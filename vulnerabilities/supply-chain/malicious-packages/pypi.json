@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "ecosystem": "pypi",
+  "last_updated": "2026-05-12T10:00:00Z",
+  "entries": [
+    {
+      "name": "ctx",
+      "versions_affected": ["0.1.2", "0.2.2", "0.2.6"],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2022-05-24",
+      "description": "Attacker took over abandoned package and uploaded versions that exfiltrate AWS credentials from environment variables",
+      "references": [
+        "https://medium.com/@m.s.miettinen/ctx-pypi-hijack-on-may-2022-c4a86a8acec5",
+        "https://www.zdnet.com/article/malicious-pypi-packages-caught-stealing-developer-data-and-sending-to-public-endpoints/"
+      ],
+      "indicators": ["sends AWS credentials to remote endpoint"],
+      "attack_type": "maintainer_compromise"
+    },
+    {
+      "name": "phpass",
+      "versions_affected": ["*"],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2022-05-24",
+      "description": "Companion malicious PyPI package alongside ctx hijack; exfiltrates AWS credentials",
+      "references": [
+        "https://medium.com/@m.s.miettinen/ctx-pypi-hijack-on-may-2022-c4a86a8acec5"
+      ],
+      "indicators": ["AWS credential exfiltration"],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "colorsama",
+      "versions_affected": ["*"],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2022-08-23",
+      "description": "Typosquat of colorama; exfiltrates Discord tokens, browser cookies, system info",
+      "references": [
+        "https://blog.checkpoint.com/2022/08/23/check-point-research-detects-12-malicious-python-packages-in-pypi/"
+      ],
+      "indicators": ["typosquat of colorama"],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "djanga",
+      "versions_affected": ["*"],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2022-11-15",
+      "description": "Typosquat of django; installs information stealer",
+      "references": [
+        "https://blog.phylum.io/malicious-pypi-package/"
+      ],
+      "indicators": ["typosquat of django"],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "pip-helper",
+      "versions_affected": ["*"],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2023-02-10",
+      "description": "Dependency confusion attack package masquerading as internal Python utility; collects host data and posts to attacker URL",
+      "references": [
+        "https://blog.phylum.io/typosquats-and-dependency-confusion-attacks/"
+      ],
+      "indicators": ["setup.py exfiltration"],
+      "attack_type": "dependency_confusion"
+    }
+  ]
+}

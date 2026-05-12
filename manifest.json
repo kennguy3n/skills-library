@@ -1,0 +1,179 @@
+{
+  "schema_version": "1.0",
+  "version": "2026.05.12.1",
+  "previous_version": null,
+  "released_at": "2026-05-12T10:00:00Z",
+  "signature": "TBD",
+  "public_key_id": "skills-library-release-2026",
+  "description": "Root manifest. Phase 2 will populate SHA-256 checksums and Ed25519 signature. Phase 1 ships an unsigned scaffold so the format is exercised end-to-end.",
+  "files": [
+    {
+      "path": "skills/secret-detection/SKILL.md",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/secret-detection/rules/dlp_patterns.json",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/secret-detection/rules/dlp_exclusions.json",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/secret-detection/tests/corpus.json",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/dependency-audit/SKILL.md",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/dependency-audit/rules/known_malicious.json",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/secure-code-review/SKILL.md",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/secure-code-review/checklists/owasp_top10.yaml",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/secure-code-review/checklists/injection_patterns.yaml",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/supply-chain-security/SKILL.md",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/supply-chain-security/rules/typosquat_patterns.json",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/supply-chain-security/rules/dependency_confusion.json",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/infrastructure-security/SKILL.md",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/infrastructure-security/checklists/k8s_hardening.yaml",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/infrastructure-security/checklists/docker_security.yaml",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/infrastructure-security/checklists/terraform_security.yaml",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/api-security/SKILL.md",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/api-security/checklists/auth_patterns.yaml",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/api-security/checklists/input_validation.yaml",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/compliance-awareness/SKILL.md",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/compliance-awareness/frameworks/owasp_mapping.yaml",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "skills/compliance-awareness/frameworks/cwe_mapping.yaml",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "vulnerabilities/manifest.json",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "vulnerabilities/supply-chain/malicious-packages/npm.json",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "vulnerabilities/supply-chain/malicious-packages/pypi.json",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "dictionaries/security_terms.yaml",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "dictionaries/cwe_top25.yaml",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    },
+    {
+      "path": "dictionaries/owasp_top10_2025.yaml",
+      "sha256": "TBD",
+      "size": 0,
+      "action": "added"
+    }
+  ]
+}

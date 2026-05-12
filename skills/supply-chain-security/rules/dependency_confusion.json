@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-05-12",
+  "description": "Internal namespace patterns. The AI flags any public package matching these patterns since they likely shadow internal packages.",
+  "namespaces": [
+    {
+      "pattern": "@yourco/*",
+      "ecosystem": "npm",
+      "description": "Replace 'yourco' with your organization's npm scope and ensure .npmrc routes the scope to the internal registry"
+    },
+    {
+      "pattern": "com.yourco.*",
+      "ecosystem": "maven",
+      "description": "Replace with your organization's Java group ID"
+    },
+    {
+      "pattern": "yourco-*",
+      "ecosystem": "pypi",
+      "description": "Replace with your organization's PyPI prefix; configure pip.conf with --extra-index-url"
+    },
+    {
+      "pattern": "github.com/yourco/*",
+      "ecosystem": "go",
+      "description": "Replace with your organization's Go module path; use GOPRIVATE env var"
+    }
+  ],
+  "mitigation_guide": "https://medium.com/@alex.birsan/dependency-confusion-4a5d60fec610"
+}

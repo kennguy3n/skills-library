@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "description": "Test corpus for the secret-detection skill. Each entry is a snippet plus the expected detection outcome.",
+  "fixtures": [
+    {
+      "id": "aws-real-key-with-hotword",
+      "text": "AWS_ACCESS_KEY_ID = AKIAZ1234567890ABCDE",
+      "expected": "detect",
+      "expected_pattern": "AWS Access Key"
+    },
+    {
+      "id": "aws-doc-example",
+      "text": "Use AKIAIOSFODNN7EXAMPLE as the example access key id",
+      "expected": "ignore",
+      "reason": "well-known AWS documentation placeholder"
+    },
+    {
+      "id": "github-pat",
+      "text": "token: ghp_abcdefghijklmnopqrstuvwxyz0123456789",
+      "expected": "detect",
+      "expected_pattern": "GitHub Personal Access Token"
+    },
+    {
+      "id": "private-key-block",
+      "text": "-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEA...\n-----END RSA PRIVATE KEY-----",
+      "expected": "detect",
+      "expected_pattern": "Private Key Block"
+    },
+    {
+      "id": "css-hex-color",
+      "text": "background-color: #abcdef;",
+      "expected": "ignore",
+      "reason": "CSS hex color is not a secret"
+    },
+    {
+      "id": "placeholder-api-key",
+      "text": "api_key = \"YOUR_API_KEY_HERE\"",
+      "expected": "ignore",
+      "reason": "placeholder value"
+    }
+  ]
+}

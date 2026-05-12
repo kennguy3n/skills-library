@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "version": "2026.05.12.1",
+  "released_at": "2026-05-12T10:00:00Z",
+  "description": "Vulnerabilities sub-manifest. Lists every vulnerability data file with its current SHA-256 (Phase 2 will compute and sign these).",
+  "files": [
+    {
+      "path": "supply-chain/malicious-packages/npm.json",
+      "sha256": "TBD",
+      "size": 0
+    },
+    {
+      "path": "supply-chain/malicious-packages/pypi.json",
+      "sha256": "TBD",
+      "size": 0
+    }
+  ]
+}

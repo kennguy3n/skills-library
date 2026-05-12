@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0",
+  "description": "Symlink target for the consolidated malicious-package list. See vulnerabilities/supply-chain/malicious-packages/ for the source of truth.",
+  "sources": [
+    "../../../vulnerabilities/supply-chain/malicious-packages/npm.json",
+    "../../../vulnerabilities/supply-chain/malicious-packages/pypi.json"
+  ]
+}
