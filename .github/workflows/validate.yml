@@ -71,7 +71,7 @@ jobs:
         run: |
           set -e
           python - <<'PY'
-          import sys, pathlib, yaml
+          import re, sys, pathlib, yaml
 
           required = {
               "id", "version", "title", "description", "category",
@@ -81,19 +81,19 @@ jobs:
           allowed_categories = {"prevention", "detection", "compliance", "supply-chain", "hardening"}
           allowed_severities = {"critical", "high", "medium", "low"}
 
+          # Match YAML frontmatter delimited by lines containing only '---'.
+          # Anchored at start-of-file; the closing '---' must be on its own line.
+          frontmatter_re = re.compile(r"\A---\s*\n(.*?)\n---\s*(?:\n|\Z)", re.DOTALL)
+
           fail = 0
           for path in sorted(pathlib.Path("skills").rglob("SKILL.md")):
               text = path.read_text(encoding="utf-8")
-              if not text.startswith("---"):
-                  print(f"::error file={path}::Missing YAML frontmatter")
+              match = frontmatter_re.match(text)
+              if not match:
+                  print(f"::error file={path}::Missing or malformed YAML frontmatter (expected file to start with '---' line and contain a closing '---' line)")
                   fail = 1
                   continue
-              parts = text.split("---", 2)
-              if len(parts) < 3:
-                  print(f"::error file={path}::Malformed YAML frontmatter (missing closing ---)")
-                  fail = 1
-                  continue
-              _, fm, _ = parts
+              fm = match.group(1)
               data = yaml.safe_load(fm) or {}
               missing = required - data.keys()
               if missing:
