@@ -1,7 +1,7 @@
 # Skills Library
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Skills](https://img.shields.io/badge/skills-28-blue)](#skill-catalogue)
+[![Skills](https://img.shields.io/badge/skills-7-blue)](#skill-catalogue)
 [![Platforms](https://img.shields.io/badge/platforms-win%20%7C%20mac%20%7C%20linux-green)](#platform-support)
 
 **Open-source security skills, rules, and vulnerability intelligence for AI-assisted coding tools.**
