@@ -88,8 +88,13 @@ jobs:
                   print(f"::error file={path}::Missing YAML frontmatter")
                   fail = 1
                   continue
-              _, fm, _ = text.split("---", 2)
-              data = yaml.safe_load(fm)
+              parts = text.split("---", 2)
+              if len(parts) < 3:
+                  print(f"::error file={path}::Malformed YAML frontmatter (missing closing ---)")
+                  fail = 1
+                  continue
+              _, fm, _ = parts
+              data = yaml.safe_load(fm) or {}
               missing = required - data.keys()
               if missing:
                   print(f"::error file={path}::Missing fields: {sorted(missing)}")

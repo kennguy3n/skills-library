@@ -5,7 +5,7 @@ mapping:
   - skill: "secure-code-review"
     cwes: [787, 79, 89, 416, 78, 20, 125, 22, 352, 434, 862, 476, 287, 190, 502, 77, 119, 798, 918, 306, 362, 269, 94, 863, 276]
   - skill: "secret-detection"
-    cwes: [798, 259, 522, 532, 798]
+    cwes: [798, 259, 522, 532]
   - skill: "api-security"
     cwes: [79, 89, 287, 306, 352, 434, 502, 639, 798, 862, 863, 918]
   - skill: "supply-chain-security"
