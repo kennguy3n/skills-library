@@ -122,7 +122,9 @@ func validateRuleFiles(root string, problems *[]string) error {
 			var v any
 			if err := yaml.Unmarshal(b, &v); err != nil {
 				*problems = append(*problems, fmt.Sprintf("%s: invalid YAML: %v", p, err))
+				return nil
 			}
+			validateSchemaShape(p, v, problems)
 		}
 		return nil
 	})

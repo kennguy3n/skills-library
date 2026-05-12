@@ -84,9 +84,11 @@ func loadVulnerabilitySummary(repoRoot string) (string, error) {
 	if len(items) == 0 {
 		return "", nil
 	}
+	severityOrder := map[string]int{"critical": 0, "high": 1, "medium": 2, "low": 3}
 	sort.Slice(items, func(i, j int) bool {
-		if items[i].entry.Severity != items[j].entry.Severity {
-			return items[i].entry.Severity < items[j].entry.Severity
+		si, sj := severityOrder[items[i].entry.Severity], severityOrder[items[j].entry.Severity]
+		if si != sj {
+			return si < sj
 		}
 		return items[i].entry.Discovered > items[j].entry.Discovered
 	})
