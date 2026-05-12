@@ -15,7 +15,7 @@ clone, generate IDE files from, and commit into their project today.
 
 ### Deliverables
 
-- [ ] Seven skill manifests under `skills/`, each with `SKILL.md` + supporting rule files:
+- [x] Seven skill manifests under `skills/`, each with `SKILL.md` + supporting rule files:
   - `secret-detection`
   - `dependency-audit`
   - `secure-code-review`
@@ -23,21 +23,21 @@ clone, generate IDE files from, and commit into their project today.
   - `infrastructure-security`
   - `api-security`
   - `compliance-awareness`
-- [ ] `skills-check` Go CLI with the following commands:
+- [x] `skills-check` Go CLI with the following commands:
   - `init` — generate IDE-specific config in target project
-  - `update` — pull latest skills from remote source
+  - `update` — scaffold for Phase 2 (remote update channel)
   - `validate` — check `SKILL.md` schema, rule file syntax, token budgets
   - `list` — list available skills with token counts per tier
   - `regenerate` — rebuild `dist/` files from current skills
   - `version` — display CLI version, library version, embedded public key ID
-- [ ] `dist/` compiler producing the eight IDE-specific files:
+- [x] `dist/` compiler producing the eight IDE-specific files:
   `CLAUDE.md`, `.cursorrules`, `copilot-instructions.md`, `AGENTS.md`,
   `.windsurfrules`, `devin.md`, `.clinerules`, `SECURITY-SKILLS.md`.
-- [ ] Token budget system: `minimal` / `compact` / `full` tiers with tiktoken-based
+- [x] Token budget system: `minimal` / `compact` / `full` tiers with tiktoken-based
   counting and per-skill budget enforcement.
-- [ ] CI pipeline (`.github/workflows/validate.yml`) running on every PR.
-- [ ] Dictionaries: `security_terms.yaml`, `cwe_top25.yaml`, `owasp_top10_2025.yaml`.
-- [ ] `README.md`, `PROPOSAL.md`, `ARCHITECTURE.md`, `PHASES.md`, `PROGRESS.md`.
+- [x] CI pipeline (`.github/workflows/validate.yml`) running on every PR.
+- [x] Dictionaries: `security_terms.yaml`, `cwe_top25.yaml`, `owasp_top10_2025.yaml`, `attack_techniques.yaml`.
+- [x] `README.md`, `PROPOSAL.md`, `ARCHITECTURE.md`, `PHASES.md`, `PROGRESS.md`.
 
 ### Out of scope for Phase 1
 

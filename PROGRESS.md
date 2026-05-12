@@ -1,8 +1,12 @@
 # Skills Library — Progress
 
 **Last updated:** 2026-05-12
-**Current phase:** Phase 1 (Planning)
-**Overall progress:** 0 / 92 items complete
+**Current phase:** Phase 1 (In Progress)
+**Overall progress:** 48 / 150 items complete
+
+### Changelog
+
+- **2026-05-12** — Phase 1 implementation: `skills-check` Go CLI (init / update / validate / list / regenerate / version), `internal/skill` SKILL.md parser, `internal/token` tiktoken-go counter (1.3x Claude multiplier), `internal/compiler` with 8 IDE formatters, all 8 `dist/` files generated, `dictionaries/attack_techniques.yaml`, supply-chain-security test corpus, CI jobs for Go build/test/vet/format, rule-file schema, token budgets, and `dist/` regeneration drift.
 
 This document mirrors the deliverables in [PHASES.md](./PHASES.md). Items are checked off
 as they ship.
@@ -12,55 +16,55 @@ as they ship.
 ## Phase 1: Core Skills + CLI Foundation (MVP)
 
 ### Skill manifests (`skills/`)
-- [ ] `skills/secret-detection/SKILL.md` + `rules/dlp_patterns.json` + `rules/dlp_exclusions.json` + `tests/corpus.json`
-- [ ] `skills/dependency-audit/SKILL.md` + `rules/known_malicious.json`
-- [ ] `skills/secure-code-review/SKILL.md` + `checklists/owasp_top10.yaml` + `checklists/injection_patterns.yaml`
-- [ ] `skills/supply-chain-security/SKILL.md` + `rules/typosquat_patterns.json` + `rules/dependency_confusion.json`
-- [ ] `skills/infrastructure-security/SKILL.md` + `checklists/k8s_hardening.yaml` + `checklists/docker_security.yaml` + `checklists/terraform_security.yaml`
-- [ ] `skills/api-security/SKILL.md` + `checklists/auth_patterns.yaml` + `checklists/input_validation.yaml`
-- [ ] `skills/compliance-awareness/SKILL.md` + `frameworks/owasp_mapping.yaml` + `frameworks/cwe_mapping.yaml`
+- [x] `skills/secret-detection/SKILL.md` + `rules/dlp_patterns.json` + `rules/dlp_exclusions.json` + `tests/corpus.json`
+- [x] `skills/dependency-audit/SKILL.md` + `rules/known_malicious.json`
+- [x] `skills/secure-code-review/SKILL.md` + `checklists/owasp_top10.yaml` + `checklists/injection_patterns.yaml`
+- [x] `skills/supply-chain-security/SKILL.md` + `rules/typosquat_patterns.json` + `rules/dependency_confusion.json` + `tests/corpus.json`
+- [x] `skills/infrastructure-security/SKILL.md` + `checklists/k8s_hardening.yaml` + `checklists/docker_security.yaml` + `checklists/terraform_security.yaml`
+- [x] `skills/api-security/SKILL.md` + `checklists/auth_patterns.yaml` + `checklists/input_validation.yaml`
+- [x] `skills/compliance-awareness/SKILL.md` + `frameworks/owasp_mapping.yaml` + `frameworks/cwe_mapping.yaml`
 
 ### CLI (`cmd/skills-check/`)
-- [ ] `skills-check init --tool <tool> --skills <list> --budget <tier>`
-- [ ] `skills-check update [--regenerate]`
-- [ ] `skills-check validate [--path <dir>]`
-- [ ] `skills-check list [--category <cat>]`
-- [ ] `skills-check regenerate [--tool <tool>] [--budget <tier>]`
-- [ ] `skills-check version`
-- [ ] Cobra-based command framework
-- [ ] Single-binary build via `go build -trimpath -ldflags "-s -w"`
+- [x] `skills-check init --tool <tool> --skills <list> --budget <tier>`
+- [x] `skills-check update [--regenerate]` (scaffold; remote update channel is Phase 2)
+- [x] `skills-check validate [--path <dir>]`
+- [x] `skills-check list [--category <cat>]`
+- [x] `skills-check regenerate [--tool <tool>] [--budget <tier>]`
+- [x] `skills-check version`
+- [x] Cobra-based command framework
+- [x] Single-binary build via `go build -trimpath -ldflags "-s -w"`
 
 ### `dist/` compiler outputs
-- [ ] `dist/CLAUDE.md`
-- [ ] `dist/.cursorrules`
-- [ ] `dist/copilot-instructions.md`
-- [ ] `dist/AGENTS.md`
-- [ ] `dist/.windsurfrules`
-- [ ] `dist/devin.md`
-- [ ] `dist/.clinerules`
-- [ ] `dist/SECURITY-SKILLS.md`
+- [x] `dist/CLAUDE.md`
+- [x] `dist/.cursorrules`
+- [x] `dist/copilot-instructions.md`
+- [x] `dist/AGENTS.md`
+- [x] `dist/.windsurfrules`
+- [x] `dist/devin.md`
+- [x] `dist/.clinerules`
+- [x] `dist/SECURITY-SKILLS.md`
 
 ### Token budget system
-- [ ] `minimal` (< 500 tokens) tier extraction
-- [ ] `compact` (< 2000 tokens) tier extraction
-- [ ] `full` (< 5000 tokens) tier extraction
-- [ ] `tiktoken-go` integration for OpenAI-family counts
-- [ ] Claude conservative `1.3x` multiplier
-- [ ] Per-skill budget enforcement at compile time
+- [x] `minimal` tier extraction (ALWAYS + NEVER bullets only)
+- [x] `compact` tier extraction (full Rules + KFP + references)
+- [x] `full` tier extraction (everything, including Context)
+- [x] `tiktoken-go` integration for OpenAI-family counts (`cl100k_base`)
+- [x] Claude conservative `1.3x` multiplier
+- [x] Per-skill budget enforcement at compile time (`skills-check validate`)
 
 ### CI pipeline
 - [x] `.github/workflows/validate.yml` scaffolded (Phase 1 baseline: JSON + YAML syntax checks)
-- [ ] Schema validation of every `SKILL.md` frontmatter
-- [ ] Rule file JSON schema validation
-- [ ] Markdown link check
-- [ ] Token budget enforcement
-- [ ] `dist/` files regenerated and diffed against committed copy
+- [x] Schema validation of every `SKILL.md` frontmatter
+- [x] Rule file JSON schema validation (`schema_version` required on every rules/checklists/frameworks/tests file)
+- [x] Markdown link check
+- [x] Token budget enforcement (`skills-check validate` job)
+- [x] `dist/` files regenerated and diffed against committed copy
 
 ### Dictionaries
 - [x] `dictionaries/security_terms.yaml` scaffolded
 - [x] `dictionaries/cwe_top25.yaml` scaffolded
 - [x] `dictionaries/owasp_top10_2025.yaml` scaffolded
-- [ ] `dictionaries/attack_techniques.yaml`
+- [x] `dictionaries/attack_techniques.yaml`
 
 ### Documentation
 - [x] `README.md`

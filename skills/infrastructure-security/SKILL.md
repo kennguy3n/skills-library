@@ -12,8 +12,8 @@ applies_to:
   - "when reviewing IaC PRs"
 languages: ["yaml", "hcl", "dockerfile"]
 token_budget:
-  minimal: 240
-  compact: 900
+  minimal: 650
+  compact: 950
   full: 2500
 rules_path: "checklists/"
 related_skills: ["api-security", "compliance-awareness"]

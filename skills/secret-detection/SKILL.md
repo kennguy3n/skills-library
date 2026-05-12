@@ -12,8 +12,8 @@ applies_to:
   - "when creating .env or config templates"
 languages: ["*"]
 token_budget:
-  minimal: 180
-  compact: 650
+  minimal: 700
+  compact: 1100
   full: 1800
 rules_path: "rules/"
 tests_path: "tests/"

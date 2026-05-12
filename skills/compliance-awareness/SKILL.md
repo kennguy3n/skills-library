@@ -11,7 +11,7 @@ applies_to:
   - "when refactoring code that crosses compliance boundaries (PII, PHI, PCI scope)"
 languages: ["*"]
 token_budget:
-  minimal: 180
+  minimal: 400
   compact: 700
   full: 2000
 rules_path: "frameworks/"

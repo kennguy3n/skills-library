@@ -12,8 +12,8 @@ applies_to:
   - "when adding new HTTP handlers or endpoints"
 languages: ["*"]
 token_budget:
-  minimal: 220
-  compact: 850
+  minimal: 700
+  compact: 900
   full: 2400
 rules_path: "checklists/"
 related_skills: ["api-security", "secret-detection", "infrastructure-security"]

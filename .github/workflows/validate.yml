@@ -141,5 +141,123 @@ jobs:
                 fail=1
               fi
             done < <(grep -oE '\]\([^)]+\)' "$md" | grep -oE '\([^)]+\)' || true)
-          done < <(find . -name '*.md' -not -path './.git/*')
+          done < <(find . -name '*.md' -not -path './.git/*' -not -path './dist/*')
           exit "$fail"
+
+  rule-file-schema:
+    name: Rule file schema (skills/**/{rules,checklists,frameworks,tests}/*)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyYAML
+        run: python -m pip install --quiet pyyaml
+
+      - name: Check rule files declare schema_version
+        shell: bash
+        run: |
+          set -e
+          python - <<'PY'
+          import json, sys, pathlib, yaml
+          fail = 0
+          roots = ["rules", "checklists", "frameworks", "tests"]
+          for skill_dir in sorted(pathlib.Path("skills").iterdir()):
+              if not skill_dir.is_dir():
+                  continue
+              for sub in roots:
+                  d = skill_dir / sub
+                  if not d.exists():
+                      continue
+                  for p in sorted(d.rglob("*")):
+                      if p.suffix not in {".json", ".yaml", ".yml"}:
+                          continue
+                      text = p.read_text(encoding="utf-8")
+                      try:
+                          data = json.loads(text) if p.suffix == ".json" else yaml.safe_load(text)
+                      except Exception as e:
+                          print(f"::error file={p}::Parse error: {e}")
+                          fail = 1
+                          continue
+                      if not isinstance(data, dict):
+                          continue
+                      if "schema_version" not in data:
+                          print(f"::error file={p}::Missing required key 'schema_version'")
+                          fail = 1
+          sys.exit(fail)
+          PY
+
+  go-build-test:
+    name: skills-check (build, vet, test)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: true
+
+      - name: Verify go.mod is tidy
+        run: |
+          go mod tidy
+          if ! git diff --quiet -- go.mod go.sum; then
+            echo "::error::go.mod / go.sum are not tidy. Run 'go mod tidy'."
+            git diff -- go.mod go.sum
+            exit 1
+          fi
+
+      - name: gofmt
+        run: |
+          unformatted=$(gofmt -l ./cmd)
+          if [ -n "$unformatted" ]; then
+            echo "::error::Run gofmt -w on:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: go test
+        run: go test ./...
+
+      - name: go build
+        run: go build -trimpath -ldflags "-s -w" -o /tmp/skills-check ./cmd/skills-check
+
+      - name: skills-check validate (enforces token budgets)
+        run: /tmp/skills-check validate --path .
+
+  dist-regeneration:
+    name: dist/ matches skills/
+    needs: go-build-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: true
+
+      - name: Build skills-check
+        run: go build -trimpath -ldflags "-s -w" -o /tmp/skills-check ./cmd/skills-check
+
+      - name: Regenerate dist/ and diff
+        shell: bash
+        run: |
+          set -e
+          /tmp/skills-check regenerate --path .
+          if ! git diff --exit-code -- dist/; then
+            echo "::error::dist/ files are out of date. Run 'skills-check regenerate' and commit."
+            exit 1
+          fi
