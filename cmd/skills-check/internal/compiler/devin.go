@@ -25,13 +25,15 @@ func (devinFormatter) Format(skills []*skill.Skill, tier skill.Tier, ctx Context
 		fmt.Fprintf(&b, "_%s_\n\n", s.Frontmatter.Description)
 		writeMarkdownBullets(&b, "Always", s.Body.Always)
 		writeMarkdownBullets(&b, "Never", s.Body.Never)
-		writeMarkdownBullets(&b, "Known false positives", s.Body.KnownFalsePositives)
-		if s.Body.Context != "" {
+		if tier != skill.TierMinimal {
+			writeMarkdownBullets(&b, "Known false positives", s.Body.KnownFalsePositives)
+		}
+		if tier == skill.TierFull && s.Body.Context != "" {
 			b.WriteString("**Why this matters:**\n\n")
 			b.WriteString(s.Body.Context)
 			b.WriteString("\n\n")
 		}
-		if s.Body.References != "" {
+		if tier != skill.TierMinimal && s.Body.References != "" {
 			b.WriteString("**References:**\n\n")
 			b.WriteString(s.Body.References)
 			b.WriteString("\n\n")
