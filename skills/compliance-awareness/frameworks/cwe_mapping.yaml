@@ -1,0 +1,16 @@
+schema_version: "1.0"
+framework: "CWE Top 25 2023"
+last_updated: "2026-05-12"
+mapping:
+  - skill: "secure-code-review"
+    cwes: [787, 79, 89, 416, 78, 20, 125, 22, 352, 434, 862, 476, 287, 190, 502, 77, 119, 798, 918, 306, 362, 269, 94, 863, 276]
+  - skill: "secret-detection"
+    cwes: [798, 259, 522, 532]
+  - skill: "api-security"
+    cwes: [79, 89, 287, 306, 352, 434, 502, 639, 798, 862, 863, 918]
+  - skill: "supply-chain-security"
+    cwes: [494, 829, 830, 1357]
+  - skill: "dependency-audit"
+    cwes: [1104, 937, 1035]
+  - skill: "infrastructure-security"
+    cwes: [276, 732, 798]

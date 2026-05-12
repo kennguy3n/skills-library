@@ -1,0 +1,149 @@
+{
+  "schema_version": "1.0",
+  "patterns": [
+    {
+      "name": "AWS Access Key",
+      "regex": "AKIA[0-9A-Z]{16}",
+      "prefix": "AKIA",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": ["aws", "access_key", "credentials", "iam", "secret"],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "entropy_min": 3.5
+    },
+    {
+      "name": "AWS Secret Access Key",
+      "regex": "(?i)aws[_\\-]?secret[_\\-]?access[_\\-]?key\\s*[:=]\\s*['\"]?[A-Za-z0-9/+=]{40}['\"]?",
+      "prefix": "aws_secret",
+      "severity": "critical",
+      "score_weight": 2,
+      "hotwords": ["aws", "secret", "access_key"],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "entropy_min": 4.0
+    },
+    {
+      "name": "Generic API Key",
+      "regex": "(?i)(api[_-]?key|apikey)\\s*[:=]\\s*['\"]?[A-Za-z0-9_\\-]{20,}",
+      "prefix": "api",
+      "severity": "high",
+      "score_weight": 1,
+      "hotwords": ["api", "key", "token", "secret"],
+      "hotword_window": 50,
+      "hotword_boost": 2,
+      "require_hotword": true,
+      "entropy_min": 3.0
+    },
+    {
+      "name": "GitHub Personal Access Token",
+      "regex": "ghp_[A-Za-z0-9_]{36}",
+      "prefix": "ghp_",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": ["github", "token", "auth"],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "entropy_min": 4.0
+    },
+    {
+      "name": "GitHub OAuth Token",
+      "regex": "gho_[A-Za-z0-9_]{36}",
+      "prefix": "gho_",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": ["github", "oauth", "token"],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "entropy_min": 4.0
+    },
+    {
+      "name": "OpenAI API Key",
+      "regex": "sk-[A-Za-z0-9]{48}",
+      "prefix": "sk-",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": ["openai", "api", "key", "gpt"],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "entropy_min": 4.0
+    },
+    {
+      "name": "Slack Token",
+      "regex": "xox[baprs]-[A-Za-z0-9-]{10,}",
+      "prefix": "xox",
+      "severity": "high",
+      "score_weight": 1,
+      "hotwords": ["slack", "token", "webhook"],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "entropy_min": 3.5
+    },
+    {
+      "name": "Stripe Live API Key",
+      "regex": "sk_live_[A-Za-z0-9]{24,}",
+      "prefix": "sk_live_",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": ["stripe", "payment"],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "entropy_min": 4.0
+    },
+    {
+      "name": "Google API Key",
+      "regex": "AIza[0-9A-Za-z\\-_]{35}",
+      "prefix": "AIza",
+      "severity": "high",
+      "score_weight": 1,
+      "hotwords": ["google", "gcp", "firebase", "api"],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "entropy_min": 4.0
+    },
+    {
+      "name": "Private Key Block",
+      "regex": "-----BEGIN (RSA |EC |DSA |OPENSSH |PGP )?PRIVATE KEY-----",
+      "prefix": "-----BEGIN",
+      "severity": "critical",
+      "score_weight": 2,
+      "hotwords": [],
+      "hotword_window": 0,
+      "hotword_boost": 0,
+      "require_hotword": false,
+      "entropy_min": 0
+    },
+    {
+      "name": "JWT Token",
+      "regex": "eyJ[A-Za-z0-9_\\-]+\\.eyJ[A-Za-z0-9_\\-]+\\.[A-Za-z0-9_\\-]+",
+      "prefix": "eyJ",
+      "severity": "medium",
+      "score_weight": 1,
+      "hotwords": ["jwt", "bearer", "auth", "token"],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "entropy_min": 3.5
+    },
+    {
+      "name": "Generic High-Entropy Secret",
+      "regex": "(?i)(secret|password|passwd|pwd)\\s*[:=]\\s*['\"][^'\"\\s]{16,}['\"]",
+      "prefix": "secret",
+      "severity": "high",
+      "score_weight": 1,
+      "hotwords": ["secret", "password", "credential"],
+      "hotword_window": 50,
+      "hotword_boost": 1,
+      "require_hotword": true,
+      "entropy_min": 3.5
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  json-yaml-syntax:
+    name: JSON + YAML syntax
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyYAML
+        run: python -m pip install --quiet pyyaml
+
+      - name: Validate JSON files
+        shell: bash
+        run: |
+          set -e
+          fail=0
+          while IFS= read -r f; do
+            if ! python -c "import json,sys; json.load(open(sys.argv[1]))" "$f"; then
+              echo "::error file=$f::Invalid JSON"
+              fail=1
+            fi
+          done < <(find . -name '*.json' -not -path './.git/*')
+          exit "$fail"
+
+      - name: Validate YAML files
+        shell: bash
+        run: |
+          set -e
+          fail=0
+          while IFS= read -r f; do
+            if ! python -c "import yaml,sys; yaml.safe_load(open(sys.argv[1]))" "$f"; then
+              echo "::error file=$f::Invalid YAML"
+              fail=1
+            fi
+          done < <(find . \( -name '*.yaml' -o -name '*.yml' \) -not -path './.git/*')
+          exit "$fail"
+
+  skill-manifest-shape:
+    name: SKILL.md frontmatter shape
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install --quiet pyyaml
+
+      - name: Check every SKILL.md has the required frontmatter fields
+        shell: bash
+        run: |
+          set -e
+          python - <<'PY'
+          import re, sys, pathlib, yaml
+
+          required = {
+              "id", "version", "title", "description", "category",
+              "severity", "applies_to", "languages", "token_budget",
+              "last_updated", "sources",
+          }
+          allowed_categories = {"prevention", "detection", "compliance", "supply-chain", "hardening"}
+          allowed_severities = {"critical", "high", "medium", "low"}
+
+          # Match YAML frontmatter delimited by lines containing only '---'.
+          # Anchored at start-of-file; the closing '---' must be on its own line.
+          frontmatter_re = re.compile(r"\A---\s*\n(.*?)\n---\s*(?:\n|\Z)", re.DOTALL)
+
+          fail = 0
+          for path in sorted(pathlib.Path("skills").rglob("SKILL.md")):
+              text = path.read_text(encoding="utf-8")
+              match = frontmatter_re.match(text)
+              if not match:
+                  print(f"::error file={path}::Missing or malformed YAML frontmatter (expected file to start with '---' line and contain a closing '---' line)")
+                  fail = 1
+                  continue
+              fm = match.group(1)
+              data = yaml.safe_load(fm) or {}
+              missing = required - data.keys()
+              if missing:
+                  print(f"::error file={path}::Missing fields: {sorted(missing)}")
+                  fail = 1
+              if data.get("category") not in allowed_categories:
+                  print(f"::error file={path}::Invalid category {data.get('category')!r}")
+                  fail = 1
+              if data.get("severity") not in allowed_severities:
+                  print(f"::error file={path}::Invalid severity {data.get('severity')!r}")
+                  fail = 1
+              tb = data.get("token_budget") or {}
+              for tier in ("minimal", "compact", "full"):
+                  if tier not in tb:
+                      print(f"::error file={path}::Missing token_budget.{tier}")
+                      fail = 1
+          sys.exit(fail)
+          PY
+
+  markdown-link-sanity:
+    name: Markdown link sanity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for obviously broken relative links
+        shell: bash
+        run: |
+          set -e
+          fail=0
+          while IFS= read -r md; do
+            while IFS= read -r link; do
+              # Strip surrounding ()  and any anchor
+              target="${link#(}"
+              target="${target%)*}"
+              target="${target%%#*}"
+              # Skip external links and template references
+              case "$target" in
+                http*|mailto:*|"") continue ;;
+              esac
+              base_dir="$(dirname "$md")"
+              if [ ! -e "$base_dir/$target" ]; then
+                echo "::error file=$md::Broken relative link: $target"
+                fail=1
+              fi
+            done < <(grep -oE '\]\([^)]+\)' "$md" | grep -oE '\([^)]+\)' || true)
+          done < <(find . -name '*.md' -not -path './.git/*')
+          exit "$fail"

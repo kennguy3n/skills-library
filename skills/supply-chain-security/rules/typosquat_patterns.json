@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-05-12",
+  "description": "Heuristics for detecting typosquats. The CLI computes Levenshtein distance against the top-1000 list per ecosystem.",
+  "rules": [
+    {
+      "id": "levenshtein-2",
+      "description": "Reject candidate packages within Levenshtein distance 2 of a top-1000 package",
+      "ecosystems": ["npm", "pypi", "crates", "go"],
+      "threshold": 2,
+      "exempt_authors": []
+    },
+    {
+      "id": "char-swap",
+      "description": "Detect adjacent-character transposition (axios -> axois)",
+      "ecosystems": ["npm", "pypi", "crates", "go"],
+      "threshold": 1
+    },
+    {
+      "id": "homoglyph",
+      "description": "Detect Unicode-confusable homoglyph substitutions (rеact with Cyrillic 'е' instead of Latin 'e')",
+      "ecosystems": ["npm", "pypi"],
+      "confusables": [
+        ["e", "е"],
+        ["a", "а"],
+        ["o", "о"],
+        ["c", "с"],
+        ["p", "р"]
+      ]
+    },
+    {
+      "id": "tld-suffix",
+      "description": "Detect packages mimicking another with -js, -lib, -core, -utils suffix appended",
+      "ecosystems": ["npm", "pypi"],
+      "suspicious_suffixes": ["-js", "-lib", "-core", "-utils", "-tools", "-helper"]
+    }
+  ]
+}

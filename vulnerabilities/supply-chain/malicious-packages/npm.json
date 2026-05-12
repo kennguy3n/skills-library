@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "ecosystem": "npm",
+  "last_updated": "2026-05-12T10:00:00Z",
+  "entries": [
+    {
+      "name": "event-stream",
+      "versions_affected": ["3.3.6"],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2018-11-26",
+      "description": "Maintainer account compromised; malicious flatmap-stream dependency added to steal cryptocurrency wallets from copay app",
+      "references": [
+        "https://blog.npmjs.org/post/180565383195/details-about-the-event-stream-incident",
+        "https://github.com/dominictarr/event-stream/issues/116"
+      ],
+      "indicators": ["flatmap-stream dependency"],
+      "cve": "CVE-2018-16492",
+      "attack_type": "maintainer_compromise"
+    },
+    {
+      "name": "ua-parser-js",
+      "versions_affected": ["0.7.29", "0.8.0", "1.0.0"],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2021-10-22",
+      "description": "Maintainer's npm account hijacked; malicious versions installed cryptominer and password stealer",
+      "references": [
+        "https://github.com/faisalman/ua-parser-js/issues/536",
+        "https://www.cisa.gov/news-events/alerts/2021/10/22/malware-discovered-popular-npm-package-ua-parser-js"
+      ],
+      "indicators": ["jsextension binary", "preinstall script"],
+      "attack_type": "maintainer_compromise"
+    },
+    {
+      "name": "colors",
+      "versions_affected": ["1.4.1", "1.4.2"],
+      "type": "protestware",
+      "severity": "high",
+      "discovered": "2022-01-08",
+      "description": "Maintainer published versions with infinite loop that prints non-ASCII characters; affected Node.js applications globally",
+      "references": [
+        "https://github.com/Marak/colors.js/issues/285",
+        "https://snyk.io/blog/open-source-npm-packages-colors-faker/"
+      ],
+      "indicators": ["LIBERTY LIBERTY LIBERTY", "infinite loop in colors.js"],
+      "attack_type": "protestware"
+    },
+    {
+      "name": "faker",
+      "versions_affected": ["6.6.6"],
+      "type": "protestware",
+      "severity": "high",
+      "discovered": "2022-01-08",
+      "description": "Maintainer wiped repo and published empty version, breaking every downstream user",
+      "references": [
+        "https://snyk.io/blog/open-source-npm-packages-colors-faker/"
+      ],
+      "indicators": ["empty package, README only"],
+      "attack_type": "protestware"
+    },
+    {
+      "name": "node-ipc",
+      "versions_affected": ["10.1.1", "10.1.2"],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2022-03-15",
+      "description": "Maintainer added code that overwrites files on systems with Russian/Belarusian IPs",
+      "references": [
+        "https://snyk.io/blog/peacenotwar-malicious-npm-node-ipc-package-vulnerability/"
+      ],
+      "indicators": ["peacenotwar", "ssl-geospec dependency"],
+      "cve": "CVE-2022-23812",
+      "attack_type": "protestware"
+    }
+  ]
+}
