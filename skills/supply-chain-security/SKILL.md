@@ -12,10 +12,11 @@ applies_to:
   - "before publishing a package to a public registry"
 languages: ["*"]
 token_budget:
-  minimal: 220
+  minimal: 550
   compact: 800
   full: 2100
 rules_path: "rules/"
+tests_path: "tests/"
 related_skills: ["dependency-audit", "secret-detection"]
 last_updated: "2026-05-12"
 sources:

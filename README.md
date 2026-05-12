@@ -287,6 +287,42 @@ skills-library/
 - [PROGRESS.md](./PROGRESS.md) — Live progress tracker mirroring the deliverables in
   PHASES.md.
 
+## Project Structure (Phase 1)
+
+```
+skills-library/
+├── cmd/skills-check/
+│   ├── main.go                    # Cobra root command
+│   ├── cmd/                       # init / update / validate / list / regenerate / version
+│   └── internal/
+│       ├── skill/                 # SKILL.md parser (frontmatter + body + tier extraction)
+│       ├── token/                 # tiktoken-go counter + 1.3x Claude multiplier
+│       ├── compiler/              # 8 IDE-specific formatters + core compile loop
+│       └── manifest/              # manifest.json reader (Phase 2 will use signing)
+├── skills/                        # 7 SKILL.md manifests + their rule files
+├── dictionaries/                  # security_terms / cwe_top25 / owasp_top10_2025 / attack_techniques
+├── vulnerabilities/               # Supply-chain vulnerability data + root manifest.json
+├── dist/                          # Generated IDE configs (regenerate via skills-check)
+├── .github/workflows/validate.yml # CI: JSON/YAML, frontmatter, rule schema, go build/test, token budgets, dist drift
+├── go.mod / go.sum
+└── README.md / PROPOSAL.md / ARCHITECTURE.md / PHASES.md / PROGRESS.md
+```
+
+## Building and Running Tests
+
+```bash
+go build -trimpath -ldflags "-s -w" -o skills-check ./cmd/skills-check
+go test ./...
+./skills-check validate
+./skills-check list
+./skills-check regenerate
+```
+
+The same commands run in CI on every PR. `skills-check validate` enforces the per-skill
+token budgets declared in each `SKILL.md` frontmatter; `skills-check regenerate` rebuilds
+every file in `dist/` and CI fails if the committed copy differs from the regenerated
+output.
+
 ## Platform Support
 
 | OS | Architectures | CLI install method | Scheduled updates |

@@ -197,23 +197,35 @@ The CLI is a single Cobra-based Go binary. Layout:
 cmd/skills-check/
 ├── main.go                    # cobra root command
 ├── cmd/
+│   ├── root.go                # root command + subcommand registration
 │   ├── init.go                # skills-check init --tool <tool> --skills <list> --budget <tier>
-│   ├── update.go              # skills-check update [--regenerate]
+│   ├── update.go              # skills-check update [--regenerate] (Phase 2)
 │   ├── validate.go            # skills-check validate [--path <dir>]
 │   ├── list.go                # skills-check list [--category <cat>]
 │   ├── regenerate.go          # skills-check regenerate [--tool <tool>] [--budget <tier>]
-│   ├── scheduler.go           # skills-check scheduler install|remove --interval <duration>
-│   └── version.go             # skills-check version
+│   ├── version.go             # skills-check version
+│   └── cmd_test.go            # integration tests for every subcommand
 ├── internal/
-│   ├── skill/                 # SKILL.md parser (YAML frontmatter + markdown body)
-│   ├── compiler/              # dist/ file generators per tool
-│   ├── manifest/              # manifest.json parser, signature verifier, delta downloader
-│   ├── scheduler/             # OS-specific scheduled task installer
-│   │   ├── launchd.go         # macOS LaunchAgent plist generation
-│   │   ├── systemd.go         # Linux systemd timer/service generation
-│   │   └── taskscheduler.go   # Windows Task Scheduler COM integration
-│   └── vuln/                  # Vulnerability database loader + query
+│   ├── skill/                 # SKILL.md parser (YAML frontmatter + markdown body + tier extraction)
+│   ├── token/                 # tiktoken-go counter + 1.3x Claude multiplier + budget enforcer
+│   ├── compiler/              # dist/ file generators per tool + context loader
+│   │   ├── compiler.go        # Core compile loop, formatter registry, token reporting
+│   │   ├── context.go         # Vulnerability summary, glossary, ATT&CK injection
+│   │   ├── claude.go          # CLAUDE.md formatter
+│   │   ├── cursor.go          # .cursorrules formatter
+│   │   ├── copilot.go         # copilot-instructions.md formatter
+│   │   ├── agents.go          # AGENTS.md formatter (also serves codex)
+│   │   ├── windsurf.go        # .windsurfrules formatter
+│   │   ├── devin.go           # devin.md formatter (defaults to full tier)
+│   │   ├── cline.go           # .clinerules formatter
+│   │   └── universal.go       # SECURITY-SKILLS.md formatter
+│   └── manifest/              # manifest.json reader (Phase 2 will add signature verifier + delta downloader)
 ```
+
+In Phase 2 the layout grows a `scheduler/` package (launchd / systemd / Windows Task
+Scheduler plumbing) and a `vuln/` package for query helpers; for Phase 1 those are
+out of scope and the dist compiler reads the vulnerability files directly via
+`internal/compiler/context.go`.
 
 The binary is built with `-trimpath -ldflags "-s -w"` for reproducibility. The embedded
 Ed25519 public key is injected at build time via `-X` ldflags so the same source tree
