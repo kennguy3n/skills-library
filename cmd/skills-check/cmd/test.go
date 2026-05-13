@@ -251,9 +251,15 @@ func hotwordNear(lowerText string, matchIdx []int, hotwords []string, window int
 	if start < 0 {
 		start = 0
 	}
+	if start > len(lowerText) {
+		start = len(lowerText)
+	}
 	end := matchIdx[1] + window
 	if end > len(lowerText) {
 		end = len(lowerText)
+	}
+	if end < start {
+		end = start
 	}
 	region := lowerText[start:end]
 	for _, h := range hotwords {

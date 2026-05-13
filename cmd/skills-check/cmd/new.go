@@ -114,7 +114,7 @@ Example:
 	c.Flags().StringVar(&libraryPath, "library", ".", "Path to the skills library root")
 	c.Flags().StringVar(&title, "title", "", "Human-readable skill title (defaults to humanized id)")
 	c.Flags().StringVar(&description, "description", "", "One-line description (defaults to TODO placeholder)")
-	c.Flags().StringVar(&category, "category", defaultSkillCategoryNew, "Skill category: prevention|hardening|detection|response|audit")
+	c.Flags().StringVar(&category, "category", defaultSkillCategoryNew, "Skill category: prevention|detection|compliance|supply-chain|hardening")
 	c.Flags().StringVar(&severity, "severity", defaultSkillSeverityNew, "Skill severity: low|medium|high|critical")
 	c.Flags().StringVar(&languages, "languages", "*", "Comma-separated language list, or '*' for any")
 	c.Flags().StringVar(&rulesKind, "rules-kind", "rules", "Whether to scaffold a rules/ or checklists/ directory")

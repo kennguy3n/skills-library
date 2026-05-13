@@ -137,9 +137,10 @@ func TrustedKeys(additionalPaths []string) ([]ed25519.PublicKey, error) {
 	keys := make([]ed25519.PublicKey, 0, 1+len(additionalPaths))
 	if EmbeddedPublicKey != "" {
 		pub, err := embeddedPublicKey()
-		if err == nil {
-			keys = append(keys, pub)
+		if err != nil {
+			return nil, fmt.Errorf("load embedded public key: %w", err)
 		}
+		keys = append(keys, pub)
 	}
 	extra, err := LoadAdditionalPublicKeys(additionalPaths)
 	if err != nil {

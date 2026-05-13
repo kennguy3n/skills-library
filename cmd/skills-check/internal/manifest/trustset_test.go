@@ -69,6 +69,15 @@ func TestLoadAdditionalPublicKeysReadsAndSkipsBlanks(t *testing.T) {
 	}
 }
 
+func TestTrustedKeysReturnsErrorOnMalformedEmbeddedKey(t *testing.T) {
+	saved := EmbeddedPublicKey
+	t.Cleanup(func() { EmbeddedPublicKey = saved })
+	EmbeddedPublicKey = "not-a-valid-base64-ed25519-key"
+	if _, err := TrustedKeys(nil); err == nil {
+		t.Fatal("expected TrustedKeys to return an error for a malformed embedded key")
+	}
+}
+
 func TestTrustedKeysPrependsEmbedded(t *testing.T) {
 	saved := EmbeddedPublicKey
 	t.Cleanup(func() { EmbeddedPublicKey = saved })
