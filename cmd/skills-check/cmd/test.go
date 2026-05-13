@@ -194,7 +194,6 @@ type compiledPattern struct {
 // multiple patterns match, the most specific one (i.e. the last non-Generic
 // pattern that matched) wins.
 func matchAny(text string, patterns []compiledPattern) (bool, string) {
-	lower := strings.ToLower(text)
 	bestName := ""
 	bestIsGeneric := true
 	for _, p := range patterns {
@@ -207,7 +206,7 @@ func matchAny(text string, patterns []compiledPattern) (bool, string) {
 			continue
 		}
 		if p.RequireHotword || len(p.Hotwords) > 0 {
-			if !hotwordNear(lower, loc, p.Hotwords, p.HotwordWindow) {
+			if !hotwordNear(text, loc, p.Hotwords, p.HotwordWindow) {
 				if p.RequireHotword {
 					continue
 				}
@@ -243,7 +242,15 @@ func denylisted(matchText string, denylist []string) bool {
 	return false
 }
 
-func hotwordNear(lowerText string, matchIdx []int, hotwords []string, window int) bool {
+// hotwordNear returns true if any hotword appears within `window` bytes of the
+// regex match indicated by matchIdx, where matchIdx is a [start, end) byte
+// range over the original-case `text`. The window is lowered together with the
+// slice so the byte indices and the lowered string come from the same byte
+// space — strings.ToLower is not length-preserving (e.g. U+2126 OHM SIGN →
+// U+03C9, 3 → 2 bytes; Turkish İ → i, 2 → 1 byte), so pre-lowering the full
+// text would shift the window relative to the match and produce false
+// negatives (or panics) on non-ASCII input.
+func hotwordNear(text string, matchIdx []int, hotwords []string, window int) bool {
 	if window <= 0 {
 		window = 80
 	}
@@ -251,17 +258,17 @@ func hotwordNear(lowerText string, matchIdx []int, hotwords []string, window int
 	if start < 0 {
 		start = 0
 	}
-	if start > len(lowerText) {
-		start = len(lowerText)
+	if start > len(text) {
+		start = len(text)
 	}
 	end := matchIdx[1] + window
-	if end > len(lowerText) {
-		end = len(lowerText)
+	if end > len(text) {
+		end = len(text)
 	}
 	if end < start {
 		end = start
 	}
-	region := lowerText[start:end]
+	region := strings.ToLower(text[start:end])
 	for _, h := range hotwords {
 		if strings.Contains(region, strings.ToLower(h)) {
 			return true
