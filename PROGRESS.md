@@ -157,8 +157,6 @@ as they ship.
 ## Phase 4: Detection Rules + MCP Server
 
 ### Sigma rule extraction
-- [ ] Audit of existing `uneycom/shieldnet-security-detection-rules`
-- [ ] Audit of existing `kennguy3n/sn360-security-platform` rules
 - [x] `rules/cloud/aws/`
 - [x] `rules/cloud/gcp/`
 - [x] `rules/cloud/azure/`
