@@ -269,6 +269,10 @@ func isKnownFalsePositive(exclusions []Exclusion, ruleName, match string) bool {
 				if strings.EqualFold(match, w) {
 					return true
 				}
+			case "prefix":
+				if strings.HasPrefix(strings.ToLower(match), strings.ToLower(w)) {
+					return true
+				}
 			default:
 				if strings.Contains(strings.ToLower(match), strings.ToLower(w)) {
 					return true
