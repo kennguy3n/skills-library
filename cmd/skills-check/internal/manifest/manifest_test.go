@@ -328,6 +328,57 @@ func TestPrivateKeyRoundTripFromPKCS8PEM(t *testing.T) {
 	}
 }
 
+func TestPublicKeyRoundTripFromSPKIPEM(t *testing.T) {
+	pub, _, err := GenerateKeyPair()
+	if err != nil {
+		t.Fatal(err)
+	}
+	der, err := x509.MarshalPKIXPublicKey(pub)
+	if err != nil {
+		t.Fatal(err)
+	}
+	block := &pem.Block{Type: "PUBLIC KEY", Bytes: der}
+	dir := t.TempDir()
+	path := filepath.Join(dir, "pub.pem")
+	if err := os.WriteFile(path, pem.EncodeToMemory(block), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	loaded, err := LoadPublicKey(path)
+	if err != nil {
+		t.Fatalf("LoadPublicKey: %v", err)
+	}
+	if string(loaded) != string(pub) {
+		t.Errorf("SPKI PEM public key roundtrip mismatch")
+	}
+}
+
+func TestSignAndVerifyWithSPKIPublicKey(t *testing.T) {
+	pub, priv, err := GenerateKeyPair()
+	if err != nil {
+		t.Fatal(err)
+	}
+	der, err := x509.MarshalPKIXPublicKey(pub)
+	if err != nil {
+		t.Fatal(err)
+	}
+	dir := t.TempDir()
+	path := filepath.Join(dir, "pub.pem")
+	if err := os.WriteFile(path, pem.EncodeToMemory(&pem.Block{Type: "PUBLIC KEY", Bytes: der}), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	loaded, err := LoadPublicKey(path)
+	if err != nil {
+		t.Fatalf("LoadPublicKey: %v", err)
+	}
+	m := &Manifest{SchemaVersion: "1.0", Version: "v1"}
+	if err := m.SignWith(priv); err != nil {
+		t.Fatalf("SignWith: %v", err)
+	}
+	if err := m.VerifyWith(loaded); err != nil {
+		t.Errorf("VerifyWith using SPKI-loaded key failed: %v", err)
+	}
+}
+
 func sha256Hex(s string) string {
 	sum := sha256.Sum256([]byte(s))
 	return hex.EncodeToString(sum[:])

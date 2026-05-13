@@ -75,6 +75,21 @@ func TestRenderSystemdServiceAndTimerMatchArchitectureDoc(t *testing.T) {
 	}
 }
 
+func TestRenderTaskSchedulerXMLDeclaresUTF8(t *testing.T) {
+	body, err := RenderTaskSchedulerXML(sampleConfig())
+	if err != nil {
+		t.Fatal(err)
+	}
+	// The body is emitted as UTF-8 bytes; the declaration must agree so
+	// strict XML parsers don't try to interpret the bytes as UTF-16.
+	if !strings.HasPrefix(body, `<?xml version="1.0" encoding="UTF-8"?>`) {
+		t.Errorf("task XML must declare UTF-8 encoding; got prefix %q", body[:min(80, len(body))])
+	}
+	if strings.Contains(body, `encoding="UTF-16"`) {
+		t.Errorf("task XML must not declare UTF-16 encoding: %q", body)
+	}
+}
+
 func TestRenderTaskSchedulerXMLContainsRepetitionAndCommand(t *testing.T) {
 	cfg := sampleConfig()
 	cfg.Binary = `C:\Program Files\Skills-Check\skills-check.exe`

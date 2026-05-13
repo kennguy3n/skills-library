@@ -226,6 +226,56 @@ func TestRollbackRestoresPrevious(t *testing.T) {
 	}
 }
 
+func TestRollbackRemovesAddedFiles(t *testing.T) {
+	// Remote has a file the local tree does not, so Apply will add it.
+	// After Rollback, the file must be gone again.
+	remoteFiles := map[string]string{
+		"skills/a/SKILL.md":     "existed before",
+		"vulnerabilities/new.json": "brand new",
+	}
+	srcDir, pub, _ := stagedRelease(t, remoteFiles, "v2")
+	localFiles := map[string]string{
+		"skills/a/SKILL.md": "existed before",
+	}
+	localRoot, _ := localLibrary(t, localFiles, "v1")
+	src, err := NewSource(srcDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer src.Close()
+
+	res, err := Apply(localRoot, src, Options{PublicKey: pub})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var added int
+	for _, c := range res.Changes {
+		if c.Action == "added" {
+			added++
+		}
+	}
+	if added != 1 {
+		t.Fatalf("expected 1 added change, got %d (%+v)", added, res.Changes)
+	}
+
+	addedPath := filepath.Join(localRoot, "vulnerabilities/new.json")
+	if _, err := os.Stat(addedPath); err != nil {
+		t.Fatalf("added file should exist post-Apply: %v", err)
+	}
+
+	if err := Rollback(localRoot); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(addedPath); !os.IsNotExist(err) {
+		t.Errorf("Rollback must remove file added by Apply; stat err = %v", err)
+	}
+	// And the unchanged file must remain intact at its pre-Apply content.
+	got, _ := os.ReadFile(filepath.Join(localRoot, "skills/a/SKILL.md"))
+	if string(got) != "existed before" {
+		t.Errorf("Rollback corrupted unchanged file: %q", got)
+	}
+}
+
 func TestUnsignedManifestPolicy(t *testing.T) {
 	// Build an unsigned remote: same shape as stagedRelease but without
 	// calling SignWith.

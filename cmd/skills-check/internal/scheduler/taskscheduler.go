@@ -16,7 +16,12 @@ const TaskSchedulerTaskName = "SkillsLibraryUpdate"
 // Task Scheduler XML schema is documented at:
 //
 //	https://learn.microsoft.com/en-us/windows/win32/taskschd/task-scheduler-schema
-const taskSchedulerXMLTemplate = `<?xml version="1.0" encoding="UTF-16"?>
+//
+// The XML body is emitted as UTF-8 bytes (Go's default string encoding) and
+// the declaration must match so strict parsers accept the file. Task
+// Scheduler itself happens to accept either encoding, but a mismatched
+// declaration is a latent compatibility hazard.
+const taskSchedulerXMLTemplate = `<?xml version="1.0" encoding="UTF-8"?>
 <Task version="1.4" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
   <RegistrationInfo>
     <Description>Skills Library scheduled update</Description>

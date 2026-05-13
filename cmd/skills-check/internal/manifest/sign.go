@@ -186,7 +186,9 @@ func privateKeyFromRaw(raw []byte) (ed25519.PrivateKey, error) {
 
 // LoadPublicKey reads an Ed25519 public key from disk. Supported formats:
 //
-//   - PEM block of type "PUBLIC KEY" or "ED25519 PUBLIC KEY".
+//   - PEM block of type "PUBLIC KEY" (SPKI / X.509 SubjectPublicKeyInfo, the
+//     standard envelope produced by `openssl pkey -in key.pem -pubout`).
+//   - PEM block of type "ED25519 PUBLIC KEY" — body is 32 raw bytes.
 //   - Base64-encoded 32-byte raw key.
 //   - Raw binary 32-byte key.
 func LoadPublicKey(path string) (ed25519.PublicKey, error) {
@@ -199,7 +201,7 @@ func LoadPublicKey(path string) (ed25519.PublicKey, error) {
 
 func parsePublicKeyBytes(data []byte) (ed25519.PublicKey, error) {
 	if block, _ := pem.Decode(data); block != nil {
-		return publicKeyFromRaw(block.Bytes)
+		return publicKeyFromPEMBlock(block)
 	}
 	trimmed := strings.TrimSpace(string(data))
 	if decoded, err := base64.StdEncoding.DecodeString(trimmed); err == nil {
@@ -208,6 +210,26 @@ func parsePublicKeyBytes(data []byte) (ed25519.PublicKey, error) {
 		}
 	}
 	return publicKeyFromRaw(data)
+}
+
+// publicKeyFromPEMBlock decodes an Ed25519 public key from a PEM block.
+// PEM blocks of type "PUBLIC KEY" carry an SPKI (X.509
+// SubjectPublicKeyInfo) envelope — the standard format produced by
+// `openssl pkey -pubout`. Other block types are treated as 32 raw bytes
+// of key material so older keyfiles continue to load.
+func publicKeyFromPEMBlock(block *pem.Block) (ed25519.PublicKey, error) {
+	if strings.EqualFold(block.Type, "PUBLIC KEY") {
+		key, err := x509.ParsePKIXPublicKey(block.Bytes)
+		if err != nil {
+			return nil, fmt.Errorf("parse SPKI public key: %w", err)
+		}
+		pub, ok := key.(ed25519.PublicKey)
+		if !ok {
+			return nil, fmt.Errorf("SPKI key is %T, not ed25519.PublicKey", key)
+		}
+		return pub, nil
+	}
+	return publicKeyFromRaw(block.Bytes)
 }
 
 func publicKeyFromRaw(raw []byte) (ed25519.PublicKey, error) {

@@ -1,6 +1,8 @@
 package updater
 
 import (
+	"bufio"
+	"bytes"
 	"crypto/ed25519"
 	"errors"
 	"fmt"
@@ -8,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/kennguy3n/skills-library/cmd/skills-check/internal/manifest"
 )
@@ -15,6 +18,15 @@ import (
 // BackupDirName is where the last applied update stashes the files it
 // replaced so --rollback can restore them.
 const BackupDirName = ".skills-check-previous"
+
+// addedPathsManifest is the relative path inside BackupDirName where
+// Apply records files that did not exist before the update. Rollback
+// reads this list and removes the corresponding files so the on-disk
+// tree matches the pre-update state. The leading dot keeps the file
+// out of any future manifest walk, and the underscore-prefixed segment
+// avoids any collision with a real file path slugged through
+// filepath.Join.
+const addedPathsManifest = "_added_paths.txt"
 
 // Options control how Apply behaves. All fields are optional.
 type Options struct {
@@ -80,9 +92,15 @@ func Apply(localRoot string, src Source, opts Options) (*CheckResult, error) {
 		return res, fmt.Errorf("reset backup dir: %w", err)
 	}
 
+	var added []string
 	for _, change := range res.Changes {
 		switch change.Action {
-		case "added", "updated":
+		case "added":
+			if err := applyOne(localRoot, backupRoot, src, change, res.RemoteManifest); err != nil {
+				return res, fmt.Errorf("apply %s: %w", change.Path, err)
+			}
+			added = append(added, change.Path)
+		case "updated":
 			if err := applyOne(localRoot, backupRoot, src, change, res.RemoteManifest); err != nil {
 				return res, fmt.Errorf("apply %s: %w", change.Path, err)
 			}
@@ -94,6 +112,11 @@ func Apply(localRoot string, src Source, opts Options) (*CheckResult, error) {
 			if err := os.Remove(abs); err != nil && !os.IsNotExist(err) {
 				return res, fmt.Errorf("remove %s: %w", change.Path, err)
 			}
+		}
+	}
+	if len(added) > 0 {
+		if err := writeAddedManifest(backupRoot, added); err != nil {
+			return res, fmt.Errorf("record added paths: %w", err)
 		}
 	}
 
@@ -111,7 +134,10 @@ func Apply(localRoot string, src Source, opts Options) (*CheckResult, error) {
 	return res, nil
 }
 
-// Rollback restores files from BackupDirName, undoing the most recent Apply.
+// Rollback restores files from BackupDirName, undoing the most recent
+// Apply. Files that the previous Apply *added* (i.e. did not exist
+// before) are removed entirely so the on-disk tree matches the
+// pre-update state.
 func Rollback(localRoot string) error {
 	backupRoot := filepath.Join(localRoot, BackupDirName)
 	st, err := os.Stat(backupRoot)
@@ -124,6 +150,16 @@ func Rollback(localRoot string) error {
 	if !st.IsDir() {
 		return fmt.Errorf("%s is not a directory", backupRoot)
 	}
+	added, err := readAddedManifest(backupRoot)
+	if err != nil {
+		return fmt.Errorf("read added-paths manifest: %w", err)
+	}
+	for _, rel := range added {
+		dst := filepath.Join(localRoot, filepath.FromSlash(rel))
+		if err := os.Remove(dst); err != nil && !os.IsNotExist(err) {
+			return fmt.Errorf("remove added file %s: %w", rel, err)
+		}
+	}
 	err = filepath.Walk(backupRoot, func(p string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -135,6 +171,9 @@ func Rollback(localRoot string) error {
 		if err != nil {
 			return err
 		}
+		if filepath.ToSlash(rel) == addedPathsManifest {
+			return nil
+		}
 		dst := filepath.Join(localRoot, rel)
 		return manifest.CopyFileAtomic(p, dst, info.Mode())
 	})
@@ -142,6 +181,45 @@ func Rollback(localRoot string) error {
 		return err
 	}
 	return os.RemoveAll(backupRoot)
+}
+
+// writeAddedManifest persists the list of files Apply newly created so
+// Rollback can remove them. One path per line, slash-separated.
+func writeAddedManifest(backupRoot string, paths []string) error {
+	if err := os.MkdirAll(backupRoot, 0o755); err != nil {
+		return err
+	}
+	sorted := append([]string(nil), paths...)
+	sort.Strings(sorted)
+	var buf bytes.Buffer
+	for _, p := range sorted {
+		buf.WriteString(filepath.ToSlash(p))
+		buf.WriteByte('\n')
+	}
+	return manifest.WriteFileAtomic(filepath.Join(backupRoot, addedPathsManifest), buf.Bytes(), 0o644)
+}
+
+// readAddedManifest loads the list of paths Apply previously created.
+// A missing file means no files were added (older backup format).
+func readAddedManifest(backupRoot string) ([]string, error) {
+	f, err := os.Open(filepath.Join(backupRoot, addedPathsManifest))
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	defer f.Close()
+	var out []string
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
+		out = append(out, line)
+	}
+	return out, scanner.Err()
 }
 
 // FormatChanges renders the change list as a small human-readable summary.
