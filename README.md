@@ -33,7 +33,7 @@ incremental remote updates for new vulnerabilities, detection patterns, and best
 | Area | Path | Description |
 |------|------|-------------|
 | **Skills** | `skills/` | Self-contained `SKILL.md` manifests with associated rules, patterns, and checklists. Each skill is a security capability an AI tool can learn. |
-| **Vulnerability Database** | `vulnerabilities/` | 10-year (2015-2025) curated supply-chain vulnerability data covering 7 ecosystems (npm, PyPI, crates, Go, RubyGems, Maven, NuGet, GitHub Actions, Docker Hub), 70+ typosquats, ~60 CVE detection patterns, dependency-confusion rules, and CVE-to-package mappings. Incrementally updatable. |
+| **Vulnerability Database** | `vulnerabilities/` | 10-year (2015-2025) curated supply-chain vulnerability data covering 9 ecosystems (npm, PyPI, crates, Go, RubyGems, Maven, NuGet, GitHub Actions, Docker Hub), 70+ typosquats, ~60 CVE detection patterns, dependency-confusion rules, and CVE-to-package mappings. Incrementally updatable. |
 | **Detection Rules** | `rules/` | Sigma-format detection rules for AWS, GCP, K8s, Linux, macOS, Windows, O365. Extracted and adapted from production ShieldNet detection rules (Phase 4). |
 | **Compliance Maps** | `compliance/` | Framework-to-control mappings for OWASP Top 10, CWE, SANS Top 25, covering what AI-generated code should be checked against. |
 | **Dictionaries** | `dictionaries/` | Security term definitions, CWE catalogue, MITRE ATT&CK technique references — context AI tools need to reason about security. |
