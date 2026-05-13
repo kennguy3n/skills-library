@@ -31,5 +31,9 @@ pulls signed updates of vulnerability data and detection rules.`,
 	root.AddCommand(manifestCmd())
 	root.AddCommand(schedulerCmd())
 	root.AddCommand(selfUpdateCmd())
+	root.AddCommand(newCmd())
+	root.AddCommand(testCmd())
+	root.AddCommand(evidenceCmd())
+	root.AddCommand(configureCmd())
 	return root
 }

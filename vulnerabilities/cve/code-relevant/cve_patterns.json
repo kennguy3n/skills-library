@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "last_updated": "2026-05-12T10:00:00Z",
+  "last_updated": "2026-05-13T00:00:00Z",
   "description": "Maps CVEs to code-level detection patterns. Unlike SCA tooling, this database is keyed off code shape so that even patched or re-introduced patterns can be caught at generation time.",
   "references": [
     "https://nvd.nist.gov/",
@@ -194,6 +194,57 @@
         "require TLS and authentication on OpenWire connectors"
       ],
       "attack_type": "remote_code_execution"
+    },
+    {
+      "cve": "CVE-2024-3094",
+      "name": "xz-utils backdoor",
+      "severity": "critical",
+      "discovered": "2024-03-29",
+      "description": "Multi-year social-engineering campaign that planted an obfuscated backdoor in the upstream xz-utils 5.6.0 / 5.6.1 release tarballs. The malicious m4/build-to-host.m4 hook patched liblzma at build time so OpenSSH (when linked to systemd / libsystemd / liblzma) could be remotely unlocked by an attacker holding a private key. Detection at the code level is by build-system shape, not by version alone, because the payload is hidden in autotools macros.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-3094",
+        "https://www.openwall.com/lists/oss-security/2024/03/29/4",
+        "https://research.swtch.com/xz-timeline",
+        "https://tukaani.org/xz-backdoor/"
+      ],
+      "languages": ["c", "shell"],
+      "code_patterns": [
+        "m4/build-to-host\\.m4",
+        "liblzma\\.so\\.5",
+        "RSA_public_decrypt\\s*\\(",
+        "tests/files/(bad-3-corrupt_lzma2|good-large_compressed)\\.lzma"
+      ],
+      "remediation": [
+        "pin xz-utils to <= 5.4.6 or >= 5.6.2 (5.6.0/5.6.1 are backdoored)",
+        "rebuild any container/base image that pulled xz between 2024-02-24 and 2024-03-29",
+        "audit autotools m4 macros for shell payloads in tarballs not present in the upstream git tree"
+      ],
+      "attack_type": "build_system_backdoor"
+    },
+    {
+      "cve": "CVE-2021-32699",
+      "name": "codecov bash uploader compromise",
+      "severity": "high",
+      "discovered": "2021-04-15",
+      "description": "Codecov's bash uploader script, fetched by CI pipelines via curl | bash, was modified on its CDN to exfiltrate environment variables to an attacker-controlled host. Any pipeline running `bash <(curl -s https://codecov.io/bash)` between Jan 31 and Apr 1, 2021 had its env (and any secrets in env) sent to the attacker. The lesson is general: never pipe a remote script directly into a shell.",
+      "references": [
+        "https://about.codecov.io/security-update/",
+        "https://nvd.nist.gov/vuln/detail/CVE-2021-32699",
+        "https://www.cisa.gov/news-events/alerts/2021/04/30/codecov-bash-uploader-compromise"
+      ],
+      "languages": ["shell", "yaml"],
+      "code_patterns": [
+        "curl\\s+[^|]*\\|\\s*(ba)?sh",
+        "bash\\s+<\\(curl\\s+[^)]+\\)",
+        "codecov\\.io/bash",
+        "wget\\s+-O-\\s+[^|]*\\|\\s*(ba)?sh"
+      ],
+      "remediation": [
+        "use codecov uploader binary with pinned SHA-256 checksum instead of bash uploader",
+        "never pipe a remote script directly into a shell in CI; download, checksum, then execute",
+        "rotate every secret that may have been exposed in CI env between Jan 31 and Apr 1, 2021"
+      ],
+      "attack_type": "supply_chain_curl_pipe_bash"
     }
   ]
 }

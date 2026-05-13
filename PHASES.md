@@ -154,20 +154,20 @@ detection rule corpus extracted from production ShieldNet detection rules.
   - Tool: `check_secret_pattern(text)`
   - Tool: `get_skill(skill_id, budget)`
   - Tool: `search_skills(query)`
-- [ ] Additional skills toward the target of 20+ total:
-  - `iac-security` (Terraform, CloudFormation, Pulumi)
-  - `container-security` (Dockerfile, K8s manifests)
-  - `frontend-security` (XSS, CSP, CORS)
-  - `database-security` (SQL injection, ORM patterns)
-  - `crypto-misuse` (weak ciphers, bad RNG)
-  - `auth-security` (JWT, OAuth, session management)
-  - `serverless-security` (Lambda IAM, function permissions)
-  - `mobile-security` (Android, iOS specific)
-  - `ml-security` (prompt injection, model poisoning)
-  - `protocol-security` (TLS, mTLS, gRPC)
-  - `error-handling-security` (information disclosure)
-  - `logging-security` (sensitive data in logs)
-  - `cors-security`
+- [x] Additional skills toward the target of 20+ total:
+  - [x] `iac-security` (Terraform, CloudFormation, Pulumi)
+  - [x] `container-security` (Dockerfile, K8s manifests)
+  - [x] `frontend-security` (XSS, CSP, CORS)
+  - [x] `database-security` (SQL injection, ORM patterns)
+  - [x] `crypto-misuse` (weak ciphers, bad RNG)
+  - [x] `auth-security` (JWT, OAuth, session management)
+  - [x] `serverless-security` (Lambda IAM, function permissions)
+  - [x] `mobile-security` (Android, iOS specific)
+  - [x] `ml-security` (prompt injection, model poisoning)
+  - [x] `protocol-security` (TLS, mTLS, gRPC)
+  - [x] `error-handling-security` (information disclosure)
+  - [x] `logging-security` (sensitive data in logs)
+  - [x] `cors-security`
 
 ### MCP integration model
 
@@ -186,27 +186,35 @@ governance and community contribution at scale.
 
 ### Deliverables
 
-- [ ] Custom skill authoring tooling:
-  - `skills-check new <skill-id>` scaffolds a new skill
-  - `skills-check test <skill-id>` runs the test corpus
-  - Skill template repo (`kennguy3n/skill-template`)
-- [ ] Enterprise profiles:
-  - `--profile financial-services` — adds PCI-DSS, SOC 2 controls
-  - `--profile healthcare` — adds HIPAA controls
-  - `--profile government` — adds FedRAMP, FISMA controls
-- [ ] Compliance evidence generation:
-  - `skills-check evidence --framework SOC2` emits an audit-ready report
+- [x] Custom skill authoring tooling:
+  - [x] `skills-check new <skill-id>` scaffolds a new skill
+  - [x] `skills-check test <skill-id>` runs the test corpus
+  - [ ] Skill template repo (`kennguy3n/skill-template`)
+- [x] Enterprise profiles:
+  - [x] `--profile financial-services` — adds PCI-DSS, SOC 2 controls
+  - [x] `--profile healthcare` — adds HIPAA controls
+  - [x] `--profile government` — adds FedRAMP, FISMA controls
+- [x] Compliance evidence generation:
+  - [x] `skills-check evidence --framework SOC2` emits an audit-ready report
     documenting which skills were active when
-- [ ] Private repository support:
-  - `skills-check configure --source https://internal.corp/skills`
-  - Org-specific skill bundles with their own signing keys
-- [ ] Language SDKs:
-  - Go (already required for CLI)
-  - Python (for security teams' tooling)
-  - TypeScript (for browser-extension and VS Code integrations)
-- [ ] Localized content (Phase 5b):
-  - Spanish, French, German, Japanese, Mandarin
-  - Translation review workflow with native security professionals
+  - [x] `--framework HIPAA` and `--framework PCI-DSS` variants with the
+    same JSON / Markdown output formats
+- [x] Private repository support:
+  - [x] `skills-check configure --source https://internal.corp/skills`
+  - [x] Org-specific skill bundles with their own signing keys
+    (`--trusted-key`, `VerifyAny` over multiple Ed25519 keys, bearer
+    token over HTTPS via `--bearer-token-env`)
+- [x] Language SDKs:
+  - [x] Go SDK (`sdk/go/`) re-exporting the canonical parser
+  - [x] Python SDK (`sdk/python/skillslib/`) with `pip`-installable
+    `pyproject.toml`
+  - [x] TypeScript SDK (`sdk/typescript/`) for browser-extension and
+    VS Code integrations
+- [x] Localized content (Phase 5b):
+  - [x] Spanish (`locales/es/`), French (`locales/fr/`), German
+    (`locales/de/`) for top 3 skills
+  - [ ] Japanese, Mandarin
+  - [ ] Translation review workflow with native security professionals
 - [ ] SBOM generation for Skills Library itself (eat our own dog food)
 - [ ] Third-party security audit of:
   - The CLI binary's signature verification path

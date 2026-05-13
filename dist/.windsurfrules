@@ -22,6 +22,31 @@ Apply every rule below to every change in this workspace.
   OK     - Sequential IDs in paths are fine for genuinely public, non-tenant-scoped resources (e.g. blog post slugs, public product catalog items).
   OK     - Health-check endpoints (`/healthz`, `/ready`) intentionally bypass auth.
 
+[CRITICAL] Authentication & Authorization Security
+  ALWAYS - For JWT verification, pin the expected algorithm (`RS256`, `EdDSA`, or `ES256`) and verify `iss`, `aud`, `exp`, `nbf`, and `iat`. Reject `alg=none` and any unexpected algorithm.
+  ALWAYS - For OAuth 2.0 public clients (SPA / mobile / CLI), use the **authorization code flow with PKCE** (S256). Never the implicit flow. Never the resource owner password credentials grant.
+  ALWAYS - Cookies for sessions: `Secure; HttpOnly; SameSite=Lax` (or `Strict` for sensitive flows). Use the `__Host-` prefix when there's no subdomain sharing.
+  ALWAYS - Rotate the session identifier on login and on privilege change. Bind the session to the user agent only as a soft signal — never as the sole check.
+  ALWAYS - Hash passwords with argon2id (m=64 MiB, t=3, p=1) and a per-user random salt. Bcrypt cost ≥ 12 or scrypt N≥2^17 are acceptable alternatives for legacy systems. PBKDF2-SHA256 requires ≥ 600,000 iterations (OWASP 2023 minimum).
+  ALWAYS - Enforce password length ≥ 12 characters with no composition rules; allow Unicode; check candidate passwords against a known-breached list (HIBP / pwned-passwords k-anonymity API).
+  ALWAYS - Implement account lockout *or* rate limiting for password attempts (NIST SP 800-63B §5.2.2: at most 100 failures over 30 days).
+  ALWAYS - Implement CSRF protection for state-changing requests reachable from a browser session: synchronizer token, double-submit cookie, or `SameSite=Strict` for high-risk endpoints.
+  ALWAYS - Require MFA / step-up for administrative operations, password changes, MFA-device changes, billing changes.
+  ALWAYS - For OIDC, validate the `nonce` you sent against the `nonce` in the ID token; validate the `at_hash` / `c_hash` when present.
+  NEVER  - Use `Math.random()` (or any non-CSPRNG) to generate session IDs, reset tokens, MFA recovery codes, or API keys.
+  NEVER  - Accept JWT `alg=none`; or accept HS256 from a client when the issuer signs with RS256 (classic algorithm-confusion attack).
+  NEVER  - Compare passwords or token hashes with `==` / `strcmp`; use a constant-time comparator.
+  NEVER  - Store passwords reversibly (encrypted instead of hashed). Storage must be one-way.
+  NEVER  - Leak which of username/password was wrong. Return a generic "invalid credentials" message.
+  NEVER  - Put access tokens, refresh tokens, or session IDs in URL query strings — they leak to logs, Referer headers, and browser history.
+  NEVER  - Use `localStorage` / `sessionStorage` to hold long-lived refresh tokens. Use HttpOnly cookies.
+  NEVER  - Trust client-supplied roles / claims at the API layer — re-derive the authenticated subject and look up server-side authorization on each request.
+  NEVER  - Issue long-lived (>1 hour) access tokens; rely on refresh tokens with rotation.
+  NEVER  - Use the implicit flow or the password grant.
+  OK     - Service-to-service tokens with long TTLs are sometimes acceptable when stored in a secret manager and bound to a specific workload identity.
+  OK     - Local-development "magic link" auth without password hashing for ephemeral dev users is fine if it's gated behind an env flag and disabled in prod.
+  OK     - Tokens in URL query are tolerable in *one* place — the OAuth authorization code return — because the value is short-lived and one-time-use.
+
 [MEDIUM] Compliance Awareness
   ALWAYS - Tag functions that handle PII / PHI / PCI data with a comment indicating the classification (e.g. `// classification: PII`).
   ALWAYS - Log audit events for security-relevant actions (login, permission change, data export, admin operations) — log who, what, when, NOT the sensitive payload.
@@ -36,6 +61,87 @@ Apply every rule below to every change in this workspace.
   OK     - Logs of *types* of data accessed ("user accessed claim record") are usually fine; the rule is against logging the *contents* of sensitive fields.
   OK     - Test fixtures using clearly fake data (`555-0100` phone numbers, `4111-1111-1111-1111` PAN, `John Doe`) are not PII.
   OK     - Audit log retention is intentionally long (often years) and should not be filtered by general data-retention sweeps.
+
+[HIGH] Container Security
+  ALWAYS - Use **multi-stage builds**: separate builder/test stages from the final runtime image so build toolchains and source aren't shipped. The last stage should be `FROM distroless`, `FROM scratch`, `FROM alpine:<digest>`, or another minimal base — pinned by SHA256 digest, not just tag.
+  ALWAYS - Run as a non-root user: `USER <uid>` (numeric UID >= 10000 for K8s `runAsNonRoot` policies to be enforceable).
+  ALWAYS - Add a `.dockerignore` excluding `.git`, `node_modules`, `.env`, `*.pem`, `*.key`, `target/`, `.terraform/`, `dist/`, `coverage/`.
+  ALWAYS - Set explicit `HEALTHCHECK` for long-running services and matching `livenessProbe` / `readinessProbe` / `startupProbe` in K8s.
+  ALWAYS - Set resource `requests` and `limits` on every container (CPU and memory).
+  ALWAYS - Drop all Linux capabilities then add back only what's needed: `securityContext.capabilities.drop: [ALL]`.
+  ALWAYS - Apply a seccomp profile (`RuntimeDefault` at minimum) and AppArmor / SELinux where available.
+  ALWAYS - Mark filesystem read-only: `readOnlyRootFilesystem: true`; use `emptyDir` volumes for the few paths that must be writable.
+  ALWAYS - Scan every image in CI (Trivy, Grype, Snyk, or your registry's scanner) and fail builds on CRITICAL or HIGH severity findings.
+  ALWAYS - Pull base images by SHA256 digest in production manifests, not by mutable tag.
+  NEVER  - Run containers as root or with `privileged: true` / `allowPrivilegeEscalation: true` outside of explicit, audited system pods (e.g., CNI plugins).
+  NEVER  - Mount the host docker socket (`/var/run/docker.sock`) inside an application container. It's effectively root on the host.
+  NEVER  - Embed secrets in image layers via `ENV`, `ARG`, `COPY`, or by `echo`-ing them to a file. Even if `--squash`'d, BuildKit cache and registry layers leak.
+  NEVER  - Use `latest`, `stable`, `slim`, or unversioned tags as the final image base — builds become non-reproducible and quietly pick up CVEs.
+  NEVER  - Use `ADD <url>` to fetch remote resources during build (use `curl --fail` with a checksum verify and `RUN` instead, or vendor the artifact).
+  NEVER  - Disable `automountServiceAccountToken` when the workload needs the K8s API, but DO disable it (`automountServiceAccountToken: false`) when it doesn't.
+  NEVER  - Use `hostNetwork: true`, `hostPID: true`, or `hostIPC: true` for application pods.
+  NEVER  - Run pods in the `kube-system` namespace, or any namespace without a `NetworkPolicy` and PodSecurity admission policy.
+  OK     - Operators that legitimately need cluster-admin access (kubelet, CSI drivers, CNI plugins) require elevated privileges; they belong in `kube-system` or a dedicated namespace with auditing, not in application namespaces.
+  OK     - Bare-metal Kubernetes nodes sometimes legitimately disable `seccomp` for drivers that aren't compatible; document the exception.
+  OK     - One-shot debugging pods (kubectl debug, ephemeral containers) intentionally bypass many of these controls; they should not be persisted as YAML in the repo.
+
+[HIGH] CORS Security
+  ALWAYS - Use an **allowlist** of origins, not `*`. Reflect the incoming `Origin` header only when it matches a known entry from configuration (or matches a precompiled regex of operator-controlled hostnames).
+  ALWAYS - If responses include credentials (cookies, `Authorization`), set `Access-Control-Allow-Credentials: true` **and** ensure `Access-Control-Allow-Origin` is a single specific origin string — never `*`.
+  ALWAYS - Include `Vary: Origin` on responses whose body depends on the request `Origin`, so caches don't serve one origin's response to another.
+  ALWAYS - Restrict preflight `Access-Control-Allow-Methods` to the actual methods the endpoint accepts; restrict `Access-Control-Allow-Headers` to the actual headers consumed.
+  ALWAYS - Set `Access-Control-Max-Age` to a sensible value (≤ 86400 in production) to amortize preflight latency without locking in a bad allowlist.
+  ALWAYS - Maintain the allowlist in code (or in a config file checked into source), not derived from a database — so attackers can't add their origin by inserting a row.
+  NEVER  - Set `Access-Control-Allow-Origin: *` together with `Access-Control-Allow-Credentials: true`. The Fetch spec forbids it for a reason — browsers will refuse the response, but the bigger problem is that an upstream proxy / cache may already have leaked it.
+  NEVER  - Reflect the `Origin` header without an allowlist check (`Access-Control- Allow-Origin: <Origin>` for every incoming origin). That's the same as `*` for credentials but with worse caching behavior.
+  NEVER  - Allow `null` as an Origin. `null` is what Chrome sends from sandboxed iframes, `data:` URIs, and `file://` — none of which should have credentialed access to your API.
+  NEVER  - Allow arbitrary subdomains with a regex like `.*\.example\.com$` without considering subdomain takeover. Pin specific subdomains; treat `*.example.com` as a deliberate decision tied to subdomain ownership controls.
+  NEVER  - Expose internal headers via `Access-Control-Expose-Headers`. Limit to the minimal set the frontend genuinely needs.
+  NEVER  - Use CORS as authorization. CORS is a *browser* policy; it does not stop server-to-server, curl, or non-browser clients. Authenticate the request properly.
+  OK     - Truly public, unauthenticated APIs (e.g., open data, marketing CDN endpoints) can legitimately use `Access-Control-Allow-Origin: *` *without* credentials.
+  OK     - Internal admin tools restricted to a private network can use a single fixed origin; the wildcard concern doesn't apply because there are no cross-origin callers.
+  OK     - A handful of integrations (Stripe.js, Plaid, Auth0) expect specific CORS headers — read each provider's CORS section before relaxing the baseline.
+
+[CRITICAL] Cryptographic Misuse
+  ALWAYS - Use the language / platform's cryptographic library. Python: `cryptography`, `secrets`. JavaScript: Web Crypto, `crypto.webcrypto`, Node `crypto`. Go: `crypto/*`, `golang.org/x/crypto`. Java: JCE/Bouncy Castle. .NET: `System.Security.Cryptography`.
+  ALWAYS - Use a cryptographically secure RNG: Python `secrets.token_bytes` / `secrets.token_urlsafe`, JS `crypto.getRandomValues` / `crypto.randomBytes`, Go `crypto/rand.Read`, Java `SecureRandom`.
+  ALWAYS - Hash passwords with a slow KDF tuned for ~100 ms on production hardware: **argon2id** (preferred, RFC 9106 parameters: m=64 MiB, t=3, p=1), **scrypt** (N=2^17, r=8, p=1), or **bcrypt** (cost ≥ 12). Always with a per-user random salt.
+  ALWAYS - Encrypt with AEAD (authenticated encryption): AES-256-GCM, ChaCha20-Poly1305, or AES-256-GCM-SIV. Generate a fresh random nonce per encryption.
+  ALWAYS - Use TLS 1.2+ (TLS 1.3 strongly preferred). Disable TLS 1.0/1.1, SSLv3, RC4, 3DES, and export ciphers.
+  ALWAYS - Compare MACs / signatures / tokens with constant-time helpers: `hmac.compare_digest`, `crypto.subtle.timingSafeEqual`, `subtle.ConstantTimeCompare`, `MessageDigest.isEqual`, `CryptographicOperations.FixedTimeEquals`.
+  ALWAYS - For asymmetric keys: RSA ≥ 3072 bits, ECDSA P-256 or P-384, Ed25519, X25519.
+  NEVER  - Use MD5 or SHA-1 for signatures, certificates, password storage, or message authentication. (They remain valid for incidental non-security uses like ETag / file deduplication if explicitly documented.)
+  NEVER  - Use DES, 3DES, RC4, or Blowfish for new code.
+  NEVER  - Use ECB mode. Use CBC without HMAC over the ciphertext. Use CTR/GCM with a reused nonce.
+  NEVER  - Use unsalted hashes for passwords. Use `sha256(password)` for password storage — it's a fast hash; brute force is trivial.
+  NEVER  - Use `Math.random()`, Python `random`, `rand()` in C / Go for tokens, IDs, nonces, or passwords. They are predictable.
+  NEVER  - Hardcode IVs/nonces, salts, or keys. Never reuse a GCM/Poly1305 nonce under the same key.
+  NEVER  - Compare secrets with `==`, `===`, `strcmp`, `bytes.Equal` — these are timing-leaky.
+  NEVER  - Roll your own crypto (custom XOR, custom HMAC, custom Diffie–Hellman, custom signature schemes). Use audited primitives.
+  OK     - MD5 / SHA-1 in non-security contexts: HTTP ETag computation, content deduplication, cache keying for non-sensitive data, fixture fingerprinting. Annotate these uses with a `// non-security use: ...` comment.
+  OK     - Test vectors and KAT (Known Answer Test) values intentionally hardcode IVs, keys, and plaintexts — they belong in `tests/` not production.
+  OK     - Legacy interop: some industry / government protocols still require specific legacy ciphers. Document the exception and isolate behind a feature flag.
+
+[CRITICAL] Database Security
+  ALWAYS - Use parameterized queries / prepared statements for any SQL that touches user-controlled values. Pass values as parameters, never via string concatenation or formatting (`%s`, `+`, template literals).
+  ALWAYS - Use the ORM's safe query API. In SQLAlchemy: `session.execute(text(":id"), {"id": user_id})`. In Django: ORM methods, `Model.objects.filter(...)`. In Sequelize / Prisma / SQLAlchemy core: `.where({ ... })` builders. In Go: `db.QueryContext(ctx, "select ... where id = $1", id)`.
+  ALWAYS - Validate that identifier columns / table names — which can't be parameterized — come from a hard-coded allowlist, not from user input.
+  ALWAYS - Use a dedicated database user per application with the minimum grants needed. Web apps that only read shouldn't have `INSERT`/`UPDATE`/`DELETE`. Migration jobs run as a separate `DDL`-capable user.
+  ALWAYS - Enable Row-Level Security (Postgres `CREATE POLICY` / Supabase RLS / Azure SQL RLS) for multi-tenant tables and set the tenant context per session.
+  ALWAYS - Pull DB credentials from a secret manager or env var injected at start — never from a committed `database.yml` / `.env`. Rotate on schedule.
+  ALWAYS - Use TLS to the database (`sslmode=require` for Postgres, `requireSSL=true` for MySQL, encrypted connection for MSSQL). Pin the CA where the driver supports it.
+  ALWAYS - Connection pooling has a max size that fits within the DB's `max_connections`, with healthy back-pressure on the application.
+  NEVER  - Concatenate user input into SQL: `"SELECT * FROM users WHERE name='" + name + "'"`. Even if you "escape" it yourself — drivers escape correctly only when binding through the parameter API.
+  NEVER  - Use ORM raw query methods (`.raw()`, `.objects.raw()`, `.query(text(...))`) with f-string interpolation of user input.
+  NEVER  - Run application workloads as the database superuser / `root` / `postgres` / `sa`. Create a service user.
+  NEVER  - Disable TLS to the database (`sslmode=disable`, `useSSL=false`).
+  NEVER  - Store secrets, PII, or large blobs in JSON columns without encryption-at-rest and a key rotation plan.
+  NEVER  - Run destructive migrations (DROP TABLE, DROP COLUMN, ALTER COLUMN type changes on populated tables) inline with deploys without an expand–contract plan and a backup verified to be restorable.
+  NEVER  - Bind an internet-exposed database listener with no allowlist; databases stay in a private network and are reached via a bastion / VPN / private link.
+  NEVER  - Log entire SQL statements with bound values at INFO level — bound values are almost always sensitive.
+  OK     - Reporting tools that run analyst-authored ad-hoc SQL legitimately interpolate identifiers; they should run against a read-only replica with a separate user whose grants prevent damage.
+  OK     - Some ORMs (Django, SQLAlchemy 1.x) use `%s` placeholders as *parameter markers*, not Python format-string placeholders — that's safe.
+  OK     - Health-check queries (`SELECT 1`) are intentionally trivial.
 
 [HIGH] Dependency Audit
   ALWAYS - Pin dependencies to exact versions in lockfiles (`package-lock.json`, `yarn.lock`, `Pipfile.lock`, `poetry.lock`, `go.sum`, `Cargo.lock`).
@@ -52,6 +158,90 @@ Apply every rule below to every change in this workspace.
   OK     - Internal monorepo packages (`@yourco/*`) flagged as "unknown" — these are valid when the namespace is owned by your organization.
   OK     - New patch versions of stable packages (e.g. `react@18.2.5` after `18.2.4`) flagged as "recently published" — patch updates are usually fine.
   OK     - Package names that legitimately overlap with malicious entries from years ago that have been re-registered by the original maintainer.
+
+[MEDIUM] Error-Handling Security
+  ALWAYS - Catch exceptions at the boundary (HTTP handler, RPC method, message consumer). Log them with full context server-side; return a sanitized error externally.
+  ALWAYS - External error responses include: a stable error code, a short human-readable message, and a correlation / request ID. They never include: stack trace, SQL fragment, file path, internal hostname, framework version banner.
+  ALWAYS - Log errors at the appropriate level: `ERROR` / `WARN` for actionable failures; `INFO` for expected business outcomes; `DEBUG` for diagnostic detail (and only when explicitly enabled).
+  ALWAYS - Return uniform error responses across the API surface — same shape, same set of codes — so attackers can't infer behavior from error variation (e.g., login: same message and timing for "wrong username" vs "wrong password").
+  ALWAYS - Disable framework default error pages in production (`app.debug = False` / `Rails.env.production?` / `Environment=Production` / `DEBUG=False`). Replace with a 5xx page that returns only the correlation ID.
+  ALWAYS - Use a centralized error-rendering helper so the sanitization rules are in one place, not duplicated.
+  NEVER  - Render `traceback.format_exc()`, `e.toString()`, `printStackTrace()`, `panic`, or framework debug pages to the client in production.
+  NEVER  - Echo SQL queries / parameters in error messages — `IntegrityError: duplicate key value violates unique constraint "users_email_key"` tells an attacker the table and column name.
+  NEVER  - Leak presence-of-record information: `User not found` vs `Invalid password` lets an attacker enumerate accounts. Use a single message for both.
+  NEVER  - Leak filesystem paths (`/var/www/app/src/handlers.py`) or version banners (`X-Powered-By: Express/4.17.1`).
+  NEVER  - Treat `try / except: pass` as error handling; either the exception is expected (log + continue) or it isn't (let it propagate).
+  NEVER  - Use 4xx error responses to validate input shape — bots iterate over parameters and use the response body to learn the schema. Return a uniform 400 plus a correlation ID for malformed input.
+  NEVER  - Send full error details (including PII) to third-party error tracking services without a scrubber. Redact `password`, `Authorization`, `Cookie`, `Set-Cookie`, `token`, `secret`, common PII patterns.
+  OK     - Developer-facing error pages on `localhost` / `*.local` are fine.
+  OK     - A handful of API endpoints (debug, admin, internal RPC) may legitimately return more detail; they must require authenticated, authorized callers and never be reachable from the internet.
+  OK     - Health checks and CI smoke tests intentionally expose details when invoked from inside the cluster.
+
+[HIGH] Frontend Security
+  ALWAYS - Treat all user/URL/storage data as untrusted. Render via framework escaping (`{}` in JSX/Vue/Svelte, `{{ }}` in templating). For raw HTML use a vetted sanitizer (DOMPurify) with a strict allowlist.
+  ALWAYS - Send a strict `Content-Security-Policy` header. Minimum production baseline: `default-src 'self'; script-src 'self' 'nonce-<random>'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests`. Use nonces or hashes — never `'unsafe-inline'` for `script-src`.
+  ALWAYS - Set `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer-when-downgrade` or stricter, and `Permissions-Policy` to drop unused features.
+  ALWAYS - Add `integrity="sha384-..." crossorigin="anonymous"` to every `<script>` and `<link rel="stylesheet">` loaded from a CDN.
+  ALWAYS - Add `sandbox="allow-scripts allow-same-origin"` (only the attributes you need) to every `<iframe>`. Default to no allow flags.
+  ALWAYS - Use cookies with `Secure; HttpOnly; SameSite=Lax` (or `Strict` for sensitive flows). `__Host-` prefix when there's no subdomain sharing.
+  ALWAYS - Enable Trusted Types where browser support allows (`Content-Security-Policy: require-trusted-types-for 'script'`) so DOM-sink assignments (`innerHTML`, `setAttribute('src', ...)` for scripts) must be routed through a typed policy.
+  NEVER  - Use `dangerouslySetInnerHTML`, `v-html`, `{@html ...}`, `innerHTML =`, or `document.write` with untrusted input.
+  NEVER  - Use `eval`, `new Function`, `setTimeout(string)`, `setInterval(string)`, or `Function('return x')`.
+  NEVER  - Inject user input into `href`, `src`, `formaction`, `action`, or any URL-bearing attribute without scheme validation (block `javascript:`, `data:`, `vbscript:`).
+  NEVER  - Use `target="_blank"` without `rel="noopener noreferrer"` — leaks `window.opener`.
+  NEVER  - Trust DOM nodes by id alone. DOM clobbering: an attacker-controlled `<input name="config">` shadows `window.config`.
+  NEVER  - Use `postMessage` without checking `event.origin` against an allowlist.
+  NEVER  - Store JWTs, refresh tokens, or PII in `localStorage` / `sessionStorage` — any XSS exfiltrates them. Prefer HttpOnly cookies.
+  NEVER  - Read or write `document.cookie` from JavaScript for auth cookies — they should be HttpOnly anyway.
+  OK     - Internal admin tools deliberately rendering Markdown / rich text from trusted authors may use `dangerouslySetInnerHTML` after a sanitizer pass; document the sanitizer call inline.
+  OK     - Browser extensions sometimes need `'unsafe-eval'` in the extension CSP; user-facing web app CSP should still forbid it.
+  OK     - WebSocket connections to non-same-origin endpoints are fine when the server performs origin validation.
+
+[HIGH] Infrastructure-as-Code Security
+  ALWAYS - Pin every provider/module to an exact version or a pessimistic constraint (`~> 5.42`); never `>= 0` or unpinned `latest`.
+  ALWAYS - Configure a **remote backend** with encryption at rest, server-side state locking, and versioning (Terraform: `s3` + DynamoDB lock table with `kms_key_id`; Pulumi: the managed backend or `s3://?kmskey=`; CloudFormation: managed by AWS).
+  ALWAYS - Encrypt every persistent resource by default with a customer-managed KMS key: S3 buckets, EBS volumes, RDS, EFS, DynamoDB, SQS, SNS, CloudWatch log groups.
+  ALWAYS - Tag every resource with `owner`, `environment`, `cost-center`, and `data-classification` via a default tags block.
+  ALWAYS - Run `terraform plan` (or `pulumi preview`, `aws cloudformation deploy --no-execute-changeset`) in CI and require a human approval before `apply` on production stacks.
+  ALWAYS - Add a drift-detection job that runs daily and opens an issue when actual cloud state diverges from code (Terraform Cloud drift detection, `pulumi refresh`, `cfn-drift-detect`).
+  ALWAYS - Use IAM Conditions to scope every role: `aws:SourceArn`, `aws:SourceAccount`, `aws:PrincipalOrgID`, and TLS-only access policies on storage.
+  NEVER  - Hardcode provider credentials in the code or `.tfvars` (`access_key`, `secret_key`, `client_secret`, `service_account_key`). Use OIDC federation from CI, the provider's instance metadata service, or a secret manager.
+  NEVER  - Commit `terraform.tfstate`, `terraform.tfstate.backup`, `.pulumi/`, or any `*.tfvars` containing real secrets. They contain plaintext secrets even if the code references variables.
+  NEVER  - Use `local_exec` / `null_resource` to fetch secrets at apply time and stash them in state. State is queryable plaintext by anyone with backend read access.
+  NEVER  - Open security groups / firewall rules to `0.0.0.0/0` for ports 22, 3389, 3306, 5432, 1433, 6379, 27017, 9200, 11211 — even for "just dev". Use bastion or VPN.
+  NEVER  - Grant `*:*` (wildcard action on wildcard resource) IAM policies. Use `iam:PassRole` with explicit resource ARNs.
+  NEVER  - Disable provider TLS verification (`skip_tls_verify`, `insecure = true`).
+  NEVER  - Use `count = 0` to "soft-delete" resources you actually want gone — destroy them.
+  OK     - Bastion hosts intentionally exposed on port 22 to the internet with hardened configurations are not the same risk as opening RDS to the world. Document the exception inline.
+  OK     - Public CloudFront distributions, ALB listeners on 80/443, API Gateways, and Lambda function URLs that *are* meant to be internet-facing.
+  OK     - Bootstrap resources (the S3 bucket and DynamoDB lock table the backend itself uses) must exist before remote state can; this chicken-and-egg is usually bootstrapped by a one-time `local` backend that's then migrated.
+
+[CRITICAL] Identity & Access Management Best Practices
+  ALWAYS - Grant the **minimum** permissions required for the workload's stated job (NIST AC-6). Start with a deny-by-default policy and add concrete actions with explicit `Resource` ARNs; never `Action: "*"` combined with `Resource: "*"`.
+  ALWAYS - Prefer **workload identity** (IAM roles for service accounts on EKS, GKE Workload Identity, Azure Managed Identity) over long-lived access keys. Static access keys are the exception, not the default.
+  ALWAYS - Require **MFA** for every human IAM user, especially any principal that can assume a privileged role. Enforce MFA via an IAM policy condition (`aws:MultiFactorAuthPresent: true`), not just a directory-level setting.
+  ALWAYS - Rotate access keys, service-account keys, and signing keys on a documented schedule (≤ 90 days). Detect inactive credentials (≥ 90 days unused) and disable them automatically.
+  ALWAYS - Use **role assumption with `sts:AssumeRole` + ExternalId** for cross-account trust. The ExternalId must be unique per consumer and stored as a secret in both accounts.
+  ALWAYS - Issue **session-scoped** credentials with `MaxSessionDuration ≤ 1h` for human roles and ≤ 12h for break-glass roles. Long-lived sessions defeat rotation.
+  ALWAYS - Separate **deploy** and **runtime** identities. The CI/CD pipeline gets a deploy role; the running service gets a distinct runtime role with no IAM-mutating permissions.
+  ALWAYS - For Kubernetes RBAC, scope `Role` / `RoleBinding` to a single namespace; use `ClusterRole` only for true cluster-wide objects. Audit `cluster-admin` bindings on every PR.
+  ALWAYS - Log every IAM-mutating call (CloudTrail / Cloud Audit Logs / Azure Activity Log) to a tamper-evident sink. Alert on policy changes, `iam:PassRole`, `iam:CreateAccessKey`, and `sts:AssumeRole` from unexpected principals.
+  ALWAYS - For **break-glass** access (root, owner, cluster-admin), require an out-of-band approval (e.g., PagerDuty incident + ticket) and emit an immediate alert on every use.
+  ALWAYS - Tag every IAM principal with `owner`, `environment`, and `purpose`. Use these tags in SCPs / org policies to constrain blast radius.
+  NEVER  - Use the **root account** for day-to-day operations. Root credentials get a hardware MFA device, are stored offline, and are used only for the small set of root-only tasks (e.g., closing the account, changing the support plan).
+  NEVER  - Embed long-lived access keys in source, container images, AMIs, or CI environment variables when a workload identity is available.
+  NEVER  - Grant `iam:PassRole` with `Resource: "*"`. Always pin the role ARNs the caller may pass to downstream services.
+  NEVER  - Grant `iam:*` or `sts:*` to a runtime workload — these are deploy-time permissions only.
+  NEVER  - Share a single IAM user across multiple humans or services. One principal per identity is the audit invariant.
+  NEVER  - Use `AdministratorAccess` (or any `*:*`) managed policy on a routine basis; treat it as a break-glass-only attachment.
+  NEVER  - Trust any cross-account assume-role without an `ExternalId` condition for third-party integrations (Confused Deputy: AWS Security Bulletin 2021).
+  NEVER  - Hard-code AWS / GCP / Azure ARNs / resource IDs in policy documents without a corresponding tag-based or organization-path scope (when the number of resources can grow).
+  NEVER  - Disable MFA for a principal to "fix" a login problem — rotate the device, do not remove the requirement.
+  NEVER  - Persist OIDC / SAML assertion tokens beyond their stated TTL. Refresh by re-assertion, not by storing the original token.
+  OK     - `Resource: "*"` is acceptable for inherently account-scoped read operations like `ec2:DescribeRegions` or `sts:GetCallerIdentity` — those APIs do not accept a resource ARN.
+  OK     - Service-linked roles (e.g., `AWSServiceRoleForAutoScaling`) ship with broader permissions than your custom roles; that is by design and managed by the provider.
+  OK     - One-time bootstrap operators (Terraform-runners in a fresh account) often need elevated permissions; gate by tag / SCP and revoke after the bootstrap is complete.
+  OK     - Local-development emulators (LocalStack, GCS emulator) may accept any credentials; that is a property of the emulator, not a real grant.
 
 [HIGH] Infrastructure Security
   ALWAYS - Pin base images by digest (`FROM image@sha256:...`) when building containers for production. Tags are mutable; digests are not.
@@ -74,9 +264,91 @@ Apply every rule below to every change in this workspace.
   OK     - `Resource: "*"` is acceptable in policies that are documented admin-only with explicit `Condition` constraints.
   OK     - `runAsNonRoot: false` is acceptable when the workload genuinely requires root (e.g., binding to port 80, certain network tooling). Document why.
 
+[HIGH] Logging Security
+  ALWAYS - Log in a **structured format** (JSON or logfmt) with stable field names. Include `timestamp`, `service`, `version`, `level`, `trace_id`, `span_id`, `user_id` (when authenticated), `request_id`, `event`.
+  ALWAYS - Run every log message through a **redactor** before it reaches the log sink: passwords, tokens, API keys, cookies, full URLs containing `?token=`, common PII patterns (SSN-like, credit-card-like, email optionally).
+  ALWAYS - Sanitize newlines / control characters from any user-controlled string before logging it (CWE-117): replace `\n`, `\r`, `\t` so an attacker can't inject fake log lines.
+  ALWAYS - Log security-relevant events as **immutable audit records**: login success/failure, MFA challenges, password change, role change, access grant/revoke, data export, admin action. Audit records get longer retention and stricter access.
+  ALWAYS - Set retention per data category, not globally: short for debug, long for audit, no PII after consent expires.
+  ALWAYS - Ship logs to a centralized, append-only store (Cloud Logging, CloudWatch, Elastic, Loki) with read access restricted to engineering / SecOps.
+  ALWAYS - Alert on missing logs from a service (silent failure) and on log volume anomalies (10x spike or 10x drop).
+  NEVER  - Log full request / response bodies at INFO. Bodies regularly contain passwords, tokens, PII, and uploaded files.
+  NEVER  - Log `Authorization` headers, `Cookie` / `Set-Cookie` headers, query-string tokens, or any field named `password`, `secret`, `token`, `key`, `private`, or `credential` — even after "obfuscation" like `***`.
+  NEVER  - Log entire bound SQL statements with their parameter values; log the statement template + parameter *names* + a hashed value identifier instead.
+  NEVER  - Allow unprivileged users to read raw logs containing other users' data.
+  NEVER  - Use plain `print()` / `console.log` / `fmt.Println` in production services; use the configured logger so redaction and structure are applied uniformly.
+  NEVER  - Disable logging of failed authentication attempts to "reduce noise" — brute-force detection depends on those records.
+  NEVER  - Log to a single file on local disk in production; logs there are lost when the pod / container / VM dies.
+  OK     - Health-check or load-balancer probe logs can legitimately be downsampled / suppressed at the load balancer to save volume.
+  OK     - A `request_id` value that happens to look like a token is not a token — redactors that match patterns can over-redact; whitelist known-safe prefixes (your `req_` correlation IDs, for example).
+  OK     - Anonymous public-API access logs without auth headers are not a privacy issue per se; client IPs may still be PII under GDPR.
+
+[HIGH] ML / LLM Security
+  ALWAYS - Treat every model input — including tool outputs and retrieved documents fed back into the prompt — as untrusted. Indirect prompt injection through a retrieved web page or document is the most common LLM attack in the wild.
+  ALWAYS - Sanitize and re-encode anything the model emits before feeding it to a downstream system: SQL builder, shell, file writer, HTTP request, code evaluator. Model output is never a primary key for trust.
+  ALWAYS - Enforce an **output schema** with structured generation (JSON Schema, function-call mode, constrained decoding) when the next step consumes the output programmatically. Reject anything that fails validation.
+  ALWAYS - Maintain an allowlist of tools / function names a model can invoke; reject any other invocation. Apply per-tool authorization to the *human user* of the agent, not just the model.
+  ALWAYS - For RAG: stamp retrieved documents with provenance, and segregate "instructions" from "context" in the prompt; do not let retrieved data override system instructions.
+  ALWAYS - When loading models, use **safetensors** for PyTorch and Hugging Face; use `weights_only=True` with `torch.load` on PyTorch 2.4+; never load arbitrary `.pkl` / `.pt` files from untrusted sources.
+  ALWAYS - Scrub PII, credentials, and secrets from training data — at the source (data ingestion), at storage (encryption + access control), and at output (response filters / detectors).
+  ALWAYS - Rate-limit / quota every LLM-backed endpoint. Track per-tenant token spend.
+  ALWAYS - Track every prompt + model version + retrieved context as an audit log; redact secrets first.
+  NEVER  - `pickle.loads` / `joblib.load` / `dill.loads` / `torch.load` an artifact fetched at runtime from an untrusted source. These deserializers execute arbitrary code by design.
+  NEVER  - Concatenate user input directly into a prompt that contains higher-trust instructions: e.g. `f"You are a helpful agent. {user_input}"`. Use a templated boundary plus explicit system-role separation.
+  NEVER  - Hand an LLM-derived string straight to `eval`, `exec`, `os.system`, `subprocess(shell=True)`, `vm.runInNewContext`, or a SQL `.raw()` call.
+  NEVER  - Hard-code OpenAI / Anthropic / Cohere API keys in notebooks or repo files. Use environment variables and the `secret-detection` skill.
+  NEVER  - Store training-data examples that contain PII in long-term storage without explicit consent, retention windows, and deletion APIs.
+  NEVER  - Trust client-supplied model parameters (model name, system prompt, tool list) without server-side validation — clients will downgrade to cheaper / weaker / unauthorized models.
+  NEVER  - Use a model fine-tuned by an external vendor without provenance / lineage verification.
+  NEVER  - Cache LLM responses indexed only by prompt text — that mixes users' contexts when prompts share prefixes.
+  OK     - Research / red-team notebooks that intentionally exercise jailbreak prompts belong in an isolated environment without production credentials.
+  OK     - Pre-publication academic models from trusted authors are often distributed as `.pt` checkpoints; convert to safetensors as a first step.
+  OK     - Synthetic data generation pipelines may legitimately produce raw model output that's then committed — make sure it's labeled and reviewed for inadvertent PII / hallucinated secrets.
+
+[HIGH] Mobile Application Security
+  ALWAYS - **Android**: every `<activity>`, `<service>`, `<receiver>`, `<provider>` in `AndroidManifest.xml` either has `android:exported="false"` *or* explicitly declares an intent filter and is intentionally exported. As of Android 12 (API 31), `android:exported` is required when an intent-filter is declared.
+  ALWAYS - **Android**: store secrets in the **Android Keystore** (`KeyStore` / EncryptedSharedPreferences with `MasterKey`). Never in plain `SharedPreferences`, plain files, or `BuildConfig`.
+  ALWAYS - **iOS**: store secrets in the **Keychain** with `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` or stricter. Don't store in `UserDefaults`, plist, or files.
+  ALWAYS - **iOS**: keep App Transport Security (ATS) enabled in `Info.plist`. If an exception is required, scope it to a specific host with `NSExceptionDomains`.
+  ALWAYS - Validate the server's TLS certificate with **certificate pinning** (public key pinning preferred) for backends you control. Use `OkHttp.CertificatePinner` on Android, `URLSessionDelegate didReceiveChallenge` on iOS, or your framework's pinning module.
+  ALWAYS - Obfuscate / shrink release builds (Android R8 / ProGuard with `proguard-rules.pro`; iOS bitcode + Swift symbol stripping). Strip debug logs from release builds.
+  ALWAYS - Detect rooted / jailbroken devices for high-risk apps (banking, payment, enterprise) and reduce sensitivity (block payments, refuse to attach to a managed profile). Use the Play Integrity API on Android and `DeviceCheck` / `AppAttest` on iOS as the authoritative attestation.
+  NEVER  - Ship API keys, signing keys, or backend secrets in source / resources / `strings.xml` / `BuildConfig` / `Info.plist`. Issue short-lived, device-scoped tokens from a backend instead.
+  NEVER  - Set `android:allowBackup="true"` for apps that store credentials — the backed-up data is readable on developer machines. Use `android:fullBackupContent` to exclude sensitive paths.
+  NEVER  - Set `android:debuggable="true"` in release builds, or `<application android:networkSecurityConfig>` that allows cleartext to arbitrary hosts.
+  NEVER  - Disable ATS app-wide on iOS (`NSAllowsArbitraryLoads=true`). If you must weaken it, scope per-host.
+  NEVER  - Implement custom TLS / certificate handling that returns "trust all" (`X509TrustManager.checkServerTrusted` empty body, `URLSessionDelegate` always-trust). This is the #1 Android security finding shipped to production.
+  NEVER  - Pass user input to `WebView.loadUrl` / `WKWebView.load` without scheme validation; never enable `WebSettings.setAllowFileAccessFromFileURLs(true)` or `setUniversalAccessFromFileURLs(true)`.
+  NEVER  - Implement biometric auth without `BiometricPrompt`'s `setUserAuthenticationRequired(true)` binding the key — biometric "true" alone proves nothing without a cryptographic challenge.
+  NEVER  - Log full request/response bodies including `Authorization` headers — they end up in adb / xcrun logs.
+  OK     - Public read-only IDs (analytics public key, public DSN) embedded in the binary are not secrets; they're meant to be there.
+  OK     - The default debuggable=true on debug variants is normal — the rule applies to release builds.
+  OK     - Custom URL schemes (`myapp://`) for OAuth callbacks are expected; ensure the corresponding intent filter is restricted and the `state` parameter is verified.
+
+[CRITICAL] Protocol Security
+  ALWAYS - Default to **TLS 1.3** for new clients and servers; permit TLS 1.2 only for interop with legacy peers. Disable TLS 1.0/1.1, SSLv2/v3.
+  ALWAYS - Validate the server certificate: chain to a trusted CA, name matches the expected hostname (or SAN), not expired, not revoked (OCSP stapling enabled).
+  ALWAYS - Enable HSTS on HTTP responses for everything served over HTTPS: `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`. Add the host to the HSTS preload list once stable.
+  ALWAYS - Use **mutual TLS** (mTLS) for service-to-service traffic inside a trust domain (mesh: Istio / Linkerd; standalone: SPIFFE / SPIRE for identity).
+  ALWAYS - For gRPC clients/servers, use `grpc.secure_channel` / `grpc.SslCredentials` / `credentials.NewTLS` — never `insecure_channel` in production.
+  ALWAYS - For WebSocket servers, validate the `Origin` header against an allowlist and authenticate the handshake (cookies + CSRF token, or a query-string bearer used once at upgrade and re-validated).
+  ALWAYS - For service-to-service tokens, prefer **SPIFFE IDs** (`spiffe://trust-domain/...`) with short-lived workload certs over long-lived API keys.
+  ALWAYS - Pin the certificate (public key pinning) for high-risk mobile / desktop clients calling back to the operator's own backend.
+  NEVER  - Disable certificate verification (`InsecureSkipVerify: true`, `verify=False`, `rejectUnauthorized: false`, `CURLOPT_SSL_VERIFYPEER=0`). The only acceptable use is in a unit test that runs against a localhost ephemeral cert.
+  NEVER  - Implement a custom `X509TrustManager` / `HostnameVerifier` / `URLSessionDelegate` / `ServerCertificateValidationCallback` that unconditionally returns trusted.
+  NEVER  - Mix HTTP and HTTPS resources on the same page (mixed content) — modern browsers will block subresources, but APIs are still vulnerable to MITM downgrade.
+  NEVER  - Send tokens / passwords over plain HTTP — even on localhost in dev unless the dev environment is documented as not security-relevant.
+  NEVER  - Use `grpc.insecure_channel(...)` in production code.
+  NEVER  - Trust the `Host` / `X-Forwarded-Host` / `Forwarded` header without an allowlist; absolute URLs built from `Host` enable host-header injection and password-reset poisoning.
+  NEVER  - Forward incoming `Authorization` / `Cookie` headers blindly across origins in your service mesh — re-derive identity from mTLS or a service token.
+  NEVER  - Enable TLS renegotiation on clients you control; pin to `tls.NoRenegotiation` where available.
+  OK     - Localhost-only dev servers with self-signed certs and explicit documentation are fine; CI tests against ephemeral CA-signed certs are fine.
+  OK     - A small number of legacy enterprise integrations require TLS 1.2 with a specific cipher; document the exception and isolate the integration behind a proxy.
+  OK     - Public read-only endpoints (e.g., status pages) can legitimately serve over HTTP for cacheability, though HTTPS is still preferred.
+
 [CRITICAL] Secret Detection
   ALWAYS - Check all string literals longer than 20 characters near keywords: `api_key`, `secret`, `token`, `password`, `credential`, `auth`, `bearer`, `private_key`, `access_key`, `client_secret`, `refresh_token`.
-  ALWAYS - Flag any string matching known secret patterns: `AKIA[0-9A-Z]{16}` (AWS access key), `ghp_[A-Za-z0-9_]{36}` (GitHub PAT), `gho_[A-Za-z0-9_]{36}` (GitHub OAuth), `sk-[A-Za-z0-9]{48}` (OpenAI), `xox[baprs]-[A-Za-z0-9-]+` (Slack), `-----BEGIN.*PRIVATE KEY-----` (PEM private key).
+  ALWAYS - Flag any string matching known secret patterns. The bundled pattern set covers AWS (`AKIA...`), GitHub classic (`ghp_`, `gho_`) **and fine-grained** (`github_pat_`) PATs, OpenAI (`sk-`), **Anthropic (`sk-ant-api03-`)**, Slack (`xox[baprs]-`), Stripe (`sk_live_`), Google (`AIza...`), **Azure AD client secrets**, **Databricks (`dapi`)**, **Datadog 32-hex with hotword**, **Twilio (`SK`)**, **SendGrid (`SG.`)**, **npm (`npm_`)**, **PyPI upload (`pypi-AgEI`)**, **Heroku UUID with hotword**, **DigitalOcean (`dop_v1_`)**, **HashiCorp Vault (`hvs.`)**, **Supabase (`sbp_`)**, **Linear (`lin_api_`)**, JWT, and PEM private keys.
   ALWAYS - Verify `.gitignore` includes: `*.pem`, `*.key`, `.env`, `.env.*`, `*credentials*`, `*secret*`, `id_rsa*`, `*.ppk`.
   ALWAYS - Prefer environment variable usage (`os.environ`, `process.env`, `os.Getenv`) over hardcoded values for any credential, connection string, or API endpoint that has an attached secret.
   ALWAYS - Suggest a secret manager (1Password, AWS Secrets Manager, HashiCorp Vault, Doppler) when credentials must be shared across machines or services.
@@ -113,6 +385,27 @@ Apply every rule below to every change in this workspace.
   OK     - Cryptographic test vectors using `MD5` / `SHA1` for compatibility with documented protocols (e.g. legacy interop tests) are acceptable.
   OK     - Constant-time comparison is overkill for non-secret comparisons (string equality in logs, tag matching).
 
+[HIGH] Serverless Security
+  ALWAYS - Give each function its own IAM execution role with the minimum permissions needed. Never share roles across functions; never reuse the bootstrap / developer role.
+  ALWAYS - Set a concrete function timeout (≤ 30s for synchronous APIs, ≤ 15min for background jobs). Defaults like 6s or 900s are footguns in different directions.
+  ALWAYS - Set reserved or provisioned concurrency limits per function to avoid bill blow-outs and to keep one noisy tenant from starving the rest of the account.
+  ALWAYS - Pull secrets at cold-start from a secret manager (AWS Secrets Manager / GCP Secret Manager / Azure Key Vault) **with caching**, not from plaintext environment variables.
+  ALWAYS - Validate every event payload against a schema before any code that touches it. Lambda doesn't care that the event arrived from "your" SQS queue — it could be a poison message.
+  ALWAYS - Enable structured logging that redacts known secret patterns (delegate to the `logging-security` skill).
+  ALWAYS - Enable X-Ray / OpenTelemetry tracing and CloudWatch / Cloud Monitoring alerts on error rate, throttle count, duration p95.
+  ALWAYS - Use a VPC for functions that touch a private database or service; otherwise the function gets full outbound internet, which is rarely desirable.
+  NEVER  - Use `arn:aws:iam::*:role/*` (wildcard PassRole), `*:*` action/resource, or `iam:*` permissions on a function role.
+  NEVER  - Put secrets in environment variables in plaintext (use Secrets Manager references / `aws_lambda_function.environment` with `kms_key_arn`).
+  NEVER  - Pass user-controlled strings to `exec`, `os.system`, `child_process`, `subprocess.Popen(shell=True)` — function URLs become RCE shortcuts when someone shells out.
+  NEVER  - Trust the Lambda function URL or API Gateway resource as authentication. Function URLs with `AUTH_TYPE=NONE` are unauthenticated; require IAM, Cognito, or a Lambda authorizer.
+  NEVER  - Disable `aws_lambda_function.code_signing_config_arn` for production functions; sign and verify on deploy.
+  NEVER  - Use the `latest` image tag for container-image functions; pin by digest.
+  NEVER  - Use long-lived static AWS access keys to call AWS from Lambda — use the execution role.
+  NEVER  - Skip validation of S3 / SQS / EventBridge event payloads — assume any caller can post any shape, even if the trigger is "trusted".
+  OK     - Custom CloudFormation / Lambda resource handlers (`cfn-response`) sometimes legitimately need broad permissions for short-lived setup.
+  OK     - Cold-start warmer hacks (pinging the function on a CloudWatch Events schedule) are not, themselves, a security issue.
+  OK     - Step Functions iterators with thousands of map states are not an "untracked concurrency" problem if the StateMachine has its own concurrency cap.
+
 [CRITICAL] Supply Chain Security
   ALWAYS - Compute Levenshtein distance against the top-1000 list for the relevant ecosystem whenever proposing a new dependency. Flag any candidate with distance ≤ 2 from a popular package (`axois` vs `axios`, `urlib3` vs `urllib3`, `colours` vs `colors`, `python-dateutil` vs `dateutil` vs `dateutils`).
   ALWAYS - Verify that internal-namespace packages (`@yourco/*`, `com.yourco.*`) are pulled from the internal registry, not the public one. Configure `.npmrc` / `pip.conf` / `settings.gradle` with the internal scope explicitly.
@@ -131,14 +424,14 @@ Apply every rule below to every change in this workspace.
 
 ## Known Malicious Packages (recent)
 
+- **ultralytics** (pypi, critical) — GitHub Actions cache poisoning combined with a script-injection in the release workflow pushed two malicious versions of the popular YOLO/object-detection package to PyPI; users were dropped XMRig cryptominer on install.
+- **aiocpa** (pypi, critical) — Backdoor added to a previously-clean async CryptoPay client; new release shipped an obfuscated payload that stole wallet keys. Detected by Phylum.
+- **polyfill.io** (npm, critical) — polyfill.io domain sold to Funnull; CDN began injecting mobile-specific redirects to sports-betting and scam pages on ~100k sites including JSTOR, Intuit, World Economic Forum. Anyone who left `<script src="https://cdn.polyfill.io/...">` in production was affected.
 - **github.com/aws-utils/aws-go-sdk** (go, critical) — Imitation of aws-sdk-go-v2 in a vendor-style path. Used a malicious init() that fetched a second-stage shell script. Take-down was reported via the Go vulnerability database.
 - **pip-helper** (pypi, critical) — Dependency confusion attack package masquerading as internal Python utility; collects host data and posts to attacker URL
+- **torchtriton** (pypi, critical) — Dependency-confusion attack against the PyTorch nightly channel: an attacker uploaded a malicious `torchtriton` to public PyPI, which `pip` resolved in preference to PyTorch's private index. The package exfiltrated ~/.ssh, /etc/hosts, and environment vars.
 - **djanga** (pypi, critical) — Typosquat of django; installs information stealer
 - **colorsama** (pypi, critical) — Typosquat of colorama; exfiltrates Discord tokens, browser cookies, system info
-- **phpass** (pypi, critical) — Companion malicious PyPI package alongside ctx hijack; exfiltrates AWS credentials
-- **ctx** (pypi, critical) — Attacker took over abandoned package and uploaded versions that exfiltrate AWS credentials from environment variables
-- **rustdecimal** (crates, critical) — Typosquat of the legitimate rust_decimal crate. The malicious version contained code that downloaded and executed a binary payload designed to steal credentials and target Linux systems.
-- **node-ipc** (npm, critical) — Maintainer added code that overwrites files on systems with Russian/Belarusian IPs
 
 ## Reference Glossary
 

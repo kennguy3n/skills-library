@@ -1,6 +1,6 @@
 ---
 id: secret-detection
-version: "1.2.0"
+version: "1.3.0"
 title: "Secret Detection"
 description: "Detect and prevent hardcoded secrets, API keys, tokens, and credentials in code"
 category: prevention
@@ -12,13 +12,13 @@ applies_to:
   - "when creating .env or config templates"
 languages: ["*"]
 token_budget:
-  minimal: 700
-  compact: 1100
-  full: 1800
+  minimal: 800
+  compact: 1300
+  full: 2000
 rules_path: "rules/"
 tests_path: "tests/"
 related_skills: ["dependency-audit", "supply-chain-security"]
-last_updated: "2026-05-12"
+last_updated: "2026-05-13"
 sources:
   - "OWASP Secrets Management Cheat Sheet"
   - "CWE-798: Use of Hard-coded Credentials"
@@ -34,10 +34,14 @@ sources:
 - Check all string literals longer than 20 characters near keywords: `api_key`, `secret`,
   `token`, `password`, `credential`, `auth`, `bearer`, `private_key`, `access_key`,
   `client_secret`, `refresh_token`.
-- Flag any string matching known secret patterns: `AKIA[0-9A-Z]{16}` (AWS access key),
-  `ghp_[A-Za-z0-9_]{36}` (GitHub PAT), `gho_[A-Za-z0-9_]{36}` (GitHub OAuth),
-  `sk-[A-Za-z0-9]{48}` (OpenAI), `xox[baprs]-[A-Za-z0-9-]+` (Slack),
-  `-----BEGIN.*PRIVATE KEY-----` (PEM private key).
+- Flag any string matching known secret patterns. The bundled pattern set covers AWS
+  (`AKIA...`), GitHub classic (`ghp_`, `gho_`) **and fine-grained** (`github_pat_`)
+  PATs, OpenAI (`sk-`), **Anthropic (`sk-ant-api03-`)**, Slack (`xox[baprs]-`),
+  Stripe (`sk_live_`), Google (`AIza...`), **Azure AD client secrets**, **Databricks
+  (`dapi`)**, **Datadog 32-hex with hotword**, **Twilio (`SK`)**, **SendGrid
+  (`SG.`)**, **npm (`npm_`)**, **PyPI upload (`pypi-AgEI`)**, **Heroku UUID with
+  hotword**, **DigitalOcean (`dop_v1_`)**, **HashiCorp Vault (`hvs.`)**, **Supabase
+  (`sbp_`)**, **Linear (`lin_api_`)**, JWT, and PEM private keys.
 - Verify `.gitignore` includes: `*.pem`, `*.key`, `.env`, `.env.*`, `*credentials*`,
   `*secret*`, `id_rsa*`, `*.ppk`.
 - Prefer environment variable usage (`os.environ`, `process.env`, `os.Getenv`) over
@@ -80,7 +84,12 @@ AI coding assistants accelerate this risk because the path of least resistance i
 inline a working credential and "fix it later." This skill is the counterweight: it
 trains the AI to refuse the path of least resistance.
 
-The detection strategy in `rules/dlp_patterns.json` mirrors the layered pipeline
+The detection strategy in `rules/dlp_patterns.json` mirrors the layered pipeline,
+now with **26 distinct patterns** spanning developer platforms (GitHub fine-grained
+PATs, Anthropic, OpenAI, Supabase, Linear), cloud (AWS, Azure AD, GCP, DigitalOcean,
+Heroku), data platforms (Databricks, Datadog, HashiCorp Vault), and comms (Twilio,
+SendGrid, Slack). Each pattern carries severity, hotwords, hotword proximity
+window, and an entropy floor to drive precision.
 documented in [secure-edge ARCHITECTURE.md](https://github.com/kennguy3n/secure-edge/blob/main/ARCHITECTURE.md)
 — Aho-Corasick prefix scan, regex validation on candidates, hotword proximity,
 entropy thresholds, and exclusion rules — adapted for the static-analysis context.

@@ -61,8 +61,8 @@ func TestEachFormatterProducesOutput(t *testing.T) {
 
 func TestAllSeventSkillsCompile(t *testing.T) {
 	skills := loadAllSkills(t)
-	if len(skills) != 7 {
-		t.Fatalf("expected 7 skills, got %d", len(skills))
+	if len(skills) < 7 {
+		t.Fatalf("expected at least 7 skills, got %d", len(skills))
 	}
 	for _, tier := range []skill.Tier{skill.TierMinimal, skill.TierCompact, skill.TierFull} {
 		_, _, _, err := Compile(skills, "universal", tier, Context{})

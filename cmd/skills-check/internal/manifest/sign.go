@@ -92,6 +92,64 @@ func (m *Manifest) VerifyManifest() error {
 	return m.VerifyWith(pub)
 }
 
+// VerifyAny verifies the manifest's signature against any of the provided
+// trusted Ed25519 public keys. The first key that successfully verifies the
+// signature wins and that public key (and its index) is returned. This is
+// the entry point used by private-repo deployments that trust the embedded
+// upstream key plus one or more additional org-managed keys.
+func (m *Manifest) VerifyAny(keys []ed25519.PublicKey) (ed25519.PublicKey, int, error) {
+	if len(keys) == 0 {
+		return nil, -1, errors.New("no trusted keys configured")
+	}
+	for i, pub := range keys {
+		if err := m.VerifyWith(pub); err == nil {
+			return pub, i, nil
+		}
+	}
+	return nil, -1, errors.New("manifest signature did not match any trusted key")
+}
+
+// LoadAdditionalPublicKeys reads zero or more Ed25519 public keys from the
+// given file paths. Each path may carry a PEM, base64, or raw key (the same
+// formats accepted by LoadPublicKey). Empty / blank paths are skipped so
+// callers can stitch together "embedded + configured" key lists without
+// branching.
+func LoadAdditionalPublicKeys(paths []string) ([]ed25519.PublicKey, error) {
+	out := make([]ed25519.PublicKey, 0, len(paths))
+	for _, p := range paths {
+		p = strings.TrimSpace(p)
+		if p == "" {
+			continue
+		}
+		pub, err := LoadPublicKey(p)
+		if err != nil {
+			return nil, fmt.Errorf("load trusted key %s: %w", p, err)
+		}
+		out = append(out, pub)
+	}
+	return out, nil
+}
+
+// TrustedKeys returns the embedded key (if present) prepended to additional
+// keys loaded from caller-supplied paths. Callers pass the result directly
+// to VerifyAny.
+func TrustedKeys(additionalPaths []string) ([]ed25519.PublicKey, error) {
+	keys := make([]ed25519.PublicKey, 0, 1+len(additionalPaths))
+	if EmbeddedPublicKey != "" {
+		pub, err := embeddedPublicKey()
+		if err != nil {
+			return nil, fmt.Errorf("load embedded public key: %w", err)
+		}
+		keys = append(keys, pub)
+	}
+	extra, err := LoadAdditionalPublicKeys(additionalPaths)
+	if err != nil {
+		return nil, err
+	}
+	keys = append(keys, extra...)
+	return keys, nil
+}
+
 // VerifyWith verifies the manifest's signature against the provided
 // Ed25519 public key.
 func (m *Manifest) VerifyWith(pub ed25519.PublicKey) error {

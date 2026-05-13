@@ -123,9 +123,14 @@ func (d *DirSource) Description() string { return "dir:" + d.Root }
 func (d *DirSource) Close() error        { return nil }
 
 // HTTPSource fetches manifest.json and files from a base URL.
+// When BearerToken is non-empty, every request is sent with an
+// Authorization: Bearer <token> header, enabling authenticated pulls from
+// private repositories.
 type HTTPSource struct {
-	Base   string
-	Client *http.Client
+	Base        string
+	BearerToken string
+	Headers     map[string]string
+	Client      *http.Client
 }
 
 // NewHTTPSource constructs an HTTPSource with sensible defaults.
@@ -174,15 +179,64 @@ func (h *HTTPSource) fetch(path string) (io.ReadCloser, error) {
 		return nil, err
 	}
 	req.Header.Set("User-Agent", "skills-check/updater")
+	if h.BearerToken != "" {
+		req.Header.Set("Authorization", "Bearer "+h.BearerToken)
+	}
+	for k, v := range h.Headers {
+		req.Header.Set(k, v)
+	}
 	resp, err := h.Client.Do(req)
 	if err != nil {
 		return nil, err
+	}
+	if resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {
+		_ = resp.Body.Close()
+		return nil, fmt.Errorf("GET %s: HTTP %d (authentication failed; check bearer token)", target, resp.StatusCode)
 	}
 	if resp.StatusCode/100 != 2 {
 		_ = resp.Body.Close()
 		return nil, fmt.Errorf("GET %s: HTTP %d", target, resp.StatusCode)
 	}
 	return resp.Body, nil
+}
+
+// NewHTTPSourceWithAuth returns an HTTPSource that authenticates each request
+// with the supplied bearer token. The token may be empty, in which case this
+// behaves identically to NewHTTPSource.
+//
+// When the token is non-empty, the base URL MUST use https://. A plaintext
+// http:// scheme combined with a bearer token would leak the credential on
+// every request. The check is also enforced at config-write time
+// (cmd.ValidateSourceWithToken); this is the defence-in-depth second line.
+// Operators that explicitly accept the risk for internal-only setups can
+// use NewHTTPSourceWithAuthInsecure.
+func NewHTTPSourceWithAuth(base, bearerToken string) (*HTTPSource, error) {
+	if bearerToken != "" && strings.HasPrefix(base, "http://") {
+		return nil, fmt.Errorf(
+			"refusing to attach bearer token to plaintext http:// source %q; "+
+				"use https:// (recommended) or NewHTTPSourceWithAuthInsecure to opt in",
+			base,
+		)
+	}
+	s, err := NewHTTPSource(base)
+	if err != nil {
+		return nil, err
+	}
+	s.BearerToken = bearerToken
+	return s, nil
+}
+
+// NewHTTPSourceWithAuthInsecure is the explicit escape hatch for internal
+// networks that legitimately serve over plaintext http:// and want to
+// authenticate the updater. Use only when the network boundary itself
+// provides confidentiality.
+func NewHTTPSourceWithAuthInsecure(base, bearerToken string) (*HTTPSource, error) {
+	s, err := NewHTTPSource(base)
+	if err != nil {
+		return nil, err
+	}
+	s.BearerToken = bearerToken
+	return s, nil
 }
 
 // TarballSource extracts a tar (optionally gzipped) archive to a temp dir

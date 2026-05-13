@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "ecosystem": "go",
-  "last_updated": "2026-05-12T10:00:00Z",
+  "last_updated": "2026-05-13T00:00:00Z",
   "entries": [
     {
       "name": "github.com/jfrog/go-tools",
@@ -122,6 +122,40 @@
         "unusual external dependency"
       ],
       "attack_type": "data_exfiltration"
+    },
+    {
+      "name": "github.com/boltdb-go/bolt",
+      "versions_affected": ["*"],
+      "type": "namespace_squat",
+      "severity": "high",
+      "discovered": "2023-11-03",
+      "description": "Backdoored fork that imitates etcd-io/bbolt and the older `github.com/boltdb/bolt`. The first malicious typosquat seen on the Go module proxy that achieved meaningful download counts; the proxy's immutability made take-down ineffective.",
+      "references": [
+        "https://socket.dev/blog/typosquatted-go-packages-deliver-malicious-payload",
+        "https://thehackernews.com/2024/03/malicious-go-package-exploits-module.html"
+      ],
+      "indicators": [
+        "fork imitates boltdb/bolt path",
+        "init() launches reverse shell",
+        "Go proxy caching prevents take-down"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "github.com/grafanq/grafana",
+      "versions_affected": ["*"],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2024-03-04",
+      "description": "Single-character typosquat of grafana/grafana published as a Go module to coerce import path resolution for AI-assisted refactors. Imports a second-stage payload over HTTPS.",
+      "references": [
+        "https://socket.dev/blog/research-deep-dive-malicious-go-packages"
+      ],
+      "indicators": [
+        "single-character difference from upstream org",
+        "init() pulls additional .so payload"
+      ],
+      "attack_type": "typosquat"
     }
   ]
 }

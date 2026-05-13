@@ -12,7 +12,7 @@ import (
 )
 
 func regenerateCmd() *cobra.Command {
-	var path, tool, budget string
+	var path, tool, budget, profileName string
 	c := &cobra.Command{
 		Use:   "regenerate",
 		Short: "Rebuild dist/ files from the current skills/",
@@ -24,6 +24,16 @@ func regenerateCmd() *cobra.Command {
 			skills, err := skill.LoadAll(filepath.Join(abs, "skills"))
 			if err != nil {
 				return err
+			}
+			if profileName != "" {
+				prof, err := compiler.LoadProfile(abs, profileName)
+				if err != nil {
+					return err
+				}
+				skills = compiler.FilterSkillsByProfile(skills, prof)
+				if len(skills) == 0 {
+					return fmt.Errorf("profile %q matched no skills", profileName)
+				}
 			}
 			ctx, err := compiler.LoadContext(abs)
 			if err != nil {
@@ -70,5 +80,6 @@ func regenerateCmd() *cobra.Command {
 	c.Flags().StringVar(&path, "path", ".", "library root")
 	c.Flags().StringVar(&tool, "tool", "", "single tool to regenerate (default all)")
 	c.Flags().StringVar(&budget, "budget", "", "override tier (minimal|compact|full)")
+	c.Flags().StringVar(&profileName, "profile", "", "enterprise profile (e.g., financial-services|healthcare|government)")
 	return c
 }
