@@ -451,6 +451,122 @@ func TestExtractTarballRejectsOversizedEntry(t *testing.T) {
 	}
 }
 
+func TestApplyRejectsPathTraversal(t *testing.T) {
+	// Forge a release dir whose manifest lists a file outside the source
+	// root. Sign it so verifyRemoteSignature passes. Apply must refuse to
+	// write because the destination resolves outside localRoot.
+	srcDir := t.TempDir()
+	body := "malicious"
+	sum := sha256.Sum256([]byte(body))
+
+	pub, priv, err := manifest.GenerateKeyPair()
+	if err != nil {
+		t.Fatal(err)
+	}
+	m := &manifest.Manifest{
+		SchemaVersion: "1.0",
+		Version:       "v2",
+		ReleasedAt:    "2026-05-12T00:00:00Z",
+		PublicKeyID:   "test-key",
+		Files: []manifest.File{{
+			Path:   "../escaped",
+			SHA256: hex.EncodeToString(sum[:]),
+			Size:   int64(len(body)),
+		}},
+	}
+	if err := m.SignWith(priv); err != nil {
+		t.Fatal(err)
+	}
+	if err := m.Save(filepath.Join(srcDir, "manifest.json")); err != nil {
+		t.Fatal(err)
+	}
+
+	localRoot, _ := localLibrary(t, map[string]string{}, "v1")
+	src, err := NewSource(srcDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer src.Close()
+
+	_, err = Apply(localRoot, src, Options{PublicKey: pub})
+	if err == nil {
+		t.Fatal("Apply must reject manifest with path traversal")
+	}
+	if !strings.Contains(err.Error(), "unsafe path") {
+		t.Fatalf("expected 'unsafe path' error, got: %v", err)
+	}
+	// Nothing should have been written next to localRoot either.
+	escaped := filepath.Join(filepath.Dir(localRoot), "escaped")
+	if _, err := os.Stat(escaped); !os.IsNotExist(err) {
+		t.Errorf("traversal write reached %s; stat err = %v", escaped, err)
+	}
+}
+
+func TestDirSourceFileRejectsTraversal(t *testing.T) {
+	// DirSource.File must refuse a relative path that escapes the source
+	// root, even when the caller is the updater itself.
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "manifest.json"), []byte(`{"schema_version":"1.0"}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	// Put a real file outside the source root that the traversal would
+	// otherwise read.
+	outside := filepath.Join(filepath.Dir(dir), "outside.txt")
+	if err := os.WriteFile(outside, []byte("secret"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(outside)
+
+	src, err := NewDirSource(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, p := range []string{
+		"../outside.txt",
+		"/etc/passwd",
+		"",
+		"a/../../outside.txt",
+	} {
+		if rc, err := src.File(p); err == nil {
+			rc.Close()
+			t.Errorf("DirSource.File(%q) should have failed", p)
+		}
+	}
+}
+
+func TestSafeJoinRejectsEscapes(t *testing.T) {
+	root := filepath.Join(t.TempDir(), "root")
+	cases := []struct {
+		name string
+		path string
+		want bool // true == must reject
+	}{
+		{"empty", "", true},
+		{"parent", "../etc/passwd", true},
+		{"absolute", "/etc/passwd", true},
+		{"hidden parent", "skills/../../etc/passwd", true},
+		{"normal", "skills/a/SKILL.md", false},
+		{"deep", "skills/a/b/c.md", false},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := safeJoin(root, tc.path)
+			if tc.want {
+				if err == nil {
+					t.Errorf("safeJoin(%q) should error; got %q", tc.path, got)
+				}
+				return
+			}
+			if err != nil {
+				t.Errorf("safeJoin(%q) unexpected error: %v", tc.path, err)
+			}
+			if !strings.HasPrefix(got, root+string(filepath.Separator)) && got != root {
+				t.Errorf("safeJoin(%q) = %q, not rooted at %q", tc.path, got, root)
+			}
+		})
+	}
+}
+
 func TestFormatChangesEmptyHasTrailingNewline(t *testing.T) {
 	got := FormatChanges(nil)
 	if !strings.HasSuffix(got, "\n") {

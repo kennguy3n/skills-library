@@ -108,7 +108,11 @@ func (d *DirSource) Manifest() (*manifest.Manifest, error) {
 }
 
 func (d *DirSource) File(path string) (io.ReadCloser, error) {
-	return os.Open(filepath.Join(d.Root, filepath.FromSlash(path)))
+	abs, err := safeJoin(d.Root, path)
+	if err != nil {
+		return nil, err
+	}
+	return os.Open(abs)
 }
 
 func (d *DirSource) Description() string { return "dir:" + d.Root }

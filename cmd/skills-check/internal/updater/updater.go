@@ -108,7 +108,10 @@ func Apply(localRoot string, src Source, opts Options) (*CheckResult, error) {
 			if err := backupExisting(localRoot, backupRoot, change.Path); err != nil {
 				return res, fmt.Errorf("backup remove %s: %w", change.Path, err)
 			}
-			abs := filepath.Join(localRoot, filepath.FromSlash(change.Path))
+			abs, err := safeJoin(localRoot, change.Path)
+			if err != nil {
+				return res, fmt.Errorf("remove %s: %w", change.Path, err)
+			}
 			if err := os.Remove(abs); err != nil && !os.IsNotExist(err) {
 				return res, fmt.Errorf("remove %s: %w", change.Path, err)
 			}
@@ -155,7 +158,10 @@ func Rollback(localRoot string) error {
 		return fmt.Errorf("read added-paths manifest: %w", err)
 	}
 	for _, rel := range added {
-		dst := filepath.Join(localRoot, filepath.FromSlash(rel))
+		dst, err := safeJoin(localRoot, rel)
+		if err != nil {
+			return fmt.Errorf("remove added file %s: %w", rel, err)
+		}
 		if err := os.Remove(dst); err != nil && !os.IsNotExist(err) {
 			return fmt.Errorf("remove added file %s: %w", rel, err)
 		}
@@ -174,7 +180,10 @@ func Rollback(localRoot string) error {
 		if filepath.ToSlash(rel) == addedPathsManifest {
 			return nil
 		}
-		dst := filepath.Join(localRoot, rel)
+		dst, err := safeJoin(localRoot, filepath.ToSlash(rel))
+		if err != nil {
+			return err
+		}
 		return manifest.CopyFileAtomic(p, dst, info.Mode())
 	})
 	if err != nil {
@@ -338,21 +347,47 @@ func applyOne(localRoot, backupRoot string, src Source, change Change, remote *m
 	if err := backupExisting(localRoot, backupRoot, change.Path); err != nil {
 		return fmt.Errorf("backup: %w", err)
 	}
-	dst := filepath.Join(localRoot, filepath.FromSlash(change.Path))
+	dst, err := safeJoin(localRoot, change.Path)
+	if err != nil {
+		return fmt.Errorf("validate path: %w", err)
+	}
 	return manifest.WriteFileAtomic(dst, data, 0o644)
 }
 
 func backupExisting(localRoot, backupRoot, relPath string) error {
-	src := filepath.Join(localRoot, filepath.FromSlash(relPath))
+	src, err := safeJoin(localRoot, relPath)
+	if err != nil {
+		return err
+	}
 	if _, err := os.Stat(src); err != nil {
 		if os.IsNotExist(err) {
 			return nil
 		}
 		return err
 	}
-	dst := filepath.Join(backupRoot, filepath.FromSlash(relPath))
+	dst, err := safeJoin(backupRoot, relPath)
+	if err != nil {
+		return err
+	}
 	if err := os.MkdirAll(filepath.Dir(dst), 0o755); err != nil {
 		return err
 	}
 	return manifest.CopyFileAtomic(src, dst, 0o644)
+}
+
+// safeJoin joins relPath (a slash-separated path from a manifest) onto
+// root, refusing any relPath that is absolute, contains parent-directory
+// segments, or otherwise escapes root. This is a defence against
+// malicious manifests that ship paths like "../../etc/cron.d/backdoor":
+// the SHA-256 check in applyOne cannot help when the attacker controls
+// both the manifest entry and the served bytes.
+func safeJoin(root, relPath string) (string, error) {
+	if relPath == "" {
+		return "", errors.New("path is empty")
+	}
+	clean := filepath.Clean(filepath.FromSlash(relPath))
+	if !filepath.IsLocal(clean) {
+		return "", fmt.Errorf("unsafe path %q escapes root", relPath)
+	}
+	return filepath.Join(root, clean), nil
 }
