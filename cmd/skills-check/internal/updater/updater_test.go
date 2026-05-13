@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -448,6 +449,68 @@ func TestExtractTarballRejectsOversizedEntry(t *testing.T) {
 	dest := filepath.Join(dir, "out")
 	if err := ExtractTarball(archive, dest); err == nil || !strings.Contains(err.Error(), "limit") {
 		t.Errorf("expected oversized entry rejection, got %v", err)
+	}
+}
+
+// TestExtractTarballRejectsUnsafePaths exercises the filepath.IsLocal guard
+// inside ExtractTarball. The check must reject parent-directory escapes,
+// POSIX absolute paths, and (on Windows) drive-rooted paths so a tarball
+// fetched via `--source` cannot write outside the destination directory.
+// Drive-letter paths are tested only on Windows because filepath.IsLocal
+// is platform-aware: on Linux, "C:\\foo" is a normal filename and is
+// correctly treated as local.
+func TestExtractTarballRejectsUnsafePaths(t *testing.T) {
+	type tc struct {
+		name string
+		path string
+	}
+	cases := []tc{
+		{"parent", "../escaped"},
+		{"posix-absolute", "/etc/passwd"},
+		{"embedded-parent", "skills/../../etc/passwd"},
+	}
+	if runtime.GOOS == "windows" {
+		cases = append(cases,
+			tc{"windows-absolute-backslash", `C:\Windows\evil.dll`},
+			tc{"windows-absolute-forwardslash", "C:/Windows/evil.dll"},
+		)
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			dir := t.TempDir()
+			archive := filepath.Join(dir, "evil.tar")
+			f, err := os.Create(archive)
+			if err != nil {
+				t.Fatal(err)
+			}
+			tw := tar.NewWriter(f)
+			body := "x"
+			if err := tw.WriteHeader(&tar.Header{
+				Name:     c.path,
+				Mode:     0o644,
+				Size:     int64(len(body)),
+				Typeflag: tar.TypeReg,
+			}); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := tw.Write([]byte(body)); err != nil {
+				t.Fatal(err)
+			}
+			if err := tw.Close(); err != nil {
+				t.Fatal(err)
+			}
+			if err := f.Close(); err != nil {
+				t.Fatal(err)
+			}
+			dest := filepath.Join(dir, "out")
+			err = ExtractTarball(archive, dest)
+			if err == nil {
+				t.Fatalf("expected unsafe path rejection for %q, got nil", c.path)
+			}
+			if !strings.Contains(err.Error(), "unsafe path") {
+				t.Errorf("expected 'unsafe path' error for %q, got %v", c.path, err)
+			}
+		})
 	}
 }
 

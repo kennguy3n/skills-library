@@ -252,8 +252,8 @@ func ExtractTarball(archive, dest string) error {
 		if err != nil {
 			return err
 		}
-		clean := filepath.Clean(hdr.Name)
-		if strings.HasPrefix(clean, "..") || strings.HasPrefix(clean, "/") {
+		clean := filepath.Clean(filepath.FromSlash(hdr.Name))
+		if !filepath.IsLocal(clean) {
 			return fmt.Errorf("rejecting tar entry with unsafe path: %s", hdr.Name)
 		}
 		target := filepath.Join(dest, clean)
