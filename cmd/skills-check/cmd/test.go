@@ -195,7 +195,6 @@ type compiledPattern struct {
 // pattern that matched) wins.
 func matchAny(text string, patterns []compiledPattern) (bool, string) {
 	bestName := ""
-	bestIsGeneric := true
 	for _, p := range patterns {
 		loc := p.Regex.FindStringIndex(text)
 		if loc == nil {
@@ -213,14 +212,14 @@ func matchAny(text string, patterns []compiledPattern) (bool, string) {
 			}
 		}
 		isGeneric := strings.HasPrefix(p.Name, "Generic ")
-		if bestName == "" {
+		// Selection rule (per the doc comment above):
+		//   - The first match seeds the best (Generic or not).
+		//   - Any later non-Generic match replaces the current best,
+		//     so the LAST non-Generic in iteration order wins.
+		//   - Generic matches after the first never replace, keeping
+		//     the earliest seed stable when no non-Generic matches.
+		if bestName == "" || !isGeneric {
 			bestName = p.Name
-			bestIsGeneric = isGeneric
-			continue
-		}
-		if bestIsGeneric && !isGeneric {
-			bestName = p.Name
-			bestIsGeneric = false
 		}
 	}
 	if bestName == "" {

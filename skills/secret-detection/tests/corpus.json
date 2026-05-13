@@ -151,6 +151,13 @@
       "text": "AZURE_CLIENT_SECRET=Q~AbCdEf123456789-_abcdefghijklmnop",
       "expected": "detect",
       "expected_pattern": "Azure AD Client Secret"
+    },
+    {
+      "id": "two-non-generic-matches-last-wins",
+      "text": "# infra config\niam_user_aws_access_key_id = AKIA2E0A8F3B7D9C1E5F\nslack_webhook = xoxb-FAKE-CORPUS-NOT-A-REAL-TOKEN\n",
+      "expected": "detect",
+      "expected_pattern": "Slack Token",
+      "reason": "two distinct non-Generic patterns match in one payload; per matchAny doc the LAST non-Generic in dlp_patterns.json order wins (Slack Token sits after AWS Access Key)"
     }
   ]
 }
