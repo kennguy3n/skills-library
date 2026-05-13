@@ -10,8 +10,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/kennguy3n/skills-library/cmd/skills-check/internal/skill"
 	"github.com/kennguy3n/skills-library/cmd/skills-check/internal/token"
+	"github.com/kennguy3n/skills-library/internal/skill"
 )
 
 // Formatter renders the provided skills into a single string at the requested

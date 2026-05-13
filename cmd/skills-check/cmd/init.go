@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -9,11 +11,13 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/kennguy3n/skills-library/cmd/skills-check/internal/compiler"
-	"github.com/kennguy3n/skills-library/cmd/skills-check/internal/skill"
+	"github.com/kennguy3n/skills-library/cmd/skills-check/internal/scheduler"
+	"github.com/kennguy3n/skills-library/internal/skill"
 )
 
 func initCmd() *cobra.Command {
 	var libraryPath, tool, skillsList, budget, outDir string
+	var noPrompt bool
 	c := &cobra.Command{
 		Use:   "init",
 		Short: "Generate an IDE-specific config file in the current project",
@@ -78,6 +82,10 @@ func initCmd() *cobra.Command {
 			for _, w := range warns {
 				fmt.Fprintln(c.ErrOrStderr(), "warn:", w)
 			}
+
+			if !noPrompt {
+				maybeOfferScheduler(c.InOrStdin(), out)
+			}
 			return nil
 		},
 	}
@@ -86,5 +94,52 @@ func initCmd() *cobra.Command {
 	c.Flags().StringVar(&skillsList, "skills", "", "comma-separated skill IDs (default: all skills)")
 	c.Flags().StringVar(&budget, "budget", "", "tier override (minimal|compact|full)")
 	c.Flags().StringVar(&outDir, "out", "", "output directory (default: cwd)")
+	c.Flags().BoolVar(&noPrompt, "no-prompt", false, "skip the interactive prompt to set up scheduled updates")
 	return c
+}
+
+// maybeOfferScheduler asks the operator whether to install the background
+// scheduled-update task. It is a no-op when the scheduler is already
+// installed, when stdin is not a TTY, or when the user answers anything
+// other than "y" / "yes".
+func maybeOfferScheduler(stdin io.Reader, out io.Writer) {
+	status, err := scheduler.Status()
+	if err == nil && status != "" {
+		return
+	}
+	if !isTerminal(stdin) {
+		return
+	}
+	fmt.Fprint(out, "Would you like to set up automatic background updates? [y/N] ")
+	reader := bufio.NewReader(stdin)
+	line, err := reader.ReadString('\n')
+	if err != nil {
+		return
+	}
+	answer := strings.ToLower(strings.TrimSpace(line))
+	if answer != "y" && answer != "yes" {
+		return
+	}
+	exe, err := os.Executable()
+	if err != nil {
+		fmt.Fprintf(out, "could not resolve current binary: %v\n", err)
+		return
+	}
+	if err := scheduler.Install(scheduler.Defaults(exe)); err != nil {
+		fmt.Fprintf(out, "scheduler install failed: %v\n", err)
+		return
+	}
+	fmt.Fprintln(out, "scheduled update installed; run `skills-check scheduler status` to inspect")
+}
+
+func isTerminal(r io.Reader) bool {
+	f, ok := r.(*os.File)
+	if !ok {
+		return false
+	}
+	fi, err := f.Stat()
+	if err != nil {
+		return false
+	}
+	return fi.Mode()&os.ModeCharDevice != 0
 }

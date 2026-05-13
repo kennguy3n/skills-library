@@ -18,6 +18,12 @@ jobs:
   build:
     name: Build skills-check ${{ matrix.goos }}/${{ matrix.goarch }}
     runs-on: ubuntu-latest
+    env:
+      # Hoist signing-related secret names to the job env so step `if:`
+      # conditions can read them. The actual values are populated from
+      # secrets at the step that needs them.
+      APPLE_DEVELOPER_ID: ${{ secrets.APPLE_DEVELOPER_ID }}
+      WINDOWS_CERT_PFX: ${{ secrets.WINDOWS_CERT_PFX }}
     strategy:
       fail-fast: false
       matrix:
@@ -70,6 +76,60 @@ jobs:
             " \
             -o "dist-build/${out}" \
             ./cmd/skills-check
+
+      # macOS Developer ID signing + notarization. This step is a no-op
+      # unless secrets.APPLE_DEVELOPER_ID is configured. Documented in
+      # packaging/codesign/README.md.
+      - name: Sign macOS binary (Developer ID + notarytool)
+        if: matrix.goos == 'darwin' && env.APPLE_DEVELOPER_ID != ''
+        env:
+          APPLE_DEVELOPER_ID: ${{ secrets.APPLE_DEVELOPER_ID }}
+          APPLE_DEVELOPER_ID_CERT_P12_BASE64: ${{ secrets.APPLE_DEVELOPER_ID_CERT_P12_BASE64 }}
+          APPLE_DEVELOPER_ID_CERT_PASSWORD: ${{ secrets.APPLE_DEVELOPER_ID_CERT_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_NOTARY_PASSWORD: ${{ secrets.APPLE_NOTARY_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="skills-check-${{ matrix.goos }}-${{ matrix.goarch }}"
+          echo "$APPLE_DEVELOPER_ID_CERT_P12_BASE64" | base64 -d > /tmp/cert.p12
+          security create-keychain -p actions build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p actions build.keychain
+          security import /tmp/cert.p12 -k build.keychain -P "$APPLE_DEVELOPER_ID_CERT_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k actions build.keychain
+          codesign --force --options runtime --timestamp \
+            --sign "$APPLE_DEVELOPER_ID" "dist-build/${out}"
+          ditto -c -k --keepParent "dist-build/${out}" "/tmp/${out}.zip"
+          xcrun notarytool submit "/tmp/${out}.zip" \
+            --apple-id "$APPLE_ID" \
+            --team-id "$APPLE_TEAM_ID" \
+            --password "$APPLE_NOTARY_PASSWORD" \
+            --wait
+          codesign --verify --strict --verbose=2 "dist-build/${out}"
+
+      # Windows Authenticode signing. No-op unless secrets.WINDOWS_CERT_PFX
+      # is configured. signtool is included with the Windows SDK that
+      # ships on the GitHub-hosted windows runners.
+      - name: Sign Windows binary (Authenticode)
+        if: matrix.goos == 'windows' && env.WINDOWS_CERT_PFX != ''
+        env:
+          WINDOWS_CERT_PFX: ${{ secrets.WINDOWS_CERT_PFX }}
+          WINDOWS_CERT_PFX_PASSWORD: ${{ secrets.WINDOWS_CERT_PFX_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="skills-check-${{ matrix.goos }}-${{ matrix.goarch }}.exe"
+          echo "$WINDOWS_CERT_PFX" | base64 -d > /tmp/cert.pfx
+          signtool=$(find "/c/Program Files (x86)/Windows Kits/10/bin" -name signtool.exe | sort -r | head -n1)
+          "$signtool" sign \
+            /f /tmp/cert.pfx \
+            /p "$WINDOWS_CERT_PFX_PASSWORD" \
+            /tr http://timestamp.digicert.com \
+            /td sha256 \
+            /fd sha256 \
+            "dist-build/${out}"
 
       - name: SHA-256 of binary
         shell: bash

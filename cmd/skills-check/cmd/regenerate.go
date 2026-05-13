@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/kennguy3n/skills-library/cmd/skills-check/internal/compiler"
-	"github.com/kennguy3n/skills-library/cmd/skills-check/internal/skill"
+	"github.com/kennguy3n/skills-library/internal/skill"
 )
 
 func regenerateCmd() *cobra.Command {

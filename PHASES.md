@@ -108,22 +108,25 @@ steps.
   matrix):
   - macOS: `.pkg` via `pkgbuild` + `productbuild` — `packaging/macos/`
   - Windows: MSI via WiX Toolset — `packaging/windows/`
-  - [ ] Linux: `.deb` + `.rpm` via `nfpm`
-- [ ] Package managers:
-  - `brew install kennguy3n/tap/skills-check`
-  - `winget install skills-library.skills-check`
-  - `scoop install skills-check`
-  - `apt`/`yum` via release repo
-- [ ] Post-install hooks that offer to set up the scheduled update on first run.
-- [ ] Code signing:
-  - macOS: Developer ID signing + notarization
-  - Windows: Authenticode signing
-- [ ] Auto-update of the CLI binary itself (separate from skills updates), with
-  signature verification matching the rule update channel.
-- [ ] Documentation:
-  - "Install on macOS / Linux / Windows" pages with one-liners
-  - "Roll out to a team" admin guide
-  - "Air-gapped installation" guide
+  - Linux: `.deb` + `.rpm` via `nfpm` — `packaging/linux/`
+- [x] Package managers:
+  - `brew install kennguy3n/tap/skills-check` — `packaging/homebrew/skills-check.rb`
+  - `winget install kennguy3n.skills-check` — `packaging/winget/kennguy3n.skills-check.yaml`
+  - `scoop install skills-check` — `packaging/scoop/skills-check.json`
+  - `apt`/`yum` via release repo — `packaging/apt-yum/`
+- [x] Post-install hooks that offer to set up the scheduled update on first run
+  (`skills-check init` interactive prompt; `--no-prompt` skips for CI).
+- [x] Code signing CI scaffolds in `.github/workflows/release.yml`
+  (no-op when secrets not configured; see `packaging/codesign/README.md`):
+  - macOS: Developer ID signing + notarization (`secrets.APPLE_DEVELOPER_ID`)
+  - Windows: Authenticode signing (`secrets.WINDOWS_CERT_PFX`)
+- [x] Auto-update of the CLI binary itself (separate from skills updates), with
+  SHA-256 verification against published `checksums-<goos>-<goarch>.txt`
+  (`skills-check self-update`).
+- [x] Documentation — see `docs/`:
+  - `install-macos.md`, `install-linux.md`, `install-windows.md`
+  - `admin-team-rollout.md`
+  - `air-gapped-install.md`
 
 ### Privacy of scheduled updates
 
@@ -141,14 +144,15 @@ detection rule corpus extracted from production ShieldNet detection rules.
 
 ### Deliverables
 
-- [ ] Sigma rule extraction & adaptation:
-  - Audit existing rules in
+- [x] Sigma rule extraction & adaptation (initial corpus from public sources —
+  SigmaHQ, MITRE ATT&CK, AWS/GCP/Azure/M365 docs):
+  - [ ] Audit existing rules in
     [uneycom/shieldnet-security-detection-rules](https://github.com/uneycom/shieldnet-security-detection-rules)
     and [kennguy3n/sn360-security-platform](https://github.com/kennguy3n/sn360-security-platform)
-  - Adapt rules into `rules/cloud/`, `rules/endpoint/`, `rules/container/`
-  - Cover AWS, GCP, Azure, K8s, Linux, macOS, Windows, O365
-- [ ] MCP server (`cmd/skills-mcp/`):
-  - Implements Model Context Protocol over stdio
+  - Rules live in `rules/cloud/`, `rules/endpoint/`, `rules/container/`, `rules/saas/`
+  - Coverage: AWS, GCP, Azure, Linux, macOS, Windows, K8s, O365
+- [x] MCP server (`cmd/skills-mcp/`):
+  - JSON-RPC 2.0 over stdio (`initialize`, `tools/list`, `tools/call`)
   - Tool: `lookup_vulnerability(package, ecosystem, version)`
   - Tool: `check_secret_pattern(text)`
   - Tool: `get_skill(skill_id, budget)`
