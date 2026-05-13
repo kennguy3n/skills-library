@@ -134,6 +134,20 @@ jobs:
           # Flatten binary artifacts.
           find artifacts -type f \( -name 'skills-check-*' -o -name 'checksums-*.txt' \) -exec cp {} release/ \;
           cp manifest.json release/
+          # Bundle the distributable library tree into a single tarball so
+          # `skills-check update` (default --source) can pull the whole
+          # library in one HTTP request. Individual files under skills/,
+          # vulnerabilities/, dictionaries/, and dist/ are NOT published
+          # as separate release assets — this bundle is the canonical
+          # channel for them. Include manifest.json inside the tarball so
+          # NewHTTPTarballSource → NewTarballSource → NewDirSource finds
+          # it after extraction.
+          tar -czf release/skills-library-data.tar.gz \
+            manifest.json \
+            skills \
+            vulnerabilities \
+            dictionaries \
+            dist
           if [ -d deltas ]; then
             tar -C deltas -czf release/deltas.tar.gz . || true
           fi
@@ -160,6 +174,14 @@ jobs:
           fail_on_unmatched_files: true
           body: |
             Automated Skills Library release for tag ${{ steps.tag.outputs.tag }}.
+
+            **Assets:**
+            - `skills-check-<goos>-<goarch>[.exe]` — CLI binary (reproducible build).
+            - `checksums-<goos>-<goarch>.txt` — SHA-256 of each binary.
+            - `manifest.json` — signed library manifest.
+            - `skills-library-data.tar.gz` — library payload (skills, vulnerabilities, dictionaries, dist, manifest.json). This is what `skills-check update` downloads by default.
+            - `deltas.tar.gz` — patch set against the previous release (best effort).
+            - `SHA256SUMS.txt` — checksum of every asset above.
 
             **Verification:**
             - Verify the binary with the matching `checksums-<goos>-<goarch>.txt` file.

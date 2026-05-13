@@ -51,15 +51,19 @@ type Source interface {
 // NewSource parses a source string and returns the appropriate Source. The
 // rules:
 //
-//   - "https://..." or "http://..."  → HTTPSource
-//   - "file:///..."                  → DirSource(stripped)
-//   - <path>.tar.gz / .tgz           → TarballSource(extracted)
-//   - <directory path>               → DirSource
+//   - "https://..." or "http://..." ending in .tar.gz/.tgz → HTTPTarballSource
+//   - "https://..." or "http://..."                        → HTTPSource
+//   - "file:///..."                                        → DirSource(stripped)
+//   - <path>.tar.gz / .tgz                                 → TarballSource(extracted)
+//   - <directory path>                                     → DirSource
 func NewSource(spec string) (Source, error) {
 	if spec == "" {
 		return nil, errors.New("source is empty")
 	}
 	if strings.HasPrefix(spec, "http://") || strings.HasPrefix(spec, "https://") {
+		if strings.HasSuffix(spec, ".tar.gz") || strings.HasSuffix(spec, ".tgz") {
+			return NewHTTPTarballSource(spec)
+		}
 		return NewHTTPSource(spec)
 	}
 	if strings.HasPrefix(spec, "file://") {
@@ -288,6 +292,75 @@ func ExtractTarball(archive, dest string) error {
 			}
 		}
 	}
+}
+
+// MaxHTTPTarballBytes caps how many bytes NewHTTPTarballSource will copy
+// from the remote response into the on-disk archive before extracting it.
+// This is a defence-in-depth guard against a malicious or compromised
+// release host serving an arbitrarily large body; the per-entry size
+// guard inside ExtractTarball and the SHA-256 check against the signed
+// manifest in applyOne are the deeper checks.
+//
+// Declared as a var (not a const) so tests can lower the limit without
+// allocating gigabytes. Production builds should not mutate this value.
+var MaxHTTPTarballBytes int64 = 1 << 30 // 1 GiB
+
+// NewHTTPTarballSource downloads a .tar.gz/.tgz archive from rawURL into
+// a temp file, extracts it via NewTarballSource (which validates entry
+// paths and per-entry size), and returns the resulting Source. The
+// temp archive is removed after extraction; only the extracted
+// directory tree remains, and Close() removes that too.
+//
+// This is the canonical channel for the default update source: the
+// release workflow publishes a single skills-library-data.tar.gz
+// containing manifest.json plus the distributable tree, so the updater
+// can pull the whole library in one HTTP request rather than 404ing
+// on per-file paths that are not published as release assets.
+func NewHTTPTarballSource(rawURL string) (*TarballSource, error) {
+	if _, err := url.Parse(rawURL); err != nil {
+		return nil, fmt.Errorf("parse %s: %w", rawURL, err)
+	}
+	client := &http.Client{Timeout: 5 * time.Minute}
+	req, err := http.NewRequest(http.MethodGet, rawURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("User-Agent", "skills-check/updater")
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("GET %s: %w", rawURL, err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode/100 != 2 {
+		return nil, fmt.Errorf("GET %s: HTTP %d", rawURL, resp.StatusCode)
+	}
+
+	tmpFile, err := os.CreateTemp("", "skills-check-download-*.tar.gz")
+	if err != nil {
+		return nil, err
+	}
+	tmpPath := tmpFile.Name()
+	// Always remove the on-disk archive: NewTarballSource extracts it
+	// to a separate temp dir, so we no longer need the archive after
+	// construction succeeds (or fails).
+	defer os.Remove(tmpPath)
+
+	// Cap the body read so a hostile source cannot exhaust local disk.
+	// We allow one extra byte so that a body that is exactly the limit
+	// succeeds while a body even one byte larger surfaces as an error.
+	limited := io.LimitReader(resp.Body, MaxHTTPTarballBytes+1)
+	n, err := io.Copy(tmpFile, limited)
+	if cerr := tmpFile.Close(); err == nil {
+		err = cerr
+	}
+	if err != nil {
+		return nil, fmt.Errorf("download %s: %w", rawURL, err)
+	}
+	if n > MaxHTTPTarballBytes {
+		return nil, fmt.Errorf("download %s exceeded %d byte limit", rawURL, MaxHTTPTarballBytes)
+	}
+
+	return NewTarballSource(tmpPath)
 }
 
 // unmarshalManifest is a thin wrapper so the package keeps a single import

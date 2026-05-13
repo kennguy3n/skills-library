@@ -12,9 +12,14 @@ import (
 )
 
 // DefaultUpdateSource is the canonical update channel. Operators can override
-// via --source. Release artifacts on GitHub Releases live alongside the
-// manifest.json that this URL serves.
-const DefaultUpdateSource = "https://github.com/kennguy3n/skills-library/releases/latest/download"
+// via --source. It points at the single skills-library-data.tar.gz asset
+// the release workflow publishes alongside the binaries: the archive
+// bundles manifest.json plus the distributable tree (skills/,
+// vulnerabilities/, dictionaries/, dist/) so the updater can pull the
+// whole library in one HTTP request. Individual library files are not
+// published as separate release assets, so a per-file URL scheme like
+// .../releases/latest/download/skills/foo/SKILL.md would 404.
+const DefaultUpdateSource = "https://github.com/kennguy3n/skills-library/releases/latest/download/skills-library-data.tar.gz"
 
 func updateCmd() *cobra.Command {
 	var (

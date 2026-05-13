@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"crypto/sha256"
 	"encoding/hex"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -646,5 +647,145 @@ func TestFormatChangesIsStable(t *testing.T) {
 	got := FormatChanges(c)
 	if !strings.Contains(got, "2 added, 1 updated, 0 removed") {
 		t.Errorf("unexpected summary line: %q", got)
+	}
+}
+
+// oversizedSource serves a body much larger than the manifest's declared
+// Size for every file. It is the minimal hostile Source for proving that
+// the LimitReader inside applyOne keeps the process from being OOM'd
+// before the SHA-256 check rejects the response.
+type oversizedSource struct{ DirSource }
+
+func (o *oversizedSource) File(path string) (io.ReadCloser, error) {
+	// Always serve a 4 MiB payload regardless of what the manifest says.
+	// 4 MiB is comfortably above the LimitReader slack (4 KiB) so the
+	// SHA-256 check is the only thing that can fire.
+	return io.NopCloser(strings.NewReader(strings.Repeat("X", 4<<20))), nil
+}
+func (o *oversizedSource) Description() string { return "oversized:test" }
+func (o *oversizedSource) Close() error        { return nil }
+
+// TestApplyLimitsReadAllToManifestSize ensures applyOne caps the body
+// read at the manifest's declared Size plus a small slack. Without the
+// cap, a malicious source could serve gigabytes for a path the manifest
+// says is small and exhaust process memory before the SHA-256 check
+// runs. With the cap, the truncated body fails the SHA-256 check
+// (because hash(truncated XXXX...) != hash(real body)).
+func TestApplyLimitsReadAllToManifestSize(t *testing.T) {
+	files := map[string]string{"skills/a/SKILL.md": "real body"}
+	dir, pub, _ := stagedRelease(t, files, "v2")
+	localRoot, _ := localLibrary(t, map[string]string{}, "v1")
+
+	// Wrap the legitimate DirSource so .Manifest() returns the signed
+	// manifest with the real (small) declared Size, but .File() returns
+	// a 4 MiB body.
+	base, err := NewDirSource(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	src := &oversizedSource{DirSource: *base}
+
+	_, err = Apply(localRoot, src, Options{PublicKey: pub})
+	if err == nil {
+		t.Fatal("expected Apply to reject oversized body, got nil error")
+	}
+	if !strings.Contains(err.Error(), "sha256 mismatch") {
+		t.Errorf("expected sha256 mismatch error (body truncated by LimitReader), got %v", err)
+	}
+}
+
+// TestHTTPTarballSourceRoundtrip proves the default update channel works
+// end-to-end: an httptest server publishes a .tar.gz at
+// /skills-library-data.tar.gz, NewSource routes to NewHTTPTarballSource,
+// the bundle is downloaded + extracted, and Apply writes the unpacked
+// files into the local library root.
+func TestHTTPTarballSourceRoundtrip(t *testing.T) {
+	files := map[string]string{
+		"skills/a/SKILL.md":                   "bundled skill body",
+		"vulnerabilities/supply-chain/x.json": `{"k":"v"}`,
+	}
+	srcDir, pub, _ := stagedRelease(t, files, "v2")
+
+	// Build the data bundle the release workflow would publish: a gzip
+	// tarball whose top level contains manifest.json plus the staged
+	// distributable tree.
+	archive := filepath.Join(t.TempDir(), "skills-library-data.tar.gz")
+	f, err := os.Create(archive)
+	if err != nil {
+		t.Fatal(err)
+	}
+	gz := gzip.NewWriter(f)
+	tw := tar.NewWriter(gz)
+	err = filepath.Walk(srcDir, func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		rel, _ := filepath.Rel(srcDir, p)
+		if rel == "." {
+			return nil
+		}
+		hdr := &tar.Header{
+			Name: filepath.ToSlash(rel),
+			Mode: int64(info.Mode().Perm()),
+			Size: info.Size(),
+		}
+		if info.IsDir() {
+			hdr.Typeflag = tar.TypeDir
+			hdr.Name = filepath.ToSlash(rel) + "/"
+			return tw.WriteHeader(hdr)
+		}
+		hdr.Typeflag = tar.TypeReg
+		if err := tw.WriteHeader(hdr); err != nil {
+			return err
+		}
+		body, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		_, err = tw.Write(body)
+		return err
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, c := range []io.Closer{tw, gz, f} {
+		if err := c.Close(); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	// Serve the archive at /skills-library-data.tar.gz so NewSource
+	// matches the .tar.gz suffix and dispatches to the HTTP-tarball
+	// path.
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/skills-library-data.tar.gz" {
+			http.NotFound(w, r)
+			return
+		}
+		http.ServeFile(w, r, archive)
+	}))
+	defer server.Close()
+
+	url := server.URL + "/skills-library-data.tar.gz"
+	src, err := NewSource(url)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer src.Close()
+	if !strings.HasPrefix(src.Description(), "tarball:") {
+		t.Errorf("expected tarball source description, got %q", src.Description())
+	}
+
+	localRoot, _ := localLibrary(t, map[string]string{}, "v1")
+	res, err := Apply(localRoot, src, Options{PublicKey: pub})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.Changes) != 2 {
+		t.Errorf("expected 2 added changes, got %+v", res.Changes)
+	}
+	got, _ := os.ReadFile(filepath.Join(localRoot, "skills/a/SKILL.md"))
+	if string(got) != "bundled skill body" {
+		t.Errorf("file body mismatch: %q", got)
 	}
 }

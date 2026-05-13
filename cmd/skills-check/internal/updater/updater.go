@@ -19,6 +19,15 @@ import (
 // replaced so --rollback can restore them.
 const BackupDirName = ".skills-check-previous"
 
+// applyOneReadSlack is the small allowance added on top of a manifest
+// entry's declared Size when bounding the response body read in applyOne.
+// We allow a few KiB of slack so transports that frame the body slightly
+// differently (HTTP chunked encoding, trailers, etc.) don't fail the
+// honest case, while still defeating OOM-style abuse where a malicious
+// source serves gigabytes for a path the manifest claims is small. The
+// downstream SHA-256 check rejects anything that doesn't match exactly.
+const applyOneReadSlack int64 = 4096
+
 // addedPathsManifest is the relative path inside BackupDirName where
 // Apply records files that did not exist before the update. Rollback
 // reads this list and removes the corresponding files so the on-disk
@@ -336,7 +345,13 @@ func applyOne(localRoot, backupRoot string, src Source, change Change, remote *m
 		return fmt.Errorf("download: %w", err)
 	}
 	defer body.Close()
-	data, err := io.ReadAll(body)
+	// Cap the read at the manifest's declared size plus a small slack so
+	// the SHA-256 check (which would catch a truncated or oversized body
+	// after the fact) can never be reached with a body large enough to
+	// OOM the process. A malicious source might serve gigabytes for a
+	// path the manifest claims is small; LimitReader bounds the damage.
+	limited := io.LimitReader(body, entry.Size+applyOneReadSlack)
+	data, err := io.ReadAll(limited)
 	if err != nil {
 		return fmt.Errorf("read body: %w", err)
 	}
