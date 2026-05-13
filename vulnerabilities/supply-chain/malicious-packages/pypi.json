@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "ecosystem": "pypi",
-  "last_updated": "2026-05-12T10:00:00Z",
+  "last_updated": "2026-05-13T00:00:00Z",
   "entries": [
     {
       "name": "ctx",
@@ -68,6 +68,115 @@
       ],
       "indicators": ["setup.py exfiltration"],
       "attack_type": "dependency_confusion"
+    },
+    {
+      "name": "ultralytics",
+      "versions_affected": ["8.3.41", "8.3.42"],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2024-12-04",
+      "description": "GitHub Actions cache poisoning combined with a script-injection in the release workflow pushed two malicious versions of the popular YOLO/object-detection package to PyPI; users were dropped XMRig cryptominer on install.",
+      "references": [
+        "https://blog.yossarian.net/2024/12/06/zizmor-ultralytics-injection",
+        "https://github.com/ultralytics/ultralytics/security/advisories/GHSA-wfq8-x6r6-rg6q"
+      ],
+      "indicators": ["XMRig miner dropped on install", "compromised GitHub Actions release pipeline"],
+      "attack_type": "build_pipeline_compromise"
+    },
+    {
+      "name": "torchtriton",
+      "versions_affected": ["*"],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2022-12-30",
+      "description": "Dependency-confusion attack against the PyTorch nightly channel: an attacker uploaded a malicious `torchtriton` to public PyPI, which `pip` resolved in preference to PyTorch's private index. The package exfiltrated ~/.ssh, /etc/hosts, and environment vars.",
+      "references": [
+        "https://pytorch.org/blog/compromised-nightly-dependency/",
+        "https://nvd.nist.gov/vuln/detail/CVE-2022-45907"
+      ],
+      "indicators": ["`triton` binary that posts ~/.ssh to h4ck.cfd", "dependency-confusion on private index"],
+      "attack_type": "dependency_confusion"
+    },
+    {
+      "name": "aiocpa",
+      "versions_affected": ["0.1.13"],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2024-11-21",
+      "description": "Backdoor added to a previously-clean async CryptoPay client; new release shipped an obfuscated payload that stole wallet keys. Detected by Phylum.",
+      "references": [
+        "https://blog.phylum.io/pypi-package-aiocpa-found-exfiltrating-data"
+      ],
+      "indicators": ["obfuscated `__init__.py` payload", "crypto wallet exfiltration"],
+      "attack_type": "maintainer_compromise"
+    },
+    {
+      "name": "request",
+      "versions_affected": ["*"],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2020-11-30",
+      "description": "Long-running typosquat of `requests`; one of the most-installed accidental imports on PyPI. Various authors have used the name to push installer-stage payloads.",
+      "references": [
+        "https://snyk.io/advisor/python/request",
+        "https://blog.sonatype.com/typosquatting-pypi"
+      ],
+      "indicators": ["typosquat of requests"],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "python-requests",
+      "versions_affected": ["*"],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2020-11-30",
+      "description": "Typosquat of `requests` using the obvious `python-` prefix; multiple malicious uploads under this name historically.",
+      "references": [
+        "https://blog.sonatype.com/typosquatting-pypi"
+      ],
+      "indicators": ["typosquat of requests"],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "requests3",
+      "versions_affected": ["*"],
+      "type": "typosquat",
+      "severity": "medium",
+      "discovered": "2018-09-25",
+      "description": "Originally a legitimate experimental fork, the name is repeatedly registered by attackers between abandoned periods. Treat as suspicious unless installed from the canonical author.",
+      "references": [
+        "https://pypi.org/project/requests3/",
+        "https://snyk.io/advisor/python/requests3"
+      ],
+      "indicators": ["abandoned namesquat"],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "colourama",
+      "versions_affected": ["*"],
+      "type": "typosquat",
+      "severity": "critical",
+      "discovered": "2018-12-04",
+      "description": "British-spelling typosquat of `colorama`; published a clipboard hijacker that replaced cryptocurrency addresses in copied text.",
+      "references": [
+        "https://www.bleepingcomputer.com/news/security/malicious-python-libraries-target-windows-users/",
+        "https://medium.com/@bertusk/cryptocurrency-clipboard-hijacker-discovered-in-pypi-repository-b66b8a534a8"
+      ],
+      "indicators": ["clipboard hijacker", "replaces BTC/ETH addresses"],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "python-colorama",
+      "versions_affected": ["*"],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2023-09-04",
+      "description": "Persistent typosquat of `colorama` using the `python-` prefix; ESET tracked dozens of uploads dropping `cstealer`-style infostealers.",
+      "references": [
+        "https://www.welivesecurity.com/en/eset-research/malicious-package-pypi-impersonates-popular-colorama-library/"
+      ],
+      "indicators": ["typosquat of colorama", "infostealer payload"],
+      "attack_type": "typosquat"
     }
   ]
 }

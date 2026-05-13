@@ -10,7 +10,7 @@
       "path": "dictionaries/attack_techniques.yaml",
       "sha256": "d17ed6201283cb8e09e4fcd981646c3d0635834b5e7be5ae360b44cc11dc8790",
       "size": 8244,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "dictionaries/cwe_top25.yaml",
@@ -32,51 +32,51 @@
     },
     {
       "path": "dist/.clinerules",
-      "sha256": "c6d714aeb9547579b66a6f83ed5c0d4dc6c86f8d8e49a7c37672fc12e989de92",
-      "size": 17765,
-      "action": "added"
+      "sha256": "108d8ecf6e7fece9932549055a42b3af9f314915a136d3490dfa9702cec9024b",
+      "size": 56901,
+      "action": "unchanged"
     },
     {
       "path": "dist/.cursorrules",
-      "sha256": "dc05e7cefff651e2b73dd75e8b42357b2807a96edcacf17b63f1188ffe59432a",
-      "size": 18252,
-      "action": "added"
+      "sha256": "a5efe018629c64d7151ea1da735675e1bbaf9a77a4090450b4d8dfa00d2a6abb",
+      "size": 58099,
+      "action": "unchanged"
     },
     {
       "path": "dist/.windsurfrules",
-      "sha256": "f6d29269d692780e82f665803bf07b2552bf7ff7ce94655e8c3b102c78cf71e9",
-      "size": 18064,
-      "action": "added"
+      "sha256": "31cf3738d5eeb37440a367740da77e8343bf18756ec12da1ba9b2bd48de54cb2",
+      "size": 57750,
+      "action": "unchanged"
     },
     {
       "path": "dist/AGENTS.md",
-      "sha256": "42f68a3b12b714cd4f03d405ac1733c4828be1bdfe2dd7ff3c0cf504d6abb9f5",
-      "size": 20563,
-      "action": "added"
+      "sha256": "981adceaf1d659d74663d2e7069b52ef3c18d88f017e7ad179d164976ea73a3f",
+      "size": 61157,
+      "action": "unchanged"
     },
     {
       "path": "dist/CLAUDE.md",
-      "sha256": "e9ce001d2a723fd7e83f787d2bdca60fff85f926130502e0502441558d977d7d",
-      "size": 22151,
-      "action": "added"
+      "sha256": "e8418d580a6cc7ff0ec93caa8a41ac6f35d4dea518e33c51c2f094d883dad72b",
+      "size": 66604,
+      "action": "unchanged"
     },
     {
       "path": "dist/SECURITY-SKILLS.md",
-      "sha256": "4e62d751c0dc96321b46b683662b787ad5e097df60704de03ddc976259f31b1e",
-      "size": 20545,
-      "action": "added"
+      "sha256": "ae9edd02ffbeffa8fdccebe1af09f8ca9d665e9e83f3b9d26f00da997f9250f4",
+      "size": 61271,
+      "action": "unchanged"
     },
     {
       "path": "dist/copilot-instructions.md",
-      "sha256": "c4795e5f73061a881ab674a2ba38aca57d7a4f6cb60ca9f3ba790db33d654d0e",
-      "size": 20189,
-      "action": "added"
+      "sha256": "4c81ee3fb0fda1c305620e14417260e2f822ab30b01d731411695ea556ed9255",
+      "size": 60277,
+      "action": "unchanged"
     },
     {
       "path": "dist/devin.md",
-      "sha256": "a8433dcfe767be653b543d0e17db5e165a6e1da8373f0cd77f7fd13cc2909dd3",
-      "size": 26325,
-      "action": "added"
+      "sha256": "bb654ae4ab6533bae79d013d78a23dcc5a7650d416c9b7fb4e2154d78df2ebd9",
+      "size": 79135,
+      "action": "unchanged"
     },
     {
       "path": "skills/api-security/SKILL.md",
@@ -94,6 +94,24 @@
       "path": "skills/api-security/checklists/input_validation.yaml",
       "sha256": "1383669e4bd169db3bcdee5dc324207aa8b4a8e454ba8630d707e159825f3f70",
       "size": 1365,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/auth-security/SKILL.md",
+      "sha256": "bb8e76c92682580b61d490417ce9af20c5b42286363b744942de9bd7d8df1ffc",
+      "size": 5080,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/auth-security/rules/jwt_safe_config.json",
+      "sha256": "7b05e9c8466da82737f2d2718c33a536f862fd30e2e80fa27bed34274d70f24a",
+      "size": 2139,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/auth-security/rules/oauth_flows.json",
+      "sha256": "9ffdd351c07a39246909284bb453d28a9eb9ab3ecb141e3b4859c76e819356af",
+      "size": 2127,
       "action": "unchanged"
     },
     {
@@ -115,6 +133,72 @@
       "action": "unchanged"
     },
     {
+      "path": "skills/container-security/SKILL.md",
+      "sha256": "373ec76ad767ff396a53650247c03fdc98c371d3a030b8cc884bbd2e8c6c63c4",
+      "size": 4742,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/container-security/checklists/dockerfile_hardening.yaml",
+      "sha256": "994e7b57a8b89fba361d1baedc741cdbd0af0cde6ef71b6785ef9a5e92c1850c",
+      "size": 1804,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/container-security/checklists/k8s_pod_security.yaml",
+      "sha256": "d38c7b3c62d9280fbbd05a217c0d36b3027eab3279f0dc275248c1be00cf02ba",
+      "size": 2264,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/cors-security/SKILL.md",
+      "sha256": "4d131e870243ff5594afedb8de680ddd0ee8d88f04978c1cd63a16307daa8f5b",
+      "size": 4324,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/cors-security/rules/cors_safe_config.json",
+      "sha256": "cf4b2315228d6735b68edc31dc9bda900ee682564583a59485edd0cba0ef4866",
+      "size": 1863,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/crypto-misuse/SKILL.md",
+      "sha256": "4931b18332eaba9162bbb129494cefc62295a0389eb659ff2f0cb585166d50c0",
+      "size": 4668,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/crypto-misuse/rules/algorithm_blocklist.json",
+      "sha256": "da9d3716d900f7d0755ef2a99528d89af2d452308d252ddea38cdacc6728cca1",
+      "size": 2614,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/crypto-misuse/rules/key_size_minimums.json",
+      "sha256": "66d90e4839728253f38da061e57b4da5e4306b7ef49c8a06aa74a86aadc0c969",
+      "size": 1440,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/database-security/SKILL.md",
+      "sha256": "d43f6959a3b11f96c13c176a82c1a8df7c6b8bc13af873c7db248a0e5bbed174",
+      "size": 4837,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/database-security/rules/orm_safe_patterns.json",
+      "sha256": "e17b6d8aba84743b26c7331e01ee096bc2cf731744bf66ea1dd56d3c7e92023c",
+      "size": 2618,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/database-security/rules/sql_injection_sinks.json",
+      "sha256": "9d62b8a76f1c34f2b4f55de971c923be3f34600b397a187ad5de03974507d162",
+      "size": 2511,
+      "action": "unchanged"
+    },
+    {
       "path": "skills/dependency-audit/SKILL.md",
       "sha256": "abb13cc431fd20fc916bc6001112d1f0befb0489045977e7a725ec9ca7709fb7",
       "size": 3762,
@@ -124,6 +208,60 @@
       "path": "skills/dependency-audit/rules/known_malicious.json",
       "sha256": "122c550501b5bb76467dfcfe63a4e7b43991c19db848a0e363e3b14b9336ba73",
       "size": 354,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/error-handling-security/SKILL.md",
+      "sha256": "224b6cb59566485a8c1bad40f21742f555c7030676be731bb39cb6c920372274",
+      "size": 4264,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/error-handling-security/rules/error_response_template.json",
+      "sha256": "92e0a2f71c8a8b3bab305f2ab3ab2019db13d2ced1333cff4d1673984ee27bd1",
+      "size": 1330,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/error-handling-security/rules/redaction_patterns.json",
+      "sha256": "89863f3c655cf10aca9c356ffedad532ac2d04f2f308b592dc078f70f25b17d4",
+      "size": 1620,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/frontend-security/SKILL.md",
+      "sha256": "8519836aa5c226605f9304c7c04f81d1b2e8203a2dc484623e0dfdc376302b38",
+      "size": 4687,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/frontend-security/rules/csp_defaults.json",
+      "sha256": "911a6207d9b01416d37bf0d9f0a75f26180d203b920d96afbf1bb5299b5bce9f",
+      "size": 1426,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/frontend-security/rules/xss_sinks.json",
+      "sha256": "990b26a598e067ea831e2e9001ee364d19d996b2d3f1e16321113da95212e6db",
+      "size": 3184,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/iac-security/SKILL.md",
+      "sha256": "3c45e8b7e8e129d121f9e4f13eda6f610f73a16393a4b317ed8baad2260443bf",
+      "size": 4547,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/iac-security/checklists/cloudformation_hardening.yaml",
+      "sha256": "2c5d7f171f0bf6a6bbf84282554872f2eca62460b348132f8535fb5c915c8b10",
+      "size": 1625,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/iac-security/checklists/terraform_hardening.yaml",
+      "sha256": "c9fc7844af1f834b59f8eb698d9e420b8820e4ab038cfc39da7520847b334b6f",
+      "size": 2482,
       "action": "unchanged"
     },
     {
@@ -151,9 +289,81 @@
       "action": "unchanged"
     },
     {
+      "path": "skills/logging-security/SKILL.md",
+      "sha256": "681e2c547943bf7293e5d7a64206f086677e2f0dee8dc0ff8a77e2dae64877dd",
+      "size": 4570,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/logging-security/rules/audit_event_schema.json",
+      "sha256": "063d8ccf16fc5910a24e6d27f4bcd85d59ceb9ac291000739e07d40929b01a49",
+      "size": 1339,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/logging-security/rules/redaction_patterns.json",
+      "sha256": "4287c337824fffea9ee5397de54f95d01490e082e51ee96491bae5c45e7a0209",
+      "size": 1743,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/ml-security/SKILL.md",
+      "sha256": "2e299868ef389c4683e97dc3de979728a5c725dcfd76da004b132de8aad402f0",
+      "size": 5250,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/ml-security/rules/prompt_injection_patterns.json",
+      "sha256": "13d474e55b6a05d8ed4594d10f641accc2ad5487a39c5e926c541b7fc48be840",
+      "size": 2167,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/ml-security/rules/unsafe_deserialization.json",
+      "sha256": "a94c96a934a7019352b332ce55ed928a9839bb1770ec965b950214c8409ac217",
+      "size": 2203,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/mobile-security/SKILL.md",
+      "sha256": "90bdd46c1212611e624a3df65f083b9be1f56ca833ae0541203122e0f04116ca",
+      "size": 5177,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/mobile-security/checklists/android_manifest.yaml",
+      "sha256": "d1c57278119630a4e0387356412afe0973f309b462ad81a5ae3b66bdbf126b6a",
+      "size": 1811,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/mobile-security/checklists/ios_keychain_ats.yaml",
+      "sha256": "848cba1590cc8e3a1a3f1013401e03dbd8cab9ee720e009ea6a44cc9b8efe188",
+      "size": 1932,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/protocol-security/SKILL.md",
+      "sha256": "2455e65ab9a8d5fa6b9ce3636c97aa869183f8f141ad23f4337ef8a70aa80522",
+      "size": 4694,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/protocol-security/rules/cert_validation_sinks.json",
+      "sha256": "6e70fcb623978986ab72a94c0c80afd48e0ff242051043256db3786e54487372",
+      "size": 2302,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/protocol-security/rules/tls_defaults.json",
+      "sha256": "2415131b286f0f607ddad956336086a2b6a089445bce23ab136fe780305ff10d",
+      "size": 1276,
+      "action": "unchanged"
+    },
+    {
       "path": "skills/secret-detection/SKILL.md",
-      "sha256": "2dba72b525eca180228389fbec2832993ffc614130038b8c0318bb2361f3f655",
-      "size": 4572,
+      "sha256": "42bee32f40523e1e91b1e409ef99902f2ffbe1be4ba9507c073098f1b734c15e",
+      "size": 5307,
       "action": "unchanged"
     },
     {
@@ -164,14 +374,14 @@
     },
     {
       "path": "skills/secret-detection/rules/dlp_patterns.json",
-      "sha256": "60e7530f665330d6fb6d14559233d121fd4c1b5bea50ee12e5fbffee466309ab",
-      "size": 4219,
+      "sha256": "d327244ef01ef2078a3af5896d3c3041067c72193afd14a04a2816f16fffdcc3",
+      "size": 9051,
       "action": "unchanged"
     },
     {
       "path": "skills/secret-detection/tests/corpus.json",
-      "sha256": "30c093395d156e873b57e7e1763db4a6aefa201e5a922cdbc59a0a787bbc40ae",
-      "size": 1293,
+      "sha256": "39c6cab561986bfa0345d38d801bc837aa5ff4624fa205f5b244f70f99e5d8d0",
+      "size": 5424,
       "action": "unchanged"
     },
     {
@@ -193,6 +403,24 @@
       "action": "unchanged"
     },
     {
+      "path": "skills/serverless-security/SKILL.md",
+      "sha256": "c9823c7ac4de7cddc79389a040b6d0032644affc4e41f06b9f29dd19c9c6129d",
+      "size": 4496,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/serverless-security/checklists/event_validation.yaml",
+      "sha256": "0d32647bb3189944dacd76fa6b9a9cdf706e69720d2854f1b65de87650cb8760",
+      "size": 1286,
+      "action": "unchanged"
+    },
+    {
+      "path": "skills/serverless-security/checklists/lambda_hardening.yaml",
+      "sha256": "5eb1bd16d863a9e3d4faed235364a8385ee6772a47010643dc36029561bfe146",
+      "size": 2085,
+      "action": "unchanged"
+    },
+    {
       "path": "skills/supply-chain-security/SKILL.md",
       "sha256": "6a236bc6d84911a3049565c28bca4c69f3c95ed2e7fa7c514bcf652d12b83b89",
       "size": 3779,
@@ -206,21 +434,21 @@
     },
     {
       "path": "skills/supply-chain-security/rules/typosquat_patterns.json",
-      "sha256": "005a090ff5a7b0005b0e2ae61a4ed9c3fef1cbf2e42228d7319caacb50b10d64",
-      "size": 6405,
+      "sha256": "8ae2e513090c066fc4ae8c095f0124d3f3371a611aebf9baa561923fc9280855",
+      "size": 8763,
       "action": "unchanged"
     },
     {
       "path": "skills/supply-chain-security/tests/corpus.json",
       "sha256": "67edc96230a868070b58303ee9f08801dcad2d497d66e7e2dad937e3da57f96a",
       "size": 3166,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/cve/code-relevant/cve_patterns.json",
-      "sha256": "0e7b0eb99d99f4206427e43bd280843a3cc1e60c37d3ef13879ce6ef4e9625a3",
-      "size": 8997,
-      "action": "added"
+      "sha256": "31395a1d4ed2c0f6610cacf46fb7485fe9ee2b12dab0c461fe26862974765e05",
+      "size": 11861,
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/manifest.json",
@@ -232,37 +460,37 @@
       "path": "vulnerabilities/supply-chain/dependency-confusion/patterns.json",
       "sha256": "2407aa64da2fe8c33fe6e9d0f1f878dcc51cbc44c4cac5a375b69c3747bde3a8",
       "size": 4696,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/crates.json",
-      "sha256": "faa23c3d2320c7f52c3e366a209e90df52c3a6c09f03d1bd87e2d80365d25d7d",
+      "sha256": "7c613406298b352c0529964071d83083f398bf512f3c9f5f6c0efb4396786373",
       "size": 5390,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/go.json",
-      "sha256": "abbfa2f8aa8503a61a82d1c4fb131e420f46cdb908e2f98baa963fd329f022e6",
-      "size": 5053,
-      "action": "added"
+      "sha256": "c0e0855c524e3f7e7ea81b03ecf1ecc4883b4a06d6eb66263f07d4c1cd8d2077",
+      "size": 6542,
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/npm.json",
-      "sha256": "a924439002ddc31b20dc6053b97f577db8eb1f0396d0e046b5d9319d5d1f7c6d",
-      "size": 2973,
+      "sha256": "80a6f00610a48b21fe3bed402771ffd491a50576c1096e9bbffaad006918f836",
+      "size": 6510,
       "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/pypi.json",
-      "sha256": "894619d4fdcf98138f8d2abf0f05855deca4a481371a64c745b0921eff4721af",
-      "size": 2699,
+      "sha256": "f8c9334dc7826536472d0b24f72f37e1d23a86798fe6ad6f56afe92e0135e682",
+      "size": 7699,
       "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/typosquat-db/known_typosquats.json",
       "sha256": "e21287a8bbb73ce8ba0b64496b0649bea8c7df7ca6ac6c28fed00395cbea015d",
       "size": 5483,
-      "action": "added"
+      "action": "unchanged"
     }
   ]
 }

@@ -1,7 +1,7 @@
 # Skills Library
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Skills](https://img.shields.io/badge/skills-7-blue)](#skill-catalogue)
+[![Skills](https://img.shields.io/badge/skills-20-blue)](#skill-catalogue)
 [![Platforms](https://img.shields.io/badge/platforms-win%20%7C%20mac%20%7C%20linux-green)](#platform-support)
 
 **Open-source security skills, rules, and vulnerability intelligence for AI-assisted coding tools.**
@@ -228,11 +228,24 @@ skills-library/
 │   │   └── checklists/
 │   │       ├── auth_patterns.yaml
 │   │       └── input_validation.yaml
-│   └── compliance-awareness/
-│       ├── SKILL.md
-│       └── frameworks/
-│           ├── owasp_mapping.yaml
-│           └── cwe_mapping.yaml
+│   ├── compliance-awareness/
+│   │   ├── SKILL.md
+│   │   └── frameworks/
+│   │       ├── owasp_mapping.yaml
+│   │       └── cwe_mapping.yaml
+│   ├── iac-security/                    # Terraform / CloudFormation / Pulumi
+│   ├── container-security/              # Dockerfile / K8s / Helm
+│   ├── frontend-security/               # XSS, CSP, CORS, SRI, trusted types
+│   ├── database-security/               # SQL injection, ORM safety, RLS
+│   ├── crypto-misuse/                   # weak ciphers, bad RNG, KDF
+│   ├── auth-security/                   # JWT, OAuth, sessions, MFA
+│   ├── serverless-security/             # Lambda / Cloud Functions IAM
+│   ├── mobile-security/                 # Android exported components, iOS ATS
+│   ├── ml-security/                     # prompt injection, model poisoning
+│   ├── protocol-security/               # TLS 1.2+, mTLS, HSTS, gRPC
+│   ├── error-handling-security/         # information disclosure
+│   ├── logging-security/                # secrets/PII in logs, log injection
+│   └── cors-security/                   # origin allowlists, preflight
 ├── vulnerabilities/                     # Supply chain vulnerability database
 │   ├── manifest.json                    # Versioned, checksummed, delta-updatable
 │   ├── supply-chain/
@@ -295,10 +308,22 @@ skills-library/
 │   ├── install-windows.md
 │   ├── admin-team-rollout.md
 │   └── air-gapped-install.md
+├── profiles/                            # Enterprise --profile mappings
+│   ├── financial-services.yaml
+│   ├── healthcare.yaml
+│   └── government.yaml
+├── compliance/                          # Framework control mappings
+│   ├── soc2_mapping.yaml
+│   ├── hipaa_mapping.yaml
+│   └── pci_dss_mapping.yaml
 ├── sdk/                                 # Programmatic access
-│   ├── go/
-│   ├── python/
-│   └── typescript/
+│   ├── go/                              # Re-exports of internal/skill
+│   ├── python/                          # skillslib Python package
+│   └── typescript/                      # @skills-library/skillslib npm pkg
+├── locales/                             # Translated SKILL.md (informational)
+│   ├── es/
+│   ├── fr/
+│   └── de/
 ├── manifest.json                        # Root manifest for remote updates
 └── .github/
     └── workflows/
@@ -411,8 +436,90 @@ signing procedure and key management policy.
 | `infrastructure-security` | hardening | high | yaml, hcl, dockerfile |
 | `api-security` | prevention | high | * |
 | `compliance-awareness` | compliance | medium | * |
+| `iac-security` | hardening | high | hcl, yaml, json |
+| `container-security` | hardening | high | dockerfile, yaml |
+| `frontend-security` | prevention | high | javascript, typescript, html |
+| `database-security` | prevention | high | sql, javascript, typescript, python, java, go |
+| `crypto-misuse` | prevention | high | * |
+| `auth-security` | prevention | critical | * |
+| `serverless-security` | hardening | high | python, javascript, typescript, java, yaml |
+| `mobile-security` | hardening | high | java, kotlin, swift, objective-c |
+| `ml-security` | prevention | high | python, jupyter |
+| `protocol-security` | hardening | high | * |
+| `error-handling-security` | prevention | medium | * |
+| `logging-security` | prevention | high | * |
+| `cors-security` | hardening | medium | javascript, typescript, python, go, java |
 
-Additional skills land in Phase 4. See [PHASES.md](./PHASES.md#phase-4-detection-rules--mcp-server) for the full Phase 4 list.
+## Enterprise profiles
+
+`skills-check init` and `skills-check regenerate` accept `--profile <name>`
+to pick a curated, compliance-aligned subset of skills:
+
+| Profile | Frameworks | Use case |
+|---|---|---|
+| `financial-services` | PCI-DSS v4.0, SOC 2 | Banks, fintech, payment processors |
+| `healthcare` | HIPAA Security Rule | Hospitals, telehealth, claims processing |
+| `government` | FedRAMP, NIST SP 800-53 Rev. 5 | Public-sector workloads |
+
+Profile definitions live under [`profiles/`](./profiles).
+
+## Compliance evidence
+
+```bash
+skills-check evidence --framework SOC2 --format markdown --out evidence.md
+skills-check evidence --framework HIPAA --format json
+skills-check evidence --framework PCI-DSS --format markdown
+```
+
+The command maps controls to installed skills using YAML files in
+[`compliance/`](./compliance) and emits a timestamped audit report suitable
+for handing to auditors.
+
+## Private repositories
+
+For air-gapped or internal deployments, point the CLI at your own signed
+bundle:
+
+```bash
+skills-check configure \
+  --source https://skills.internal.example.com \
+  --bearer-token-env SKILLS_TOKEN \
+  --trusted-key /etc/skills/orgkey.pem \
+  --profile financial-services
+```
+
+This writes `.skills-check.yaml` next to the repo. The updater accepts
+multiple trusted Ed25519 keys (`VerifyAny`) and authenticated HTTPS pulls.
+
+## SDKs
+
+Minimal Go, Python, and TypeScript SDKs live under [`sdk/`](./sdk).
+
+```go
+import skillslib "github.com/kennguy3n/skills-library/sdk/go"
+
+s, _ := skillslib.LoadSkill("skills/secret-detection/SKILL.md")
+fmt.Println(skillslib.Extract(s, skillslib.TierCompact))
+```
+
+```python
+import skillslib
+s = skillslib.load_skill("skills/secret-detection/SKILL.md")
+print(skillslib.extract(s, "compact"))
+```
+
+```ts
+import { loadSkill, extract } from "@skills-library/skillslib";
+const s = loadSkill("skills/secret-detection/SKILL.md");
+console.log(extract(s, "compact"));
+```
+
+## Localization
+
+Translated copies of the top 3 skills (Spanish, French, German) live under
+[`locales/`](./locales). Translations are informational — the canonical
+English file under `skills/<id>/SKILL.md` remains the source of truth for
+the validator and IDE config generators.
 
 ## Contributing
 

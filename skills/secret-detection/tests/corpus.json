@@ -21,6 +21,108 @@
       "expected_pattern": "GitHub Personal Access Token"
     },
     {
+      "id": "github-fine-grained-pat",
+      "text": "GITHUB_TOKEN=github_pat_11ABCDEFGHIJKLMNOPQRSTUVWX_abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ012345",
+      "expected": "detect",
+      "expected_pattern": "GitHub Fine-Grained PAT"
+    },
+    {
+      "id": "github-fine-grained-pat-truncated",
+      "text": "GITHUB_TOKEN=github_pat_short",
+      "expected": "ignore",
+      "reason": "below required length for the fine-grained PAT prefix"
+    },
+    {
+      "id": "anthropic-api-key",
+      "text": "ANTHROPIC_API_KEY=sk-ant-api03-AAAAbbbb_ccccDDDDeeeeFFFFgggg-HHHHiiiijjjjKKKK_LLLLmmmmNNNNoooo-PPPPqqqq-rrrrSSSS_TTTTuuuuVVVVwwww-xxxx",
+      "expected": "detect",
+      "expected_pattern": "Anthropic API Key"
+    },
+    {
+      "id": "anthropic-api-key-doc-snippet",
+      "text": "Use sk-ant-api03-XXXX as a placeholder",
+      "expected": "ignore",
+      "reason": "below required length; placeholder pattern"
+    },
+    {
+      "id": "databricks-token",
+      "text": "DATABRICKS_TOKEN=dapi1234567890abcdef1234567890abcdef0123",
+      "expected": "detect",
+      "expected_pattern": "Databricks Token"
+    },
+    {
+      "id": "datadog-32hex-with-hotword",
+      "text": "datadog_api_key = '0123456789abcdef0123456789abcdef'",
+      "expected": "detect",
+      "expected_pattern": "Datadog API Key"
+    },
+    {
+      "id": "datadog-32hex-no-hotword",
+      "text": "commit sha 0123456789abcdef0123456789abcdef",
+      "expected": "ignore",
+      "reason": "32-hex without hotword is almost always a commit/blob SHA"
+    },
+    {
+      "id": "twilio-sid",
+      "text": "TWILIO_SK = \u0053\u004babcdef1234567890abcdef1234567890",
+      "expected": "detect",
+      "expected_pattern": "Twilio API Key"
+    },
+    {
+      "id": "sendgrid-key",
+      "text": "SENDGRID_API_KEY=\u0053\u0047.abcdefghijklmnopqrstuv.abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG",
+      "expected": "detect",
+      "expected_pattern": "SendGrid API Key"
+    },
+    {
+      "id": "npm-token",
+      "text": "//registry.npmjs.org/:_authToken=npm_AbCdEf012345abcdef012345abcdef012345abcd",
+      "expected": "detect",
+      "expected_pattern": "npm Access Token"
+    },
+    {
+      "id": "pypi-upload-token",
+      "text": "twine upload -p pypi-AgEIcHlwaS5vcmcCJDA0YjIzNzY0LWQ5MzgtNDhmMC1iNmMzLTI4ZjJkOWY0ZTY4NgACKlszLCJlNjRmZmI5MS1lOGVjLTQwZWMtOTQ5Yi1mYTdmZmI",
+      "expected": "detect",
+      "expected_pattern": "PyPI Upload Token"
+    },
+    {
+      "id": "heroku-uuid-with-hotword",
+      "text": "HEROKU_API_KEY=12345678-90ab-cdef-1234-567890abcdef",
+      "expected": "detect",
+      "expected_pattern": "Heroku API Key"
+    },
+    {
+      "id": "uuid-without-heroku-hotword",
+      "text": "session_id = '12345678-90ab-cdef-1234-567890abcdef'",
+      "expected": "ignore",
+      "reason": "UUIDs are everywhere; require hotword"
+    },
+    {
+      "id": "digitalocean-pat",
+      "text": "DO_TOKEN=\u0064\u006fp_v1_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      "expected": "detect",
+      "expected_pattern": "DigitalOcean Personal Access Token"
+    },
+    {
+      "id": "vault-token",
+      "text": "VAULT_TOKEN=hvs.ABCDEFGHIJKLMNOP_qrstuvwx",
+      "expected": "detect",
+      "expected_pattern": "HashiCorp Vault Token"
+    },
+    {
+      "id": "supabase-service-key",
+      "text": "SUPABASE_SERVICE_ROLE_KEY=\u0073\u0062p_0123456789abcdef0123456789abcdef01234567",
+      "expected": "detect",
+      "expected_pattern": "Supabase Service Key"
+    },
+    {
+      "id": "linear-api-key",
+      "text": "LINEAR_API_KEY=lin_api_0123456789abcdefABCDEF0123456789abcdefABCD",
+      "expected": "detect",
+      "expected_pattern": "Linear API Key"
+    },
+    {
       "id": "private-key-block",
       "text": "-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEA...\n-----END RSA PRIVATE KEY-----",
       "expected": "detect",
@@ -37,6 +139,18 @@
       "text": "api_key = \"YOUR_API_KEY_HERE\"",
       "expected": "ignore",
       "reason": "placeholder value"
+    },
+    {
+      "id": "git-commit-sha",
+      "text": "Cherry-picked from 9f3a7c2bde4f1e0a8c2d6b8e7f1234567",
+      "expected": "ignore",
+      "reason": "git commit SHAs share the 32-40 hex shape but are not secrets"
+    },
+    {
+      "id": "azure-client-secret-with-hotword",
+      "text": "AZURE_CLIENT_SECRET=Q~AbCdEf123456789-_abcdefghijklmnop",
+      "expected": "detect",
+      "expected_pattern": "Azure AD Client Secret"
     }
   ]
 }

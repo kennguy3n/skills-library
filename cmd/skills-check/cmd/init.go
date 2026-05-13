@@ -16,7 +16,7 @@ import (
 )
 
 func initCmd() *cobra.Command {
-	var libraryPath, tool, skillsList, budget, outDir string
+	var libraryPath, tool, skillsList, budget, outDir, profileName string
 	var noPrompt bool
 	c := &cobra.Command{
 		Use:   "init",
@@ -61,6 +61,16 @@ func initCmd() *cobra.Command {
 				}
 				all = filtered
 			}
+			if profileName != "" {
+				prof, err := compiler.LoadProfile(lib, profileName)
+				if err != nil {
+					return err
+				}
+				all = filterSkillsByProfile(all, prof)
+				if len(all) == 0 {
+					return fmt.Errorf("profile %q matched no skills", profileName)
+				}
+			}
 
 			ctx, err := compiler.LoadContext(lib)
 			if err != nil {
@@ -95,7 +105,28 @@ func initCmd() *cobra.Command {
 	c.Flags().StringVar(&budget, "budget", "", "tier override (minimal|compact|full)")
 	c.Flags().StringVar(&outDir, "out", "", "output directory (default: cwd)")
 	c.Flags().BoolVar(&noPrompt, "no-prompt", false, "skip the interactive prompt to set up scheduled updates")
+	c.Flags().StringVar(&profileName, "profile", "", "enterprise profile (e.g., financial-services|healthcare|government) — restricts the skill set")
 	return c
+}
+
+// filterSkillsByProfile selects only those skills whose ID appears in the
+// profile's skill list. If the profile has no skill list, the input is
+// returned unchanged.
+func filterSkillsByProfile(all []*skill.Skill, prof *compiler.Profile) []*skill.Skill {
+	if prof == nil || len(prof.Skills) == 0 {
+		return all
+	}
+	allowed := make(map[string]bool, len(prof.Skills))
+	for _, s := range prof.Skills {
+		allowed[s] = true
+	}
+	out := all[:0]
+	for _, s := range all {
+		if allowed[s.Frontmatter.ID] {
+			out = append(out, s)
+		}
+	}
+	return out
 }
 
 // maybeOfferScheduler asks the operator whether to install the background

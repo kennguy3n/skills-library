@@ -207,6 +207,10 @@ cmd/skills-check/
 │   ├── manifest.go            # skills-check manifest compute/verify/sign/delta
 │   ├── scheduler.go           # skills-check scheduler install/remove/status
 │   ├── selfupdate.go          # skills-check self-update (download + SHA-256 verify + atomic replace)
+│   ├── new.go                 # skills-check new <id> (Phase 5 scaffolder)
+│   ├── test.go                # skills-check test <id> (Phase 5 corpus runner)
+│   ├── evidence.go            # skills-check evidence --framework SOC2|HIPAA|PCI-DSS
+│   ├── configure.go           # skills-check configure (writes .skills-check.yaml)
 │   └── cmd_test.go            # integration tests for every subcommand
 └── internal/
     ├── token/                 # tiktoken-go counter + 1.3x Claude multiplier + budget enforcer
@@ -223,8 +227,9 @@ cmd/skills-check/
     │   ├── universal.go       # SECURITY-SKILLS.md formatter
     │   ├── packaging_test.go  # validates packaging/* manifests are well-formed
     │   └── rules_test.go      # walks rules/**/*.yml and asserts the Sigma schema
-    ├── manifest/              # manifest.json: load/save, SHA-256 checksum, Ed25519 sign/verify, delta, atomic write
-    ├── updater/               # Remote update engine: HTTP/dir/tarball sources, verify-before-replace, rollback
+    ├── manifest/              # manifest.json: load/save, SHA-256 checksum, Ed25519 sign/verify (incl. VerifyAny over multiple trusted keys), delta, atomic write
+    ├── updater/               # Remote update engine: HTTP / dir / tarball sources (HTTP supports bearer-token auth for private repos), verify-before-replace, rollback
+    ├── compiler/              # …also hosts profiles.go (LoadProfile, ListProfiles, FilterSkillsByProfile)
     └── scheduler/             # Cross-platform scheduled updates (launchd / systemd / Task Scheduler)
 
 cmd/skills-mcp/                # Model Context Protocol server
@@ -422,3 +427,50 @@ defended.
   fetching public release artifacts.
 - **CLI never collects telemetry, analytics, or usage data.** There is no opt-in
   toggle; the code that would do this does not exist.
+
+## Phase 5: Enterprise Layout
+
+Phase 5 adds three sibling directories at the repo root that the CLI loads on
+demand. None of them change the core SKILL.md schema or break Phase 1-4 layouts.
+
+```
+profiles/                 # --profile <name> mappings
+├── financial-services.yaml
+├── healthcare.yaml
+└── government.yaml
+
+compliance/               # framework → control → skill mappings
+├── soc2_mapping.yaml
+├── hipaa_mapping.yaml
+└── pci_dss_mapping.yaml
+
+sdk/                      # programmatic access
+├── go/                   # re-exports of internal/skill
+├── python/               # skillslib (pyproject.toml, PyYAML)
+└── typescript/           # @skills-library/skillslib (js-yaml, ESM)
+
+locales/                  # informational translations
+├── es/<skill>/SKILL.md
+├── fr/<skill>/SKILL.md
+└── de/<skill>/SKILL.md
+```
+
+- **Profiles** are pure YAML — they list the skill IDs to enable plus optional
+  control hints. `init` and `regenerate` filter the loaded skills via
+  `compiler.FilterSkillsByProfile`.
+- **Compliance mappings** are loaded by `skills-check evidence` and rendered
+  to either JSON (for audit pipelines) or Markdown (for human-readable
+  evidence reports).
+- **SDKs** are thin façades over the same SKILL.md schema. The Go SDK
+  imports `internal/skill` directly. The Python and TypeScript SDKs
+  reimplement the parser and validator independently so they have no Go
+  build dependency.
+- **Locales** are not auto-loaded by the validator. They are reference
+  material for human review; the canonical English file under
+  `skills/<id>/SKILL.md` remains the source of truth for tooling.
+- **`.skills-check.yaml`** is written by `skills-check configure`. It
+  configures private-repo deployments: alternate update source, bearer
+  token env var, additional trusted Ed25519 public keys, and selected
+  profile / skill set. `internal/manifest.VerifyAny` accepts a signature
+  valid under any of the trusted keys (embedded build-time key plus
+  paths loaded from this file).

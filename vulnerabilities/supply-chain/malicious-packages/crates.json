@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "ecosystem": "crates",
-  "last_updated": "2026-05-12T10:00:00Z",
+  "last_updated": "2026-05-13T00:00:00Z",
   "entries": [
     {
       "name": "rustdecimal",

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "last_updated": "2026-05-12",
+  "last_updated": "2026-05-13",
   "description": "Heuristics and corpora for detecting typosquats. The CLI computes Levenshtein distance against the top-1000 list per ecosystem, applies character substitution and homoglyph checks, and consults the known_typosquats corpus for fast hits.",
   "rules": [
     {
@@ -92,7 +92,17 @@
       "typescript", "eslint", "prettier", "babel", "jest", "mocha",
       "chalk", "commander", "yargs", "dotenv", "uuid", "moment",
       "react-dom", "react-native", "redux", "rxjs", "underscore",
-      "request", "node-fetch", "minimist", "debug", "ms", "tslib"
+      "request", "node-fetch", "minimist", "debug", "ms", "tslib",
+      "vite", "rollup", "esbuild", "swc", "turbo",
+      "vitest", "playwright", "cypress", "puppeteer",
+      "axios-retry", "got", "undici", "ws", "socket.io",
+      "fastify", "koa", "hapi", "nestjs",
+      "sequelize", "prisma", "mongoose", "knex",
+      "zod", "yup", "joi", "ajv", "luxon", "date-fns",
+      "ramda", "immer", "immutable",
+      "@types/node", "@types/react", "@babel/core",
+      "cross-env", "rimraf", "glob", "semver", "husky",
+      "styled-components", "tailwindcss", "postcss", "autoprefixer"
     ],
     "pypi": [
       "requests", "urllib3", "numpy", "pandas", "django", "flask",
@@ -100,12 +110,26 @@
       "setuptools", "pip", "wheel", "pyyaml", "cryptography",
       "pytest", "sqlalchemy", "celery", "click", "fastapi",
       "uvicorn", "pydantic", "httpx", "aiohttp", "beautifulsoup4",
-      "lxml", "pillow", "redis", "psutil"
+      "lxml", "pillow", "redis", "psutil",
+      "jinja2", "werkzeug", "itsdangerous", "markupsafe",
+      "openai", "anthropic", "langchain", "transformers", "huggingface-hub",
+      "scikit-learn", "xgboost", "lightgbm", "polars", "pyarrow",
+      "protobuf", "grpcio", "twisted",
+      "colorama", "tqdm", "rich", "typer", "loguru",
+      "requests-oauthlib", "oauthlib", "pyjwt", "passlib", "bcrypt",
+      "alembic", "motor", "pymongo", "psycopg2", "psycopg2-binary",
+      "black", "flake8", "ruff", "mypy", "pre-commit"
     ],
     "crates": [
       "serde", "tokio", "clap", "anyhow", "reqwest", "log",
       "syn", "quote", "rand", "regex", "futures", "thiserror",
-      "tracing", "uuid", "chrono", "hyper", "axum", "actix-web"
+      "tracing", "uuid", "chrono", "hyper", "axum", "actix-web",
+      "rocket", "warp", "tonic", "prost", "diesel", "sqlx",
+      "sea-orm", "polars", "arrow", "once_cell", "lazy_static",
+      "parking_lot", "crossbeam", "rayon", "bytes", "itertools",
+      "smallvec", "hashbrown", "toml", "serde_json", "serde_yaml",
+      "bincode", "rmp-serde", "ring", "rustls", "openssl", "sha2",
+      "hex", "base64", "flate2", "zstd", "image", "tempfile"
     ],
     "go": [
       "github.com/spf13/cobra",
@@ -118,7 +142,35 @@
       "google.golang.org/grpc",
       "github.com/pkg/errors",
       "github.com/aws/aws-sdk-go",
-      "github.com/prometheus/client_golang"
+      "github.com/prometheus/client_golang",
+      "github.com/aws/aws-sdk-go-v2",
+      "github.com/go-sql-driver/mysql",
+      "github.com/lib/pq",
+      "github.com/jackc/pgx",
+      "github.com/jmoiron/sqlx",
+      "github.com/redis/go-redis",
+      "github.com/elastic/go-elasticsearch",
+      "github.com/google/uuid",
+      "github.com/golang-jwt/jwt",
+      "github.com/gorilla/mux",
+      "github.com/gorilla/websocket",
+      "github.com/labstack/echo",
+      "github.com/valyala/fasthttp",
+      "github.com/uber-go/zap",
+      "go.uber.org/zap",
+      "k8s.io/client-go",
+      "k8s.io/api",
+      "k8s.io/apimachinery",
+      "sigs.k8s.io/controller-runtime",
+      "github.com/kubernetes-sigs/yaml",
+      "github.com/hashicorp/terraform-plugin-sdk",
+      "github.com/hashicorp/vault/api",
+      "github.com/hashicorp/consul/api",
+      "github.com/grpc-ecosystem/grpc-gateway",
+      "github.com/pkg/sftp",
+      "golang.org/x/crypto",
+      "golang.org/x/net",
+      "github.com/etcd-io/etcd"
     ]
   },
   "known_typosquats": [
