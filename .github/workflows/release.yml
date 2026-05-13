@@ -51,6 +51,8 @@ jobs:
           GOARCH: ${{ matrix.goarch }}
           CGO_ENABLED: "0"
           SOURCE_DATE_EPOCH: "0"
+          SKILLS_LIBRARY_PUBKEY_B64: ${{ secrets.SKILLS_LIBRARY_PUBKEY_B64 }}
+          SKILLS_LIBRARY_PUBKEY_ID: ${{ secrets.SKILLS_LIBRARY_PUBKEY_ID }}
         shell: bash
         run: |
           set -euo pipefail
