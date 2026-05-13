@@ -101,10 +101,10 @@ Typical workflows:
 `,
 		RunE: func(c *cobra.Command, args []string) error {
 			cfg, _, err := LoadConfig(dir)
-			if err != nil {
+			if err != nil && !clearAll {
 				return err
 			}
-			if clearAll {
+			if clearAll || cfg == nil {
 				cfg = &SkillsCheckConfig{SchemaVersion: "1.0"}
 			}
 			if cfg.SchemaVersion == "" {
