@@ -150,6 +150,63 @@ controls:
 	}
 }
 
+// TestValidateReportsMalformedComplianceYAML verifies that a YAML syntax
+// error in compliance/*.yaml is surfaced by `skills-check validate`
+// instead of being silently dropped. validateRuleFiles only walks
+// skills/, so without this check a broken compliance mapping would pass
+// `validate` and crash later inside the evidence command at YAML load
+// time. Regression test for the silent-`continue` bug in
+// collectComplianceSkillRefs.
+func TestValidateReportsMalformedComplianceYAML(t *testing.T) {
+	tmp := buildMinimalLibrary(t)
+
+	// Intentional YAML syntax error: unbalanced bracket inside the
+	// skills list. yaml.Unmarshal will return an error which previously
+	// was discarded.
+	broken := []byte("controls:\n  - id: \"CTRL-1\"\n    skills: [api-security,\n")
+	brokenPath := filepath.Join(tmp, "compliance", "broken_mapping.yaml")
+	if err := os.WriteFile(brokenPath, broken, 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	_, stderr, err := executeRoot(t, "validate", "--path", tmp)
+	if err == nil {
+		t.Fatalf("expected validate to fail on malformed compliance YAML; stderr:%s", stderr)
+	}
+	if !strings.Contains(stderr, "broken_mapping.yaml") {
+		t.Errorf("expected stderr to name the broken file, got:\n%s", stderr)
+	}
+	if !strings.Contains(stderr, "invalid YAML") {
+		t.Errorf("expected 'invalid YAML' in stderr, got:\n%s", stderr)
+	}
+}
+
+// TestValidateReportsMalformedProfileYAML verifies the same invariant
+// for profiles/*.yaml. validateRuleFiles only walks skills/, so a
+// broken profile would otherwise pass `validate` and crash later inside
+// the init / regenerate commands at profile-load time. Regression test
+// for the silent-`continue` bug in collectProfileSkillRefs.
+func TestValidateReportsMalformedProfileYAML(t *testing.T) {
+	tmp := buildMinimalLibrary(t)
+
+	broken := []byte("name: \"broken-profile\"\nskills:\n  - api-security\n  - [unbalanced\n")
+	brokenPath := filepath.Join(tmp, "profiles", "broken-profile.yaml")
+	if err := os.WriteFile(brokenPath, broken, 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	_, stderr, err := executeRoot(t, "validate", "--path", tmp)
+	if err == nil {
+		t.Fatalf("expected validate to fail on malformed profile YAML; stderr:%s", stderr)
+	}
+	if !strings.Contains(stderr, "broken-profile.yaml") {
+		t.Errorf("expected stderr to name the broken file, got:\n%s", stderr)
+	}
+	if !strings.Contains(stderr, "invalid YAML") {
+		t.Errorf("expected 'invalid YAML' in stderr, got:\n%s", stderr)
+	}
+}
+
 // TestValidateAcceptsAllCurrentSkillReferences is the positive-path test:
 // the real repository's compliance and profile YAMLs reference only skills
 // that exist. This guards against future regressions where a new mapping

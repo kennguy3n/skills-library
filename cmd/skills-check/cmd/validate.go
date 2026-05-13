@@ -173,7 +173,7 @@ func validateSkillReferences(root string, knownIDs map[string]bool, problems *[]
 	}
 
 	compDir := filepath.Join(root, "compliance")
-	if refs, err := collectComplianceSkillRefs(compDir); err != nil {
+	if refs, err := collectComplianceSkillRefs(compDir, problems); err != nil {
 		return err
 	} else {
 		for path, controlRefs := range refs {
@@ -182,7 +182,7 @@ func validateSkillReferences(root string, knownIDs map[string]bool, problems *[]
 	}
 
 	profDir := filepath.Join(root, "profiles")
-	profRefs, err := collectProfileSkillRefs(profDir)
+	profRefs, err := collectProfileSkillRefs(profDir, problems)
 	if err != nil {
 		return err
 	}
@@ -222,7 +222,12 @@ type skillRef struct {
 
 // collectComplianceSkillRefs walks compliance/<framework>_mapping.yaml files
 // and returns, per file, the skill IDs referenced under each control.
-func collectComplianceSkillRefs(dir string) (map[string][]skillRef, error) {
+//
+// YAML parse errors are appended to `problems` rather than silently dropped:
+// validateRuleFiles only walks skills/, so compliance/ syntax errors would
+// otherwise pass `skills-check validate` and crash later in the evidence
+// command at YAML load time.
+func collectComplianceSkillRefs(dir string, problems *[]string) (map[string][]skillRef, error) {
 	out := make(map[string][]skillRef)
 	entries, err := os.ReadDir(dir)
 	if err != nil {
@@ -251,7 +256,8 @@ func collectComplianceSkillRefs(dir string) (map[string][]skillRef, error) {
 			} `yaml:"controls"`
 		}
 		if err := yaml.Unmarshal(data, &mapping); err != nil {
-			continue // syntactic problems are reported by validateRuleFiles
+			*problems = append(*problems, fmt.Sprintf("%s: invalid YAML: %v", path, err))
+			continue
 		}
 		refs := make([]skillRef, 0)
 		for _, ctrl := range mapping.Controls {
@@ -287,7 +293,12 @@ type profileSkillRefs struct {
 // the skill IDs referenced in both the top-level `skills:` list and the
 // per-control `skills:` lists, preserving the distinction so callers can
 // enforce the per-control ⊆ top-level invariant.
-func collectProfileSkillRefs(dir string) (map[string]profileSkillRefs, error) {
+//
+// YAML parse errors are appended to `problems` rather than silently dropped:
+// validateRuleFiles only walks skills/, so profiles/ syntax errors would
+// otherwise pass `skills-check validate` and crash later in the init /
+// regenerate commands at profile-load time.
+func collectProfileSkillRefs(dir string, problems *[]string) (map[string]profileSkillRefs, error) {
 	out := make(map[string]profileSkillRefs)
 	entries, err := os.ReadDir(dir)
 	if err != nil {
@@ -318,6 +329,7 @@ func collectProfileSkillRefs(dir string) (map[string]profileSkillRefs, error) {
 			} `yaml:"controls"`
 		}
 		if err := yaml.Unmarshal(data, &prof); err != nil {
+			*problems = append(*problems, fmt.Sprintf("%s: invalid YAML: %v", path, err))
 			continue
 		}
 		psr := profileSkillRefs{topLevel: map[string]bool{}}
