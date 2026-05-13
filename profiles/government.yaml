@@ -26,6 +26,7 @@ skills:
   - mobile-security
   - ml-security
   - compliance-awareness
+  - iam-best-practices
 controls:
   - control_id: "AC-2"
     framework: "NIST SP 800-53 Rev. 5"

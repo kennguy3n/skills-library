@@ -87,6 +87,69 @@ controls:
 	}
 }
 
+// TestValidateRejectsPerControlSkillMissingFromProfileTopLevel verifies
+// that the validator catches the profile-internal inconsistency where a
+// per-control `skills:` list names a skill ID that is NOT in the
+// profile's top-level `skills:` list. filterSkillsByProfile (init.go:115)
+// uses ONLY the top-level list to filter the generated IDE config, so a
+// per-control reference that is missing from the top-level list would be
+// silently dropped — the profile would claim to cover a control while
+// `init --profile <name>` produces a config that excludes the required
+// skill.
+func TestValidateRejectsPerControlSkillMissingFromProfileTopLevel(t *testing.T) {
+	tmp := buildMinimalLibrary(t)
+
+	// Copy a second real skill so the per-control reference is to a
+	// known-good skill ID (this isolates the per-control ⊆ top-level
+	// check from the dangling-ID check).
+	root := repoRoot(t)
+	srcSkill := filepath.Join(root, "skills", "auth-security")
+	dstSkill := filepath.Join(tmp, "skills", "auth-security")
+	if err := copyDir(srcSkill, dstSkill); err != nil {
+		t.Fatal(err)
+	}
+
+	// auth-security IS a real skill, but the profile does NOT include
+	// it in the top-level skills list — only api-security is. The
+	// per-control list references auth-security, so filterSkillsByProfile
+	// would silently drop it from the generated IDE config.
+	profile := []byte(`schema_version: "1.0"
+name: "inconsistent-profile"
+description: "x"
+last_updated: "2026-05-13"
+skills:
+  - api-security
+controls:
+  - control_id: "CTRL-MISSING"
+    framework: "TEST"
+    skills: ["api-security", "auth-security"]
+`)
+	if err := os.WriteFile(filepath.Join(tmp, "profiles", "inconsistent.yaml"), profile, 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	_, stderr, err := executeRoot(t, "validate", "--path", tmp)
+	if err == nil {
+		t.Fatalf("expected validate to fail on per-control skill missing from top-level; stderr:%s", stderr)
+	}
+	if !strings.Contains(stderr, "auth-security") {
+		t.Errorf("expected stderr to name the per-control skill ID, got:\n%s", stderr)
+	}
+	if !strings.Contains(stderr, "missing from the profile's top-level skills list") {
+		t.Errorf("expected stderr to explain the top-level mismatch, got:\n%s", stderr)
+	}
+	if !strings.Contains(stderr, "control CTRL-MISSING") {
+		t.Errorf("expected stderr to label the offending control, got:\n%s", stderr)
+	}
+	// api-security IS in the top-level list, so it should NOT be flagged
+	// even though it also appears in the per-control list.
+	if strings.Contains(stderr, "api-security") &&
+		strings.Contains(stderr, "missing from the profile's top-level skills list") &&
+		!strings.Contains(stderr, "auth-security") {
+		t.Errorf("api-security is in the top-level list; should not be flagged. stderr:\n%s", stderr)
+	}
+}
+
 // TestValidateAcceptsAllCurrentSkillReferences is the positive-path test:
 // the real repository's compliance and profile YAMLs reference only skills
 // that exist. This guards against future regressions where a new mapping

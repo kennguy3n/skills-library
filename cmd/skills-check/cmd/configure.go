@@ -176,7 +176,13 @@ Typical workflows:
 			); err != nil {
 				return err
 			}
-			if strings.HasPrefix(cfg.Source, "http://") {
+			// Warn only on the http:// + no-token path. If a token is
+			// attached and ValidateSourceWithToken accepted it (because
+			// --insecure-allow-http-token opt-in is set), the operator has
+			// explicitly accepted the risk — emitting "no bearer token
+			// attached" in that case would be factually wrong and
+			// misleading.
+			if strings.HasPrefix(cfg.Source, "http://") && cfg.BearerToken == "" && cfg.BearerTokenEnv == "" {
 				fmt.Fprintf(c.ErrOrStderr(),
 					"warning: source %q uses plaintext http:// "+
 						"(no bearer token attached; use https:// for confidentiality)\n",

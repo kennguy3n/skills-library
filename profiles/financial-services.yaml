@@ -23,6 +23,7 @@ skills:
   - iac-security
   - serverless-security
   - compliance-awareness
+  - iam-best-practices
 controls:
   - control_id: "PCI-DSS 3.5.1"
     framework: "PCI-DSS v4.0"

@@ -253,6 +253,57 @@ func TestConfigureRejectsHTTPSourceWithBearerToken(t *testing.T) {
 		}
 	})
 
+	t.Run("http+token+opt-in does NOT emit the no-token-attached warning", func(t *testing.T) {
+		// When the operator explicitly opts in to http+token via
+		// --insecure-allow-http-token, the warning that claims "no
+		// bearer token attached" would be factually wrong — the token IS
+		// attached. Verify the warning is suppressed on this path so
+		// stderr stays honest.
+		tmp := t.TempDir()
+		_, stderr, err := executeRoot(t,
+			"configure",
+			"--dir", tmp,
+			"--source", "http://internal.corp.example.com/skills",
+			"--bearer-token-env", "MY_TOKEN",
+			"--insecure-allow-http-token",
+		)
+		if err != nil {
+			t.Fatalf("http+token+opt-in should succeed, got: %v", err)
+		}
+		if strings.Contains(stderr, "no bearer token attached") {
+			t.Errorf("misleading no-token warning fired on http+token+opt-in path; stderr:\n%s", stderr)
+		}
+		if strings.Contains(stderr, "plaintext http://") {
+			t.Errorf("plaintext-http warning fired on http+token+opt-in path; stderr:\n%s", stderr)
+		}
+	})
+
+	t.Run("http+token-on-disk+opt-in via existing config does NOT emit warning", func(t *testing.T) {
+		// Same invariant when the http+token+opt-in config is loaded
+		// from disk and the operator runs `configure` to update an
+		// unrelated field (e.g. --profile).
+		tmp := t.TempDir()
+		path := filepath.Join(tmp, ".skills-check.yaml")
+		body := "schema_version: \"1.0\"\n" +
+			"source: http://internal.corp.example.com/skills\n" +
+			"bearer_token_env: MY_TOKEN\n" +
+			"insecure_allow_http_token: true\n"
+		if err := os.WriteFile(path, []byte(body), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		_, stderr, err := executeRoot(t,
+			"configure",
+			"--dir", tmp,
+			"--profile", "financial-services",
+		)
+		if err != nil {
+			t.Fatalf("updating an opted-in config should succeed, got: %v", err)
+		}
+		if strings.Contains(stderr, "no bearer token attached") {
+			t.Errorf("misleading no-token warning fired when reloading opted-in config; stderr:\n%s", stderr)
+		}
+	})
+
 	t.Run("file:// source bypasses the check", func(t *testing.T) {
 		tmp := t.TempDir()
 		_, _, err := executeRoot(t,

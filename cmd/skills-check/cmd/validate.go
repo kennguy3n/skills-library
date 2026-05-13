@@ -182,11 +182,31 @@ func validateSkillReferences(root string, knownIDs map[string]bool, problems *[]
 	}
 
 	profDir := filepath.Join(root, "profiles")
-	if refs, err := collectProfileSkillRefs(profDir); err != nil {
+	profRefs, err := collectProfileSkillRefs(profDir)
+	if err != nil {
 		return err
-	} else {
-		for path, profRefs := range refs {
-			check(path, profRefs)
+	}
+	for path, pr := range profRefs {
+		check(path, pr.topLevelRefs)
+		check(path, pr.perControl)
+		// Per-control ⊆ top-level: every skill ID referenced by a
+		// per-control list must also appear in the profile's top-level
+		// skills list. filterSkillsByProfile (init.go:115) uses only the
+		// top-level list to filter generated IDE configs, so a per-control
+		// skill that is missing from the top-level list would be silently
+		// excluded from `skills-check init --profile <name>` output even
+		// though the profile declares it covers the relevant controls.
+		for _, r := range pr.perControl {
+			if r.skillID == "" {
+				continue
+			}
+			if !pr.topLevel[r.skillID] {
+				*problems = append(*problems, fmt.Sprintf(
+					"%s: %s references skill %q which is missing from the profile's top-level skills list "+
+						"(filterSkillsByProfile uses only the top-level list, so `init --profile` would silently exclude this skill from generated IDE configs)",
+					path, r.where, r.skillID,
+				))
+			}
 		}
 	}
 
@@ -247,11 +267,28 @@ func collectComplianceSkillRefs(dir string) (map[string][]skillRef, error) {
 	return out, nil
 }
 
+// profileSkillRefs captures both the top-level skill IDs declared by a
+// profile and the per-control skill IDs referenced by its controls. The
+// distinction matters because filterSkillsByProfile uses only the
+// top-level list to filter generated IDE configs (init.go:115).
+type profileSkillRefs struct {
+	// topLevel is the set of skill IDs declared in the profile's
+	// top-level `skills:` list.
+	topLevel map[string]bool
+	// topLevelRefs is the same data as `topLevel` but in parallel-list
+	// form, used for the dangling-skill-ID check.
+	topLevelRefs []skillRef
+	// perControl is the list of skill IDs referenced by each control,
+	// with the control ID stored in `where`.
+	perControl []skillRef
+}
+
 // collectProfileSkillRefs walks profiles/*.yaml files and returns, per file,
 // the skill IDs referenced in both the top-level `skills:` list and the
-// per-control `skills:` lists.
-func collectProfileSkillRefs(dir string) (map[string][]skillRef, error) {
-	out := make(map[string][]skillRef)
+// per-control `skills:` lists, preserving the distinction so callers can
+// enforce the per-control ⊆ top-level invariant.
+func collectProfileSkillRefs(dir string) (map[string]profileSkillRefs, error) {
+	out := make(map[string]profileSkillRefs)
 	entries, err := os.ReadDir(dir)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -283,22 +320,26 @@ func collectProfileSkillRefs(dir string) (map[string][]skillRef, error) {
 		if err := yaml.Unmarshal(data, &prof); err != nil {
 			continue
 		}
-		refs := make([]skillRef, 0)
+		psr := profileSkillRefs{topLevel: map[string]bool{}}
 		for _, sid := range prof.Skills {
-			refs = append(refs, skillRef{
-				skillID: strings.TrimSpace(sid),
+			sid = strings.TrimSpace(sid)
+			if sid != "" {
+				psr.topLevel[sid] = true
+			}
+			psr.topLevelRefs = append(psr.topLevelRefs, skillRef{
+				skillID: sid,
 				where:   "top-level skills list",
 			})
 		}
 		for _, ctrl := range prof.Controls {
 			for _, sid := range ctrl.Skills {
-				refs = append(refs, skillRef{
+				psr.perControl = append(psr.perControl, skillRef{
 					skillID: strings.TrimSpace(sid),
 					where:   fmt.Sprintf("control %s", ctrl.ControlID),
 				})
 			}
 		}
-		out[path] = refs
+		out[path] = psr
 	}
 	return out, nil
 }

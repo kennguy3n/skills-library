@@ -23,6 +23,7 @@ skills:
   - mobile-security
   - ml-security
   - compliance-awareness
+  - iam-best-practices
 controls:
   - control_id: "HIPAA 164.308(a)(3)"
     framework: "HIPAA Security Rule"
