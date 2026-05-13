@@ -190,6 +190,63 @@ func TestEvidenceCmdUnknownFramework(t *testing.T) {
 	}
 }
 
+// TestEvidenceCmdRejectsPathTraversalFramework is the regression for L2: a
+// caller passing path-traversal characters in --framework must be rejected
+// at flag-validation time, before the value is concatenated into a filepath.
+// Pre-fix, `--framework ../../etc/passwd` would compute
+// fwSlug=`../../etc/passwd` and try to read compliance/../../etc/passwd_mapping.yaml.
+func TestEvidenceCmdRejectsPathTraversalFramework(t *testing.T) {
+	root := repoRoot(t)
+	cases := []struct {
+		name      string
+		framework string
+	}{
+		{name: "parent traversal", framework: "../../etc/passwd"},
+		{name: "forward slash", framework: "soc2/extra"},
+		{name: "backslash", framework: `soc2\extra`},
+		{name: "double dot", framework: ".."},
+		{name: "leading dot", framework: ".soc2"},
+		{name: "embedded space", framework: "soc 2"},
+		{name: "null byte", framework: "soc2\x00extra"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			_, _, err := executeRoot(t,
+				"evidence",
+				"--library", root,
+				"--framework", tc.framework,
+				"--format", "json",
+			)
+			if err == nil {
+				t.Fatalf("expected error for --framework %q, got nil", tc.framework)
+			}
+			if !strings.Contains(err.Error(), "invalid") {
+				t.Errorf("expected error message to mention 'invalid' for %q, got: %v",
+					tc.framework, err)
+			}
+		})
+	}
+}
+
+// TestEvidenceCmdAcceptsValidFrameworkSlug confirms the slug validator
+// allows the canonical framework names (alphanumerics plus `-` and `_`).
+func TestEvidenceCmdAcceptsValidFrameworkSlug(t *testing.T) {
+	root := repoRoot(t)
+	for _, fw := range []string{"SOC2", "HIPAA", "PCI-DSS"} {
+		t.Run(fw, func(t *testing.T) {
+			_, _, err := executeRoot(t,
+				"evidence",
+				"--library", root,
+				"--framework", fw,
+				"--format", "json",
+			)
+			if err != nil {
+				t.Fatalf("expected %q to be accepted by the slug validator, got: %v", fw, err)
+			}
+		})
+	}
+}
+
 // TestEvidenceCmdUnmappedControlsPopulated verifies that controls whose
 // skills: list is empty are aggregated into UnmappedControls in the JSON
 // report and surfaced in the markdown summary + section. Regression for the

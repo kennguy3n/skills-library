@@ -52,3 +52,29 @@ def test_extract_rejects_unknown_tier():
     s = skillslib.load_skill(os.path.join(root, "skills", "secret-detection", "SKILL.md"))
     with pytest.raises(ValueError):
         s.extract("ginormous")
+
+
+def test_extract_merges_duplicate_heading_sections():
+    """Regression for L1: a SKILL.md with two `### ALWAYS` blocks must
+    surface bullets from BOTH blocks under the minimal tier. The previous
+    implementation silently overwrote the first block with the second,
+    losing bullets and disagreeing with the Go parser, which appends.
+    """
+    body = (
+        "## Rules\n\n"
+        "### ALWAYS\n\n"
+        "- first-always-bullet-marker\n\n"
+        "### NEVER\n\n"
+        "- only-never-bullet-marker\n\n"
+        "### ALWAYS\n\n"
+        "- second-always-bullet-marker\n"
+    )
+    s = skillslib.Skill(
+        path="/tmp/fake-skill",
+        frontmatter=skillslib.Frontmatter(),
+        body=body,
+    )
+    out = s.extract("minimal")
+    assert "first-always-bullet-marker" in out, out
+    assert "second-always-bullet-marker" in out, out
+    assert "only-never-bullet-marker" in out, out

@@ -4,7 +4,7 @@ import { dirname, join, resolve } from "node:path";
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-import { loadSkill, loadAll, extract, validate } from "../src/index.js";
+import { loadSkill, loadAll, extract, validate, Skill } from "../src/index.js";
 
 function repoRoot(): string {
   const here = dirname(fileURLToPath(import.meta.url));
@@ -54,5 +54,50 @@ describe("skillslib", () => {
   it("rejects unknown tier", () => {
     const s = loadSkill(join(root, "skills", "secret-detection", "SKILL.md"));
     assert.throws(() => extract(s, "ginormous" as never));
+  });
+
+  // Regression for L1: two `### ALWAYS` blocks in a single SKILL.md must
+  // surface bullets from BOTH blocks under the minimal tier. The previous
+  // splitSections silently overwrote the first block with the second,
+  // losing bullets and disagreeing with the Go parser, which appends.
+  it("merges duplicate ### headings instead of silently overwriting", () => {
+    const body = [
+      "## Rules",
+      "",
+      "### ALWAYS",
+      "",
+      "- first-always-bullet-marker",
+      "",
+      "### NEVER",
+      "",
+      "- only-never-bullet-marker",
+      "",
+      "### ALWAYS",
+      "",
+      "- second-always-bullet-marker",
+      "",
+    ].join("\n");
+    const s: Skill = {
+      path: "/tmp/fake-skill",
+      body,
+      frontmatter: {
+        id: "",
+        version: "",
+        title: "",
+        description: "",
+        category: "",
+        severity: "",
+        applies_to: [],
+        languages: [],
+        related_skills: [],
+        sources: [],
+        last_updated: "",
+        token_budget: { minimal: 0, compact: 0, full: 0 },
+      },
+    };
+    const out = extract(s, "minimal");
+    assert.ok(out.includes("first-always-bullet-marker"), out);
+    assert.ok(out.includes("second-always-bullet-marker"), out);
+    assert.ok(out.includes("only-never-bullet-marker"), out);
   });
 });

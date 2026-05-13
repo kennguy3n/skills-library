@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -14,6 +15,11 @@ import (
 
 	"github.com/kennguy3n/skills-library/internal/skill"
 )
+
+// frameworkSlugRegex restricts the --framework value to a simple slug so the
+// derived mapping path (compliance/<slug>_mapping.yaml) can never traverse
+// out of the compliance/ directory or pull in unintended files.
+var frameworkSlugRegex = regexp.MustCompile(`^[A-Za-z0-9_-]+$`)
 
 // ComplianceMapping is the shape of the per-framework mapping files under
 // compliance/<framework>_mapping.yaml.
@@ -82,6 +88,12 @@ versions, flags missing skills, and is suitable for handing to an auditor.
 		RunE: func(c *cobra.Command, args []string) error {
 			if framework == "" {
 				return fmt.Errorf("--framework is required (SOC2|HIPAA|PCI-DSS)")
+			}
+			if !frameworkSlugRegex.MatchString(framework) {
+				return fmt.Errorf(
+					"--framework %q is invalid: must match %s (no path separators or '..')",
+					framework, frameworkSlugRegex.String(),
+				)
 			}
 			fwSlug := strings.ToLower(framework)
 			fwSlug = strings.ReplaceAll(fwSlug, "-", "_")

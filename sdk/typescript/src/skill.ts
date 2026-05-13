@@ -138,6 +138,15 @@ function walk(dir: string, visit: (file: string) => void): void {
 
 const HEADING_RE = /^(#{2,3})\s+(.+?)\s*$/gm;
 
+// splitSections splits the markdown body into a { heading: content } map
+// keyed by the trimmed heading text. Both ## and ### are tracked so callers
+// can ask for either rule subsections (### ALWAYS) or top-level (## References).
+//
+// Duplicate headings are merged with a blank line between blocks instead of
+// being silently overwritten. This matches the Go parser, which appends
+// bullets across duplicate `### ALWAYS` / `### NEVER` subsections into the
+// same list, and ensures all three SDKs (Go, Python, TypeScript) agree on
+// what a malformed SKILL.md contains.
 function splitSections(body: string): Record<string, string> {
   const out: Record<string, string> = {};
   const matches: {
@@ -160,9 +169,17 @@ function splitSections(body: string): Record<string, string> {
     if (i + 1 < matches.length) {
       matches[i].end = matches[i + 1].matchStart;
     }
-    out[matches[i].heading] = body
+    const heading = matches[i].heading;
+    const content = body
       .slice(matches[i].contentStart, matches[i].end)
       .trim();
+    if (Object.prototype.hasOwnProperty.call(out, heading)) {
+      if (content) {
+        out[heading] = out[heading] + "\n\n" + content;
+      }
+    } else {
+      out[heading] = content;
+    }
   }
   return out;
 }

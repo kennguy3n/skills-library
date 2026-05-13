@@ -154,6 +154,12 @@ def _split_sections(body: str) -> dict:
     """Split the markdown body into a {heading: content} dictionary keyed by
     the trimmed heading text. Both ## and ### are tracked so callers can ask
     for either rule subsections (### ALWAYS) or top-level (## References).
+
+    Duplicate headings are merged with a blank line between blocks instead of
+    being silently overwritten. This matches the Go parser, which appends
+    bullets across duplicate `### ALWAYS` / `### NEVER` subsections into the
+    same list, and ensures all three SDKs (Go, Python, TypeScript) agree on
+    what a malformed SKILL.md contains.
     """
     sections: dict = {}
     matches = list(_HEADING_RE.finditer(body))
@@ -161,5 +167,10 @@ def _split_sections(body: str) -> dict:
         heading = m.group(2).strip()
         start = m.end()
         end = matches[i + 1].start() if i + 1 < len(matches) else len(body)
-        sections[heading] = body[start:end].strip()
+        content = body[start:end].strip()
+        if heading in sections:
+            if content:
+                sections[heading] = sections[heading] + "\n\n" + content
+        else:
+            sections[heading] = content
     return sections
