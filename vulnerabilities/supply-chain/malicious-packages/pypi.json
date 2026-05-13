@@ -5,7 +5,11 @@
   "entries": [
     {
       "name": "ctx",
-      "versions_affected": ["0.1.2", "0.2.2", "0.2.6"],
+      "versions_affected": [
+        "0.1.2",
+        "0.2.2",
+        "0.2.6"
+      ],
       "type": "malicious_code",
       "severity": "critical",
       "discovered": "2022-05-24",
@@ -14,12 +18,16 @@
         "https://medium.com/@m.s.miettinen/ctx-pypi-hijack-on-may-2022-c4a86a8acec5",
         "https://www.zdnet.com/article/malicious-pypi-packages-caught-stealing-developer-data-and-sending-to-public-endpoints/"
       ],
-      "indicators": ["sends AWS credentials to remote endpoint"],
+      "indicators": [
+        "sends AWS credentials to remote endpoint"
+      ],
       "attack_type": "maintainer_compromise"
     },
     {
       "name": "phpass",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "malicious_code",
       "severity": "critical",
       "discovered": "2022-05-24",
@@ -27,12 +35,16 @@
       "references": [
         "https://medium.com/@m.s.miettinen/ctx-pypi-hijack-on-may-2022-c4a86a8acec5"
       ],
-      "indicators": ["AWS credential exfiltration"],
+      "indicators": [
+        "AWS credential exfiltration"
+      ],
       "attack_type": "typosquat"
     },
     {
       "name": "colorsama",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "malicious_code",
       "severity": "critical",
       "discovered": "2022-08-23",
@@ -40,12 +52,16 @@
       "references": [
         "https://blog.checkpoint.com/2022/08/23/check-point-research-detects-12-malicious-python-packages-in-pypi/"
       ],
-      "indicators": ["typosquat of colorama"],
+      "indicators": [
+        "typosquat of colorama"
+      ],
       "attack_type": "typosquat"
     },
     {
       "name": "djanga",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "malicious_code",
       "severity": "critical",
       "discovered": "2022-11-15",
@@ -53,12 +69,16 @@
       "references": [
         "https://blog.phylum.io/malicious-pypi-package/"
       ],
-      "indicators": ["typosquat of django"],
+      "indicators": [
+        "typosquat of django"
+      ],
       "attack_type": "typosquat"
     },
     {
       "name": "pip-helper",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "malicious_code",
       "severity": "critical",
       "discovered": "2023-02-10",
@@ -66,12 +86,17 @@
       "references": [
         "https://blog.phylum.io/typosquats-and-dependency-confusion-attacks/"
       ],
-      "indicators": ["setup.py exfiltration"],
+      "indicators": [
+        "setup.py exfiltration"
+      ],
       "attack_type": "dependency_confusion"
     },
     {
       "name": "ultralytics",
-      "versions_affected": ["8.3.41", "8.3.42"],
+      "versions_affected": [
+        "8.3.41",
+        "8.3.42"
+      ],
       "type": "malicious_code",
       "severity": "critical",
       "discovered": "2024-12-04",
@@ -80,12 +105,17 @@
         "https://blog.yossarian.net/2024/12/06/zizmor-ultralytics-injection",
         "https://github.com/ultralytics/ultralytics/security/advisories/GHSA-wfq8-x6r6-rg6q"
       ],
-      "indicators": ["XMRig miner dropped on install", "compromised GitHub Actions release pipeline"],
+      "indicators": [
+        "XMRig miner dropped on install",
+        "compromised GitHub Actions release pipeline"
+      ],
       "attack_type": "build_pipeline_compromise"
     },
     {
       "name": "torchtriton",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "malicious_code",
       "severity": "critical",
       "discovered": "2022-12-30",
@@ -94,12 +124,17 @@
         "https://pytorch.org/blog/compromised-nightly-dependency/",
         "https://nvd.nist.gov/vuln/detail/CVE-2022-45907"
       ],
-      "indicators": ["`triton` binary that posts ~/.ssh to h4ck.cfd", "dependency-confusion on private index"],
+      "indicators": [
+        "`triton` binary that posts ~/.ssh to h4ck.cfd",
+        "dependency-confusion on private index"
+      ],
       "attack_type": "dependency_confusion"
     },
     {
       "name": "aiocpa",
-      "versions_affected": ["0.1.13"],
+      "versions_affected": [
+        "0.1.13"
+      ],
       "type": "malicious_code",
       "severity": "critical",
       "discovered": "2024-11-21",
@@ -107,12 +142,17 @@
       "references": [
         "https://blog.phylum.io/pypi-package-aiocpa-found-exfiltrating-data"
       ],
-      "indicators": ["obfuscated `__init__.py` payload", "crypto wallet exfiltration"],
+      "indicators": [
+        "obfuscated `__init__.py` payload",
+        "crypto wallet exfiltration"
+      ],
       "attack_type": "maintainer_compromise"
     },
     {
       "name": "request",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "typosquat",
       "severity": "high",
       "discovered": "2020-11-30",
@@ -121,12 +161,16 @@
         "https://snyk.io/advisor/python/request",
         "https://blog.sonatype.com/typosquatting-pypi"
       ],
-      "indicators": ["typosquat of requests"],
+      "indicators": [
+        "typosquat of requests"
+      ],
       "attack_type": "typosquat"
     },
     {
       "name": "python-requests",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "typosquat",
       "severity": "high",
       "discovered": "2020-11-30",
@@ -134,12 +178,16 @@
       "references": [
         "https://blog.sonatype.com/typosquatting-pypi"
       ],
-      "indicators": ["typosquat of requests"],
+      "indicators": [
+        "typosquat of requests"
+      ],
       "attack_type": "typosquat"
     },
     {
       "name": "requests3",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "typosquat",
       "severity": "medium",
       "discovered": "2018-09-25",
@@ -148,12 +196,16 @@
         "https://pypi.org/project/requests3/",
         "https://snyk.io/advisor/python/requests3"
       ],
-      "indicators": ["abandoned namesquat"],
+      "indicators": [
+        "abandoned namesquat"
+      ],
       "attack_type": "typosquat"
     },
     {
       "name": "colourama",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "typosquat",
       "severity": "critical",
       "discovered": "2018-12-04",
@@ -162,12 +214,17 @@
         "https://www.bleepingcomputer.com/news/security/malicious-python-libraries-target-windows-users/",
         "https://medium.com/@bertusk/cryptocurrency-clipboard-hijacker-discovered-in-pypi-repository-b66b8a534a8"
       ],
-      "indicators": ["clipboard hijacker", "replaces BTC/ETH addresses"],
+      "indicators": [
+        "clipboard hijacker",
+        "replaces BTC/ETH addresses"
+      ],
       "attack_type": "typosquat"
     },
     {
       "name": "python-colorama",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "typosquat",
       "severity": "high",
       "discovered": "2023-09-04",
@@ -175,7 +232,318 @@
       "references": [
         "https://www.welivesecurity.com/en/eset-research/malicious-package-pypi-impersonates-popular-colorama-library/"
       ],
-      "indicators": ["typosquat of colorama", "infostealer payload"],
+      "indicators": [
+        "typosquat of colorama",
+        "infostealer payload"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "ssh-decorator",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2018-05-09",
+      "description": "Early PyPI malware: a Python SSH-wrapper decorator that exfiltrated SSH connection credentials (host/user/key/password) to an attacker host. Among the first publicly documented PyPI supply-chain incidents.",
+      "references": [
+        "https://www.nbu.gov.sk/skcsirt-sa-20170909-pypi/",
+        "https://github.com/uetchy/awesome-malicious-packages"
+      ],
+      "indicators": [
+        "SSH credential exfil"
+      ],
+      "attack_type": "malicious_code"
+    },
+    {
+      "name": "diango",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2017-09-09",
+      "description": "Typosquat of django from the original SK-CSIRT 10-package PyPI malware discovery. PyPI mirrored package payloads to attacker host at install time.",
+      "references": [
+        "https://www.nbu.gov.sk/skcsirt-sa-20170909-pypi/",
+        "https://www.bleepingcomputer.com/news/security/ten-malicious-libraries-found-on-pypi-python-package-index/"
+      ],
+      "indicators": [
+        "SK-CSIRT 2017 wave"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "djago",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2017-09-09",
+      "description": "Another Django typosquat from the SK-CSIRT 2017 disclosure. Same payload as diango.",
+      "references": [
+        "https://www.nbu.gov.sk/skcsirt-sa-20170909-pypi/"
+      ],
+      "indicators": [
+        "SK-CSIRT 2017 wave"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "urllib",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2017-09-09",
+      "description": "Typosquat of urllib3 from the SK-CSIRT 2017 wave. PyPI removed the package shortly after disclosure.",
+      "references": [
+        "https://www.nbu.gov.sk/skcsirt-sa-20170909-pypi/",
+        "https://www.bleepingcomputer.com/news/security/ten-malicious-libraries-found-on-pypi-python-package-index/"
+      ],
+      "indicators": [
+        "SK-CSIRT 2017 wave"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "setup-tools",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2017-09-09",
+      "description": "Typosquat of setuptools from the SK-CSIRT 2017 wave. Same payload pattern as ssh-decorator.",
+      "references": [
+        "https://www.nbu.gov.sk/skcsirt-sa-20170909-pypi/"
+      ],
+      "indicators": [
+        "SK-CSIRT 2017 wave"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "python3-dateutil",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "critical",
+      "discovered": "2019-12-02",
+      "description": "Typosquat of python-dateutil that exfiltrated arbitrary files and SSH keys to an attacker server. Published alongside the jeIlyfish typosquat.",
+      "references": [
+        "https://snyk.io/blog/malicious-packages-found-to-be-typo-squatting-in-pypi/",
+        "https://github.com/dateutil/dateutil/issues/984"
+      ],
+      "indicators": [
+        "paired with jeIlyfish",
+        "SSH key exfil"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "jeIlyfish",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "critical",
+      "discovered": "2019-12-02",
+      "description": "Typosquat of jellyfish using a capital I in place of a lowercase l. Stole SSH keys and env vars; the second-stage payload was retrieved from a remote host on first import.",
+      "references": [
+        "https://snyk.io/blog/malicious-packages-found-to-be-typo-squatting-in-pypi/"
+      ],
+      "indicators": [
+        "homoglyph attack",
+        "SSH key exfil"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "cupy",
+      "versions_affected": [
+        "1.0.0"
+      ],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2020-07-23",
+      "description": "Homoglyph / case-variant typosquat of the legitimate CuPy CUDA Python package. Exfiltrated environment variables on import; targeted ML developers.",
+      "references": [
+        "https://blog.reversinglabs.com/blog/discovered-malicious-pypi-packages-targeting-popular-ml-frameworks"
+      ],
+      "indicators": [
+        "ML developer targeting"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "importlib_metadata",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2021-08-12",
+      "description": "Underscore variant of `importlib-metadata`. Member of a 2021 typosquat campaign that targeted high-traffic Python stdlib-adjacent packages.",
+      "references": [
+        "https://jfrog.com/blog/pypi-malware-attack-targets-python-developers/",
+        "https://snyk.io/blog/typosquat-attack-discovered-on-popular-pypi-package/"
+      ],
+      "indicators": [
+        "importlib campaign"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "httpslib",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2022-11-01",
+      "description": "Part of the W4SP Stealer campaign. Hundreds of related PyPI packages bundled a Python info-stealer that collected Discord tokens, browser cookies, and saved passwords, exfiltrating to anonymous file hosts.",
+      "references": [
+        "https://www.reversinglabs.com/blog/w4sp-stealer-discovered-in-multiple-pypi-packages",
+        "https://checkmarx.com/blog/wasp-attack-on-python-supply-chain/"
+      ],
+      "indicators": [
+        "W4SP Stealer",
+        "Discord token theft",
+        "browser cookie theft"
+      ],
+      "attack_type": "malicious_code"
+    },
+    {
+      "name": "libhttps",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2022-11-01",
+      "description": "Member of the W4SP Stealer family alongside httpslib and httpserver-python; identical info-stealer payload.",
+      "references": [
+        "https://www.reversinglabs.com/blog/w4sp-stealer-discovered-in-multiple-pypi-packages"
+      ],
+      "indicators": [
+        "W4SP Stealer"
+      ],
+      "attack_type": "malicious_code"
+    },
+    {
+      "name": "langchain-core-utils",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "critical",
+      "discovered": "2024-02-20",
+      "description": "Typosquat targeting the LangChain ecosystem to capitalize on the LLM-tooling boom. Carried an info-stealer that exfiltrated OpenAI API keys and other developer secrets from environment variables.",
+      "references": [
+        "https://blog.phylum.io/typosquatting-attack-targets-langchain-developers",
+        "https://socket.dev/blog/langchain-typosquat-malware"
+      ],
+      "indicators": [
+        "AI developer targeting",
+        "OPENAI_API_KEY theft"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "chatgpt-python",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2023-07-25",
+      "description": "Typosquat of `openai` and unofficial chatgpt clients. Exfiltrated environment variables and a list of installed Python packages to an attacker server.",
+      "references": [
+        "https://blog.phylum.io/malicious-pypi-packages-target-ai-developers",
+        "https://socket.dev/blog/chatgpt-pypi-malware"
+      ],
+      "indicators": [
+        "AI hype squatting"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "pycord-self",
+      "versions_affected": [
+        "2.7.0"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2024-03-20",
+      "description": "Backdoored Discord self-bot library. The 2.7.0 release added an obfuscated payload that posted Discord tokens, billing info, and machine fingerprints to an attacker webhook on import.",
+      "references": [
+        "https://blog.phylum.io/pycord-self-supply-chain-attack"
+      ],
+      "indicators": [
+        "Discord self-bot",
+        "billing exfil"
+      ],
+      "attack_type": "malicious_code"
+    },
+    {
+      "name": "huggingface-cli",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "ai_hallucination_squat",
+      "severity": "high",
+      "discovered": "2024-03-28",
+      "description": "Squatted on a name LLMs frequently hallucinate when asked for the Hugging Face CLI install command (the real one is `huggingface_hub`). Once-popular typosquat name attackers can use as a slop-squat landing page.",
+      "references": [
+        "https://blog.lasso.security/ai-package-hallucinations/",
+        "https://socket.dev/blog/huggingface-cli-typosquat"
+      ],
+      "indicators": [
+        "AI hallucination squat",
+        "Hugging Face"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "aiohttp-socks3",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "ai_hallucination_squat",
+      "severity": "high",
+      "discovered": "2024-06-10",
+      "description": "Slop-squat: published under a name LLMs commonly hallucinate when asked for a SOCKS-capable aiohttp transport. Followed the Lasso 'AI package hallucinations' research that documented the slop-squat attack class.",
+      "references": [
+        "https://blog.lasso.security/ai-package-hallucinations/",
+        "https://www.theregister.com/2024/03/28/ai_bots_hallucinate_software_packages/"
+      ],
+      "indicators": [
+        "AI hallucination squat"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "coloredtxt",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "critical",
+      "discovered": "2023-04-26",
+      "description": "Typosquat of colorama / colorlog. Exfiltrated saved browser passwords, Discord tokens, and crypto wallet keys via a Python-side info-stealer on every import.",
+      "references": [
+        "https://blog.phylum.io/multi-stage-pypi-malware-coloredtxt",
+        "https://socket.dev/blog/coloredtxt-typosquat"
+      ],
+      "indicators": [
+        "colorama typosquat",
+        "Discord token theft"
+      ],
       "attack_type": "typosquat"
     }
   ]

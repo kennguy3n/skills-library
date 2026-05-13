@@ -1,6 +1,6 @@
 ---
 id: secret-detection
-version: "1.3.0"
+version: "1.4.0"
 title: "Secret Detection"
 description: "Detect and prevent hardcoded secrets, API keys, tokens, and credentials in code"
 category: prevention

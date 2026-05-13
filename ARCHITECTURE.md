@@ -264,8 +264,9 @@ spawned by the AI client and talks to it over stdio.
   then the directory containing the binary. The root must contain a
   `skills/` subdirectory.
 - **Tools.** `lookup_vulnerability` reads
-  `vulnerabilities/supply-chain/malicious-packages/{ecosystem}.json` and the
-  typosquat DB; `check_secret_pattern` runs the regex rules from
+  `vulnerabilities/supply-chain/malicious-packages/{ecosystem}.json`
+  (npm, pypi, crates, go, rubygems, maven, nuget, github-actions, docker)
+  and the typosquat DB; `check_secret_pattern` runs the regex rules from
   `skills/secret-detection/rules/dlp_patterns.json` and applies
   `dlp_exclusions.json`; `get_skill` parses `skills/{id}/SKILL.md` and
   returns the requested tier; `search_skills` substring-matches across all

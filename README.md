@@ -1,7 +1,7 @@
 # Skills Library
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Skills](https://img.shields.io/badge/skills-20-blue)](#skill-catalogue)
+[![Skills](https://img.shields.io/badge/skills-27-blue)](#skill-catalogue)
 [![Platforms](https://img.shields.io/badge/platforms-win%20%7C%20mac%20%7C%20linux-green)](#platform-support)
 
 **Open-source security skills, rules, and vulnerability intelligence for AI-assisted coding tools.**
@@ -33,7 +33,7 @@ incremental remote updates for new vulnerabilities, detection patterns, and best
 | Area | Path | Description |
 |------|------|-------------|
 | **Skills** | `skills/` | Self-contained `SKILL.md` manifests with associated rules, patterns, and checklists. Each skill is a security capability an AI tool can learn. |
-| **Vulnerability Database** | `vulnerabilities/` | Curated supply-chain vulnerability data: malicious packages, typosquat patterns, dependency confusion rules, CVE-to-package mappings. Incrementally updatable. |
+| **Vulnerability Database** | `vulnerabilities/` | 10-year (2015-2025) curated supply-chain vulnerability data covering 7 ecosystems (npm, PyPI, crates, Go, RubyGems, Maven, NuGet, GitHub Actions, Docker Hub), 70+ typosquats, ~60 CVE detection patterns, dependency-confusion rules, and CVE-to-package mappings. Incrementally updatable. |
 | **Detection Rules** | `rules/` | Sigma-format detection rules for AWS, GCP, K8s, Linux, macOS, Windows, O365. Extracted and adapted from production ShieldNet detection rules (Phase 4). |
 | **Compliance Maps** | `compliance/` | Framework-to-control mappings for OWASP Top 10, CWE, SANS Top 25, covering what AI-generated code should be checked against. |
 | **Dictionaries** | `dictionaries/` | Security term definitions, CWE catalogue, MITRE ATT&CK technique references — context AI tools need to reason about security. |
@@ -449,6 +449,12 @@ signing procedure and key management policy.
 | `error-handling-security` | prevention | medium | * |
 | `logging-security` | prevention | high | * |
 | `cors-security` | hardening | medium | javascript, typescript, python, go, java |
+| `cicd-security` | prevention | critical | yaml, shell, * |
+| `ssrf-prevention` | prevention | critical | * |
+| `deserialization-security` | prevention | critical | java, python, csharp, php, ruby, javascript, typescript |
+| `graphql-security` | prevention | high | javascript, typescript, python, go, java, kotlin, csharp, ruby |
+| `file-upload-security` | prevention | high | * |
+| `websocket-security` | prevention | high | javascript, typescript, python, go, java, csharp, ruby, elixir |
 
 ## Enterprise profiles
 
