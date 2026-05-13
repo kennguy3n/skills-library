@@ -230,7 +230,7 @@ func TestRollbackRemovesAddedFiles(t *testing.T) {
 	// Remote has a file the local tree does not, so Apply will add it.
 	// After Rollback, the file must be gone again.
 	remoteFiles := map[string]string{
-		"skills/a/SKILL.md":     "existed before",
+		"skills/a/SKILL.md":        "existed before",
 		"vulnerabilities/new.json": "brand new",
 	}
 	srcDir, pub, _ := stagedRelease(t, remoteFiles, "v2")
