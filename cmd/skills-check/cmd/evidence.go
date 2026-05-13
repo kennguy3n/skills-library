@@ -33,26 +33,26 @@ type ComplianceMapping struct {
 
 // EvidenceReport is the rendered audit artifact for `skills-check evidence`.
 type EvidenceReport struct {
-	GeneratedAt     time.Time              `json:"generated_at"`
-	Framework       string                 `json:"framework"`
-	FrameworkVersion string                `json:"framework_version,omitempty"`
-	LibraryRoot     string                 `json:"library_root"`
-	SkillsCount     int                    `json:"skills_count"`
-	Controls        []ControlEvidence      `json:"controls"`
-	UnmappedSkills  []string               `json:"unmapped_skills"`
-	UnmappedControls []string              `json:"unmapped_controls"`
-	Metadata        map[string]string      `json:"metadata,omitempty"`
+	GeneratedAt      time.Time         `json:"generated_at"`
+	Framework        string            `json:"framework"`
+	FrameworkVersion string            `json:"framework_version,omitempty"`
+	LibraryRoot      string            `json:"library_root"`
+	SkillsCount      int               `json:"skills_count"`
+	Controls         []ControlEvidence `json:"controls"`
+	UnmappedSkills   []string          `json:"unmapped_skills"`
+	UnmappedControls []string          `json:"unmapped_controls"`
+	Metadata         map[string]string `json:"metadata,omitempty"`
 }
 
 type ControlEvidence struct {
-	ID                string         `json:"id"`
-	Title             string         `json:"title"`
-	Description       string         `json:"description,omitempty"`
-	Status            string         `json:"status"` // covered | partial | missing
-	MappedSkills      []string       `json:"mapped_skills"`
-	PresentSkills     []SkillSummary `json:"present_skills"`
-	MissingSkills     []string       `json:"missing_skills"`
-	References        []string       `json:"references,omitempty"`
+	ID            string         `json:"id"`
+	Title         string         `json:"title"`
+	Description   string         `json:"description,omitempty"`
+	Status        string         `json:"status"` // covered | partial | missing
+	MappedSkills  []string       `json:"mapped_skills"`
+	PresentSkills []SkillSummary `json:"present_skills"`
+	MissingSkills []string       `json:"missing_skills"`
+	References    []string       `json:"references,omitempty"`
 }
 
 type SkillSummary struct {

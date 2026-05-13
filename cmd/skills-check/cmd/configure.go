@@ -15,13 +15,13 @@ import (
 // machinery so private-repo deployments stay byte-for-byte interoperable
 // with the public default.
 type SkillsCheckConfig struct {
-	SchemaVersion   string   `yaml:"schema_version"`
-	Source          string   `yaml:"source,omitempty"`
-	BearerTokenEnv  string   `yaml:"bearer_token_env,omitempty"`
-	BearerToken     string   `yaml:"bearer_token,omitempty"`
-	TrustedKeyPaths []string `yaml:"trusted_key_paths,omitempty"`
-	Profile         string   `yaml:"profile,omitempty"`
-	Skills          []string `yaml:"skills,omitempty"`
+	SchemaVersion   string            `yaml:"schema_version"`
+	Source          string            `yaml:"source,omitempty"`
+	BearerTokenEnv  string            `yaml:"bearer_token_env,omitempty"`
+	BearerToken     string            `yaml:"bearer_token,omitempty"`
+	TrustedKeyPaths []string          `yaml:"trusted_key_paths,omitempty"`
+	Profile         string            `yaml:"profile,omitempty"`
+	Skills          []string          `yaml:"skills,omitempty"`
 	Headers         map[string]string `yaml:"headers,omitempty"`
 }
 
@@ -69,14 +69,14 @@ func (c *SkillsCheckConfig) ResolveBearerToken() string {
 
 func configureCmd() *cobra.Command {
 	var (
-		dir              string
-		source           string
-		bearerTokenEnv   string
-		trustedKey       []string
-		profile          string
-		skillList        string
-		clearTrusted     bool
-		clearAll         bool
+		dir            string
+		source         string
+		bearerTokenEnv string
+		trustedKey     []string
+		profile        string
+		skillList      string
+		clearTrusted   bool
+		clearAll       bool
 	)
 
 	c := &cobra.Command{
