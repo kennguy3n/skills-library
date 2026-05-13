@@ -56,24 +56,25 @@ keeps it (and every other file in the library) up to date.
 
 ### Deliverables
 
-- [ ] Curated vulnerability data:
+- [x] Curated vulnerability data:
   - `vulnerabilities/supply-chain/malicious-packages/{npm,pypi,crates,go}.json`
   - `vulnerabilities/supply-chain/typosquat-db/known_typosquats.json`
   - `vulnerabilities/supply-chain/dependency-confusion/patterns.json`
   - `vulnerabilities/cve/code-relevant/cve_patterns.json`
-- [ ] Manifest system:
+- [x] Manifest system:
   - Root `manifest.json` listing every distributable file with SHA-256 checksum
   - Ed25519 signing of every release manifest, embedded public key in CLI
   - Per-file delta patches for large vulnerability databases
-- [ ] CLI update commands:
+- [x] CLI update commands:
   - `skills-check update` — fetch latest manifest, verify signature, download deltas
   - `skills-check update --check-only` — show available updates without applying
   - `skills-check update --rollback` — revert to previous version on the local disk
-- [ ] GitHub Actions release workflow:
+  - `skills-check update --source <url|path|tarball>` — swap update source
+- [x] GitHub Actions release workflow:
   - Compile `manifest.json` on tag push
-  - Sign manifest with maintainer's offline signing key (out-of-band)
+  - Sign manifest with maintainer's offline signing key (out-of-band; see [SIGNING.md](./SIGNING.md))
   - Publish manifest + delta patches as release assets
-- [ ] CI validation: every PR must update `last_updated` timestamps and regenerate
+- [x] CI validation: every PR must update `last_updated` timestamps and regenerate
   checksums for any modified file.
 
 ### Update protocol guarantees
@@ -99,15 +100,15 @@ steps.
 
 ### Deliverables
 
-- [ ] Scheduled update mechanism:
+- [x] Scheduled update mechanism:
   - macOS: LaunchAgent (`~/Library/LaunchAgents/com.skills-library.update.plist`)
   - Linux: systemd user timer (`~/.config/systemd/user/skills-check-update.timer`)
   - Windows: Task Scheduler task (`SkillsLibraryUpdate`)
-- [ ] Platform installers (modeled directly on the secure-edge Phase 3 installer
+- [x] Platform installers (modeled directly on the secure-edge Phase 3 installer
   matrix):
-  - macOS: `.pkg` via `pkgbuild` + `productbuild`
-  - Windows: MSI via WiX Toolset
-  - Linux: `.deb` + `.rpm` via `nfpm`
+  - macOS: `.pkg` via `pkgbuild` + `productbuild` — `packaging/macos/`
+  - Windows: MSI via WiX Toolset — `packaging/windows/`
+  - [ ] Linux: `.deb` + `.rpm` via `nfpm`
 - [ ] Package managers:
   - `brew install kennguy3n/tap/skills-check`
   - `winget install skills-library.skills-check`

@@ -1,0 +1,191 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to publish (must already exist)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build skills-check ${{ matrix.goos }}/${{ matrix.goarch }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: arm64
+          - goos: darwin
+            goarch: amd64
+          - goos: darwin
+            goarch: arm64
+          - goos: windows
+            goarch: amd64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: true
+
+      - name: Verify go.sum is intact
+        run: go mod verify
+
+      - name: Reproducible build
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: "0"
+          SOURCE_DATE_EPOCH: "0"
+          SKILLS_LIBRARY_PUBKEY_B64: ${{ secrets.SKILLS_LIBRARY_PUBKEY_B64 }}
+          SKILLS_LIBRARY_PUBKEY_ID: ${{ secrets.SKILLS_LIBRARY_PUBKEY_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="skills-check-${GOOS}-${GOARCH}"
+          if [ "$GOOS" = "windows" ]; then
+            out="${out}.exe"
+          fi
+          mkdir -p dist-build
+          go build \
+            -trimpath \
+            -ldflags "-s -w \
+              -X github.com/kennguy3n/skills-library/cmd/skills-check/cmd.CLIVersion=${GITHUB_REF_NAME:-dev} \
+              -X github.com/kennguy3n/skills-library/cmd/skills-check/internal/manifest.EmbeddedPublicKey=${SKILLS_LIBRARY_PUBKEY_B64:-} \
+              -X github.com/kennguy3n/skills-library/cmd/skills-check/internal/manifest.EmbeddedPublicKeyID=${SKILLS_LIBRARY_PUBKEY_ID:-} \
+            " \
+            -o "dist-build/${out}" \
+            ./cmd/skills-check
+
+      - name: SHA-256 of binary
+        shell: bash
+        run: |
+          cd dist-build
+          sha256sum * > checksums-${{ matrix.goos }}-${{ matrix.goarch }}.txt
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: skills-check-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist-build/
+
+  publish:
+    name: Compute manifest and publish release assets
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: true
+
+      - name: Build local skills-check (for manifest tooling)
+        run: go build -trimpath -ldflags "-s -w" -o /tmp/skills-check ./cmd/skills-check
+
+      - name: Compute manifest checksums
+        run: /tmp/skills-check manifest compute --path . --write
+
+      - name: Verify manifest checksums
+        run: /tmp/skills-check manifest verify --path . --checksums-only
+
+      - name: Compute delta against previous version (best effort)
+        shell: bash
+        run: |
+          set -e
+          mkdir -p deltas
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          if [ -z "$PREV_TAG" ]; then
+            echo "no previous tag; skipping delta"
+            exit 0
+          fi
+          PREV_MANIFEST=$(mktemp)
+          if git show "$PREV_TAG:manifest.json" > "$PREV_MANIFEST" 2>/dev/null; then
+            /tmp/skills-check manifest delta --from "$PREV_MANIFEST" --to manifest.json --out deltas || true
+          fi
+
+      - name: Download every binary artifact
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Stage release assets
+        shell: bash
+        run: |
+          set -e
+          mkdir -p release
+          # Flatten binary artifacts.
+          find artifacts -type f \( -name 'skills-check-*' -o -name 'checksums-*.txt' \) -exec cp {} release/ \;
+          cp manifest.json release/
+          # Bundle the distributable library tree into a single tarball so
+          # `skills-check update` (default --source) can pull the whole
+          # library in one HTTP request. Individual files under skills/,
+          # vulnerabilities/, dictionaries/, and dist/ are NOT published
+          # as separate release assets — this bundle is the canonical
+          # channel for them. Include manifest.json inside the tarball so
+          # NewHTTPTarballSource → NewTarballSource → NewDirSource finds
+          # it after extraction.
+          tar -czf release/skills-library-data.tar.gz \
+            manifest.json \
+            skills \
+            vulnerabilities \
+            dictionaries \
+            dist
+          if [ -d deltas ]; then
+            tar -C deltas -czf release/deltas.tar.gz . || true
+          fi
+          (cd release && sha256sum * > SHA256SUMS.txt)
+
+      - name: Tag-resolved release name
+        id: tag
+        shell: bash
+        env:
+          TAG_INPUT: ${{ inputs.tag }}
+        run: |
+          if [ -n "$TAG_INPUT" ]; then
+            echo "tag=$TAG_INPUT" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          files: |
+            release/*
+          fail_on_unmatched_files: true
+          body: |
+            Automated Skills Library release for tag ${{ steps.tag.outputs.tag }}.
+
+            **Assets:**
+            - `skills-check-<goos>-<goarch>[.exe]` — CLI binary (reproducible build).
+            - `checksums-<goos>-<goarch>.txt` — SHA-256 of each binary.
+            - `manifest.json` — signed library manifest.
+            - `skills-library-data.tar.gz` — library payload (skills, vulnerabilities, dictionaries, dist, manifest.json). This is what `skills-check update` downloads by default.
+            - `deltas.tar.gz` — patch set against the previous release (best effort).
+            - `SHA256SUMS.txt` — checksum of every asset above.
+
+            **Verification:**
+            - Verify the binary with the matching `checksums-<goos>-<goarch>.txt` file.
+            - Verify `manifest.json` with `skills-check manifest verify --path .`.
+            - Out-of-band Ed25519 signing of `manifest.json` is performed by the
+              release manager per [SIGNING.md](../SIGNING.md) and pushed as a
+              follow-up commit before the release is marked latest.

@@ -28,5 +28,7 @@ pulls signed updates of vulnerability data and detection rules.`,
 	root.AddCommand(listCmd())
 	root.AddCommand(regenerateCmd())
 	root.AddCommand(versionCmd())
+	root.AddCommand(manifestCmd())
+	root.AddCommand(schedulerCmd())
 	return root
 }
