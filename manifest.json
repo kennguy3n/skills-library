@@ -140,14 +140,14 @@
     },
     {
       "path": "skills/compliance-awareness/frameworks/cwe_mapping.yaml",
-      "sha256": "ebdd5f389c10aaedea83e0f6ca99db3eb54441bea3323a159909ce152acac861",
-      "size": 592,
+      "sha256": "d4cb9623a2d1a8e1b54b8591d97451de4782e06df4a8400e30c296387c7ed865",
+      "size": 1766,
       "action": "unchanged"
     },
     {
       "path": "skills/compliance-awareness/frameworks/owasp_mapping.yaml",
-      "sha256": "8024e278ae4e859eb6aca1186710974260144a14cb103216b8211069835eced9",
-      "size": 558,
+      "sha256": "55f5ecf7477e0032ba4e6d2fa15b88e21c428b14ec1e134764df696c8da4e6f9",
+      "size": 1703,
       "action": "unchanged"
     },
     {
@@ -224,8 +224,8 @@
     },
     {
       "path": "skills/dependency-audit/rules/known_malicious.json",
-      "sha256": "122c550501b5bb76467dfcfe63a4e7b43991c19db848a0e363e3b14b9336ba73",
-      "size": 354,
+      "sha256": "49a80cdabb07befdf4675e7d2ff1d40aaae58a423e382647b44d97d47a328189",
+      "size": 925,
       "action": "unchanged"
     },
     {
