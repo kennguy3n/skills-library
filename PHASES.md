@@ -145,10 +145,7 @@ detection rule corpus extracted from production ShieldNet detection rules.
 ### Deliverables
 
 - [x] Sigma rule extraction & adaptation (initial corpus from public sources —
-  SigmaHQ, MITRE ATT&CK, AWS/GCP/Azure/M365 docs):
-  - [ ] Audit existing rules in
-    [uneycom/shieldnet-security-detection-rules](https://github.com/uneycom/shieldnet-security-detection-rules)
-    and [kennguy3n/sn360-security-platform](https://github.com/kennguy3n/sn360-security-platform)
+  SigmaHQ, MITRE ATT&CK, AWS/GCP/Azure/GWS/M365/Jira/Confluence docs):
   - Rules live in `rules/cloud/`, `rules/endpoint/`, `rules/container/`, `rules/saas/`
   - Coverage: AWS, GCP, Azure, Linux, macOS, Windows, K8s, O365
 - [x] MCP server (`cmd/skills-mcp/`):
