@@ -6,8 +6,8 @@ const CATEGORIES = new Set([
   "prevention",
   "hardening",
   "detection",
-  "response",
-  "audit",
+  "compliance",
+  "supply-chain",
 ]);
 const SEVERITIES = new Set(["low", "medium", "high", "critical"]);
 

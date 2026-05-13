@@ -140,21 +140,29 @@ const HEADING_RE = /^(#{2,3})\s+(.+?)\s*$/gm;
 
 function splitSections(body: string): Record<string, string> {
   const out: Record<string, string> = {};
-  const matches: { heading: string; start: number; end: number }[] = [];
+  const matches: {
+    heading: string;
+    matchStart: number;
+    contentStart: number;
+    end: number;
+  }[] = [];
   let m: RegExpExecArray | null;
   HEADING_RE.lastIndex = 0;
   while ((m = HEADING_RE.exec(body)) !== null) {
     matches.push({
       heading: m[2].trim(),
-      start: m.index + m[0].length,
+      matchStart: m.index,
+      contentStart: m.index + m[0].length,
       end: body.length,
     });
   }
   for (let i = 0; i < matches.length; i++) {
     if (i + 1 < matches.length) {
-      matches[i].end = matches[i + 1].start - matches[i + 1].heading.length;
+      matches[i].end = matches[i + 1].matchStart;
     }
-    out[matches[i].heading] = body.slice(matches[i].start, matches[i].end).trim();
+    out[matches[i].heading] = body
+      .slice(matches[i].contentStart, matches[i].end)
+      .trim();
   }
   return out;
 }

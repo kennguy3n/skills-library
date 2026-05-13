@@ -16,7 +16,7 @@ var skillIDRegexp = regexp.MustCompile(`^[a-z][a-z0-9-]{1,63}$`)
 // AllowedCategories and AllowedSeverities mirror the schema enforced by
 // internal/skill/parser.go so the scaffolded file passes validation.
 var (
-	allowedSkillCategories  = []string{"prevention", "hardening", "detection", "response", "audit"}
+	allowedSkillCategories  = []string{"prevention", "hardening", "detection", "compliance", "supply-chain"}
 	allowedSkillSeverities  = []string{"low", "medium", "high", "critical"}
 	defaultSkillCategoryNew = "prevention"
 	defaultSkillSeverityNew = "high"

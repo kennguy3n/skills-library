@@ -9,7 +9,7 @@ from .skill import Skill
 
 _SKILL_ID_RE = re.compile(r"^[a-z][a-z0-9-]{1,63}$")
 _SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$")
-_CATEGORIES = {"prevention", "hardening", "detection", "response", "audit"}
+_CATEGORIES = {"prevention", "hardening", "detection", "compliance", "supply-chain"}
 _SEVERITIES = {"low", "medium", "high", "critical"}
 
 
