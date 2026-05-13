@@ -168,6 +168,13 @@ versions, flags missing skills, and is suitable for handing to an auditor.
 			}
 			sort.Strings(report.UnmappedSkills)
 
+			for _, ctrl := range report.Controls {
+				if ctrl.Status == "unmapped" {
+					report.UnmappedControls = append(report.UnmappedControls, ctrl.ID)
+				}
+			}
+			sort.Strings(report.UnmappedControls)
+
 			out, err := renderEvidence(report, format)
 			if err != nil {
 				return err
@@ -220,7 +227,7 @@ func renderEvidenceMarkdown(r EvidenceReport) string {
 	fmt.Fprintf(&sb, "**Skills installed:** %d  \n", r.SkillsCount)
 	fmt.Fprintf(&sb, "**Controls evaluated:** %d\n\n", len(r.Controls))
 
-	var covered, partial, missing int
+	var covered, partial, missing, unmapped int
 	for _, c := range r.Controls {
 		switch c.Status {
 		case "covered":
@@ -229,9 +236,11 @@ func renderEvidenceMarkdown(r EvidenceReport) string {
 			partial++
 		case "missing":
 			missing++
+		case "unmapped":
+			unmapped++
 		}
 	}
-	fmt.Fprintf(&sb, "## Summary\n\n- Covered: %d\n- Partial: %d\n- Missing: %d\n\n", covered, partial, missing)
+	fmt.Fprintf(&sb, "## Summary\n\n- Covered: %d\n- Partial: %d\n- Missing: %d\n- Unmapped: %d\n\n", covered, partial, missing, unmapped)
 	fmt.Fprintf(&sb, "## Controls\n\n")
 	fmt.Fprintf(&sb, "| Control | Status | Skills present | Skills missing |\n")
 	fmt.Fprintf(&sb, "|---|---|---|---|\n")
@@ -247,6 +256,12 @@ func renderEvidenceMarkdown(r EvidenceReport) string {
 		fmt.Fprintf(&sb, "\n## Skills not referenced by any control\n\n")
 		for _, s := range r.UnmappedSkills {
 			fmt.Fprintf(&sb, "- %s\n", s)
+		}
+	}
+	if len(r.UnmappedControls) > 0 {
+		fmt.Fprintf(&sb, "\n## Controls with no mapped skills\n\n")
+		for _, id := range r.UnmappedControls {
+			fmt.Fprintf(&sb, "- %s\n", id)
 		}
 	}
 	return sb.String()
