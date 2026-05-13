@@ -118,19 +118,19 @@
       "path": "skills/cicd-security/SKILL.md",
       "sha256": "5112444994d090959b0c767696adf325fc25414debfcd39c60cb3672b6221f11",
       "size": 6372,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/cicd-security/checklists/github_actions_hardening.yaml",
       "sha256": "f946e5613fb9834d7b916702e8d693a4da9d973f8faca14256455d8ead573ef4",
       "size": 5076,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/cicd-security/checklists/gitlab_ci_hardening.yaml",
       "sha256": "25fafed303575c8dd555a20ca4639ccb4f0293bee3225ae139dc6289ca387a83",
       "size": 3391,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/compliance-awareness/SKILL.md",
@@ -232,13 +232,13 @@
       "path": "skills/deserialization-security/SKILL.md",
       "sha256": "aff514629836413111841e6d6e6322199268727ede9d5b316327b357ac285064",
       "size": 6223,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/deserialization-security/rules/unsafe_deserializers.json",
       "sha256": "00b3eb3733bd84166e1a5eb9003950fa80a69f2822a51904e05f12db86f931b8",
       "size": 5761,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/error-handling-security/SKILL.md",
@@ -262,13 +262,13 @@
       "path": "skills/file-upload-security/SKILL.md",
       "sha256": "a3057a631183f78f37b6f21ef91eb047cc1e5badfbb674eb4817238d4f1bfbab",
       "size": 6489,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/file-upload-security/rules/upload_validation.json",
       "sha256": "bb75bd9b7bc4c656e0ce938f2a41c84f382eda56fa626bf782b4717724bb2a1e",
       "size": 4391,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/frontend-security/SKILL.md",
@@ -292,13 +292,13 @@
       "path": "skills/graphql-security/SKILL.md",
       "sha256": "f7524fd1462342bf92bddab2c1756b06065c1143af3aa684a12fdc49ed57c9d1",
       "size": 5496,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/graphql-security/rules/graphql_safe_config.json",
       "sha256": "44b884e90133c62e8ba144cea1047e36c9fa8f1a9ccc4534c410d38820b32665",
       "size": 2914,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/iac-security/SKILL.md",
@@ -434,8 +434,8 @@
     },
     {
       "path": "skills/secret-detection/SKILL.md",
-      "sha256": "4e3688aa763936ff4cd23e9e833720b2d45910e4a8b054275fdead9fba706f01",
-      "size": 5307,
+      "sha256": "9700ac3f8169da2d1c493495c0aa67d9e3c357561721f33fe81753f26acee6f1",
+      "size": 5317,
       "action": "unchanged"
     },
     {
@@ -496,19 +496,19 @@
       "path": "skills/ssrf-prevention/SKILL.md",
       "sha256": "f0f24634f0b553e36c8996b62570dec19ceff673fbe2da9648108f7b43f2e914",
       "size": 5769,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/ssrf-prevention/rules/cloud_metadata_endpoints.json",
       "sha256": "d7847cb3e5f2462e251471d4edb61d2a179762a931b5aeb12f390133f7fbd57e",
       "size": 2342,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/ssrf-prevention/rules/ssrf_sinks.json",
       "sha256": "e151dfee6978e53b3d5fa3fb589676b1a4131947ea0f1eadc19375acb1c0761e",
       "size": 4914,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/supply-chain-security/SKILL.md",
@@ -538,17 +538,17 @@
       "path": "skills/websocket-security/SKILL.md",
       "sha256": "14069bf7cb6eaebbc4ca022e504ba3a0a3fcd3865a4b7e9a2e038ab727959389",
       "size": 5974,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/websocket-security/rules/websocket_hardening.json",
       "sha256": "1870408d7f5352bffb40c06d806e3efac9392cd756d7b42b909cae66adca2392",
       "size": 3098,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/cve/code-relevant/cve_patterns.json",
-      "sha256": "d99f0ab4efdb70b4e20821d227fa4259936d4454a7fc34a2bb5c04ba410e0986",
+      "sha256": "b36d3f15a2aa23d5947a3c779e2a7e52222334a453528cdfdd2e0796da2f7d78",
       "size": 65862,
       "action": "unchanged"
     },
@@ -574,13 +574,13 @@
       "path": "vulnerabilities/supply-chain/malicious-packages/docker.json",
       "sha256": "7bcaa81d15cbbb3a49319b24e77443629d83b5c237f03c9c8f09bf196b09b6e2",
       "size": 5901,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/github-actions.json",
       "sha256": "09a4963019228dcbb9cf74332c25f6c4d80ddb357efc61e501584d9d4055159e",
       "size": 6710,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/go.json",
@@ -592,11 +592,11 @@
       "path": "vulnerabilities/supply-chain/malicious-packages/maven.json",
       "sha256": "e33289e1d8569775dea428ce5834931b786e19b045c8e51752058f56197ddd20",
       "size": 6055,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/npm.json",
-      "sha256": "1c9ac03ab5713821cca0e644b98a7e11bd22a9b733894eefcc9d962ad2b1edc2",
+      "sha256": "7fb5bc27a9e202a8938622b22df883d94d6b4e563c27de4ec4126a3d8428acae",
       "size": 21729,
       "action": "unchanged"
     },
@@ -604,11 +604,11 @@
       "path": "vulnerabilities/supply-chain/malicious-packages/nuget.json",
       "sha256": "e8cc155223c62549fcb9118febaec7c745243767471b2c2640972960d23923d8",
       "size": 5464,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/pypi.json",
-      "sha256": "2fd505aefcac0589e33624a8e798d6c7b4b83ac815dd083d175e5957ac814bcd",
+      "sha256": "9e97cf4d34bc865acda8756f52b76524202d96505f0bd35dc24699a75181ab0b",
       "size": 18882,
       "action": "unchanged"
     },
@@ -616,7 +616,7 @@
       "path": "vulnerabilities/supply-chain/malicious-packages/rubygems.json",
       "sha256": "c850aef348573cbb25a33cfca64810d20f24fb1ce0ce60e4390a4ff5c14eac80",
       "size": 6084,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/typosquat-db/known_typosquats.json",

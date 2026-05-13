@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "ecosystem": "npm",
-  "last_updated": "2026-05-13T00:00:00Z",
+  "last_updated": "2026-05-13T18:00:00Z",
   "entries": [
     {
       "name": "event-stream",
