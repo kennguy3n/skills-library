@@ -544,7 +544,7 @@
       "code_patterns": [
         "#(post_render|lazy_builder|pre_render|access_callback)",
         "drupal_render\\s*\\(",
-        "\\\\\\\\Drupal::formBuilder\\(\\)->buildForm\\s*\\("
+        "\\\\Drupal::formBuilder\\(\\)->buildForm\\s*\\("
       ],
       "remediation": [
         "upgrade Drupal core to 7.58+ / 8.3.9+ / 8.4.6+ / 8.5.1+ and apply SA-CORE-2018-002",
@@ -590,9 +590,9 @@
         "java"
       ],
       "code_patterns": [
-        "<action[^>]*name=\\\"[^\\\"]*\\\\$\\{",
+        "<action[^>]*name=\\\"[^\\\"]*\\$\\{",
         "ActionProxy\\.getNamespace",
-        "redirect[\\s\\S]*\\\\$\\{#"
+        "redirect[\\s\\S]*\\$\\{#"
       ],
       "remediation": [
         "upgrade Struts2 to 2.3.35+ / 2.5.17+ and apply S2-057",
@@ -963,8 +963,8 @@
       ],
       "code_patterns": [
         "StringSubstitutor\\s*\\.\\s*createInterpolator",
-        "\\\\$\\\\{script:|\\\\$\\\\{url:|\\\\$\\\\{dns:",
-        "StringLookupFactory\\\\.INSTANCE\\\\.interpolatorStringLookup"
+        "\\$\\{script:|\\$\\{url:|\\$\\{dns:",
+        "StringLookupFactory\\.INSTANCE\\.interpolatorStringLookup"
       ],
       "remediation": [
         "upgrade Apache Commons Text to 1.10.0+",
@@ -1012,9 +1012,9 @@
         "java"
       ],
       "code_patterns": [
-        "\\\\$\\\\{.*?@java\\\\.lang\\\\.Runtime@getRuntime",
+        "\\$\\{.*?@java\\.lang\\.Runtime@getRuntime",
         "OgnlValueStack",
-        "/confluence/\\\\$\\\\{"
+        "/confluence/\\$\\{"
       ],
       "remediation": [
         "upgrade Confluence to 7.18.1+ and rotate any secret on the host",
@@ -1038,7 +1038,7 @@
       "code_patterns": [
         "/service/extension/backup/mboximport",
         "account-name=&account-status=",
-        "\\\\.\\\\./\\\\.\\\\./jetty/webapps/zimbra"
+        "\\.\\./\\.\\./jetty/webapps/zimbra"
       ],
       "remediation": [
         "upgrade Zimbra to 9.0.0 Patch 25 / 8.8.15 Patch 32 or later",
@@ -1188,7 +1188,7 @@
       "code_patterns": [
         "/api/v1/totp/user-backup-code",
         "/license/keys-status/",
-        "DSAuth\\\\.dll"
+        "DSAuth\\.dll"
       ],
       "remediation": [
         "apply Ivanti CVE-2023-46805 / CVE-2024-21887 patches and run the Integrity Checker Tool; assume compromise on every appliance touched before patch",
@@ -1235,7 +1235,7 @@
       ],
       "code_patterns": [
         "/template/aui/text-inline\\.vm",
-        "\\\\$\\\\{Math",
+        "\\$\\{Math",
         "VelocityContext"
       ],
       "remediation": [
@@ -1258,7 +1258,7 @@
         "c"
       ],
       "code_patterns": [
-        "sigdie\\\\(|fatal_cleanup",
+        "sigdie\\(|fatal_cleanup",
         "LoginGraceTime",
         "sshd_log_id|do_authentication2"
       ],
@@ -1284,9 +1284,9 @@
         "*"
       ],
       "code_patterns": [
-        "GlobalProtect\\\\b",
-        "SESSID\\\\s*=",
-        "/api/\\\\?type=op&cmd=<show>"
+        "GlobalProtect\\b",
+        "SESSID\\s*=",
+        "/api/\\?type=op&cmd=<show>"
       ],
       "remediation": [
         "apply PAN-OS 10.2.9-h1+ / 11.0.4-h1+ / 11.1.2-h3+ hotfixes and assume compromise on every device left unpatched after 2024-04-10",
@@ -1309,8 +1309,8 @@
       ],
       "code_patterns": [
         "@/",
-        "hudson\\\\.cli\\\\.CLI",
-        "args4j\\\\.Args4jCmdLineParser"
+        "hudson\\.cli\\.CLI",
+        "args4j\\.Args4jCmdLineParser"
       ],
       "remediation": [
         "upgrade Jenkins to 2.442+ / LTS 2.426.3+ and rotate every secret stored on the controller",
@@ -1334,7 +1334,7 @@
       "code_patterns": [
         "cups-browsed",
         "foomatic-rip",
-        "port\\\\s*=\\\\s*631\\\\b"
+        "port\\s*=\\s*631\\b"
       ],
       "remediation": [
         "stop and disable cups-browsed on every host that doesn't actively need network printer discovery",
@@ -1381,9 +1381,9 @@
         "go"
       ],
       "code_patterns": [
-        "/proc/self/fd/\\\\d+",
-        "setcwd\\\\b",
-        "runc\\\\.init"
+        "/proc/self/fd/\\d+",
+        "setcwd\\b",
+        "runc\\.init"
       ],
       "remediation": [
         "upgrade runc to 1.1.12+ (and Docker 25.0.2+, containerd 1.6.28+ / 1.7.13+, BuildKit 0.12.5+)",
@@ -1407,7 +1407,7 @@
       ],
       "code_patterns": [
         "x-middleware-subrequest",
-        "export\\\\s+(default\\\\s+)?function\\\\s+middleware",
+        "export\\s+(default\\s+)?function\\s+middleware",
         "NextResponse"
       ],
       "remediation": [
@@ -1432,8 +1432,8 @@
         "yaml"
       ],
       "code_patterns": [
-        "kubernetes\\\\.io/ingress\\\\.class:\\\\s*nginx",
-        "nginx\\\\.ingress\\\\.kubernetes\\\\.io/.*\\\\$\\\\{",
+        "kubernetes\\.io/ingress\\.class:\\s*nginx",
+        "nginx\\.ingress\\.kubernetes\\.io/.*\\$\\{",
         "admission-controller-webhook"
       ],
       "remediation": [
@@ -1456,9 +1456,9 @@
         "java"
       ],
       "code_patterns": [
-        "<Manager\\\\s+pathname=\\\"\\\"\\\\s*/>",
+        "<Manager\\s+pathname=\\\"\\\"\\s*/>",
         "persistSession|FileStore",
-        "Range:\\\\s*bytes="
+        "Range:\\s*bytes="
       ],
       "remediation": [
         "upgrade Tomcat to 9.0.99 / 10.1.35 / 11.0.3 or later",
