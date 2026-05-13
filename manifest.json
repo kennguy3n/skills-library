@@ -446,8 +446,8 @@
     },
     {
       "path": "skills/secret-detection/rules/dlp_patterns.json",
-      "sha256": "bf35c114cb9d84a47c237538929f53d2c65a95954a8954c1086a3233e15ec4e0",
-      "size": 20253,
+      "sha256": "eecdea8e9961c8ed8da595cf7a177d3d9dedc2929129b8b5eb59e27ff0f8af7e",
+      "size": 19916,
       "action": "unchanged"
     },
     {

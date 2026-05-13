@@ -163,7 +163,9 @@
       "score_weight": 1,
       "hotwords": [
         "stripe",
-        "payment"
+        "payment",
+        "live",
+        "secret"
       ],
       "hotword_window": 200,
       "hotword_boost": 2,
@@ -789,22 +791,6 @@
       "hotwords": [
         "discord",
         "webhook"
-      ],
-      "hotword_window": 200,
-      "hotword_boost": 2,
-      "require_hotword": false,
-      "entropy_min": 4.0
-    },
-    {
-      "name": "Stripe Live Secret Key",
-      "regex": "sk_live_[A-Za-z0-9]{24,}",
-      "prefix": "sk_live_",
-      "severity": "critical",
-      "score_weight": 1,
-      "hotwords": [
-        "stripe",
-        "live",
-        "secret"
       ],
       "hotword_window": 200,
       "hotword_boost": 2,
