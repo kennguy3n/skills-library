@@ -120,6 +120,9 @@ versions, flags missing skills, and is suitable for handing to an auditor.
 				LibraryRoot:      lib,
 				SkillsCount:      len(skills),
 				Controls:         make([]ControlEvidence, 0, len(mapping.Controls)),
+				// Pre-initialize so empty reports marshal as `[]` not `null` (audit JSON shape).
+				UnmappedSkills:   []string{},
+				UnmappedControls: []string{},
 				Metadata: map[string]string{
 					"mapping_schema_version": mapping.SchemaVersion,
 					"mapping_last_updated":   mapping.LastUpdated,
@@ -134,6 +137,9 @@ versions, flags missing skills, and is suitable for handing to an auditor.
 					Description:  ctrl.Description,
 					MappedSkills: append([]string{}, ctrl.Skills...),
 					References:   append([]string{}, ctrl.References...),
+					// Pre-initialize so per-control JSON marshals as `[]` not `null` when empty.
+					PresentSkills: []SkillSummary{},
+					MissingSkills: []string{},
 				}
 				for _, sid := range ctrl.Skills {
 					referencedSkills[sid] = true

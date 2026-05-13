@@ -166,3 +166,91 @@ controls:
 		t.Errorf("expected both unmapped control IDs listed in markdown, got:\n%s", mdOut)
 	}
 }
+
+// TestEvidenceCmdJSONEmptySlicesShapeAsArrays verifies that empty per-control
+// (PresentSkills, MissingSkills) and top-level (UnmappedSkills,
+// UnmappedControls) slices serialize as JSON arrays `[]` rather than `null`.
+// Audit consumers and strict JSON-schema validators distinguish the two; the
+// report must be shape-stable across emptiness.
+func TestEvidenceCmdJSONEmptySlicesShapeAsArrays(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dir, "compliance"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(dir, "skills"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	// One control with no skills mapped + empty library -> every nil-able slice
+	// is empty in the output, so any null in the JSON is a regression.
+	mapping := `schema_version: "1.0.0"
+framework: "TEST"
+version: "1.0"
+last_updated: "2026-05-13"
+controls:
+  - id: "CTRL-EMPTY"
+    title: "Control with no mapped skills"
+    skills: []
+`
+	if err := os.WriteFile(filepath.Join(dir, "compliance", "test_mapping.yaml"), []byte(mapping), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	jsonOut, _, err := executeRoot(t,
+		"evidence",
+		"--library", dir,
+		"--framework", "TEST",
+		"--format", "json",
+	)
+	if err != nil {
+		t.Fatalf("evidence returned error: %v\n%s", err, jsonOut)
+	}
+
+	// Every nil-able slice must marshal as `[]`. None of the four may render as
+	// `null` — Go's encoding/json emits null for nil slices, so a null here is
+	// proof the field was never initialized.
+	mustHave := []string{
+		`"unmapped_skills": []`,
+		`"present_skills": []`,
+		`"missing_skills": []`,
+	}
+	for _, want := range mustHave {
+		if !strings.Contains(jsonOut, want) {
+			t.Errorf("expected JSON to contain %q, got:\n%s", want, jsonOut)
+		}
+	}
+	mustNotHave := []string{
+		`"unmapped_skills": null`,
+		`"unmapped_controls": null`,
+		`"present_skills": null`,
+		`"missing_skills": null`,
+	}
+	for _, bad := range mustNotHave {
+		if strings.Contains(jsonOut, bad) {
+			t.Errorf("expected JSON to not contain %q (nil-slice marshaling regression), got:\n%s", bad, jsonOut)
+		}
+	}
+
+	// Round-trip: after Unmarshal of `[]`, slices are non-nil empty;
+	// after Unmarshal of `null`, slices are nil. A nil here means the JSON
+	// emitted null and the regression slipped past the string checks above.
+	var report EvidenceReport
+	if err := json.Unmarshal([]byte(jsonOut), &report); err != nil {
+		t.Fatalf("failed to parse JSON: %v\n%s", err, jsonOut)
+	}
+	if report.UnmappedSkills == nil {
+		t.Error("UnmappedSkills should be non-nil empty after round-trip")
+	}
+	if report.UnmappedControls == nil {
+		t.Error("UnmappedControls should be non-nil empty after round-trip")
+	}
+	if len(report.Controls) != 1 {
+		t.Fatalf("expected 1 control, got %d", len(report.Controls))
+	}
+	ctrl := report.Controls[0]
+	if ctrl.PresentSkills == nil {
+		t.Error("PresentSkills should be non-nil empty after round-trip")
+	}
+	if ctrl.MissingSkills == nil {
+		t.Error("MissingSkills should be non-nil empty after round-trip")
+	}
+}
