@@ -1,7 +1,7 @@
 # Skills Library
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Skills](https://img.shields.io/badge/skills-27-blue)](#skill-catalogue)
+[![Skills](https://img.shields.io/badge/skills-28-blue)](#skill-catalogue)
 [![Platforms](https://img.shields.io/badge/platforms-win%20%7C%20mac%20%7C%20linux-green)](#platform-support)
 
 **Open-source security skills, rules, and vulnerability intelligence for AI-assisted coding tools.**
@@ -455,6 +455,7 @@ signing procedure and key management policy.
 | `graphql-security` | prevention | high | javascript, typescript, python, go, java, kotlin, csharp, ruby |
 | `file-upload-security` | prevention | high | * |
 | `websocket-security` | prevention | high | javascript, typescript, python, go, java, csharp, ruby, elixir |
+| `saas-security` | prevention | critical | * |
 
 ## Enterprise profiles
 

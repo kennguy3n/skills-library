@@ -841,6 +841,340 @@
       "hotword_boost": 2,
       "require_hotword": false,
       "entropy_min": 4.0
+    },
+    {
+      "name": "Google OAuth Access Token",
+      "regex": "ya29\\.[0-9A-Za-z\\-_]{20,}",
+      "severity": "high",
+      "score_weight": 1,
+      "hotwords": [
+        "google",
+        "oauth",
+        "ya29",
+        "access_token",
+        "gws",
+        "workspace"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "prefix": "ya29.",
+      "denylist_substrings": [
+        "EXAMPLE"
+      ],
+      "entropy_min": 3.5
+    },
+    {
+      "name": "Google OAuth Refresh Token",
+      "regex": "1//0[0-9A-Za-z\\-_]{30,}",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": [
+        "google",
+        "oauth",
+        "refresh_token",
+        "gws"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "prefix": "1//0",
+      "denylist_substrings": [
+        "EXAMPLE"
+      ],
+      "entropy_min": 4.0
+    },
+    {
+      "name": "Google Service Account JSON (private_key)",
+      "regex": "\"type\":\\s*\"service_account\"[\\s\\S]{0,400}?\"private_key\":\\s*\"-----BEGIN PRIVATE KEY-----",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": [
+        "service_account",
+        "private_key",
+        "google",
+        "gws",
+        "delegation"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false
+    },
+    {
+      "name": "Google Chat Webhook URL",
+      "regex": "https://chat\\.googleapis\\.com/v1/spaces/[A-Za-z0-9_\\-]+/messages\\?key=[A-Za-z0-9_\\-]+",
+      "severity": "high",
+      "score_weight": 1,
+      "hotwords": [
+        "chat.googleapis.com",
+        "webhook",
+        "google",
+        "chat"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false
+    },
+    {
+      "name": "Atlassian API Token (ATATT)",
+      "regex": "ATATT3xFfGF0[A-Za-z0-9_\\-]{180,}",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": [
+        "atlassian",
+        "jira",
+        "confluence",
+        "api_token"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "prefix": "ATATT3xFfGF0",
+      "entropy_min": 4.0
+    },
+    {
+      "name": "Atlassian API Token (ATCTT \u2014 scoped)",
+      "regex": "ATCTT3xFfGF0[A-Za-z0-9_\\-]{180,}",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": [
+        "atlassian",
+        "jira",
+        "confluence",
+        "api_token",
+        "scoped"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "prefix": "ATCTT3xFfGF0",
+      "entropy_min": 4.0
+    },
+    {
+      "name": "Notion Integration Token (ntn \u2014 current)",
+      "regex": "ntn_[A-Za-z0-9]{36,}",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": [
+        "notion",
+        "integration",
+        "ntn_"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "prefix": "ntn_",
+      "entropy_min": 4.0
+    },
+    {
+      "name": "HubSpot Private App Token",
+      "regex": "pat-(na1|na2|eu1|eu2|ap1|au1)-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": [
+        "hubspot",
+        "pat",
+        "private_app"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "prefix": "pat-"
+    },
+    {
+      "name": "Salesforce Session ID",
+      "regex": "00D[A-Za-z0-9]{12,15}![A-Za-z0-9._\\-]{96,}",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": [
+        "salesforce",
+        "session",
+        "sid",
+        "00D"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "prefix": "00D"
+    },
+    {
+      "name": "Salesforce Frontdoor URL",
+      "regex": "https://[A-Za-z0-9.\\-]+\\.(my\\.salesforce|salesforce|force)\\.com/secur/frontdoor\\.jsp\\?sid=[A-Za-z0-9._\\-!]+",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": [
+        "salesforce",
+        "frontdoor",
+        "sid"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false
+    },
+    {
+      "name": "BambooHR API Key (40 hex)",
+      "regex": "(?i)(bamboohr[_\\-]?api[_\\-]?key|x-api-key)[\\\"'\\s:=]+[A-Za-z0-9]{40}",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": [
+        "bamboohr",
+        "api_key",
+        "hris"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": true,
+      "entropy_min": 4.0
+    },
+    {
+      "name": "Workday RaaS Endpoint",
+      "regex": "https://wd[0-9]+(?:-services|-impl-services)?\\.myworkday\\.com/ccx/service/customreport2/[A-Za-z0-9_\\-]+/[A-Za-z0-9_\\-/]+\\?format=(json|xml|csv)",
+      "severity": "high",
+      "score_weight": 1,
+      "hotwords": [
+        "myworkday.com",
+        "customreport2",
+        "raas"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false
+    },
+    {
+      "name": "Microsoft Teams Incoming Webhook URL",
+      "regex": "https://[A-Za-z0-9\\-]+\\.webhook\\.office\\.com/webhookb2/[a-f0-9\\-]{36}@[a-f0-9\\-]{36}/IncomingWebhook/[a-f0-9]{32}/[a-f0-9\\-]{36}",
+      "severity": "high",
+      "score_weight": 1,
+      "hotwords": [
+        "webhook.office.com",
+        "teams",
+        "incomingwebhook"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false
+    },
+    {
+      "name": "Slack App-Level Token (xapp)",
+      "regex": "xapp-1-[A-Z0-9]{8,}-[0-9]{10,}-[A-Fa-f0-9]{64}",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": [
+        "slack",
+        "xapp",
+        "app_token",
+        "socket_mode"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "prefix": "xapp-"
+    },
+    {
+      "name": "Slack Config-Access Token (xoxe)",
+      "regex": "xoxe\\.xoxp-[0-9]+-[A-Za-z0-9\\-]+",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": [
+        "slack",
+        "xoxe",
+        "config",
+        "manifest"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "prefix": "xoxe."
+    },
+    {
+      "name": "Lark/Feishu Bot Webhook URL",
+      "regex": "https://open\\.(?:larksuite\\.com|feishu\\.cn)/open-apis/bot/v2/hook/[a-f0-9\\-]{16,}",
+      "severity": "high",
+      "score_weight": 1,
+      "hotwords": [
+        "larksuite",
+        "feishu",
+        "bot",
+        "webhook"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false
+    },
+    {
+      "name": "Lark/Feishu App ID",
+      "regex": "cli_[a-z0-9]{16}",
+      "severity": "medium",
+      "score_weight": 1,
+      "hotwords": [
+        "larksuite",
+        "feishu",
+        "app_id"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false,
+      "prefix": "cli_"
+    },
+    {
+      "name": "Zoom Meeting Join URL with embedded passcode",
+      "regex": "https://[A-Za-z0-9\\-]+\\.zoom\\.us/j/[0-9]+\\?pwd=[A-Za-z0-9.]+",
+      "severity": "medium",
+      "score_weight": 1,
+      "hotwords": [
+        "zoom.us",
+        "pwd",
+        "join_url"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": false
+    },
+    {
+      "name": "Calendly Personal Access Token (JWT-shaped)",
+      "regex": "(?i)calendly[_\\-]?(api[_\\-]?key|token|pat)[\\\"'\\s:=]+eyJ[A-Za-z0-9_\\-]{20,}\\.[A-Za-z0-9_\\-]{20,}\\.[A-Za-z0-9_\\-]{20,}",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": [
+        "calendly",
+        "pat",
+        "personal_access_token"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": true,
+      "entropy_min": 4.0
+    },
+    {
+      "name": "NetSuite TBA Consumer Key (64 hex)",
+      "regex": "(?i)netsuite[_\\-]?(consumer[_\\-]?key|client[_\\-]?id)[\\\"'\\s:=]+[A-Fa-f0-9]{64}",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": [
+        "netsuite",
+        "tba",
+        "consumer_key",
+        "client_id"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": true,
+      "entropy_min": 4.0
+    },
+    {
+      "name": "NetSuite TBA Token Secret (64 hex)",
+      "regex": "(?i)netsuite[_\\-]?(token[_\\-]?secret|tba[_\\-]?secret)[\\\"'\\s:=]+[A-Fa-f0-9]{64}",
+      "severity": "critical",
+      "score_weight": 1,
+      "hotwords": [
+        "netsuite",
+        "tba",
+        "token_secret"
+      ],
+      "hotword_window": 200,
+      "hotword_boost": 2,
+      "require_hotword": true,
+      "entropy_min": 4.0
     }
   ]
 }
