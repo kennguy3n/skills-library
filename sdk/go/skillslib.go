@@ -13,7 +13,16 @@
 package skillslib
 
 import (
+	"fmt"
+	"regexp"
+	"strings"
+
 	"github.com/kennguy3n/skills-library/internal/skill"
+)
+
+var (
+	skillIDRegex = regexp.MustCompile(`^[a-z][a-z0-9-]{1,63}$`)
+	semverRegex  = regexp.MustCompile(`^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$`)
 )
 
 // Skill is the parsed representation of a skills/<id>/SKILL.md file. It
@@ -46,17 +55,75 @@ func LoadAll(dir string) ([]*Skill, error) {
 }
 
 // Validate runs the same schema checks the CLI's `skills-check validate`
-// command runs against a single skill. It returns a slice of errors, one
-// per violation, so callers can present every issue at once. An empty
-// slice means the skill is valid.
+// command runs against a single skill, plus the broader cross-SDK schema
+// checks performed by the Python and TypeScript SDKs (semver-shape
+// version, non-empty title/description/languages/last_updated, positive
+// token_budget values for all three tiers, and a non-empty rule body).
+// It returns a slice of errors, one per violation, so callers can present
+// every issue at once. An empty slice means the skill is valid.
+//
+// This function is intentionally stricter than internal/skill.(*Skill).
+// Validate(): the internal validator runs at Parse() time and only checks
+// the fields it strictly needs to render content. Programmatically
+// constructed Skills (not loaded from disk via LoadSkill) bypass Parse()'s
+// implicit checks, so the SDK applies them explicitly here to keep the
+// Go, Python, and TypeScript SDK contracts identical.
 func Validate(s *Skill) []error {
 	if s == nil {
 		return []error{errNilSkill}
 	}
-	if err := s.Validate(); err != nil {
-		return []error{err}
+	var errs []error
+	fm := s.Frontmatter
+	if !skillIDRegex.MatchString(fm.ID) {
+		errs = append(errs, fmt.Errorf("id %q must match ^[a-z][a-z0-9-]{1,63}$", fm.ID))
 	}
-	return nil
+	if !semverRegex.MatchString(fm.Version) {
+		errs = append(errs, fmt.Errorf("version %q is not valid semver", fm.Version))
+	}
+	if strings.TrimSpace(fm.Title) == "" {
+		errs = append(errs, fmt.Errorf("title is required"))
+	}
+	if strings.TrimSpace(fm.Description) == "" {
+		errs = append(errs, fmt.Errorf("description is required"))
+	}
+	if !skill.AllowedCategories[fm.Category] {
+		errs = append(errs, fmt.Errorf("category %q must be one of [compliance detection hardening prevention supply-chain]", fm.Category))
+	}
+	if !skill.AllowedSeverities[fm.Severity] {
+		errs = append(errs, fmt.Errorf("severity %q must be one of [critical high low medium]", fm.Severity))
+	}
+	if len(fm.Languages) == 0 {
+		errs = append(errs, fmt.Errorf("languages must list at least one language id (or ['*'])"))
+	}
+	if fm.TokenBudget.Minimal <= 0 {
+		errs = append(errs, fmt.Errorf("token_budget.minimal must be > 0"))
+	}
+	if fm.TokenBudget.Compact <= 0 {
+		errs = append(errs, fmt.Errorf("token_budget.compact must be > 0"))
+	}
+	if fm.TokenBudget.Full <= 0 {
+		errs = append(errs, fmt.Errorf("token_budget.full must be > 0"))
+	}
+	if strings.TrimSpace(fm.LastUpdated) == "" {
+		errs = append(errs, fmt.Errorf("last_updated is required"))
+	}
+	if isBodyEmpty(s.Body) {
+		errs = append(errs, fmt.Errorf("SKILL body is empty"))
+	}
+	return errs
+}
+
+// isBodyEmpty reports whether the parsed Body carries no rule content.
+// Mirrors the Python/TypeScript SDKs' `if not skill.body.strip()` check,
+// adapted for Go's structured Body (which is a parsed AST rather than the
+// raw markdown string the other SDKs hold).
+func isBodyEmpty(b skill.Body) bool {
+	return len(b.Always) == 0 &&
+		len(b.Never) == 0 &&
+		len(b.KnownFalsePositives) == 0 &&
+		strings.TrimSpace(b.Context) == "" &&
+		strings.TrimSpace(b.References) == "" &&
+		strings.TrimSpace(b.RawRules) == ""
 }
 
 // Extract returns the rendered SKILL.md body for the given tier (minimal /

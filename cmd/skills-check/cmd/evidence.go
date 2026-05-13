@@ -251,12 +251,19 @@ func renderEvidenceMarkdown(r EvidenceReport) string {
 	fmt.Fprintf(&sb, "| Control | Status | Skills present | Skills missing |\n")
 	fmt.Fprintf(&sb, "|---|---|---|---|\n")
 	for _, c := range r.Controls {
-		var present []string
+		present := make([]string, 0, len(c.PresentSkills))
 		for _, s := range c.PresentSkills {
-			present = append(present, fmt.Sprintf("%s@%s", s.ID, s.Version))
+			present = append(present, escapeMarkdownTableCell(fmt.Sprintf("%s@%s", s.ID, s.Version)))
+		}
+		missing := make([]string, 0, len(c.MissingSkills))
+		for _, m := range c.MissingSkills {
+			missing = append(missing, escapeMarkdownTableCell(m))
 		}
 		fmt.Fprintf(&sb, "| %s | %s | %s | %s |\n",
-			c.ID, c.Status, strings.Join(present, ", "), strings.Join(c.MissingSkills, ", "))
+			escapeMarkdownTableCell(c.ID),
+			escapeMarkdownTableCell(c.Status),
+			strings.Join(present, ", "),
+			strings.Join(missing, ", "))
 	}
 	if len(r.UnmappedSkills) > 0 {
 		fmt.Fprintf(&sb, "\n## Skills not referenced by any control\n\n")
@@ -271,4 +278,19 @@ func renderEvidenceMarkdown(r EvidenceReport) string {
 		}
 	}
 	return sb.String()
+}
+
+// escapeMarkdownTableCell escapes characters that would break a GFM table
+// row when interpolated as a cell value: pipes terminate columns and
+// newlines terminate rows. Future compliance frameworks may emit control
+// IDs or skill identifiers that contain these characters; today's data
+// does not, so this is a robustness fix rather than a fix for current
+// breakage.
+func escapeMarkdownTableCell(s string) string {
+	s = strings.ReplaceAll(s, `\`, `\\`)
+	s = strings.ReplaceAll(s, "|", `\|`)
+	s = strings.ReplaceAll(s, "\r\n", "<br>")
+	s = strings.ReplaceAll(s, "\n", "<br>")
+	s = strings.ReplaceAll(s, "\r", "<br>")
+	return s
 }

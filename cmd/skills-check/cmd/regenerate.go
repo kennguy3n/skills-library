@@ -30,7 +30,7 @@ func regenerateCmd() *cobra.Command {
 				if err != nil {
 					return err
 				}
-				skills = filterSkillsByProfile(skills, prof)
+				skills = compiler.FilterSkillsByProfile(skills, prof)
 				if len(skills) == 0 {
 					return fmt.Errorf("profile %q matched no skills", profileName)
 				}

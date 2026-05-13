@@ -45,28 +45,22 @@ func initCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			// --skills and --profile compose as an intersection: both
+			// filters apply, narrowing the skill set to those present in
+			// both. Setting only one (or neither) collapses cleanly. See
+			// filterSkillsBySkillList / compiler.FilterSkillsByProfile.
 			if skillsList != "" {
-				want := map[string]bool{}
-				for _, s := range strings.Split(skillsList, ",") {
-					want[strings.TrimSpace(s)] = true
-				}
-				filtered := all[:0]
-				for _, s := range all {
-					if want[s.Frontmatter.ID] {
-						filtered = append(filtered, s)
-					}
-				}
-				if len(filtered) == 0 {
+				all = filterSkillsBySkillList(all, skillsList)
+				if len(all) == 0 {
 					return fmt.Errorf("no skills matched %q", skillsList)
 				}
-				all = filtered
 			}
 			if profileName != "" {
 				prof, err := compiler.LoadProfile(lib, profileName)
 				if err != nil {
 					return err
 				}
-				all = filterSkillsByProfile(all, prof)
+				all = compiler.FilterSkillsByProfile(all, prof)
 				if len(all) == 0 {
 					return fmt.Errorf("profile %q matched no skills", profileName)
 				}
@@ -101,7 +95,7 @@ func initCmd() *cobra.Command {
 	}
 	c.Flags().StringVar(&libraryPath, "library", ".", "path to the skills-library checkout")
 	c.Flags().StringVar(&tool, "tool", "", "target tool (claude|cursor|copilot|codex|agents|windsurf|devin|cline|universal)")
-	c.Flags().StringVar(&skillsList, "skills", "", "comma-separated skill IDs (default: all skills)")
+	c.Flags().StringVar(&skillsList, "skills", "", "comma-separated skill IDs (narrows the --profile selection when combined; both filters apply)")
 	c.Flags().StringVar(&budget, "budget", "", "tier override (minimal|compact|full)")
 	c.Flags().StringVar(&outDir, "out", "", "output directory (default: cwd)")
 	c.Flags().BoolVar(&noPrompt, "no-prompt", false, "skip the interactive prompt to set up scheduled updates")
@@ -109,20 +103,20 @@ func initCmd() *cobra.Command {
 	return c
 }
 
-// filterSkillsByProfile selects only those skills whose ID appears in the
-// profile's skill list. If the profile has no skill list, the input is
-// returned unchanged.
-func filterSkillsByProfile(all []*skill.Skill, prof *compiler.Profile) []*skill.Skill {
-	if prof == nil || len(prof.Skills) == 0 {
-		return all
+// filterSkillsBySkillList returns only those skills whose ID appears in
+// the comma-separated `skillsList` (whitespace around each ID is trimmed).
+// The returned slice is freshly allocated; the caller's `all` slice and
+// its backing array are never mutated, so this function composes safely
+// with compiler.FilterSkillsByProfile when both --skills and --profile are
+// set (intersection semantics).
+func filterSkillsBySkillList(all []*skill.Skill, skillsList string) []*skill.Skill {
+	want := map[string]bool{}
+	for _, s := range strings.Split(skillsList, ",") {
+		want[strings.TrimSpace(s)] = true
 	}
-	allowed := make(map[string]bool, len(prof.Skills))
-	for _, s := range prof.Skills {
-		allowed[s] = true
-	}
-	out := all[:0]
+	out := make([]*skill.Skill, 0, len(all))
 	for _, s := range all {
-		if allowed[s.Frontmatter.ID] {
+		if want[s.Frontmatter.ID] {
 			out = append(out, s)
 		}
 	}

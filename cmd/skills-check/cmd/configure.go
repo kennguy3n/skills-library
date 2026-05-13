@@ -239,7 +239,7 @@ Typical workflows:
 	c.Flags().StringVar(&bearerTokenEnv, "bearer-token-env", "", "Env var holding bearer token (e.g. SKILLS_LIBRARY_TOKEN)")
 	c.Flags().StringSliceVar(&trustedKey, "trusted-key", nil, "Additional Ed25519 public key file (repeatable)")
 	c.Flags().StringVar(&profile, "profile", "", "Default enterprise profile name")
-	c.Flags().StringVar(&skillList, "skills", "", "Comma-separated default skill set (overrides --profile selection)")
+	c.Flags().StringVar(&skillList, "skills", "", "Comma-separated default skill set (narrows the --profile selection when both are set; both filters apply at init time)")
 	c.Flags().BoolVar(&clearTrusted, "clear-trusted-keys", false, "Remove existing trusted_key_paths before adding new ones")
 	c.Flags().BoolVar(&clearAll, "clear", false, "Reset the entire config to defaults before applying flags")
 	c.Flags().BoolVar(&insecureAllowHTTP, "insecure-allow-http-token", false, "Permit bearer-token authentication over plaintext http:// (internal networks only; OFF by default)")

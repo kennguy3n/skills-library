@@ -80,6 +80,104 @@ func TestEvidenceCmdMissingFramework(t *testing.T) {
 	}
 }
 
+// TestEscapeMarkdownTableCellPipes is the regression test for the bug
+// where renderEvidenceMarkdown wrote control IDs and skill names
+// directly into a GFM table without escaping `|`. A future compliance
+// framework that uses `|` in a control ID (or a skill name) would have
+// silently broken the table structure (extra columns / shifted rows).
+//
+// The fix is the escapeMarkdownTableCell helper, which:
+//   - replaces `|` with `\|`
+//   - replaces newline variants (\n, \r, \r\n) with `<br>` so a
+//     multi-line value doesn't terminate the row
+//
+// We render a synthetic table row by calling the helper directly (the
+// renderEvidenceMarkdown function takes the full EvidenceReport struct,
+// which is heavier than needed for this targeted check).
+func TestEscapeMarkdownTableCellPipes(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want string
+	}{
+		{name: "no special chars", in: "AC-2", want: "AC-2"},
+		{name: "single pipe", in: "a|b", want: `a\|b`},
+		{name: "multiple pipes", in: "a|b|c", want: `a\|b\|c`},
+		{name: "newline", in: "a\nb", want: "a<br>b"},
+		{name: "crlf", in: "a\r\nb", want: "a<br>b"},
+		{name: "pipe and newline together", in: "a|b\nc", want: `a\|b<br>c`},
+		// Pre-existing backslash must be escaped first; otherwise our
+		// pipe escape would create an ambiguous double-escape sequence.
+		{name: "pre-existing backslash", in: `a\b`, want: `a\\b`},
+	}
+	for _, tc := range cases {
+		got := escapeMarkdownTableCell(tc.in)
+		if got != tc.want {
+			t.Errorf("%s: escape(%q) = %q, want %q", tc.name, tc.in, got, tc.want)
+		}
+	}
+}
+
+// TestRenderEvidenceMarkdownEscapesPipesInControlAndSkillIDs is the
+// integration-level regression for M4: synthesize an EvidenceReport with
+// a `|` in both the control ID and a skill name, render it, and assert
+// every interpolated cell is escaped so the table parses to the correct
+// number of columns.
+func TestRenderEvidenceMarkdownEscapesPipesInControlAndSkillIDs(t *testing.T) {
+	r := EvidenceReport{
+		Framework: "TEST",
+		Controls: []ControlEvidence{
+			{
+				ID:     "CTRL|UNUSUAL",
+				Status: "covered",
+				PresentSkills: []SkillSummary{
+					{ID: "skill|with-pipe", Version: "1.0.0"},
+				},
+				MissingSkills: []string{"missing|skill"},
+			},
+		},
+	}
+	out := renderEvidenceMarkdown(r)
+	// Every literal `|` from input data must be escaped.
+	if strings.Contains(out, "CTRL|UNUSUAL") {
+		t.Errorf("control ID pipe was not escaped:\n%s", out)
+	}
+	if !strings.Contains(out, `CTRL\|UNUSUAL`) {
+		t.Errorf("expected escaped control ID, got:\n%s", out)
+	}
+	if !strings.Contains(out, `skill\|with-pipe@1.0.0`) {
+		t.Errorf("expected escaped present-skill ID, got:\n%s", out)
+	}
+	if !strings.Contains(out, `missing\|skill`) {
+		t.Errorf("expected escaped missing-skill ID, got:\n%s", out)
+	}
+	// Sanity check the table row has the expected column count. The
+	// rendered row should contain exactly 5 `|` characters (4 cells
+	// → 5 separators), where each escaped `\|` inside a cell does NOT
+	// count as a column separator.
+	for _, line := range strings.Split(out, "\n") {
+		if !strings.Contains(line, `CTRL\|UNUSUAL`) {
+			continue
+		}
+		// Count unescaped `|` separators only.
+		separators := 0
+		for i := 0; i < len(line); i++ {
+			if line[i] != '|' {
+				continue
+			}
+			if i > 0 && line[i-1] == '\\' {
+				continue
+			}
+			separators++
+		}
+		if separators != 5 {
+			t.Errorf("control row has %d unescaped `|` separators, want 5; line: %q", separators, line)
+		}
+		return
+	}
+	t.Errorf("could not find rendered control row in output:\n%s", out)
+}
+
 func TestEvidenceCmdUnknownFramework(t *testing.T) {
 	root := repoRoot(t)
 	_, _, err := executeRoot(t,
