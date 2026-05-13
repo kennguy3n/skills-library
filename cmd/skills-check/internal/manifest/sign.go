@@ -3,6 +3,7 @@ package manifest
 import (
 	"crypto/ed25519"
 	"crypto/rand"
+	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
@@ -32,9 +33,9 @@ var EmbeddedPublicKeyID = ""
 // hash exactly these bytes, so they must be byte-stable across runs.
 //
 // Implementation: marshal the manifest, decode into a generic map, drop the
-// "signature" key, sort file entries, then re-marshal with json.MarshalIndent.
-// Go's json.Marshal sorts object keys alphabetically for map[string]any, so
-// the encoding is canonical.
+// "signature" key, sort file entries, then re-marshal with the compact
+// json.Marshal form. Go's json.Marshal sorts object keys alphabetically for
+// map[string]any, so the encoding is canonical.
 func (m *Manifest) CanonicalSigningBytes() ([]byte, error) {
 	dup := m.Clone()
 	dup.SortFiles()
@@ -127,10 +128,9 @@ func GenerateKeyPair() (ed25519.PublicKey, ed25519.PrivateKey, error) {
 
 // LoadPrivateKey reads an Ed25519 private key from disk. Supported formats:
 //
-//   - PEM block of type "PRIVATE KEY" (PKCS#8) — encoded body is the 32-byte
-//     seed followed by an Ed25519 OID header; for the common Ed25519 case we
-//     accept any PEM body whose decoded length is 32 or 64.
-//   - PEM block of type "ED25519 PRIVATE KEY" — decoded body of 32 or 64.
+//   - PEM block of type "PRIVATE KEY" (PKCS#8 ASN.1 envelope as produced by
+//     `openssl genpkey -algorithm Ed25519`).
+//   - PEM block of type "ED25519 PRIVATE KEY" — decoded body of 32 or 64 bytes.
 //   - Base64-encoded raw key — 32 byte seed or 64 byte expanded key.
 //   - Raw binary — 32 byte seed or 64 byte expanded key.
 func LoadPrivateKey(path string) (ed25519.PrivateKey, error) {
@@ -143,7 +143,7 @@ func LoadPrivateKey(path string) (ed25519.PrivateKey, error) {
 
 func parsePrivateKeyBytes(data []byte) (ed25519.PrivateKey, error) {
 	if block, _ := pem.Decode(data); block != nil {
-		return privateKeyFromRaw(block.Bytes)
+		return privateKeyFromPEMBlock(block)
 	}
 	trimmed := strings.TrimSpace(string(data))
 	if decoded, err := base64.StdEncoding.DecodeString(trimmed); err == nil {
@@ -152,6 +152,25 @@ func parsePrivateKeyBytes(data []byte) (ed25519.PrivateKey, error) {
 		}
 	}
 	return privateKeyFromRaw(data)
+}
+
+// privateKeyFromPEMBlock decodes an Ed25519 private key from a PEM block.
+// PEM blocks of type "PRIVATE KEY" are decoded as PKCS#8 (the standard
+// envelope used by `openssl genpkey -algorithm Ed25519`). Other block
+// types fall back to treating the body as raw key material.
+func privateKeyFromPEMBlock(block *pem.Block) (ed25519.PrivateKey, error) {
+	if strings.EqualFold(block.Type, "PRIVATE KEY") {
+		key, err := x509.ParsePKCS8PrivateKey(block.Bytes)
+		if err != nil {
+			return nil, fmt.Errorf("parse PKCS#8 private key: %w", err)
+		}
+		priv, ok := key.(ed25519.PrivateKey)
+		if !ok {
+			return nil, fmt.Errorf("PKCS#8 key is %T, not ed25519.PrivateKey", key)
+		}
+		return priv, nil
+	}
+	return privateKeyFromRaw(block.Bytes)
 }
 
 func privateKeyFromRaw(raw []byte) (ed25519.PrivateKey, error) {

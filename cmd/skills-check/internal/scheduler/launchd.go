@@ -52,6 +52,10 @@ func RenderLaunchAgentPlist(cfg Config) (string, error) {
 	if logPath == "" {
 		logPath = "/tmp/skills-check-update.log"
 	}
+	escapedArgs := make([]string, len(args))
+	for i, a := range args {
+		escapedArgs[i] = escapeXMLAttr(a)
+	}
 	data := struct {
 		Label           string
 		Binary          string
@@ -60,10 +64,10 @@ func RenderLaunchAgentPlist(cfg Config) (string, error) {
 		LogPath         string
 	}{
 		Label:           LaunchAgentLabel,
-		Binary:          cfg.Binary,
-		Args:            args,
+		Binary:          escapeXMLAttr(cfg.Binary),
+		Args:            escapedArgs,
 		IntervalSeconds: intSecondsAtLeast(cfg.Interval, 60),
-		LogPath:         logPath,
+		LogPath:         escapeXMLAttr(logPath),
 	}
 	tpl := template.Must(template.New("plist").Parse(launchAgentTemplate))
 	var buf bytes.Buffer

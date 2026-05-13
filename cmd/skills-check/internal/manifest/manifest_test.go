@@ -2,8 +2,10 @@ package manifest
 
 import (
 	"crypto/sha256"
+	"crypto/x509"
 	"encoding/hex"
 	"encoding/json"
+	"encoding/pem"
 	"os"
 	"path/filepath"
 	"strings"
@@ -299,6 +301,30 @@ func TestPrivateKeyRoundTripFromSeed(t *testing.T) {
 	}
 	if string(loaded) != string(priv) {
 		t.Errorf("private key roundtrip mismatch")
+	}
+}
+
+func TestPrivateKeyRoundTripFromPKCS8PEM(t *testing.T) {
+	_, priv, err := GenerateKeyPair()
+	if err != nil {
+		t.Fatal(err)
+	}
+	der, err := x509.MarshalPKCS8PrivateKey(priv)
+	if err != nil {
+		t.Fatal(err)
+	}
+	block := &pem.Block{Type: "PRIVATE KEY", Bytes: der}
+	dir := t.TempDir()
+	path := filepath.Join(dir, "key.pem")
+	if err := os.WriteFile(path, pem.EncodeToMemory(block), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	loaded, err := LoadPrivateKey(path)
+	if err != nil {
+		t.Fatalf("LoadPrivateKey: %v", err)
+	}
+	if string(loaded) != string(priv) {
+		t.Errorf("PKCS#8 PEM private key roundtrip mismatch")
 	}
 }
 

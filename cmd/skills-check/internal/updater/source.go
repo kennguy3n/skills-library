@@ -210,8 +210,19 @@ func (t *TarballSource) File(path string) (io.ReadCloser, error) {
 func (t *TarballSource) Description() string { return "tarball:" + t.Archive }
 func (t *TarballSource) Close() error        { return os.RemoveAll(t.tmp.Root) }
 
+// MaxTarballEntrySize caps the number of bytes ExtractTarball will copy for
+// any single regular file in the archive. It is a defence-in-depth guard
+// against tar bombs that pad a single entry to exhaust disk or memory; the
+// signed manifest is the primary check that any extracted file is legitimate.
+//
+// Declared as a var (rather than a const) so tests can lower the limit
+// without writing hundreds of megabytes to disk. Production builds should
+// not mutate this value.
+var MaxTarballEntrySize int64 = 512 * 1024 * 1024 // 512 MiB
+
 // ExtractTarball expands the named archive into dest. It auto-detects gzip
-// based on extension. Path traversal is rejected.
+// based on extension. Path traversal is rejected and each regular file is
+// limited to MaxTarballEntrySize bytes.
 func ExtractTarball(archive, dest string) error {
 	f, err := os.Open(archive)
 	if err != nil {
@@ -248,6 +259,9 @@ func ExtractTarball(archive, dest string) error {
 				return err
 			}
 		case tar.TypeReg, tar.TypeRegA:
+			if hdr.Size > MaxTarballEntrySize {
+				return fmt.Errorf("tar entry %s exceeds %d byte limit (declared size %d)", hdr.Name, MaxTarballEntrySize, hdr.Size)
+			}
 			if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
 				return err
 			}
@@ -255,9 +269,15 @@ func ExtractTarball(archive, dest string) error {
 			if err != nil {
 				return err
 			}
-			if _, err := io.Copy(out, tr); err != nil {
+			limited := io.LimitReader(tr, MaxTarballEntrySize+1)
+			written, err := io.Copy(out, limited)
+			if err != nil {
 				_ = out.Close()
 				return err
+			}
+			if written > MaxTarballEntrySize {
+				_ = out.Close()
+				return fmt.Errorf("tar entry %s exceeded %d byte limit while reading", hdr.Name, MaxTarballEntrySize)
 			}
 			if err := out.Close(); err != nil {
 				return err

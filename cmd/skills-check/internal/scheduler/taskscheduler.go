@@ -66,8 +66,9 @@ const taskSchedulerXMLTemplate = `<?xml version="1.0" encoding="UTF-16"?>
 `
 
 // RenderTaskSchedulerXML produces the XML registration document for the
-// scheduled task. The text/template package handles HTML escaping for the
-// argument string.
+// scheduled task. text/template does not perform any escaping, so every
+// caller-supplied value (Binary, each arg) is run through escapeXMLAttr
+// first so it is safe to interpolate into the XML body.
 func RenderTaskSchedulerXML(cfg Config) (string, error) {
 	if cfg.Binary == "" {
 		return "", fmt.Errorf("taskscheduler: Binary must be set")

@@ -364,6 +364,50 @@ func TestTarballSourceExtractsAndVerifies(t *testing.T) {
 	}
 }
 
+func TestExtractTarballRejectsOversizedEntry(t *testing.T) {
+	saved := MaxTarballEntrySize
+	MaxTarballEntrySize = 16
+	t.Cleanup(func() { MaxTarballEntrySize = saved })
+
+	dir := t.TempDir()
+	archive := filepath.Join(dir, "bomb.tar")
+	f, err := os.Create(archive)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tw := tar.NewWriter(f)
+	body := strings.Repeat("A", 64)
+	hdr := &tar.Header{
+		Name:     "big.bin",
+		Mode:     0o644,
+		Size:     int64(len(body)),
+		Typeflag: tar.TypeReg,
+	}
+	if err := tw.WriteHeader(hdr); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := tw.Write([]byte(body)); err != nil {
+		t.Fatal(err)
+	}
+	if err := tw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
+		t.Fatal(err)
+	}
+	dest := filepath.Join(dir, "out")
+	if err := ExtractTarball(archive, dest); err == nil || !strings.Contains(err.Error(), "limit") {
+		t.Errorf("expected oversized entry rejection, got %v", err)
+	}
+}
+
+func TestFormatChangesEmptyHasTrailingNewline(t *testing.T) {
+	got := FormatChanges(nil)
+	if !strings.HasSuffix(got, "\n") {
+		t.Errorf("empty FormatChanges should end with newline, got %q", got)
+	}
+}
+
 func TestFormatChangesIsStable(t *testing.T) {
 	c := []Change{
 		{Path: "b", Action: "added"},

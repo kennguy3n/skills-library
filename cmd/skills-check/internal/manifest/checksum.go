@@ -31,6 +31,11 @@ var DefaultDistributableRoots = []string{
 // action="added". Files present in the manifest but missing from disk are
 // preserved verbatim so an operator can see "removed" entries. The list is
 // sorted by path on return.
+//
+// This function intentionally resets m.Signature to PlaceholderSignature
+// because the canonical bytes are now stale: callers must re-sign the
+// manifest after computing checksums. The release workflow runs
+// `manifest compute --write` before the out-of-band signing step.
 func (m *Manifest) ComputeChecksums(repoRoot string) error {
 	return m.ComputeChecksumsForRoots(repoRoot, DefaultDistributableRoots)
 }

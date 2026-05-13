@@ -147,7 +147,7 @@ func Rollback(localRoot string) error {
 // FormatChanges renders the change list as a small human-readable summary.
 func FormatChanges(changes []Change) string {
 	if len(changes) == 0 {
-		return "already up to date"
+		return "already up to date\n"
 	}
 	var added, updated, removed int
 	for _, c := range changes {
