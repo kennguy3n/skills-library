@@ -217,6 +217,33 @@ every file you touch in this project.
 - FALSE POSITIVE: Public CloudFront distributions, ALB listeners on 80/443, API Gateways, and Lambda function URLs that *are* meant to be internet-facing.
 - FALSE POSITIVE: Bootstrap resources (the S3 bucket and DynamoDB lock table the backend itself uses) must exist before remote state can; this chicken-and-egg is usually bootstrapped by a one-time `local` backend that's then migrated.
 
+## Identity & Access Management Best Practices (prevention, critical)
+- ALWAYS: Grant the **minimum** permissions required for the workload's stated job (NIST AC-6). Start with a deny-by-default policy and add concrete actions with explicit `Resource` ARNs; never `Action: "*"` combined with `Resource: "*"`.
+- ALWAYS: Prefer **workload identity** (IAM roles for service accounts on EKS, GKE Workload Identity, Azure Managed Identity) over long-lived access keys. Static access keys are the exception, not the default.
+- ALWAYS: Require **MFA** for every human IAM user, especially any principal that can assume a privileged role. Enforce MFA via an IAM policy condition (`aws:MultiFactorAuthPresent: true`), not just a directory-level setting.
+- ALWAYS: Rotate access keys, service-account keys, and signing keys on a documented schedule (≤ 90 days). Detect inactive credentials (≥ 90 days unused) and disable them automatically.
+- ALWAYS: Use **role assumption with `sts:AssumeRole` + ExternalId** for cross-account trust. The ExternalId must be unique per consumer and stored as a secret in both accounts.
+- ALWAYS: Issue **session-scoped** credentials with `MaxSessionDuration ≤ 1h` for human roles and ≤ 12h for break-glass roles. Long-lived sessions defeat rotation.
+- ALWAYS: Separate **deploy** and **runtime** identities. The CI/CD pipeline gets a deploy role; the running service gets a distinct runtime role with no IAM-mutating permissions.
+- ALWAYS: For Kubernetes RBAC, scope `Role` / `RoleBinding` to a single namespace; use `ClusterRole` only for true cluster-wide objects. Audit `cluster-admin` bindings on every PR.
+- ALWAYS: Log every IAM-mutating call (CloudTrail / Cloud Audit Logs / Azure Activity Log) to a tamper-evident sink. Alert on policy changes, `iam:PassRole`, `iam:CreateAccessKey`, and `sts:AssumeRole` from unexpected principals.
+- ALWAYS: For **break-glass** access (root, owner, cluster-admin), require an out-of-band approval (e.g., PagerDuty incident + ticket) and emit an immediate alert on every use.
+- ALWAYS: Tag every IAM principal with `owner`, `environment`, and `purpose`. Use these tags in SCPs / org policies to constrain blast radius.
+- NEVER: Use the **root account** for day-to-day operations. Root credentials get a hardware MFA device, are stored offline, and are used only for the small set of root-only tasks (e.g., closing the account, changing the support plan).
+- NEVER: Embed long-lived access keys in source, container images, AMIs, or CI environment variables when a workload identity is available.
+- NEVER: Grant `iam:PassRole` with `Resource: "*"`. Always pin the role ARNs the caller may pass to downstream services.
+- NEVER: Grant `iam:*` or `sts:*` to a runtime workload — these are deploy-time permissions only.
+- NEVER: Share a single IAM user across multiple humans or services. One principal per identity is the audit invariant.
+- NEVER: Use `AdministratorAccess` (or any `*:*`) managed policy on a routine basis; treat it as a break-glass-only attachment.
+- NEVER: Trust any cross-account assume-role without an `ExternalId` condition for third-party integrations (Confused Deputy: AWS Security Bulletin 2021).
+- NEVER: Hard-code AWS / GCP / Azure ARNs / resource IDs in policy documents without a corresponding tag-based or organization-path scope (when the number of resources can grow).
+- NEVER: Disable MFA for a principal to "fix" a login problem — rotate the device, do not remove the requirement.
+- NEVER: Persist OIDC / SAML assertion tokens beyond their stated TTL. Refresh by re-assertion, not by storing the original token.
+- FALSE POSITIVE: `Resource: "*"` is acceptable for inherently account-scoped read operations like `ec2:DescribeRegions` or `sts:GetCallerIdentity` — those APIs do not accept a resource ARN.
+- FALSE POSITIVE: Service-linked roles (e.g., `AWSServiceRoleForAutoScaling`) ship with broader permissions than your custom roles; that is by design and managed by the provider.
+- FALSE POSITIVE: One-time bootstrap operators (Terraform-runners in a fresh account) often need elevated permissions; gate by tag / SCP and revoke after the bootstrap is complete.
+- FALSE POSITIVE: Local-development emulators (LocalStack, GCS emulator) may accept any credentials; that is a property of the emulator, not a real grant.
+
 ## Infrastructure Security (hardening, high)
 - ALWAYS: Pin base images by digest (`FROM image@sha256:...`) when building containers for production. Tags are mutable; digests are not.
 - ALWAYS: Run containers as a non-root `USER` other than `0`. Add `securityContext: runAsNonRoot: true` to K8s pod specs.

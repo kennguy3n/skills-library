@@ -32,50 +32,50 @@
     },
     {
       "path": "dist/.clinerules",
-      "sha256": "108d8ecf6e7fece9932549055a42b3af9f314915a136d3490dfa9702cec9024b",
-      "size": 56901,
+      "sha256": "f972d4db44e6c79d8c02360fae1c021e41534b21e7d79f05745ff17babd321e0",
+      "size": 61158,
       "action": "unchanged"
     },
     {
       "path": "dist/.cursorrules",
-      "sha256": "a5efe018629c64d7151ea1da735675e1bbaf9a77a4090450b4d8dfa00d2a6abb",
-      "size": 58099,
+      "sha256": "06d41a047d745149f5df5054796c054d7f5d1b45e797ca6950e3fbd2ad356b30",
+      "size": 62426,
       "action": "unchanged"
     },
     {
       "path": "dist/.windsurfrules",
-      "sha256": "31cf3738d5eeb37440a367740da77e8343bf18756ec12da1ba9b2bd48de54cb2",
-      "size": 57750,
+      "sha256": "1773ce9ad67ab6af59e49920de8a453fbe3003bcfe2f82ed47a93b8d1e4596b2",
+      "size": 62065,
       "action": "unchanged"
     },
     {
       "path": "dist/AGENTS.md",
-      "sha256": "981adceaf1d659d74663d2e7069b52ef3c18d88f017e7ad179d164976ea73a3f",
-      "size": 61157,
+      "sha256": "dd6bbca93b8a9d6402dce63c41fcf386cf6118bd0c26aa42e2efa0d2fc7e053c",
+      "size": 65540,
       "action": "unchanged"
     },
     {
       "path": "dist/CLAUDE.md",
-      "sha256": "e8418d580a6cc7ff0ec93caa8a41ac6f35d4dea518e33c51c2f094d883dad72b",
-      "size": 66604,
+      "sha256": "547d9265a0a47ccb827f53511d1e8f3cbd6dc1272a2ab8a4d00dd072baaf2b44",
+      "size": 71432,
       "action": "unchanged"
     },
     {
       "path": "dist/SECURITY-SKILLS.md",
-      "sha256": "ae9edd02ffbeffa8fdccebe1af09f8ca9d665e9e83f3b9d26f00da997f9250f4",
-      "size": 61271,
+      "sha256": "3a17ba7606595631d6c73c0aa984cf13bd6c87aa48f900fee3c981ee01c09560",
+      "size": 65668,
       "action": "unchanged"
     },
     {
       "path": "dist/copilot-instructions.md",
-      "sha256": "4c81ee3fb0fda1c305620e14417260e2f822ab30b01d731411695ea556ed9255",
-      "size": 60277,
+      "sha256": "05ce4f46deb8534d714c11c26066092721cb3e88b6235ab5bd19b1966664d418",
+      "size": 64608,
       "action": "unchanged"
     },
     {
       "path": "dist/devin.md",
-      "sha256": "bb654ae4ab6533bae79d013d78a23dcc5a7650d416c9b7fb4e2154d78df2ebd9",
-      "size": 79135,
+      "sha256": "9a3fcc68dc73247ee1ba624c87d8b7816059e2989cee754672fa304ee2372476",
+      "size": 85283,
       "action": "unchanged"
     },
     {
@@ -263,6 +263,24 @@
       "sha256": "c9fc7844af1f834b59f8eb698d9e420b8820e4ab038cfc39da7520847b334b6f",
       "size": 2482,
       "action": "unchanged"
+    },
+    {
+      "path": "skills/iam-best-practices/SKILL.md",
+      "sha256": "09bb06c745f39b078520ff17377275b69939464909961a1332df2eca09126d53",
+      "size": 7173,
+      "action": "added"
+    },
+    {
+      "path": "skills/iam-best-practices/rules/iam_policy_invariants.json",
+      "sha256": "dedd97f2c3b2d1ae6110ca2541bb15d4df5b5b8013ab8c29dc1736d7b816f92e",
+      "size": 3391,
+      "action": "added"
+    },
+    {
+      "path": "skills/iam-best-practices/rules/key_rotation_policy.json",
+      "sha256": "207dc8e9ec6f34868c31e4bfeb6c0c3f941e9a4872bf827a2bc49e37045d03df",
+      "size": 2561,
+      "action": "added"
     },
     {
       "path": "skills/infrastructure-security/SKILL.md",

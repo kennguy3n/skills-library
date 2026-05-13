@@ -15,14 +15,63 @@ import (
 // machinery so private-repo deployments stay byte-for-byte interoperable
 // with the public default.
 type SkillsCheckConfig struct {
-	SchemaVersion   string            `yaml:"schema_version"`
-	Source          string            `yaml:"source,omitempty"`
-	BearerTokenEnv  string            `yaml:"bearer_token_env,omitempty"`
-	BearerToken     string            `yaml:"bearer_token,omitempty"`
-	TrustedKeyPaths []string          `yaml:"trusted_key_paths,omitempty"`
-	Profile         string            `yaml:"profile,omitempty"`
-	Skills          []string          `yaml:"skills,omitempty"`
-	Headers         map[string]string `yaml:"headers,omitempty"`
+	SchemaVersion          string            `yaml:"schema_version"`
+	Source                 string            `yaml:"source,omitempty"`
+	BearerTokenEnv         string            `yaml:"bearer_token_env,omitempty"`
+	BearerToken            string            `yaml:"bearer_token,omitempty"`
+	TrustedKeyPaths        []string          `yaml:"trusted_key_paths,omitempty"`
+	Profile                string            `yaml:"profile,omitempty"`
+	Skills                 []string          `yaml:"skills,omitempty"`
+	Headers                map[string]string `yaml:"headers,omitempty"`
+	InsecureAllowHTTPToken bool              `yaml:"insecure_allow_http_token,omitempty"`
+}
+
+// ValidateSourceWithToken enforces that a source URL transporting a bearer
+// token uses HTTPS. The check is a defence-in-depth guard against a
+// misconfigured `--source http://...` exfiltrating the bearer token in
+// plaintext on every poll.
+//
+// Rules:
+//   - https:// is always allowed.
+//   - file:// and bare paths/tarballs are always allowed (no network).
+//   - http:// without any bearer token configured is allowed (with a stderr
+//     warning emitted by the caller).
+//   - http:// with a bearer token is rejected unless allowInsecure=true.
+//
+// allowInsecure is the opt-in escape hatch (`--insecure-allow-http-token`)
+// for internal-only setups that explicitly accept the risk.
+func ValidateSourceWithToken(source, bearerToken, bearerTokenEnv string, allowInsecure bool) error {
+	if source == "" {
+		return nil
+	}
+	switch {
+	case strings.HasPrefix(source, "https://"):
+		return nil
+	case strings.HasPrefix(source, "file://"):
+		return nil // local file URL — no network transport for the token.
+	case strings.HasPrefix(source, "http://"):
+		// fall through to the http+token check below.
+	default:
+		// Reject any other URL-shaped source so a typo like ftp:// or
+		// http:/x cannot silently bypass the token-transport check.
+		// Bare paths and tarballs do not look like URLs (no "://").
+		if strings.Contains(source, "://") {
+			return fmt.Errorf("unsupported source scheme in %q (use https://, http://, or file://)", source)
+		}
+		return nil
+	}
+	hasToken := bearerToken != "" || bearerTokenEnv != ""
+	if !hasToken {
+		return nil
+	}
+	if allowInsecure {
+		return nil
+	}
+	return fmt.Errorf(
+		"refusing to attach bearer token to plaintext http:// source %q; "+
+			"use https:// (recommended) or pass --insecure-allow-http-token to opt in for internal-only setups",
+		source,
+	)
 }
 
 // LoadConfig reads `.skills-check.yaml` from `dir`. If the file does not
@@ -69,14 +118,15 @@ func (c *SkillsCheckConfig) ResolveBearerToken() string {
 
 func configureCmd() *cobra.Command {
 	var (
-		dir            string
-		source         string
-		bearerTokenEnv string
-		trustedKey     []string
-		profile        string
-		skillList      string
-		clearTrusted   bool
-		clearAll       bool
+		dir               string
+		source            string
+		bearerTokenEnv    string
+		trustedKey        []string
+		profile           string
+		skillList         string
+		clearTrusted      bool
+		clearAll          bool
+		insecureAllowHTTP bool
 	)
 
 	c := &cobra.Command{
@@ -116,6 +166,22 @@ Typical workflows:
 			}
 			if bearerTokenEnv != "" {
 				cfg.BearerTokenEnv = bearerTokenEnv
+			}
+			if insecureAllowHTTP {
+				cfg.InsecureAllowHTTPToken = true
+			}
+			if err := ValidateSourceWithToken(
+				cfg.Source, cfg.BearerToken, cfg.BearerTokenEnv,
+				cfg.InsecureAllowHTTPToken,
+			); err != nil {
+				return err
+			}
+			if strings.HasPrefix(cfg.Source, "http://") {
+				fmt.Fprintf(c.ErrOrStderr(),
+					"warning: source %q uses plaintext http:// "+
+						"(no bearer token attached; use https:// for confidentiality)\n",
+					cfg.Source,
+				)
 			}
 			if profile != "" {
 				cfg.Profile = profile
@@ -170,5 +236,6 @@ Typical workflows:
 	c.Flags().StringVar(&skillList, "skills", "", "Comma-separated default skill set (overrides --profile selection)")
 	c.Flags().BoolVar(&clearTrusted, "clear-trusted-keys", false, "Remove existing trusted_key_paths before adding new ones")
 	c.Flags().BoolVar(&clearAll, "clear", false, "Reset the entire config to defaults before applying flags")
+	c.Flags().BoolVar(&insecureAllowHTTP, "insecure-allow-http-token", false, "Permit bearer-token authentication over plaintext http:// (internal networks only; OFF by default)")
 	return c
 }

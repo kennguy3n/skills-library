@@ -17,7 +17,10 @@ func TestHTTPSourceBearerAuth(t *testing.T) {
 	}))
 	t.Cleanup(srv.Close)
 
-	src, err := NewHTTPSourceWithAuth(srv.URL, "tok-12345")
+	// httptest.NewServer is http://, so use the explicit insecure
+	// constructor — the guard is verified separately in
+	// TestNewHTTPSourceWithAuthRejectsHTTPWithToken.
+	src, err := NewHTTPSourceWithAuthInsecure(srv.URL, "tok-12345")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -38,7 +41,7 @@ func TestHTTPSourceReturnsAuthErrorOn401(t *testing.T) {
 	}))
 	t.Cleanup(srv.Close)
 
-	src, err := NewHTTPSourceWithAuth(srv.URL, "bad")
+	src, err := NewHTTPSourceWithAuthInsecure(srv.URL, "bad")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -68,5 +71,55 @@ func TestHTTPSourceNoAuthHeaderWhenEmptyToken(t *testing.T) {
 	}
 	if seenAuth != "" {
 		t.Errorf("expected no auth header, got %q", seenAuth)
+	}
+}
+
+// TestNewHTTPSourceWithAuthRejectsHTTPWithToken verifies the defence-in-depth
+// guard at the updater layer: even if a misconfigured caller skips the
+// configure-time check, NewHTTPSourceWithAuth refuses to attach a bearer
+// token to a plaintext http:// source.
+func TestNewHTTPSourceWithAuthRejectsHTTPWithToken(t *testing.T) {
+	_, err := NewHTTPSourceWithAuth("http://internal.corp.example.com/skills", "tok-12345")
+	if err == nil {
+		t.Fatal("expected error attaching bearer token to http://, got nil")
+	}
+	if !strings.Contains(err.Error(), "plaintext http://") {
+		t.Errorf("expected plaintext-http error, got %v", err)
+	}
+}
+
+// TestNewHTTPSourceWithAuthAllowsHTTPWithoutToken verifies the constructor
+// still accepts http:// when no token is supplied (the token leak is the
+// concern; plaintext fetches of public artifacts are not rejected here).
+func TestNewHTTPSourceWithAuthAllowsHTTPWithoutToken(t *testing.T) {
+	src, err := NewHTTPSourceWithAuth("http://public.example.com/skills", "")
+	if err != nil {
+		t.Fatalf("expected http:// without token to succeed, got: %v", err)
+	}
+	if src == nil {
+		t.Fatal("expected non-nil source")
+	}
+}
+
+// TestNewHTTPSourceWithAuthAllowsHTTPSWithToken is the positive path.
+func TestNewHTTPSourceWithAuthAllowsHTTPSWithToken(t *testing.T) {
+	src, err := NewHTTPSourceWithAuth("https://secure.example.com/skills", "tok-12345")
+	if err != nil {
+		t.Fatalf("expected https:// with token to succeed, got: %v", err)
+	}
+	if src.BearerToken != "tok-12345" {
+		t.Errorf("expected token to be attached, got %q", src.BearerToken)
+	}
+}
+
+// TestNewHTTPSourceWithAuthInsecureOptsIn verifies the explicit escape
+// hatch for internal-only setups that legitimately use plaintext http://.
+func TestNewHTTPSourceWithAuthInsecureOptsIn(t *testing.T) {
+	src, err := NewHTTPSourceWithAuthInsecure("http://internal.corp.example.com/skills", "tok-12345")
+	if err != nil {
+		t.Fatalf("expected insecure constructor to bypass http+token check, got: %v", err)
+	}
+	if src.BearerToken != "tok-12345" {
+		t.Errorf("expected token to be attached, got %q", src.BearerToken)
 	}
 }
