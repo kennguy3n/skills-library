@@ -59,6 +59,29 @@ func TestLookupVulnerabilityAcrossAllEcosystems(t *testing.T) {
 	}
 }
 
+func TestLookupVulnerabilityRejectsUnknownEcosystem(t *testing.T) {
+	lib := newLibrary(t)
+	cases := []string{
+		"../../../../etc/passwd",
+		"..",
+		"npm/../../etc",
+		"unknown",
+		"",
+	}
+	for _, eco := range cases {
+		if eco == "" {
+			continue
+		}
+		_, err := lib.LookupVulnerability("event-stream", eco, "")
+		if err == nil {
+			t.Errorf("LookupVulnerability(%q) returned nil error; want rejection", eco)
+		}
+	}
+	if _, err := lib.LookupVulnerability("event-stream", "NPM", ""); err != nil {
+		t.Errorf("LookupVulnerability with NPM (uppercase) should normalize and succeed: %v", err)
+	}
+}
+
 func TestLookupVulnerabilityReturnsTyposquats(t *testing.T) {
 	lib := newLibrary(t)
 	res, err := lib.LookupVulnerability("lodash", "npm", "")

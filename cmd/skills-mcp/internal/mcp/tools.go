@@ -11,9 +11,13 @@ func toolDefinitions() []map[string]interface{} {
 			"inputSchema": map[string]interface{}{
 				"type": "object",
 				"properties": map[string]interface{}{
-					"package":   map[string]string{"type": "string", "description": "Package name to look up."},
-					"ecosystem": map[string]string{"type": "string", "description": "One of npm, pypi, crates, go. Optional — defaults to all ecosystems."},
-					"version":   map[string]string{"type": "string", "description": "Optional version pin. Empty matches all affected versions."},
+					"package": map[string]string{"type": "string", "description": "Package name to look up."},
+					"ecosystem": map[string]interface{}{
+						"type":        "string",
+						"description": "One of npm, pypi, crates, go. Optional — defaults to all ecosystems.",
+						"enum":        []string{"npm", "pypi", "crates", "go"},
+					},
+					"version": map[string]string{"type": "string", "description": "Optional version pin. Empty matches all affected versions."},
 				},
 				"required": []string{"package"},
 			},

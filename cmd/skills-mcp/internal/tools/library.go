@@ -17,6 +17,18 @@ import (
 	"github.com/kennguy3n/skills-library/internal/skill"
 )
 
+// knownEcosystems whitelists the ecosystem identifiers that may flow into
+// a filesystem path. Anything else is rejected before reaching disk, so a
+// caller can't escape the library root via path traversal (e.g.
+// `../../etc/passwd`) by smuggling traversal segments into the
+// `ecosystem` argument.
+var knownEcosystems = map[string]bool{
+	"npm":    true,
+	"pypi":   true,
+	"crates": true,
+	"go":     true,
+}
+
 // Library is the live view of a skills-library checkout used to back the
 // MCP tools. It owns a cache of parsed skill manifests, vulnerability
 // data, and secret-detection rules; reloads are not implemented because
@@ -114,12 +126,16 @@ func (l *Library) LookupVulnerability(pkg, ecosystem, version string) (*LookupVu
 	if strings.TrimSpace(pkg) == "" {
 		return nil, fmt.Errorf("package is required")
 	}
-	out := &LookupVulnerabilityResult{Package: pkg, Ecosystem: ecosystem, Matches: []VulnEntry{}, Typosquats: []TyposquatEntry{}}
-
 	ecosystems := []string{"npm", "pypi", "crates", "go"}
 	if ecosystem != "" {
-		ecosystems = []string{ecosystem}
+		eco := strings.ToLower(strings.TrimSpace(ecosystem))
+		if !knownEcosystems[eco] {
+			return nil, fmt.Errorf("unknown ecosystem %q (must be one of npm, pypi, crates, go)", ecosystem)
+		}
+		ecosystem = eco
+		ecosystems = []string{eco}
 	}
+	out := &LookupVulnerabilityResult{Package: pkg, Ecosystem: ecosystem, Matches: []VulnEntry{}, Typosquats: []TyposquatEntry{}}
 	for _, e := range ecosystems {
 		vf, err := l.loadVulnFile(e)
 		if err != nil {
@@ -155,6 +171,9 @@ func (l *Library) LookupVulnerability(pkg, ecosystem, version string) (*LookupVu
 }
 
 func (l *Library) loadVulnFile(eco string) (*vulnFile, error) {
+	if !knownEcosystems[eco] {
+		return nil, fmt.Errorf("unknown ecosystem %q", eco)
+	}
 	l.vulnsMu.Lock()
 	defer l.vulnsMu.Unlock()
 	if cached, ok := l.vulnCache[eco]; ok {
