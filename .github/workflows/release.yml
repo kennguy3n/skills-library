@@ -15,15 +15,12 @@ permissions:
   contents: write
 
 jobs:
+  # Cross-compile every target on a single Linux runner. The resulting
+  # binaries are uploaded as `raw-<goos>-<goarch>` artifacts and handed
+  # off to platform-specific jobs below for signing + checksumming.
   build:
-    name: Build skills-check ${{ matrix.goos }}/${{ matrix.goarch }}
+    name: Cross-compile skills-check ${{ matrix.goos }}/${{ matrix.goarch }}
     runs-on: ubuntu-latest
-    env:
-      # Hoist signing-related secret names to the job env so step `if:`
-      # conditions can read them. The actual values are populated from
-      # secrets at the step that needs them.
-      APPLE_DEVELOPER_ID: ${{ secrets.APPLE_DEVELOPER_ID }}
-      WINDOWS_CERT_PFX: ${{ secrets.WINDOWS_CERT_PFX }}
     strategy:
       fail-fast: false
       matrix:
@@ -77,11 +74,68 @@ jobs:
             -o "dist-build/${out}" \
             ./cmd/skills-check
 
-      # macOS Developer ID signing + notarization. This step is a no-op
-      # unless secrets.APPLE_DEVELOPER_ID is configured. Documented in
-      # packaging/codesign/README.md.
-      - name: Sign macOS binary (Developer ID + notarytool)
-        if: matrix.goos == 'darwin' && env.APPLE_DEVELOPER_ID != ''
+      - name: Upload unsigned binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: raw-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist-build/
+
+  # Linux binaries are not code-signed. This job just computes checksums
+  # and re-uploads the artifact under the canonical name that `publish`
+  # consumes.
+  finalize-linux:
+    name: Checksum Linux ${{ matrix.goarch }}
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        goarch: [amd64, arm64]
+    steps:
+      - name: Download unsigned binary
+        uses: actions/download-artifact@v4
+        with:
+          name: raw-linux-${{ matrix.goarch }}
+          path: dist-build/
+
+      - name: SHA-256 of binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd dist-build
+          sha256sum skills-check-linux-${{ matrix.goarch }} \
+            > checksums-linux-${{ matrix.goarch }}.txt
+
+      - name: Upload final binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: skills-check-linux-${{ matrix.goarch }}
+          path: dist-build/
+
+  # macOS Developer ID signing + notarization. Runs on `macos-latest`
+  # so the Apple toolchain (`security`, `codesign`, `ditto`,
+  # `xcrun notarytool`) is available. When `secrets.APPLE_DEVELOPER_ID`
+  # is not configured the binary is passed through unsigned and the
+  # release still succeeds (with a `shasum` step on the unsigned bytes).
+  sign-macos:
+    name: Sign macOS ${{ matrix.goarch }}
+    needs: build
+    runs-on: macos-latest
+    env:
+      APPLE_DEVELOPER_ID: ${{ secrets.APPLE_DEVELOPER_ID }}
+    strategy:
+      fail-fast: false
+      matrix:
+        goarch: [amd64, arm64]
+    steps:
+      - name: Download unsigned binary
+        uses: actions/download-artifact@v4
+        with:
+          name: raw-darwin-${{ matrix.goarch }}
+          path: dist-build/
+
+      - name: Sign and notarize (Developer ID + notarytool)
+        if: env.APPLE_DEVELOPER_ID != ''
         env:
           APPLE_DEVELOPER_ID: ${{ secrets.APPLE_DEVELOPER_ID }}
           APPLE_DEVELOPER_ID_CERT_P12_BASE64: ${{ secrets.APPLE_DEVELOPER_ID_CERT_P12_BASE64 }}
@@ -92,7 +146,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          out="skills-check-${{ matrix.goos }}-${{ matrix.goarch }}"
+          out="skills-check-darwin-${{ matrix.goarch }}"
           echo "$APPLE_DEVELOPER_ID_CERT_P12_BASE64" | base64 -d > /tmp/cert.p12
           security create-keychain -p actions build.keychain
           security default-keychain -s build.keychain
@@ -109,43 +163,84 @@ jobs:
             --wait
           codesign --verify --strict --verbose=2 "dist-build/${out}"
 
-      # Windows Authenticode signing. No-op unless secrets.WINDOWS_CERT_PFX
-      # is configured. signtool is included with the Windows SDK that
-      # ships on the GitHub-hosted windows runners.
-      - name: Sign Windows binary (Authenticode)
-        if: matrix.goos == 'windows' && env.WINDOWS_CERT_PFX != ''
-        env:
-          WINDOWS_CERT_PFX: ${{ secrets.WINDOWS_CERT_PFX }}
-          WINDOWS_CERT_PFX_PASSWORD: ${{ secrets.WINDOWS_CERT_PFX_PASSWORD }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          out="skills-check-${{ matrix.goos }}-${{ matrix.goarch }}.exe"
-          echo "$WINDOWS_CERT_PFX" | base64 -d > /tmp/cert.pfx
-          signtool=$(find "/c/Program Files (x86)/Windows Kits/10/bin" -name signtool.exe | sort -r | head -n1)
-          "$signtool" sign \
-            /f /tmp/cert.pfx \
-            /p "$WINDOWS_CERT_PFX_PASSWORD" \
-            /tr http://timestamp.digicert.com \
-            /td sha256 \
-            /fd sha256 \
-            "dist-build/${out}"
-
+      # `shasum -a 256` is the macOS-native equivalent of `sha256sum`
+      # and produces identical output (lowercase hex + two spaces + name).
       - name: SHA-256 of binary
         shell: bash
         run: |
+          set -euo pipefail
           cd dist-build
-          sha256sum * > checksums-${{ matrix.goos }}-${{ matrix.goarch }}.txt
+          shasum -a 256 skills-check-darwin-${{ matrix.goarch }} \
+            > checksums-darwin-${{ matrix.goarch }}.txt
 
-      - name: Upload binary artifact
+      - name: Upload final binary artifact
         uses: actions/upload-artifact@v4
         with:
-          name: skills-check-${{ matrix.goos }}-${{ matrix.goarch }}
+          name: skills-check-darwin-${{ matrix.goarch }}
+          path: dist-build/
+
+  # Windows Authenticode signing. Runs on `windows-latest` so
+  # `signtool.exe` (shipped with the Windows SDK) is available. When
+  # `secrets.WINDOWS_CERT_PFX` is not configured the binary is passed
+  # through unsigned.
+  sign-windows:
+    name: Sign Windows amd64
+    needs: build
+    runs-on: windows-latest
+    env:
+      WINDOWS_CERT_PFX: ${{ secrets.WINDOWS_CERT_PFX }}
+    steps:
+      - name: Download unsigned binary
+        uses: actions/download-artifact@v4
+        with:
+          name: raw-windows-amd64
+          path: dist-build/
+
+      - name: Sign (Authenticode)
+        if: env.WINDOWS_CERT_PFX != ''
+        env:
+          WINDOWS_CERT_PFX: ${{ secrets.WINDOWS_CERT_PFX }}
+          WINDOWS_CERT_PFX_PASSWORD: ${{ secrets.WINDOWS_CERT_PFX_PASSWORD }}
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $bin = "dist-build/skills-check-windows-amd64.exe"
+          $pfxPath = Join-Path $env:RUNNER_TEMP 'cert.pfx'
+          [System.IO.File]::WriteAllBytes($pfxPath, [System.Convert]::FromBase64String($env:WINDOWS_CERT_PFX))
+          $signtool = (Get-ChildItem 'C:/Program Files (x86)/Windows Kits/10/bin' -Recurse -Filter signtool.exe `
+            | Where-Object { $_.FullName -match '\\x64\\' } `
+            | Sort-Object FullName -Descending `
+            | Select-Object -First 1).FullName
+          if (-not $signtool) { throw 'signtool.exe not found on runner' }
+          & $signtool sign `
+            /f $pfxPath `
+            /p $env:WINDOWS_CERT_PFX_PASSWORD `
+            /tr 'http://timestamp.digicert.com' `
+            /td sha256 `
+            /fd sha256 `
+            $bin
+          & $signtool verify /pa $bin
+
+      - name: SHA-256 of binary
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Set-Location dist-build
+          $hash = (Get-FileHash skills-check-windows-amd64.exe -Algorithm SHA256).Hash.ToLower()
+          # Match the `sha256sum` output format: "<hash>  <filename>\n".
+          # Use UTF-8 without BOM so the file reads cleanly on Unix tooling.
+          $line = "$hash  skills-check-windows-amd64.exe`n"
+          [System.IO.File]::WriteAllText("checksums-windows-amd64.txt", $line, (New-Object System.Text.UTF8Encoding $false))
+
+      - name: Upload final binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: skills-check-windows-amd64
           path: dist-build/
 
   publish:
     name: Compute manifest and publish release assets
-    needs: build
+    needs: [finalize-linux, sign-macos, sign-windows]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -185,6 +280,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts/
+          # Only pull the signed/finalized artifacts; the `raw-*`
+          # artifacts are intermediate and must not appear in the
+          # release.
+          pattern: skills-check-*
 
       - name: Stage release assets
         shell: bash

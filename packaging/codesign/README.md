@@ -1,10 +1,24 @@
 # Code signing — macOS and Windows
 
-The release workflow (`.github/workflows/release.yml`) has conditional steps
-that sign the macOS and Windows artifacts. The steps are **no-ops unless the
-corresponding secrets are configured** — the release still succeeds without
-code signing, but the binaries are not notarized and Windows will show a
-SmartScreen warning.
+The release workflow (`.github/workflows/release.yml`) signs macOS and
+Windows artifacts in dedicated platform-specific jobs:
+
+- `sign-macos` runs on `macos-latest` so the Apple toolchain (`security`,
+  `codesign`, `ditto`, `xcrun notarytool`) is available.
+- `sign-windows` runs on `windows-latest` so `signtool.exe` (shipped with
+  the Windows SDK) is available.
+
+Cross-compilation still happens on a single `ubuntu-latest` `build` job
+which uploads `raw-<goos>-<goarch>` artifacts that the signing jobs
+download, sign, checksum, and re-upload as `skills-check-<goos>-<goarch>`.
+
+The signing steps inside each platform-specific job are **no-ops unless
+the corresponding secrets are configured** — the release still succeeds
+without code signing, but the binaries are not notarized and Windows
+will show a SmartScreen warning. The SHA-256 checksum is always
+computed against the bytes that end up in the release (signed if
+signing ran, unsigned otherwise) so `skills-check self-update` always
+verifies correctly.
 
 ## macOS — Developer ID + notarization
 
