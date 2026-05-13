@@ -1,0 +1,179 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-05-12T10:00:00Z",
+  "description": "Curated list of well-known typosquats across npm, PyPI, crates.io, and Go. Each entry maps a fake package (typosquat) to the legitimate target it imitates, with its Levenshtein distance and current status.",
+  "references": [
+    "https://blog.phylum.io/typosquatting-malware-found-in-rust-crate",
+    "https://snyk.io/research/state-of-open-source-security-2023",
+    "https://www.cisa.gov/news-events/alerts/2021/10/22/malware-discovered-popular-npm-package-ua-parser-js",
+    "https://medium.com/@m.s.miettinen/ctx-pypi-hijack-on-may-2022-c4a86a8acec5",
+    "https://jfrog.com/blog/jfrog-detects-coordinated-attack-on-go-package-ecosystem/"
+  ],
+  "entries": [
+    {
+      "target": "lodash",
+      "typosquat": "lodahs",
+      "ecosystem": "npm",
+      "levenshtein_distance": 2,
+      "status": "removed",
+      "discovered": "2019-07-02",
+      "references": [
+        "https://snyk.io/research/state-of-open-source-security-2023"
+      ]
+    },
+    {
+      "target": "express",
+      "typosquat": "expres",
+      "ecosystem": "npm",
+      "levenshtein_distance": 1,
+      "status": "removed",
+      "discovered": "2019-03-21",
+      "references": [
+        "https://snyk.io/research/state-of-open-source-security-2023"
+      ]
+    },
+    {
+      "target": "axios",
+      "typosquat": "axois",
+      "ecosystem": "npm",
+      "levenshtein_distance": 2,
+      "status": "removed",
+      "discovered": "2020-09-15",
+      "references": [
+        "https://snyk.io/research/state-of-open-source-security-2023"
+      ]
+    },
+    {
+      "target": "cross-env",
+      "typosquat": "crossenv",
+      "ecosystem": "npm",
+      "levenshtein_distance": 1,
+      "status": "removed",
+      "discovered": "2017-08-01",
+      "references": [
+        "https://blog.npmjs.org/post/163723642530/crossenv-malware-on-the-npm-registry"
+      ]
+    },
+    {
+      "target": "twilio",
+      "typosquat": "twilio-npm",
+      "ecosystem": "npm",
+      "levenshtein_distance": 4,
+      "status": "removed",
+      "discovered": "2020-10-30",
+      "references": [
+        "https://snyk.io/blog/discord-malware-npm-package/"
+      ]
+    },
+    {
+      "target": "discord.js",
+      "typosquat": "discord-js",
+      "ecosystem": "npm",
+      "levenshtein_distance": 1,
+      "status": "removed",
+      "discovered": "2020-12-09",
+      "references": [
+        "https://snyk.io/blog/discord-malware-npm-package/"
+      ]
+    },
+    {
+      "target": "requests",
+      "typosquat": "request",
+      "ecosystem": "pypi",
+      "levenshtein_distance": 1,
+      "status": "removed",
+      "discovered": "2017-09-12",
+      "references": [
+        "https://www.bleepingcomputer.com/news/security/ten-malicious-libraries-found-on-pypi-python-package-index/"
+      ]
+    },
+    {
+      "target": "urllib3",
+      "typosquat": "urlib3",
+      "ecosystem": "pypi",
+      "levenshtein_distance": 1,
+      "status": "removed",
+      "discovered": "2017-09-12",
+      "references": [
+        "https://www.bleepingcomputer.com/news/security/ten-malicious-libraries-found-on-pypi-python-package-index/"
+      ]
+    },
+    {
+      "target": "pyyaml",
+      "typosquat": "pyymal",
+      "ecosystem": "pypi",
+      "levenshtein_distance": 2,
+      "status": "removed",
+      "discovered": "2018-11-29",
+      "references": [
+        "https://medium.com/@bertusk/cryptocurrency-clipboard-hijacker-discovered-in-pypi-repository-b66b8a534a8"
+      ]
+    },
+    {
+      "target": "colorama",
+      "typosquat": "colourama",
+      "ecosystem": "pypi",
+      "levenshtein_distance": 1,
+      "status": "removed",
+      "discovered": "2018-10-31",
+      "references": [
+        "https://medium.com/@bertusk/cryptocurrency-clipboard-hijacker-discovered-in-pypi-repository-b66b8a534a8"
+      ]
+    },
+    {
+      "target": "rust_decimal",
+      "typosquat": "rustdecimal",
+      "ecosystem": "crates",
+      "levenshtein_distance": 1,
+      "status": "removed",
+      "discovered": "2022-05-10",
+      "references": [
+        "https://blog.rust-lang.org/2022/05/10/cve-2022-36315.html"
+      ]
+    },
+    {
+      "target": "anyhow",
+      "typosquat": "anyhow_ext",
+      "ecosystem": "crates",
+      "levenshtein_distance": 4,
+      "status": "removed",
+      "discovered": "2023-07-19",
+      "references": [
+        "https://blog.phylum.io/rust-cargo-supply-chain-attack-research-summer-2023/"
+      ]
+    },
+    {
+      "target": "postgres",
+      "typosquat": "postgress",
+      "ecosystem": "crates",
+      "levenshtein_distance": 1,
+      "status": "removed",
+      "discovered": "2023-07-19",
+      "references": [
+        "https://blog.phylum.io/rust-cargo-supply-chain-attack-research-summer-2023/"
+      ]
+    },
+    {
+      "target": "github.com/aws/aws-sdk-go-v2",
+      "typosquat": "github.com/aws-utils/aws-go-sdk",
+      "ecosystem": "go",
+      "levenshtein_distance": 12,
+      "status": "removed",
+      "discovered": "2023-09-12",
+      "references": [
+        "https://socket.dev/blog/research-deep-dive-malicious-go-packages"
+      ]
+    },
+    {
+      "target": "github.com/hashicorp/terraform-provider-google",
+      "typosquat": "github.com/hashicorpp/terraform-provider-google",
+      "ecosystem": "go",
+      "levenshtein_distance": 1,
+      "status": "removed",
+      "discovered": "2024-01-08",
+      "references": [
+        "https://socket.dev/blog/research-deep-dive-malicious-go-packages"
+      ]
+    }
+  ]
+}

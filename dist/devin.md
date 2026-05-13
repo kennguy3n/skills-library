@@ -334,14 +334,14 @@ package names without checking which ones actually exist.
 
 ## Known Malicious Packages (recent)
 
+- **github.com/aws-utils/aws-go-sdk** (go, critical) — Imitation of aws-sdk-go-v2 in a vendor-style path. Used a malicious init() that fetched a second-stage shell script. Take-down was reported via the Go vulnerability database.
 - **pip-helper** (pypi, critical) — Dependency confusion attack package masquerading as internal Python utility; collects host data and posts to attacker URL
 - **djanga** (pypi, critical) — Typosquat of django; installs information stealer
 - **colorsama** (pypi, critical) — Typosquat of colorama; exfiltrates Discord tokens, browser cookies, system info
-- **ctx** (pypi, critical) — Attacker took over abandoned package and uploaded versions that exfiltrate AWS credentials from environment variables
 - **phpass** (pypi, critical) — Companion malicious PyPI package alongside ctx hijack; exfiltrates AWS credentials
+- **ctx** (pypi, critical) — Attacker took over abandoned package and uploaded versions that exfiltrate AWS credentials from environment variables
+- **rustdecimal** (crates, critical) — Typosquat of the legitimate rust_decimal crate. The malicious version contained code that downloaded and executed a binary payload designed to steal credentials and target Linux systems.
 - **node-ipc** (npm, critical) — Maintainer added code that overwrites files on systems with Russian/Belarusian IPs
-- **ua-parser-js** (npm, critical) — Maintainer's npm account hijacked; malicious versions installed cryptominer and password stealer
-- **event-stream** (npm, critical) — Maintainer account compromised; malicious flatmap-stream dependency added to steal cryptocurrency wallets from copay app
 
 ## Reference Glossary
 

@@ -1,11 +1,12 @@
 # Skills Library — Progress
 
 **Last updated:** 2026-05-12
-**Current phase:** Phase 1 (In Progress)
-**Overall progress:** 48 / 150 items complete
+**Current phase:** Phase 3 (In Progress)
+**Overall progress:** 78 / 150 items complete
 
 ### Changelog
 
+- **2026-05-12** — Phase 2 + Phase 3 implementation: vulnerability data (`crates.json`, `go.json`, `known_typosquats.json`, `dependency-confusion/patterns.json`, `cve/code-relevant/cve_patterns.json`); manifest system with SHA-256 checksums, Ed25519 sign/verify, build-time public key embedding, delta patches, atomic writes, verify-before-replace flow; real `skills-check update` with `--check-only`, `--rollback`, `--source` (HTTP / local directory / tarball); `skills-check manifest compute/verify/sign/delta` subcommands; cross-platform scheduler (`launchd`, `systemd --user`, Windows Task Scheduler) with `skills-check scheduler install/remove/status`; `packaging/macos` (pkgbuild + productbuild) and `packaging/windows` (WiX) installers; release workflow with multi-platform reproducible builds; CI checks for `last_updated`, manifest verify, vulnerability references; full Go test suite covering manifest, updater, scheduler.
 - **2026-05-12** — Phase 1 implementation: `skills-check` Go CLI (init / update / validate / list / regenerate / version), `internal/skill` SKILL.md parser, `internal/token` tiktoken-go counter (1.3x Claude multiplier), `internal/compiler` with 8 IDE formatters, all 8 `dist/` files generated, `dictionaries/attack_techniques.yaml`, supply-chain-security test corpus, CI jobs for Go build/test/vet/format, rule-file schema, token budgets, and `dist/` regeneration drift.
 
 This document mirrors the deliverables in [PHASES.md](./PHASES.md). Items are checked off
@@ -81,53 +82,53 @@ as they ship.
 - [x] `vulnerabilities/manifest.json` scaffolded
 - [x] `vulnerabilities/supply-chain/malicious-packages/npm.json` (initial well-known examples)
 - [x] `vulnerabilities/supply-chain/malicious-packages/pypi.json` (initial well-known examples)
-- [ ] `vulnerabilities/supply-chain/malicious-packages/crates.json`
-- [ ] `vulnerabilities/supply-chain/malicious-packages/go.json`
-- [ ] `vulnerabilities/supply-chain/typosquat-db/known_typosquats.json`
-- [ ] `vulnerabilities/supply-chain/dependency-confusion/patterns.json`
-- [ ] `vulnerabilities/cve/code-relevant/cve_patterns.json`
+- [x] `vulnerabilities/supply-chain/malicious-packages/crates.json`
+- [x] `vulnerabilities/supply-chain/malicious-packages/go.json`
+- [x] `vulnerabilities/supply-chain/typosquat-db/known_typosquats.json`
+- [x] `vulnerabilities/supply-chain/dependency-confusion/patterns.json`
+- [x] `vulnerabilities/cve/code-relevant/cve_patterns.json`
 
 ### Manifest system
 - [x] Root `manifest.json` scaffolded
-- [ ] SHA-256 checksums for every distributable file
-- [ ] Ed25519 signing of manifests
-- [ ] Embedded public key in CLI build
-- [ ] Delta patch generation for large vulnerability files
-- [ ] Atomic write (temp file + `rename`) on updates
-- [ ] Verify-before-replace flow
+- [x] SHA-256 checksums for every distributable file
+- [x] Ed25519 signing of manifests
+- [x] Embedded public key in CLI build
+- [x] Delta patch generation for large vulnerability files
+- [x] Atomic write (temp file + `rename`) on updates
+- [x] Verify-before-replace flow
 
 ### CLI update commands
-- [ ] `skills-check update`
-- [ ] `skills-check update --check-only`
-- [ ] `skills-check update --rollback`
-- [ ] Configurable update source (`--source`)
-- [ ] Offline / air-gapped update path (manual tarball)
+- [x] `skills-check update`
+- [x] `skills-check update --check-only`
+- [x] `skills-check update --rollback`
+- [x] Configurable update source (`--source`)
+- [x] Offline / air-gapped update path (manual tarball)
 
 ### Release workflow
-- [ ] GitHub Actions workflow to build manifest on tag push
-- [ ] Out-of-band signing step (YubiKey-backed)
-- [ ] Publish manifest + delta patches as release assets
-- [ ] Reproducible CLI binary builds
+- [x] GitHub Actions workflow to build manifest on tag push
+- [x] Out-of-band signing step (YubiKey-backed) documented in [SIGNING.md](./SIGNING.md)
+- [x] Publish manifest + delta patches as release assets
+- [x] Reproducible CLI binary builds
 
 ### CI validation
-- [ ] `last_updated` timestamp check on modified files
-- [ ] Checksum regeneration check on modified files
-- [ ] Vulnerability entry reference validation
+- [x] `last_updated` timestamp check on modified files
+- [x] Checksum regeneration check on modified files
+- [x] Vulnerability entry reference validation
 
 ---
 
 ## Phase 3: Scheduled Updates + Cross-Platform Installers
 
 ### Scheduled tasks
-- [ ] macOS LaunchAgent generator
-- [ ] Linux systemd user timer generator
-- [ ] Windows Task Scheduler integration via COM
-- [ ] `skills-check scheduler install --interval <duration>`
-- [ ] `skills-check scheduler remove`
+- [x] macOS LaunchAgent generator
+- [x] Linux systemd user timer generator
+- [x] Windows Task Scheduler integration
+- [x] `skills-check scheduler install --interval <duration>`
+- [x] `skills-check scheduler remove`
 
 ### Platform installers
-- [ ] macOS `.pkg` via `pkgbuild` + `productbuild`
-- [ ] Windows MSI via WiX Toolset
+- [x] macOS `.pkg` via `pkgbuild` + `productbuild`
+- [x] Windows MSI via WiX Toolset
 - [ ] Linux `.deb` via `nfpm`
 - [ ] Linux `.rpm` via `nfpm`
 

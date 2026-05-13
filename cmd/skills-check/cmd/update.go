@@ -1,31 +1,120 @@
 package cmd
 
 import (
+	"crypto/ed25519"
 	"fmt"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
+
+	"github.com/kennguy3n/skills-library/cmd/skills-check/internal/manifest"
+	"github.com/kennguy3n/skills-library/cmd/skills-check/internal/updater"
 )
 
+// DefaultUpdateSource is the canonical update channel. Operators can override
+// via --source. Release artifacts on GitHub Releases live alongside the
+// manifest.json that this URL serves.
+const DefaultUpdateSource = "https://github.com/kennguy3n/skills-library/releases/latest/download"
+
 func updateCmd() *cobra.Command {
-	var regenerate, checkOnly, rollback bool
+	var (
+		regenerate    bool
+		checkOnly     bool
+		rollback      bool
+		source        string
+		path          string
+		publicKeyPath string
+		skipSignature bool
+		quiet         bool
+	)
 	c := &cobra.Command{
 		Use:   "update",
-		Short: "(Phase 2) Pull latest signed skills and vulnerability data",
+		Short: "Pull the latest signed skills and vulnerability data from a release channel",
+		Long: "Verifies the signed manifest published at --source, downloads only the files " +
+			"whose SHA-256 differs from the local copy, and atomically writes them into the " +
+			"library root. --check-only reports without applying; --rollback restores the " +
+			"previous applied update.",
 		RunE: func(c *cobra.Command, args []string) error {
 			out := c.OutOrStdout()
-			fmt.Fprintln(out, "skills-check update: remote update channel ships in Phase 2.")
-			fmt.Fprintln(out, "  - Signed manifest fetch + Ed25519 verification")
-			fmt.Fprintln(out, "  - Delta application for large vulnerability data")
-			fmt.Fprintln(out, "  - Atomic writes + rollback support")
-			fmt.Fprintln(out, "Track progress in PROGRESS.md.")
-			_ = regenerate
-			_ = checkOnly
-			_ = rollback
+			root, err := filepath.Abs(path)
+			if err != nil {
+				return err
+			}
+
+			if rollback {
+				if err := updater.Rollback(root); err != nil {
+					return err
+				}
+				fmt.Fprintln(out, "rollback complete")
+				return nil
+			}
+
+			if source == "" {
+				source = DefaultUpdateSource
+			}
+			src, err := updater.NewSource(source)
+			if err != nil {
+				return fmt.Errorf("source %s: %w", source, err)
+			}
+			defer src.Close()
+
+			var pub ed25519.PublicKey
+			if publicKeyPath != "" {
+				pub, err = manifest.LoadPublicKey(publicKeyPath)
+				if err != nil {
+					return err
+				}
+			}
+			opts := updater.Options{PublicKey: pub, SkipSignature: skipSignature}
+
+			if checkOnly {
+				res, err := updater.CheckOnly(root, src, opts)
+				if err != nil {
+					return err
+				}
+				if !quiet {
+					fmt.Fprintf(out, "source: %s\n", src.Description())
+					fmt.Fprintf(out, "remote version: %s\n", res.RemoteManifest.Version)
+				}
+				fmt.Fprint(out, updater.FormatChanges(res.Changes))
+				return nil
+			}
+
+			res, err := updater.Apply(root, src, opts)
+			if err != nil {
+				return err
+			}
+			if !quiet {
+				fmt.Fprintf(out, "source: %s\n", src.Description())
+				fmt.Fprintf(out, "updated to version %s\n", res.RemoteManifest.Version)
+			}
+			fmt.Fprint(out, updater.FormatChanges(res.Changes))
+			if regenerate {
+				if err := regenerateAfterUpdate(root, out); err != nil {
+					return err
+				}
+			}
 			return nil
 		},
 	}
-	c.Flags().BoolVar(&regenerate, "regenerate", false, "regenerate dist/ files after update (Phase 2)")
-	c.Flags().BoolVar(&checkOnly, "check-only", false, "show available updates without applying (Phase 2)")
-	c.Flags().BoolVar(&rollback, "rollback", false, "revert to previous version (Phase 2)")
+	c.Flags().BoolVar(&regenerate, "regenerate", false, "regenerate dist/ from skills/ after applying the update")
+	c.Flags().BoolVar(&checkOnly, "check-only", false, "fetch and verify the manifest, then print available updates without applying")
+	c.Flags().BoolVar(&rollback, "rollback", false, "restore the previous applied update from .skills-check-previous/")
+	c.Flags().StringVar(&source, "source", "", "update source: https URL, file:///path, local directory, or .tar.gz tarball")
+	c.Flags().StringVar(&path, "path", ".", "library root to apply the update into")
+	c.Flags().StringVar(&publicKeyPath, "public-key", "", "Ed25519 public key file used to verify the manifest (default: embedded)")
+	c.Flags().BoolVar(&skipSignature, "skip-signature", false, "skip signature verification (testing / bootstrap only)")
+	c.Flags().BoolVar(&quiet, "quiet", false, "suppress non-essential output")
 	return c
+}
+
+// regenerateAfterUpdate runs the same logic as `skills-check regenerate` so
+// dist/ stays in sync after an update brings in new skill content. We do not
+// share the cobra.Command instance here because both commands accept their
+// own --path flag; instead we drive the package APIs directly.
+func regenerateAfterUpdate(root string, out interface{ Write(p []byte) (int, error) }) error {
+	cmd := regenerateCmd()
+	cmd.SetArgs([]string{"--path", root})
+	cmd.SetOut(out)
+	return cmd.Execute()
 }

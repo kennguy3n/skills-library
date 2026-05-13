@@ -159,14 +159,17 @@ jobs:
       - name: Install PyYAML
         run: python -m pip install --quiet pyyaml
 
-      - name: Check rule files declare schema_version
+      - name: Check rule and vulnerability files declare schema_version
         shell: bash
         run: |
           set -e
           python - <<'PY'
           import json, sys, pathlib, yaml
           fail = 0
+          # Skill subdirectories that contain rules / checklists / frameworks /
+          # tests are required to declare schema_version on every JSON/YAML.
           roots = ["rules", "checklists", "frameworks", "tests"]
+          checked = []
           for skill_dir in sorted(pathlib.Path("skills").iterdir()):
               if not skill_dir.is_dir():
                   continue
@@ -175,20 +178,30 @@ jobs:
                   if not d.exists():
                       continue
                   for p in sorted(d.rglob("*")):
-                      if p.suffix not in {".json", ".yaml", ".yml"}:
-                          continue
-                      text = p.read_text(encoding="utf-8")
-                      try:
-                          data = json.loads(text) if p.suffix == ".json" else yaml.safe_load(text)
-                      except Exception as e:
-                          print(f"::error file={p}::Parse error: {e}")
-                          fail = 1
-                          continue
-                      if not isinstance(data, dict):
-                          continue
-                      if "schema_version" not in data:
-                          print(f"::error file={p}::Missing required key 'schema_version'")
-                          fail = 1
+                      if p.suffix in {".json", ".yaml", ".yml"}:
+                          checked.append(p)
+          # Vulnerability data files all need schema_version + last_updated.
+          for p in sorted(pathlib.Path("vulnerabilities").rglob("*.json")):
+              if p.name == "manifest.json":
+                  continue
+              checked.append(p)
+          require_last_updated_root = pathlib.Path("vulnerabilities")
+          for p in checked:
+              text = p.read_text(encoding="utf-8")
+              try:
+                  data = json.loads(text) if p.suffix == ".json" else yaml.safe_load(text)
+              except Exception as e:
+                  print(f"::error file={p}::Parse error: {e}")
+                  fail = 1
+                  continue
+              if not isinstance(data, dict):
+                  continue
+              if "schema_version" not in data:
+                  print(f"::error file={p}::Missing required key 'schema_version'")
+                  fail = 1
+              if require_last_updated_root in p.parents and "last_updated" not in data:
+                  print(f"::error file={p}::Missing required key 'last_updated'")
+                  fail = 1
           sys.exit(fail)
           PY
 
@@ -261,3 +274,162 @@ jobs:
             echo "::error::dist/ files are out of date. Run 'skills-check regenerate' and commit."
             exit 1
           fi
+
+  manifest-checksums:
+    name: manifest checksums match repo contents
+    needs: go-build-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: true
+
+      - name: Build skills-check
+        run: go build -trimpath -ldflags "-s -w" -o /tmp/skills-check ./cmd/skills-check
+
+      - name: skills-check manifest verify --checksums-only
+        run: /tmp/skills-check manifest verify --path . --checksums-only
+
+  vulnerability-references:
+    name: every vulnerability entry has at least one external reference URL
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check references
+        shell: bash
+        run: |
+          set -e
+          python - <<'PY'
+          import json, sys, pathlib
+
+          fail = 0
+          # Every entry under vulnerabilities/ that has a "name" or "cve" must
+          # ship at least one external reference URL. Files that aggregate
+          # entries under "entries" are walked.
+          for path in sorted(pathlib.Path("vulnerabilities").rglob("*.json")):
+              if path.name == "manifest.json":
+                  continue
+              try:
+                  data = json.loads(path.read_text(encoding="utf-8"))
+              except json.JSONDecodeError as e:
+                  print(f"::error file={path}::Invalid JSON: {e}")
+                  fail = 1
+                  continue
+              entries = []
+              if isinstance(data, dict):
+                  if isinstance(data.get("entries"), list):
+                      entries = data["entries"]
+                  # files like patterns.json with namespace_patterns/heuristics
+                  # also count as entry-bearing; require top-level references too
+                  if not entries and not data.get("references"):
+                      # only require this for files with concrete vulnerability or
+                      # CVE content; skip empty schemas
+                      if any(k in data for k in ("cve", "name", "entries")):
+                          print(f"::error file={path}::Missing top-level 'references' URL")
+                          fail = 1
+              for ent in entries:
+                  if not isinstance(ent, dict):
+                      continue
+                  refs = ent.get("references") or []
+                  if not isinstance(refs, list) or not any(isinstance(r, str) and r.startswith("http") for r in refs):
+                      ident = ent.get("name") or ent.get("cve") or ent.get("typosquat") or "<unknown>"
+                      print(f"::error file={path}::Entry {ident!r} missing external reference URL")
+                      fail = 1
+          sys.exit(fail)
+          PY
+
+  last-updated-check:
+    name: last_updated is bumped when content changes
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install --quiet pyyaml
+
+      - name: Verify modified skills / vuln files bumped last_updated
+        shell: bash
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          set -e
+          git fetch --no-tags --depth=50 origin "$BASE_REF" || true
+          BASE_SHA=$(git rev-parse "origin/$BASE_REF" 2>/dev/null || git rev-parse "$BASE_REF" 2>/dev/null || echo "")
+          if [ -z "$BASE_SHA" ]; then
+            echo "::warning::could not resolve base ref $BASE_REF; skipping check"
+            exit 0
+          fi
+          mapfile -t CHANGED < <(git diff --name-only --diff-filter=AM "$BASE_SHA"...HEAD -- 'skills/**' 'vulnerabilities/**' || true)
+          if [ "${#CHANGED[@]}" -eq 0 ]; then
+            echo "no skill / vuln changes; skipping"
+            exit 0
+          fi
+          python - "$BASE_SHA" "${CHANGED[@]}" <<'PY'
+          import json, re, subprocess, sys, pathlib, yaml
+
+          base_sha = sys.argv[1]
+          changed = sys.argv[2:]
+
+          def base_text(path):
+              try:
+                  return subprocess.check_output(["git", "show", f"{base_sha}:{path}"], stderr=subprocess.DEVNULL).decode("utf-8")
+              except subprocess.CalledProcessError:
+                  return None
+
+          def field(text, path):
+              if text is None:
+                  return None
+              if path.endswith(".json"):
+                  try:
+                      return json.loads(text).get("last_updated")
+                  except json.JSONDecodeError:
+                      return None
+              if path.endswith("SKILL.md"):
+                  m = re.match(r"\A---\s*\n(.*?)\n---", text, re.DOTALL)
+                  if not m:
+                      return None
+                  try:
+                      return (yaml.safe_load(m.group(1)) or {}).get("last_updated")
+                  except yaml.YAMLError:
+                      return None
+              return None
+
+          fail = 0
+          for path in changed:
+              if not (path.endswith(".json") or path.endswith("SKILL.md")):
+                  continue
+              p = pathlib.Path(path)
+              if not p.exists():
+                  continue
+              head_text = p.read_text(encoding="utf-8")
+              head_value = field(head_text, path)
+              base_value = field(base_text(path), path)
+              if head_value is None:
+                  # file does not declare last_updated; skip — schema is checked elsewhere
+                  continue
+              if base_value is not None and base_value == head_value:
+                  print(f"::error file={path}::last_updated must be bumped when the file changes (was {base_value})")
+                  fail = 1
+          sys.exit(fail)
+          PY

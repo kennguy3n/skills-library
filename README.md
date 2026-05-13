@@ -126,6 +126,16 @@ skills-check update
 
 # Pull and regenerate IDE files in one step
 skills-check update --regenerate
+
+# Check for updates without applying
+skills-check update --check-only
+
+# Revert to the previous version
+skills-check update --rollback
+
+# Use a custom source (HTTP URL, local directory, or tarball)
+skills-check update --source https://cdn.example.com/skills-library/
+skills-check update --source /mnt/airgap/skills-library-v2.tar.gz
 ```
 
 ### Scheduled Updates
@@ -287,25 +297,19 @@ skills-library/
 - [PROGRESS.md](./PROGRESS.md) — Live progress tracker mirroring the deliverables in
   PHASES.md.
 
-## Project Structure (Phase 1)
+## CLI Package Layout
 
 ```
-skills-library/
-├── cmd/skills-check/
-│   ├── main.go                    # Cobra root command
-│   ├── cmd/                       # init / update / validate / list / regenerate / version
-│   └── internal/
-│       ├── skill/                 # SKILL.md parser (frontmatter + body + tier extraction)
-│       ├── token/                 # tiktoken-go counter + 1.3x Claude multiplier
-│       ├── compiler/              # 8 IDE-specific formatters + core compile loop
-│       └── manifest/              # manifest.json reader (Phase 2 will use signing)
-├── skills/                        # 7 SKILL.md manifests + their rule files
-├── dictionaries/                  # security_terms / cwe_top25 / owasp_top10_2025 / attack_techniques
-├── vulnerabilities/               # Supply-chain vulnerability data + root manifest.json
-├── dist/                          # Generated IDE configs (regenerate via skills-check)
-├── .github/workflows/validate.yml # CI: JSON/YAML, frontmatter, rule schema, go build/test, token budgets, dist drift
-├── go.mod / go.sum
-└── README.md / PROPOSAL.md / ARCHITECTURE.md / PHASES.md / PROGRESS.md
+cmd/skills-check/
+├── main.go                    # Cobra root command
+├── cmd/                       # init / update / validate / list / regenerate / version / manifest / scheduler
+└── internal/
+    ├── skill/                 # SKILL.md parser (frontmatter + body + tier extraction)
+    ├── token/                 # tiktoken-go counter + 1.3x Claude multiplier
+    ├── compiler/              # 8 IDE-specific formatters + core compile loop
+    ├── manifest/              # manifest.json: load, checksum, Ed25519 sign/verify, delta, atomic write
+    ├── updater/               # Remote update: HTTP / dir / tarball sources, verify-before-replace, rollback
+    └── scheduler/             # Cross-platform scheduled updates (launchd / systemd / Task Scheduler)
 ```
 
 ## Building and Running Tests
@@ -316,12 +320,20 @@ go test ./...
 ./skills-check validate
 ./skills-check list
 ./skills-check regenerate
+./skills-check manifest compute --path . --write   # recompute SHA-256 checksums
+./skills-check manifest verify  --path .            # verify committed checksums
 ```
 
 The same commands run in CI on every PR. `skills-check validate` enforces the per-skill
 token budgets declared in each `SKILL.md` frontmatter; `skills-check regenerate` rebuilds
 every file in `dist/` and CI fails if the committed copy differs from the regenerated
 output.
+
+## Signing Model
+
+Release manifests are signed with Ed25519. The public key is embedded in the CLI binary at
+build time via `-ldflags -X`. See [SIGNING.md](./SIGNING.md) for the out-of-band YubiKey-backed
+signing procedure and key management policy.
 
 ## Platform Support
 

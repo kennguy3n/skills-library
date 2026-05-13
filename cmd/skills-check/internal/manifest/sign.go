@@ -1,0 +1,235 @@
+package manifest
+
+import (
+	"crypto/ed25519"
+	"crypto/rand"
+	"encoding/base64"
+	"encoding/json"
+	"encoding/pem"
+	"errors"
+	"fmt"
+	"os"
+	"strings"
+)
+
+// EmbeddedPublicKey is the base64-encoded Ed25519 public key the CLI uses to
+// verify manifests when no key is supplied explicitly. The build system can
+// override it via:
+//
+//	go build -ldflags "-X github.com/.../manifest.EmbeddedPublicKey=<b64>"
+//
+// When left empty (the development default), VerifyManifest still works as
+// long as the caller passes an explicit public key.
+var EmbeddedPublicKey = ""
+
+// EmbeddedPublicKeyID is the human-friendly key ID baked into the binary at
+// build time. It is reported by `skills-check version` so operators can tell
+// which signing key the binary trusts.
+var EmbeddedPublicKeyID = ""
+
+// CanonicalSigningBytes returns the deterministic JSON encoding of the
+// manifest with the "signature" field stripped. Signing and verification both
+// hash exactly these bytes, so they must be byte-stable across runs.
+//
+// Implementation: marshal the manifest, decode into a generic map, drop the
+// "signature" key, sort file entries, then re-marshal with json.MarshalIndent.
+// Go's json.Marshal sorts object keys alphabetically for map[string]any, so
+// the encoding is canonical.
+func (m *Manifest) CanonicalSigningBytes() ([]byte, error) {
+	dup := m.Clone()
+	dup.SortFiles()
+	dup.Signature = ""
+	raw, err := json.Marshal(dup)
+	if err != nil {
+		return nil, err
+	}
+	var generic map[string]any
+	if err := json.Unmarshal(raw, &generic); err != nil {
+		return nil, err
+	}
+	delete(generic, "signature")
+	return json.Marshal(generic)
+}
+
+// SignManifest signs the manifest in-place using the Ed25519 private key
+// found at privateKeyPath. The file may hold a 64-byte raw seed, a 64-byte
+// raw private key, a base64-encoded variant of either, or a PEM block with
+// type "PRIVATE KEY" or "ED25519 PRIVATE KEY".
+//
+// The resulting signature is stored as "ed25519:<base64>". The public key id
+// is left intact so the operator can configure it explicitly.
+func (m *Manifest) SignManifest(privateKeyPath string) error {
+	priv, err := LoadPrivateKey(privateKeyPath)
+	if err != nil {
+		return err
+	}
+	return m.SignWith(priv)
+}
+
+// SignWith signs the manifest with an in-memory Ed25519 private key.
+func (m *Manifest) SignWith(priv ed25519.PrivateKey) error {
+	if len(priv) != ed25519.PrivateKeySize {
+		return fmt.Errorf("ed25519 private key must be %d bytes, got %d", ed25519.PrivateKeySize, len(priv))
+	}
+	canon, err := m.CanonicalSigningBytes()
+	if err != nil {
+		return err
+	}
+	sig := ed25519.Sign(priv, canon)
+	m.Signature = SignaturePrefix + base64.StdEncoding.EncodeToString(sig)
+	return nil
+}
+
+// VerifyManifest verifies the manifest's signature against the embedded
+// public key. If EmbeddedPublicKey is unset, an error is returned; callers
+// that want to provide a key explicitly should use VerifyWith.
+func (m *Manifest) VerifyManifest() error {
+	pub, err := embeddedPublicKey()
+	if err != nil {
+		return err
+	}
+	return m.VerifyWith(pub)
+}
+
+// VerifyWith verifies the manifest's signature against the provided
+// Ed25519 public key.
+func (m *Manifest) VerifyWith(pub ed25519.PublicKey) error {
+	if len(pub) != ed25519.PublicKeySize {
+		return fmt.Errorf("ed25519 public key must be %d bytes, got %d", ed25519.PublicKeySize, len(pub))
+	}
+	if m.Signature == "" || m.Signature == PlaceholderSignature {
+		return errors.New("manifest is unsigned")
+	}
+	if !strings.HasPrefix(m.Signature, SignaturePrefix) {
+		return fmt.Errorf("manifest signature missing %q prefix", SignaturePrefix)
+	}
+	raw, err := base64.StdEncoding.DecodeString(strings.TrimPrefix(m.Signature, SignaturePrefix))
+	if err != nil {
+		return fmt.Errorf("decode signature: %w", err)
+	}
+	if len(raw) != ed25519.SignatureSize {
+		return fmt.Errorf("signature length %d != %d", len(raw), ed25519.SignatureSize)
+	}
+	canon, err := m.CanonicalSigningBytes()
+	if err != nil {
+		return err
+	}
+	if !ed25519.Verify(pub, canon, raw) {
+		return errors.New("ed25519 signature verification failed")
+	}
+	return nil
+}
+
+// GenerateKeyPair produces a fresh Ed25519 keypair for development and tests.
+func GenerateKeyPair() (ed25519.PublicKey, ed25519.PrivateKey, error) {
+	return ed25519.GenerateKey(rand.Reader)
+}
+
+// LoadPrivateKey reads an Ed25519 private key from disk. Supported formats:
+//
+//   - PEM block of type "PRIVATE KEY" (PKCS#8) — encoded body is the 32-byte
+//     seed followed by an Ed25519 OID header; for the common Ed25519 case we
+//     accept any PEM body whose decoded length is 32 or 64.
+//   - PEM block of type "ED25519 PRIVATE KEY" — decoded body of 32 or 64.
+//   - Base64-encoded raw key — 32 byte seed or 64 byte expanded key.
+//   - Raw binary — 32 byte seed or 64 byte expanded key.
+func LoadPrivateKey(path string) (ed25519.PrivateKey, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("read %s: %w", path, err)
+	}
+	return parsePrivateKeyBytes(data)
+}
+
+func parsePrivateKeyBytes(data []byte) (ed25519.PrivateKey, error) {
+	if block, _ := pem.Decode(data); block != nil {
+		return privateKeyFromRaw(block.Bytes)
+	}
+	trimmed := strings.TrimSpace(string(data))
+	if decoded, err := base64.StdEncoding.DecodeString(trimmed); err == nil {
+		if priv, err := privateKeyFromRaw(decoded); err == nil {
+			return priv, nil
+		}
+	}
+	return privateKeyFromRaw(data)
+}
+
+func privateKeyFromRaw(raw []byte) (ed25519.PrivateKey, error) {
+	switch len(raw) {
+	case ed25519.SeedSize:
+		return ed25519.NewKeyFromSeed(raw), nil
+	case ed25519.PrivateKeySize:
+		return ed25519.PrivateKey(raw), nil
+	default:
+		return nil, fmt.Errorf("unsupported ed25519 private key length: %d", len(raw))
+	}
+}
+
+// LoadPublicKey reads an Ed25519 public key from disk. Supported formats:
+//
+//   - PEM block of type "PUBLIC KEY" or "ED25519 PUBLIC KEY".
+//   - Base64-encoded 32-byte raw key.
+//   - Raw binary 32-byte key.
+func LoadPublicKey(path string) (ed25519.PublicKey, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("read %s: %w", path, err)
+	}
+	return parsePublicKeyBytes(data)
+}
+
+func parsePublicKeyBytes(data []byte) (ed25519.PublicKey, error) {
+	if block, _ := pem.Decode(data); block != nil {
+		return publicKeyFromRaw(block.Bytes)
+	}
+	trimmed := strings.TrimSpace(string(data))
+	if decoded, err := base64.StdEncoding.DecodeString(trimmed); err == nil {
+		if pub, err := publicKeyFromRaw(decoded); err == nil {
+			return pub, nil
+		}
+	}
+	return publicKeyFromRaw(data)
+}
+
+func publicKeyFromRaw(raw []byte) (ed25519.PublicKey, error) {
+	if len(raw) != ed25519.PublicKeySize {
+		return nil, fmt.Errorf("unsupported ed25519 public key length: %d", len(raw))
+	}
+	return ed25519.PublicKey(append([]byte(nil), raw...)), nil
+}
+
+// embeddedPublicKey returns the public key baked in via -ldflags. It is
+// permitted to fail when no key is embedded so the CLI can fall back to a
+// caller-supplied key in tests and development.
+func embeddedPublicKey() (ed25519.PublicKey, error) {
+	if EmbeddedPublicKey == "" {
+		return nil, errors.New("no public key embedded in this build; pass --public-key explicitly")
+	}
+	raw, err := base64.StdEncoding.DecodeString(EmbeddedPublicKey)
+	if err != nil {
+		return nil, fmt.Errorf("decode embedded public key: %w", err)
+	}
+	return publicKeyFromRaw(raw)
+}
+
+// HasEmbeddedKey reports whether the CLI binary was built with a baked-in
+// public key.
+func HasEmbeddedKey() bool { return EmbeddedPublicKey != "" }
+
+// EmbeddedKeyDisplay is the short string the version command prints for the
+// embedded key, which falls back to the manifest-declared key id.
+func EmbeddedKeyDisplay() string {
+	if EmbeddedPublicKeyID != "" {
+		return EmbeddedPublicKeyID
+	}
+	if EmbeddedPublicKey != "" {
+		return "embedded"
+	}
+	return "unset"
+}
+
+// EncodePublicKey converts a public key to a base64 string suitable for
+// passing to -ldflags -X.
+func EncodePublicKey(pub ed25519.PublicKey) string {
+	return base64.StdEncoding.EncodeToString(pub)
+}

@@ -219,13 +219,14 @@ cmd/skills-check/
 │   │   ├── devin.go           # devin.md formatter (defaults to full tier)
 │   │   ├── cline.go           # .clinerules formatter
 │   │   └── universal.go       # SECURITY-SKILLS.md formatter
-│   └── manifest/              # manifest.json reader (Phase 2 will add signature verifier + delta downloader)
+│   ├── manifest/              # manifest.json: load/save, SHA-256 checksum, Ed25519 sign/verify, delta, atomic write
+│   ├── updater/               # Remote update engine: HTTP/dir/tarball sources, verify-before-replace, rollback
+│   └── scheduler/             # Cross-platform scheduled updates (launchd / systemd / Task Scheduler)
 ```
 
-In Phase 2 the layout grows a `scheduler/` package (launchd / systemd / Windows Task
-Scheduler plumbing) and a `vuln/` package for query helpers; for Phase 1 those are
-out of scope and the dist compiler reads the vulnerability files directly via
-`internal/compiler/context.go`.
+The `updater/` package implements the full update protocol. `scheduler/` generates
+native artifacts (plist, systemd units, Task Scheduler XML) and shells out to the
+OS tools to install/remove them.
 
 The binary is built with `-trimpath -ldflags "-s -w"` for reproducibility. The embedded
 Ed25519 public key is injected at build time via `-X` ldflags so the same source tree
@@ -295,7 +296,8 @@ logged in, which matches the desktop-developer workflow.
 
 ### Windows (Task Scheduler)
 
-Task Scheduler is driven via COM through `golang.org/x/sys/windows`. The created task:
+Task Scheduler integration generates an XML task definition and calls `schtasks.exe`
+to create the task (no COM dependency). The created task:
 
 - Task name: `SkillsLibraryUpdate`
 - Trigger: repeat every six hours

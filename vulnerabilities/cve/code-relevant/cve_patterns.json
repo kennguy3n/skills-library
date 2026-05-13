@@ -1,0 +1,199 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-05-12T10:00:00Z",
+  "description": "Maps CVEs to code-level detection patterns. Unlike SCA tooling, this database is keyed off code shape so that even patched or re-introduced patterns can be caught at generation time.",
+  "references": [
+    "https://nvd.nist.gov/",
+    "https://github.com/advisories",
+    "https://logging.apache.org/log4j/2.x/security.html",
+    "https://spring.io/security/cve-2022-22965",
+    "https://www.cisa.gov/news-events/cybersecurity-advisories/aa21-356a"
+  ],
+  "entries": [
+    {
+      "cve": "CVE-2021-44228",
+      "name": "Log4Shell",
+      "severity": "critical",
+      "discovered": "2021-12-09",
+      "description": "Apache Log4j 2.x JNDI lookup substitution. Any string passed through Logger.info / Logger.error etc. that contains ${jndi:...} triggers remote class loading. The pattern is detectable in code, not only by version range.",
+      "references": [
+        "https://logging.apache.org/log4j/2.x/security.html",
+        "https://www.cisa.gov/news-events/cybersecurity-advisories/aa21-356a",
+        "https://nvd.nist.gov/vuln/detail/CVE-2021-44228"
+      ],
+      "languages": ["java", "kotlin", "scala"],
+      "code_patterns": [
+        "\\$\\{jndi:(ldap|rmi|dns|iiop|corba|nis|nds|http)://",
+        "log4j2\\.formatMsgNoLookups\\s*=\\s*false",
+        "Logger\\.(info|warn|error|debug|trace)\\s*\\([^)]*user(name|Agent|Input)"
+      ],
+      "remediation": [
+        "upgrade Log4j to 2.17.1+",
+        "set system property log4j2.formatMsgNoLookups=true",
+        "never log untrusted strings without redaction"
+      ],
+      "attack_type": "remote_code_execution"
+    },
+    {
+      "cve": "CVE-2022-22965",
+      "name": "Spring4Shell",
+      "severity": "critical",
+      "discovered": "2022-03-30",
+      "description": "Spring Framework / Spring Boot data binding allows attacker-controlled class manipulation through specially-crafted query parameters that walk to class.module.classLoader. AI-generated controllers using @ModelAttribute on raw POJOs are vulnerable on JDK9+.",
+      "references": [
+        "https://spring.io/security/cve-2022-22965",
+        "https://nvd.nist.gov/vuln/detail/CVE-2022-22965"
+      ],
+      "languages": ["java", "kotlin"],
+      "code_patterns": [
+        "@(ModelAttribute|RequestParam)[^)]*\\)\\s+\\w+\\s+\\w+",
+        "DataBinder\\s*\\([^)]*\\)\\s*;",
+        "(class|Class)\\.module\\.classLoader"
+      ],
+      "remediation": [
+        "upgrade Spring Framework to 5.3.18+ / 5.2.20+",
+        "add allowed-fields allowlist on DataBinder",
+        "deploy with allowlisted whitelist of bindable properties"
+      ],
+      "attack_type": "remote_code_execution"
+    },
+    {
+      "cve": "CVE-2017-5638",
+      "name": "Apache Struts2 OGNL injection",
+      "severity": "critical",
+      "discovered": "2017-03-06",
+      "description": "Apache Struts2 Jakarta Multipart parser evaluates OGNL expressions in the Content-Type header. AI-generated handlers that touch ServletRequest.getContentType() and pass it to OGNL evaluators are vulnerable.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2017-5638",
+        "https://cwiki.apache.org/confluence/display/WW/S2-045"
+      ],
+      "languages": ["java"],
+      "code_patterns": [
+        "OgnlUtil\\.getValue\\s*\\(",
+        "JakartaMultiPartRequest",
+        "ServletRequest\\s*\\.getContentType\\s*\\(\\s*\\)\\s*\\.contains"
+      ],
+      "remediation": [
+        "upgrade Apache Struts2 to 2.3.32+ / 2.5.10.1+",
+        "validate Content-Type header against a strict allowlist",
+        "do not pass user input into OGNL.evaluate"
+      ],
+      "attack_type": "remote_code_execution"
+    },
+    {
+      "cve": "CVE-2019-19781",
+      "name": "Citrix ADC path traversal",
+      "severity": "critical",
+      "discovered": "2019-12-17",
+      "description": "Path-traversal pattern '/../vpns/' in code that constructs URLs to Citrix ADC / NetScaler endpoints. Devin-generated reverse proxies sometimes recreate this exact path-resolution flaw.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2019-19781",
+        "https://support.citrix.com/article/CTX267027/"
+      ],
+      "languages": ["*"],
+      "code_patterns": [
+        "/../vpns/",
+        "url\\s*\\.replace\\s*\\(\\s*['\\\"]\\.\\.['\\\"]\\s*,\\s*['\\\"]['\\\"]\\s*\\)",
+        "path\\s*\\.normalize\\s*\\([^)]*\\.\\.[^)]*\\)"
+      ],
+      "remediation": [
+        "reject any request URI containing '..' segments",
+        "canonicalize paths before authorization checks",
+        "apply Citrix ADC security advisory CTX267027"
+      ],
+      "attack_type": "directory_traversal"
+    },
+    {
+      "cve": "CVE-2014-6271",
+      "name": "Shellshock",
+      "severity": "critical",
+      "discovered": "2014-09-24",
+      "description": "Bash environment variable function definition pattern '() { :;};' executed by CGI scripts. AI-generated wrapper scripts that pass user-controlled headers into env variables for bash subshells reintroduce Shellshock-like exposure.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2014-6271",
+        "https://www.cisa.gov/news-events/alerts/2014/09/25/bash-shellshock-vulnerability"
+      ],
+      "languages": ["shell", "perl", "python"],
+      "code_patterns": [
+        "\\(\\s*\\)\\s*\\{\\s*:\\s*;\\s*\\}\\s*;",
+        "env\\s+[A-Z_][A-Z0-9_]*='\\(\\) \\{",
+        "os\\.environ\\[[^\\]]+\\]\\s*=\\s*['\\\"]\\(\\)\\s*\\{"
+      ],
+      "remediation": [
+        "upgrade bash to patched version",
+        "never set env variables from untrusted HTTP headers",
+        "use exec form for subprocess calls"
+      ],
+      "attack_type": "remote_code_execution"
+    },
+    {
+      "cve": "CVE-2018-1273",
+      "name": "Spring Data Commons SpEL injection",
+      "severity": "critical",
+      "discovered": "2018-04-10",
+      "description": "Spring Data REST property-binding allowed SpEL evaluation, leading to arbitrary code execution via crafted property paths. AI-generated repositories exposing PagedResources without binding restrictions reintroduce the pattern.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2018-1273",
+        "https://pivotal.io/security/cve-2018-1273"
+      ],
+      "languages": ["java", "kotlin"],
+      "code_patterns": [
+        "SpelExpressionParser\\s*\\(\\s*\\)",
+        "@RepositoryRestResource[^)]*\\)\\s*public\\s+interface",
+        "PropertyPath\\.from\\s*\\("
+      ],
+      "remediation": [
+        "upgrade Spring Data Commons to 1.13.11+ / 2.0.6+",
+        "use a SimpleEvaluationContext, never StandardEvaluationContext, with untrusted input",
+        "restrict @RepositoryRestResource exported properties"
+      ],
+      "attack_type": "remote_code_execution"
+    },
+    {
+      "cve": "CVE-2023-22518",
+      "name": "Confluence Data Center improper authorization",
+      "severity": "critical",
+      "discovered": "2023-10-31",
+      "description": "Improper authorization in Atlassian Confluence DC permits remote attackers to reset or restore the instance. AI-generated admin endpoints that forget to call AuthorizationService.checkUserCanAccess match this code shape.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2023-22518",
+        "https://confluence.atlassian.com/security/cve-2023-22518-improper-authorization-vulnerability-in-confluence-data-center-and-server-1311473907.html"
+      ],
+      "languages": ["java"],
+      "code_patterns": [
+        "@(POST|PUT|DELETE)[^)]*\\)\\s+public\\s+\\w+\\s+(reset|restore|wipe)",
+        "AuthorizationService\\s*\\.\\s*checkUser",
+        "DataIntegrationApi"
+      ],
+      "remediation": [
+        "apply Atlassian patch per CVE-2023-22518",
+        "wrap admin endpoints with explicit authorization checks",
+        "require SUDO / re-auth for destructive actions"
+      ],
+      "attack_type": "improper_authorization"
+    },
+    {
+      "cve": "CVE-2023-46604",
+      "name": "Apache ActiveMQ OpenWire RCE",
+      "severity": "critical",
+      "discovered": "2023-10-25",
+      "description": "Apache ActiveMQ OpenWire protocol deserialization allows remote code execution. AI-generated message brokers that bind OpenWire to a non-localhost interface without TLS or authentication reintroduce the exposure.",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2023-46604",
+        "https://activemq.apache.org/security-advisories.data/CVE-2023-46604-announcement.txt"
+      ],
+      "languages": ["java"],
+      "code_patterns": [
+        "tcp://0\\.0\\.0\\.0:61616",
+        "OpenWireFormat",
+        "BrokerService\\s*\\(\\s*\\)\\s*;\\s*\\w+\\.addConnector\\s*\\("
+      ],
+      "remediation": [
+        "upgrade Apache ActiveMQ to 5.18.3+ / 5.17.6+",
+        "bind OpenWire to localhost or VPN-only addresses",
+        "require TLS and authentication on OpenWire connectors"
+      ],
+      "attack_type": "remote_code_execution"
+    }
+  ]
+}
