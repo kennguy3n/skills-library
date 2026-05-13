@@ -36,13 +36,14 @@ var knownEcosystems = map[string]bool{
 type Library struct {
 	root string
 
-	once      sync.Once
-	skills    []*skill.Skill
-	loadErr   error
-	secretsMu sync.Mutex
-	secrets   *secretRules
-	vulnsMu   sync.Mutex
-	vulnCache map[string]*vulnFile
+	once       sync.Once
+	skills     []*skill.Skill
+	loadErr    error
+	secretsMu  sync.Mutex
+	secrets    *secretRules
+	vulnsMu    sync.Mutex
+	vulnCache  map[string]*vulnFile
+	typosquats *typosquatFile
 }
 
 // NewLibrary returns a Library rooted at root. It does not eagerly load
@@ -193,6 +194,11 @@ func (l *Library) loadVulnFile(eco string) (*vulnFile, error) {
 }
 
 func (l *Library) loadTyposquats() (*typosquatFile, error) {
+	l.vulnsMu.Lock()
+	defer l.vulnsMu.Unlock()
+	if l.typosquats != nil {
+		return l.typosquats, nil
+	}
 	path := filepath.Join(l.root, "vulnerabilities", "supply-chain", "typosquat-db", "known_typosquats.json")
 	body, err := os.ReadFile(path)
 	if err != nil {
@@ -202,6 +208,7 @@ func (l *Library) loadTyposquats() (*typosquatFile, error) {
 	if err := json.Unmarshal(body, &tf); err != nil {
 		return nil, fmt.Errorf("parse %s: %w", path, err)
 	}
+	l.typosquats = &tf
 	return &tf, nil
 }
 

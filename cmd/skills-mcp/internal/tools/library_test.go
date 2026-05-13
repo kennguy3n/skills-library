@@ -93,6 +93,24 @@ func TestLookupVulnerabilityReturnsTyposquats(t *testing.T) {
 	}
 }
 
+func TestLoadTyposquatsCachesAcrossCalls(t *testing.T) {
+	lib := newLibrary(t)
+	first, err := lib.loadTyposquats()
+	if err != nil {
+		t.Fatalf("loadTyposquats: %v", err)
+	}
+	if first == nil {
+		t.Fatal("loadTyposquats returned nil on first call")
+	}
+	second, err := lib.loadTyposquats()
+	if err != nil {
+		t.Fatalf("loadTyposquats (second): %v", err)
+	}
+	if first != second {
+		t.Errorf("loadTyposquats did not cache: first=%p second=%p", first, second)
+	}
+}
+
 func TestCheckSecretPatternFlagsAWSExampleKeyAsKnownFalsePositive(t *testing.T) {
 	lib := newLibrary(t)
 	res, err := lib.CheckSecretPattern("AKIAIOSFODNN7EXAMPLE")
