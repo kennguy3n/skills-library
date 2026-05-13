@@ -187,3 +187,30 @@ func TestNotificationProducesNoResponse(t *testing.T) {
 		t.Errorf("notification should not produce a response; got %+v", resp)
 	}
 }
+
+// Per JSON-RPC 2.0 §4.1, a request with an explicit "id": null is NOT a
+// notification and MUST receive a response (also with "id": null). Only
+// a request lacking the "id" member entirely is a notification.
+func TestExplicitNullIDProducesResponse(t *testing.T) {
+	srv := newServer(t)
+	req := []byte(`{"jsonrpc":"2.0","id":null,"method":"initialize"}`)
+	resp := srv.HandleLine(req)
+	if resp == nil {
+		t.Fatal("request with explicit \"id\": null must receive a response")
+	}
+	if resp.Error != nil {
+		t.Fatalf("expected ok response, got error %+v", resp.Error)
+	}
+	// The response id should preserve the null literal sent by the
+	// client, and serialize as "id":null (not be omitted).
+	if string(resp.ID) != "null" {
+		t.Errorf("response.ID = %q, want \"null\"", string(resp.ID))
+	}
+	out, err := json.Marshal(resp)
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	if !strings.Contains(string(out), `"id":null`) {
+		t.Errorf("serialized response should contain \"id\":null; got %s", out)
+	}
+}

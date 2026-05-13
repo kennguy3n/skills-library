@@ -96,8 +96,10 @@ func (s *Server) HandleLine(line []byte) *response {
 	if req.JSONRPC != "2.0" {
 		return errorResponse(req.ID, codeInvalidRequest, "jsonrpc must be 2.0")
 	}
-	// Notifications: no id, no response.
-	isNotification := len(req.ID) == 0 || string(req.ID) == "null"
+	// Per JSON-RPC 2.0 §4.1, a notification is a request without an
+	// "id" member. Explicit `"id": null` is a request and MUST receive
+	// a response.
+	isNotification := len(req.ID) == 0
 	resp := s.dispatch(&req)
 	if isNotification {
 		return nil
