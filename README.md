@@ -248,16 +248,19 @@ skills-library/
 │   └── cve/
 │       └── code-relevant/               # CVEs that affect code patterns, not just versions
 │           └── cve_patterns.json
-├── rules/                               # Detection rules (Sigma format, Phase 4)
+├── rules/                               # Detection rules (Sigma format)
 │   ├── cloud/
-│   │   ├── aws/
-│   │   └── gcp/
+│   │   ├── aws/                          # CloudTrail / IAM / S3
+│   │   ├── gcp/                          # Cloud Audit Logs / IAM / VPC
+│   │   └── azure/                        # Activity Log / Azure AD / NSG
 │   ├── endpoint/
-│   │   ├── linux/
-│   │   ├── macos/
-│   │   └── windows/
-│   └── container/
-│       └── k8s/
+│   │   ├── linux/                        # auditd / reverse shell, cron persistence
+│   │   ├── macos/                        # UnifiedLog / LaunchAgent persistence
+│   │   └── windows/                      # Sysmon / Mimikatz / encoded PowerShell
+│   ├── container/
+│   │   └── k8s/                          # API audit / privileged pod / exec
+│   └── saas/
+│       └── o365/                         # Mailbox forwarding / admin roles
 ├── dictionaries/                        # Reference data for AI context
 │   ├── security_terms.yaml
 │   ├── cwe_top25.yaml
@@ -273,8 +276,25 @@ skills-library/
 │   ├── .clinerules
 │   └── SECURITY-SKILLS.md               # Universal format
 ├── cmd/
-│   └── skills-check/                    # CLI tool (Go, single binary)
+│   ├── skills-check/                    # CLI tool (Go, single binary)
+│   │   └── main.go
+│   └── skills-mcp/                      # MCP server over JSON-RPC stdio
 │       └── main.go
+├── packaging/                            # OS installers / package manager manifests
+│   ├── macos/                            # pkgbuild + productbuild
+│   ├── windows/                          # WiX MSI
+│   ├── linux/                            # nfpm .deb + .rpm
+│   ├── homebrew/                         # Homebrew tap formula
+│   ├── winget/                           # Winget manifest
+│   ├── scoop/                            # Scoop bucket manifest
+│   ├── apt-yum/                          # GitHub Pages-hosted APT / YUM repos
+│   └── codesign/                         # macOS notarization + Windows Authenticode docs
+├── docs/                                 # Install + admin docs
+│   ├── install-macos.md
+│   ├── install-linux.md
+│   ├── install-windows.md
+│   ├── admin-team-rollout.md
+│   └── air-gapped-install.md
 ├── sdk/                                 # Programmatic access
 │   ├── go/
 │   ├── python/
@@ -296,27 +316,64 @@ skills-library/
   difficulty assessment per component.
 - [PROGRESS.md](./PROGRESS.md) — Live progress tracker mirroring the deliverables in
   PHASES.md.
+- [docs/](./docs/) — Install guides (macOS / Linux / Windows / air-gapped) and the
+  team rollout admin guide.
+- [packaging/codesign/README.md](./packaging/codesign/README.md) — macOS notarization and
+  Windows Authenticode signing in the release workflow.
 
 ## CLI Package Layout
 
 ```
 cmd/skills-check/
 ├── main.go                    # Cobra root command
-├── cmd/                       # init / update / validate / list / regenerate / version / manifest / scheduler
+├── cmd/                       # init / update / validate / list / regenerate / version / manifest / scheduler / self-update
 └── internal/
-    ├── skill/                 # SKILL.md parser (frontmatter + body + tier extraction)
     ├── token/                 # tiktoken-go counter + 1.3x Claude multiplier
     ├── compiler/              # 8 IDE-specific formatters + core compile loop
     ├── manifest/              # manifest.json: load, checksum, Ed25519 sign/verify, delta, atomic write
     ├── updater/               # Remote update: HTTP / dir / tarball sources, verify-before-replace, rollback
     └── scheduler/             # Cross-platform scheduled updates (launchd / systemd / Task Scheduler)
+
+cmd/skills-mcp/                # Model Context Protocol server (JSON-RPC 2.0 over stdio)
+├── main.go
+└── internal/
+    ├── mcp/                   # JSON-RPC dispatch + tool definitions
+    └── tools/                 # lookup_vulnerability, check_secret_pattern, get_skill, search_skills
+
+internal/skill/                # SKILL.md parser (shared between skills-check and skills-mcp)
 ```
+
+## MCP Server
+
+`skills-mcp` exposes the Skills Library to AI tools that speak the
+Model Context Protocol. It runs as a short-lived child process spoken to
+over stdio:
+
+```bash
+go build -o skills-mcp ./cmd/skills-mcp
+skills-mcp --path /path/to/skills-library
+```
+
+The server registers 4 tools on `tools/list`:
+
+- `lookup_vulnerability(package, ecosystem?, version?)` — search the
+  supply-chain malicious-packages database and the typosquat DB.
+- `check_secret_pattern(text)` — run the secret-detection regex rules
+  against `text`, returning matches with severity and whether they are
+  known false positives.
+- `get_skill(skill_id, budget?)` — return the requested skill at the
+  requested tier (`minimal` / `compact` / `full`).
+- `search_skills(query)` — substring match across skill metadata.
+
+The library root is resolved from `--path`, then `$SKILLS_LIBRARY_PATH`,
+then the directory containing the binary.
 
 ## Building and Running Tests
 
 ```bash
 go build -trimpath -ldflags "-s -w" -o skills-check ./cmd/skills-check
-go test ./...
+go build -trimpath -ldflags "-s -w" -o skills-mcp   ./cmd/skills-mcp
+go test ./...                                       # covers CLI + MCP server
 ./skills-check validate
 ./skills-check list
 ./skills-check regenerate

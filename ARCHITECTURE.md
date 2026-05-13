@@ -198,30 +198,43 @@ cmd/skills-check/
 ├── main.go                    # cobra root command
 ├── cmd/
 │   ├── root.go                # root command + subcommand registration
-│   ├── init.go                # skills-check init --tool <tool> --skills <list> --budget <tier>
-│   ├── update.go              # skills-check update [--regenerate] (Phase 2)
+│   ├── init.go                # skills-check init --tool <tool> --skills <list> --budget <tier> [--no-prompt]
+│   ├── update.go              # skills-check update [--regenerate|--check-only|--rollback|--source]
 │   ├── validate.go            # skills-check validate [--path <dir>]
 │   ├── list.go                # skills-check list [--category <cat>]
 │   ├── regenerate.go          # skills-check regenerate [--tool <tool>] [--budget <tier>]
 │   ├── version.go             # skills-check version
+│   ├── manifest.go            # skills-check manifest compute/verify/sign/delta
+│   ├── scheduler.go           # skills-check scheduler install/remove/status
+│   ├── selfupdate.go          # skills-check self-update (download + SHA-256 verify + atomic replace)
 │   └── cmd_test.go            # integration tests for every subcommand
-├── internal/
-│   ├── skill/                 # SKILL.md parser (YAML frontmatter + markdown body + tier extraction)
-│   ├── token/                 # tiktoken-go counter + 1.3x Claude multiplier + budget enforcer
-│   ├── compiler/              # dist/ file generators per tool + context loader
-│   │   ├── compiler.go        # Core compile loop, formatter registry, token reporting
-│   │   ├── context.go         # Vulnerability summary, glossary, ATT&CK injection
-│   │   ├── claude.go          # CLAUDE.md formatter
-│   │   ├── cursor.go          # .cursorrules formatter
-│   │   ├── copilot.go         # copilot-instructions.md formatter
-│   │   ├── agents.go          # AGENTS.md formatter (also serves codex)
-│   │   ├── windsurf.go        # .windsurfrules formatter
-│   │   ├── devin.go           # devin.md formatter (defaults to full tier)
-│   │   ├── cline.go           # .clinerules formatter
-│   │   └── universal.go       # SECURITY-SKILLS.md formatter
-│   ├── manifest/              # manifest.json: load/save, SHA-256 checksum, Ed25519 sign/verify, delta, atomic write
-│   ├── updater/               # Remote update engine: HTTP/dir/tarball sources, verify-before-replace, rollback
-│   └── scheduler/             # Cross-platform scheduled updates (launchd / systemd / Task Scheduler)
+└── internal/
+    ├── token/                 # tiktoken-go counter + 1.3x Claude multiplier + budget enforcer
+    ├── compiler/              # dist/ file generators per tool + context loader
+    │   ├── compiler.go        # Core compile loop, formatter registry, token reporting
+    │   ├── context.go         # Vulnerability summary, glossary, ATT&CK injection
+    │   ├── claude.go          # CLAUDE.md formatter
+    │   ├── cursor.go          # .cursorrules formatter
+    │   ├── copilot.go         # copilot-instructions.md formatter
+    │   ├── agents.go          # AGENTS.md formatter (also serves codex)
+    │   ├── windsurf.go        # .windsurfrules formatter
+    │   ├── devin.go           # devin.md formatter (defaults to full tier)
+    │   ├── cline.go           # .clinerules formatter
+    │   ├── universal.go       # SECURITY-SKILLS.md formatter
+    │   ├── packaging_test.go  # validates packaging/* manifests are well-formed
+    │   └── rules_test.go      # walks rules/**/*.yml and asserts the Sigma schema
+    ├── manifest/              # manifest.json: load/save, SHA-256 checksum, Ed25519 sign/verify, delta, atomic write
+    ├── updater/               # Remote update engine: HTTP/dir/tarball sources, verify-before-replace, rollback
+    └── scheduler/             # Cross-platform scheduled updates (launchd / systemd / Task Scheduler)
+
+cmd/skills-mcp/                # Model Context Protocol server
+├── main.go                    # resolve library root, wire stdio JSON-RPC loop
+└── internal/
+    ├── mcp/                   # JSON-RPC 2.0 dispatch + tool/list definitions
+    └── tools/                 # lookup_vulnerability, check_secret_pattern, get_skill, search_skills
+
+internal/skill/                # SKILL.md parser (frontmatter + markdown body + tier extraction)
+                               # — shared between skills-check and skills-mcp
 ```
 
 The `updater/` package implements the full update protocol. `scheduler/` generates
@@ -231,6 +244,31 @@ OS tools to install/remove them.
 The binary is built with `-trimpath -ldflags "-s -w"` for reproducibility. The embedded
 Ed25519 public key is injected at build time via `-X` ldflags so the same source tree
 can be built against different signing keys for staging versus production.
+
+## MCP Server Architecture (`skills-mcp`)
+
+`skills-mcp` is a second Go binary that exposes the Skills Library to AI tools
+speaking the Model Context Protocol. It runs as a short-lived child process
+spawned by the AI client and talks to it over stdio.
+
+- **Transport.** JSON-RPC 2.0, one message per line. Requests arrive on
+  stdin; responses go to stdout. Notifications (no `id`) produce no response.
+- **Methods.** `initialize` returns `serverInfo`. `tools/list` returns the
+  four tool definitions with input schemas. `tools/call` dispatches by name.
+- **Library root resolution.** `--path <dir>`, then `$SKILLS_LIBRARY_PATH`,
+  then the directory containing the binary. The root must contain a
+  `skills/` subdirectory.
+- **Tools.** `lookup_vulnerability` reads
+  `vulnerabilities/supply-chain/malicious-packages/{ecosystem}.json` and the
+  typosquat DB; `check_secret_pattern` runs the regex rules from
+  `skills/secret-detection/rules/dlp_patterns.json` and applies
+  `dlp_exclusions.json`; `get_skill` parses `skills/{id}/SKILL.md` and
+  returns the requested tier; `search_skills` substring-matches across all
+  skill manifests.
+
+The MCP server reuses the parser at `internal/skill/` rather than duplicating
+the SKILL.md format implementation. No new external dependencies were added —
+the whole transport is pure stdlib (`net/http` is not used).
 
 ## Scheduler Implementation Details
 

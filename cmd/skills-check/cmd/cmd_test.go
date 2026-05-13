@@ -30,6 +30,7 @@ func executeRoot(t *testing.T, args ...string) (string, string, error) {
 	stderr := &bytes.Buffer{}
 	r.SetOut(stdout)
 	r.SetErr(stderr)
+	r.SetIn(&bytes.Buffer{})
 	r.SetArgs(args)
 	err := r.Execute()
 	return stdout.String(), stderr.String(), err
@@ -104,6 +105,19 @@ func TestInitGeneratesToolFile(t *testing.T) {
 	}
 	if info.Size() == 0 {
 		t.Errorf("%s is empty", out)
+	}
+}
+
+func TestInitNoPromptIsQuiet(t *testing.T) {
+	root := repoRoot(t)
+	tmp := t.TempDir()
+	stdout, stderr, err := executeRoot(t, "init",
+		"--tool", "cursor", "--library", root, "--out", tmp, "--no-prompt")
+	if err != nil {
+		t.Fatalf("init --no-prompt: %v\nstdout:%s\nstderr:%s", err, stdout, stderr)
+	}
+	if strings.Contains(stdout, "automatic background updates") {
+		t.Errorf("--no-prompt must not print the scheduler prompt; got:\n%s", stdout)
 	}
 }
 

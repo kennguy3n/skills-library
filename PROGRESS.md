@@ -1,11 +1,12 @@
 # Skills Library — Progress
 
-**Last updated:** 2026-05-12
-**Current phase:** Phase 3 (In Progress)
-**Overall progress:** 78 / 150 items complete
+**Last updated:** 2026-05-13
+**Current phase:** Phase 4 (In Progress)
+**Overall progress:** 106 / 150 items complete
 
 ### Changelog
 
+- **2026-05-13** — Phase 3 completion + Phase 4 partial: Linux `.deb` / `.rpm` packaging (`packaging/linux/nfpm.yaml` + Makefile); Homebrew / Winget / Scoop / APT / YUM manifests (`packaging/{homebrew,winget,scoop,apt-yum}/`); first-run scheduler prompt in `skills-check init` + `--no-prompt` flag; conditional macOS notarization and Windows Authenticode signing in `.github/workflows/release.yml` (no-op without secrets, documented in `packaging/codesign/README.md`); `skills-check self-update` with SHA-256 verification against published `checksums-<goos>-<goarch>.txt`; 5 install / admin docs in `docs/`; 16 Sigma detection rules across AWS / GCP / Azure / Linux / macOS / Windows / K8s / O365 (`rules/`); `skills-mcp` MCP server (`cmd/skills-mcp/`) over JSON-RPC stdio exposing `lookup_vulnerability`, `check_secret_pattern`, `get_skill`, and `search_skills`; relocation of `skill` parser to top-level `internal/skill` so both binaries can import it.
 - **2026-05-12** — Phase 2 + Phase 3 implementation: vulnerability data (`crates.json`, `go.json`, `known_typosquats.json`, `dependency-confusion/patterns.json`, `cve/code-relevant/cve_patterns.json`); manifest system with SHA-256 checksums, Ed25519 sign/verify, build-time public key embedding, delta patches, atomic writes, verify-before-replace flow; real `skills-check update` with `--check-only`, `--rollback`, `--source` (HTTP / local directory / tarball); `skills-check manifest compute/verify/sign/delta` subcommands; cross-platform scheduler (`launchd`, `systemd --user`, Windows Task Scheduler) with `skills-check scheduler install/remove/status`; `packaging/macos` (pkgbuild + productbuild) and `packaging/windows` (WiX) installers; release workflow with multi-platform reproducible builds; CI checks for `last_updated`, manifest verify, vulnerability references; full Go test suite covering manifest, updater, scheduler.
 - **2026-05-12** — Phase 1 implementation: `skills-check` Go CLI (init / update / validate / list / regenerate / version), `internal/skill` SKILL.md parser, `internal/token` tiktoken-go counter (1.3x Claude multiplier), `internal/compiler` with 8 IDE formatters, all 8 `dist/` files generated, `dictionaries/attack_techniques.yaml`, supply-chain-security test corpus, CI jobs for Go build/test/vet/format, rule-file schema, token budgets, and `dist/` regeneration drift.
 
@@ -129,27 +130,27 @@ as they ship.
 ### Platform installers
 - [x] macOS `.pkg` via `pkgbuild` + `productbuild`
 - [x] Windows MSI via WiX Toolset
-- [ ] Linux `.deb` via `nfpm`
-- [ ] Linux `.rpm` via `nfpm`
+- [x] Linux `.deb` via `nfpm`
+- [x] Linux `.rpm` via `nfpm`
 
 ### Package managers
-- [ ] Homebrew tap (`kennguy3n/tap/skills-check`)
-- [ ] Winget manifest
-- [ ] Scoop bucket
-- [ ] APT / YUM release repo
+- [x] Homebrew tap (`kennguy3n/tap/skills-check`)
+- [x] Winget manifest
+- [x] Scoop bucket
+- [x] APT / YUM release repo
 
 ### Post-install + signing
-- [ ] First-run prompt to set up scheduled updates
-- [ ] macOS Developer ID signing + notarization
-- [ ] Windows Authenticode signing
-- [ ] CLI self-update (separate from rule updates) with signature verification
+- [x] First-run prompt to set up scheduled updates
+- [x] macOS Developer ID signing + notarization (CI scaffold — runs when `secrets.APPLE_DEVELOPER_ID` configured)
+- [x] Windows Authenticode signing (CI scaffold — runs when `secrets.WINDOWS_CERT_PFX` configured)
+- [x] CLI self-update (separate from rule updates) with signature verification
 
 ### Documentation
-- [ ] "Install on macOS" page
-- [ ] "Install on Linux" page
-- [ ] "Install on Windows" page
-- [ ] "Roll out to a team" admin guide
-- [ ] "Air-gapped installation" guide
+- [x] "Install on macOS" page
+- [x] "Install on Linux" page
+- [x] "Install on Windows" page
+- [x] "Roll out to a team" admin guide
+- [x] "Air-gapped installation" guide
 
 ---
 
@@ -158,21 +159,21 @@ as they ship.
 ### Sigma rule extraction
 - [ ] Audit of existing `uneycom/shieldnet-security-detection-rules`
 - [ ] Audit of existing `kennguy3n/sn360-security-platform` rules
-- [ ] `rules/cloud/aws/`
-- [ ] `rules/cloud/gcp/`
-- [ ] `rules/cloud/azure/`
-- [ ] `rules/endpoint/linux/`
-- [ ] `rules/endpoint/macos/`
-- [ ] `rules/endpoint/windows/`
-- [ ] `rules/container/k8s/`
-- [ ] `rules/saas/o365/`
+- [x] `rules/cloud/aws/`
+- [x] `rules/cloud/gcp/`
+- [x] `rules/cloud/azure/`
+- [x] `rules/endpoint/linux/`
+- [x] `rules/endpoint/macos/`
+- [x] `rules/endpoint/windows/`
+- [x] `rules/container/k8s/`
+- [x] `rules/saas/o365/`
 
 ### MCP server (`cmd/skills-mcp/`)
-- [ ] Model Context Protocol stdio implementation
-- [ ] Tool: `lookup_vulnerability(package, ecosystem, version)`
-- [ ] Tool: `check_secret_pattern(text)`
-- [ ] Tool: `get_skill(skill_id, budget)`
-- [ ] Tool: `search_skills(query)`
+- [x] Model Context Protocol stdio implementation
+- [x] Tool: `lookup_vulnerability(package, ecosystem, version)`
+- [x] Tool: `check_secret_pattern(text)`
+- [x] Tool: `get_skill(skill_id, budget)`
+- [x] Tool: `search_skills(query)`
 
 ### Additional skills (target 20+)
 - [ ] `iac-security`
