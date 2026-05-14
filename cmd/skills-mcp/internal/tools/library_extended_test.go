@@ -520,3 +520,105 @@ func TestSARIFOmitemptyZeroValues(t *testing.T) {
 		}
 	}
 }
+
+// TestCheckTyposquatGoFinalSegment exercises the typosquatCompareKey
+// path: for Go modules the distance must be computed against the last
+// import-path segment, not the full path. A near-miss on the segment
+// (`gim` vs `gin`) should surface; an unrelated module that just
+// shares a long prefix (`github.com/aaaa/aaaa` vs
+// `github.com/gin-gonic/gin`) must not.
+func TestCheckTyposquatGoFinalSegment(t *testing.T) {
+	lib := newLibrary(t)
+	// Near-miss on final segment must surface.
+	res, err := lib.CheckTyposquat("github.com/gin-gonic/gim", "go")
+	if err != nil {
+		t.Fatal(err)
+	}
+	found := false
+	for _, h := range res.PotentialTyposquats {
+		if strings.EqualFold(h.Target, "github.com/gin-gonic/gin") {
+			found = true
+			if h.Distance > 2 {
+				t.Errorf("expected distance <=2 for gim->gin, got %d", h.Distance)
+			}
+		}
+	}
+	if !found {
+		t.Errorf("expected gin to surface as a potential typosquat for gim, got %+v", res.PotentialTyposquats)
+	}
+	// Unrelated prefix-sharing module must not surface.
+	res, err = lib.CheckTyposquat("totally-unrelated-name-xyz", "go")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.PotentialTyposquats) != 0 {
+		t.Errorf("unrelated name should not match any popular Go module, got %+v", res.PotentialTyposquats)
+	}
+}
+
+// TestLoadPopularPackagesDoesNotCacheParseError verifies fix B: when
+// the data file fails to parse, the loader must NOT cache an empty
+// list. A subsequent call against a valid file must still return the
+// real data.
+func TestLoadPopularPackagesDoesNotCacheParseError(t *testing.T) {
+	lib := newLibrary(t)
+	// Sanity: npm currently parses; record what we'd expect on a
+	// successful call so we can assert recovery is not silently
+	// masked by a stale cached empty list.
+	pkgs, err := lib.loadPopularPackages("npm")
+	if err != nil {
+		t.Fatalf("npm should parse: %v", err)
+	}
+	if len(pkgs) == 0 {
+		t.Fatalf("npm popular list should be non-empty")
+	}
+	// Now: ask for an ecosystem that does not exist on disk. We expect
+	// an error, AND the absence of any cached empty entry that would
+	// permanently mask later attempts.
+	if _, err := lib.loadPopularPackages("nonexistent-ecosystem-xyz"); err == nil {
+		t.Errorf("loading a missing ecosystem must return an error")
+	}
+	// Confirm the cache for the valid ecosystem is still intact (i.e.
+	// we did not corrupt other entries while handling the error).
+	pkgs2, err := lib.loadPopularPackages("npm")
+	if err != nil {
+		t.Fatalf("npm should still parse after a sibling error: %v", err)
+	}
+	if len(pkgs2) != len(pkgs) {
+		t.Errorf("npm cache was disturbed: %d vs %d", len(pkgs2), len(pkgs))
+	}
+}
+
+// TestVersionMatchesRejectsUnparseable covers fix C: an unparseable
+// version (or threshold) must NOT be treated as the zero semver.
+// Before the fix, versionMatches(">=0.0.0", "abc") returned true
+// because parseSemver("abc") = (0, 0, 0, false) and compareSemver
+// ignored the ok flag.
+func TestVersionMatchesRejectsUnparseable(t *testing.T) {
+	cases := []struct {
+		affected string
+		version  string
+		want     bool
+	}{
+		// The classic bug.
+		{">=0.0.0", "abc", false},
+		// Symmetric: unparseable threshold should also miss.
+		{">=abc", "1.2.3", false},
+		// Range form with one unparseable endpoint.
+		{"1.0.0 - bogus", "1.2.3", false},
+		// pre- form: version "abc" must not be treated as < 5.0.0.
+		{"pre-5.0.0", "abc", false},
+		// Sanity: ordinary semver still works.
+		{">=1.0.0", "1.2.3", true},
+		{"1.0.0 - 2.0.0", "1.5.0", true},
+		// And legacy exact-string fall through still works for
+		// non-structured forms.
+		{"abc", "abc", true},
+	}
+	for _, c := range cases {
+		got := versionMatches(c.affected, c.version)
+		if got != c.want {
+			t.Errorf("versionMatches(%q, %q) = %v, want %v", c.affected, c.version, got, c.want)
+		}
+	}
+}

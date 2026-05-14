@@ -458,6 +458,15 @@ func shannonEntropy(s string) float64 {
 // "hotword anywhere in the text" — useful when the caller has already
 // scoped the text to a small fragment. An empty hotwords slice
 // always returns false.
+//
+// The search slice is text[start-window : end+window], so it includes
+// the matched bytes themselves. This is intentional: many DLP patterns
+// (e.g. "Generic API Key") match assignment forms like `api_key=...`
+// where the hotword is embedded in the match. Stripping the match out
+// would force every such pattern to repeat the hotword as a separate
+// regex alternation, which is both error-prone and worse at scoring
+// the surrounding context. Tests pin this behaviour
+// (TestCheckSecretPatternHotwordScoring).
 func hasHotwordNear(text string, start, end int, hotwords []string, window int) bool {
 	if len(hotwords) == 0 || text == "" {
 		return false
@@ -708,22 +717,29 @@ func versionMatches(affected, version string) bool {
 	}
 	lower := strings.ToLower(a)
 	if strings.HasPrefix(lower, "pre-") {
-		return compareSemver(v, strings.TrimSpace(a[4:])) < 0
+		c, ok := compareSemverOK(v, strings.TrimSpace(a[4:]))
+		return ok && c < 0
 	}
 	switch {
 	case strings.HasPrefix(a, ">="):
-		return compareSemver(v, strings.TrimSpace(a[2:])) >= 0
+		c, ok := compareSemverOK(v, strings.TrimSpace(a[2:]))
+		return ok && c >= 0
 	case strings.HasPrefix(a, "<="):
-		return compareSemver(v, strings.TrimSpace(a[2:])) <= 0
+		c, ok := compareSemverOK(v, strings.TrimSpace(a[2:]))
+		return ok && c <= 0
 	case strings.HasPrefix(a, ">"):
-		return compareSemver(v, strings.TrimSpace(a[1:])) > 0
+		c, ok := compareSemverOK(v, strings.TrimSpace(a[1:]))
+		return ok && c > 0
 	case strings.HasPrefix(a, "<"):
-		return compareSemver(v, strings.TrimSpace(a[1:])) < 0
+		c, ok := compareSemverOK(v, strings.TrimSpace(a[1:]))
+		return ok && c < 0
 	}
 	if i := strings.Index(a, " - "); i > 0 {
 		lo := strings.TrimSpace(a[:i])
 		hi := strings.TrimSpace(a[i+3:])
-		return compareSemver(v, lo) >= 0 && compareSemver(v, hi) <= 0
+		cLo, okLo := compareSemverOK(v, lo)
+		cHi, okHi := compareSemverOK(v, hi)
+		return okLo && okHi && cLo >= 0 && cHi <= 0
 	}
 	// No structured form matched. Try semver equality first so
 	// trivially-equivalent encodings like "v1.2.3" / "1.2.3" line up;
@@ -737,11 +753,32 @@ func versionMatches(affected, version string) bool {
 	return strings.EqualFold(a, v)
 }
 
+// compareSemverOK is the safe form callers should prefer. It returns
+// (cmp, true) when both inputs parse as semver, and (0, false) when
+// either does not. This matters because the underlying compareSemver
+// silently treats unparseable inputs as (0, 0, 0); without the okA &&
+// okB guard, a range like ">=0.0.0" would incorrectly match a literal
+// string like "abc" (both compare equal under (0, 0, 0)).
+//
+// versionMatches uses this for every structured range form so an
+// unparseable side always means "does not match" rather than "matches
+// the zero version".
+func compareSemverOK(a, b string) (int, bool) {
+	_, _, _, okA := parseSemver(a)
+	_, _, _, okB := parseSemver(b)
+	if !okA || !okB {
+		return 0, false
+	}
+	return compareSemver(a, b), true
+}
+
 // compareSemver returns -1, 0, or +1 comparing a to b as semver-ish
 // versions. Inputs are tolerated liberally: optional leading "v",
 // up to three dotted numeric segments, and any pre-release / build
 // suffix stripped before comparison. Unparseable inputs sort as
 // equal so an exotic range simply doesn't match instead of crashing.
+// New code should prefer compareSemverOK so range checks can reject
+// unparseable input instead of treating it as "equal to 0.0.0".
 func compareSemver(a, b string) int {
 	am, an, ap, _ := parseSemver(a)
 	bm, bn, bp, _ := parseSemver(b)

@@ -269,15 +269,15 @@ func (l *Library) CheckTyposquat(pkg, ecosystem string) (*CheckTyposquatResult, 
 	if ecosystem != "" {
 		popular, perr := l.loadPopularPackages(ecosystem)
 		if perr == nil {
-			needle := strings.ToLower(strings.TrimSpace(pkg))
+			needle := typosquatCompareKey(ecosystem, pkg)
 			for _, target := range popular {
-				targetLower := strings.ToLower(target)
-				if targetLower == needle {
+				targetKey := typosquatCompareKey(ecosystem, target)
+				if targetKey == needle {
 					// Exact match: the caller is using the popular
 					// package itself, not a squat.
 					continue
 				}
-				d := levenshtein(needle, targetLower)
+				d := levenshtein(needle, targetKey)
 				if d > 0 && d <= 2 {
 					out.PotentialTyposquats = append(out.PotentialTyposquats, PotentialTyposquatHit{
 						Target:    target,
@@ -295,6 +295,33 @@ func (l *Library) CheckTyposquat(pkg, ecosystem string) (*CheckTyposquatResult, 
 		}
 	}
 	return out, nil
+}
+
+// typosquatCompareKey returns the substring that Levenshtein distance
+// should be computed against for a given ecosystem.
+//
+// For Go, the typosquat threat lives in the final import-path segment
+// (`gin` in `github.com/gin-gonic/gin`); comparing the full path
+// inflates distance for legitimate forks under unrelated owners and
+// produces near-zero distance between unrelated packages that share a
+// long prefix. So we strip to the trailing segment and lower-case for
+// case-insensitive comparison.
+//
+// For npm, PyPI, crates, and RubyGems the package name *is* the
+// surface the user types, so no segmenting is needed — we just lower-
+// case and trim.
+//
+// Output of CheckTyposquat still carries the original Target string so
+// callers see the full, recognisable package identifier; only the
+// comparison key is normalised.
+func typosquatCompareKey(ecosystem, name string) string {
+	name = strings.ToLower(strings.TrimSpace(name))
+	if strings.EqualFold(ecosystem, "go") {
+		if i := strings.LastIndex(name, "/"); i >= 0 && i+1 < len(name) {
+			return name[i+1:]
+		}
+	}
+	return name
 }
 
 // ComplianceControl is the shape of one row in the compliance/ YAMLs.
@@ -733,8 +760,13 @@ func (l *Library) loadPopularPackages(ecosystem string) ([]string, error) {
 		Packages  []string `json:"packages"`
 	}
 	if err := json.Unmarshal(body, &f); err != nil {
-		ec.popular[eco] = []string{}
-		return ec.popular[eco], fmt.Errorf("parse %s: %w", path, err)
+		// Deliberately do NOT cache on parse error. Caching the empty
+		// slice here would mask every subsequent call's view of the
+		// underlying problem (the first caller sees the error, every
+		// later caller sees a silent empty list). The data file is
+		// small, so re-reading it on each call until it parses is
+		// cheap.
+		return nil, fmt.Errorf("parse %s: %w", path, err)
 	}
 	// Defensive dedup: an accidental duplicate entry in the source
 	// data would otherwise cause CheckTyposquat to emit duplicate
@@ -809,11 +841,30 @@ func levenshtein(a, b string) int {
 
 // validateScanPath enforces the ScanSecrets access policy: no `..`
 // traversal segments in the raw input, no path inside a known
-// sensitive system directory, and (when an allow-list is configured
-// via SetAllowedRoots) the resolved path must live under one of those
-// roots. The check is run on both the supplied path and its
-// symlink-resolved counterpart so a symlink inside an allowed root
-// cannot redirect the scan to /etc/shadow.
+// sensitive system directory or file, and (when an allow-list is
+// configured via SetAllowedRoots) the resolved path must live under
+// one of those roots. The check is run on both the supplied path and
+// its symlink-resolved counterpart so a symlink inside an allowed
+// root cannot redirect the scan to /etc/shadow.
+//
+// Residual TOCTOU window: between this validateScanPath call and the
+// subsequent os.Open in ScanSecrets, an attacker with concurrent
+// filesystem access to an allowed root could swap a symlink to point
+// at a sensitive target. Fully closing that race requires
+// openat2(RESOLVE_NO_SYMLINKS) (Linux-specific) and an O_NOFOLLOW
+// open against a directory file descriptor that was itself resolved
+// from the allow-list. The current implementation is defence in
+// depth — the sensitive-paths deny-list still catches most realistic
+// destinations, and the resolved-path check at least catches symlinks
+// that exist at validation time. If a follower commit moves to
+// openat2, do it here: keep the EvalSymlinks call for portability and
+// add the openat2 path under a build tag.
+//
+// EvalSymlinks fallback note: when EvalSymlinks fails (e.g. the file
+// does not exist yet), `resolved` is assigned the unresolved `abs`.
+// This means symlink validation is best-effort for non-existent
+// paths; ScanSecrets' subsequent os.Open will still fail with a clear
+// ENOENT in that case, so no real read happens.
 func (l *Library) validateScanPath(p string) error {
 	if strings.TrimSpace(p) == "" {
 		return fmt.Errorf("scan_secrets: file_path is empty")
@@ -832,7 +883,7 @@ func (l *Library) validateScanPath(p string) error {
 		// say so explicitly.
 		resolved = abs
 	}
-	for _, denied := range sensitiveDirs() {
+	for _, denied := range sensitivePaths() {
 		if pathUnder(abs, denied) || pathUnder(resolved, denied) {
 			return fmt.Errorf("scan_secrets: %s is inside sensitive directory %s", p, denied)
 		}
@@ -889,12 +940,16 @@ func pathUnder(child, parent string) bool {
 	return strings.HasPrefix(child, parent+string(filepath.Separator))
 }
 
-// sensitiveDirs returns the absolute directories that ScanSecrets
-// must never read from regardless of the allowed-roots configuration.
-// Includes the user's SSH / GPG / cloud-CLI credential stores plus a
-// handful of system-wide secret stores. The list is built lazily per
-// call so a missing home directory does not crash the server.
-func sensitiveDirs() []string {
+// sensitivePaths returns the absolute paths — both directories AND
+// individual files — that ScanSecrets must never read from regardless
+// of the allowed-roots configuration. Includes the user's SSH / GPG /
+// cloud-CLI credential stores (directories) plus a handful of system
+// secret stores and per-user dotfiles that carry credentials in
+// plaintext (files like /etc/shadow, ~/.npmrc, ~/.netrc). The list is
+// built lazily per call so a missing home directory does not crash
+// the server. pathUnder handles the file case correctly because it
+// treats an exact-path match as "under".
+func sensitivePaths() []string {
 	out := []string{
 		"/etc/shadow",
 		"/etc/ssh",
