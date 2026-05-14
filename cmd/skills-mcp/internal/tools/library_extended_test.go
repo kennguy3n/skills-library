@@ -122,6 +122,35 @@ func TestMapComplianceControlByQueryAndFramework(t *testing.T) {
 	}
 }
 
+// TestMapComplianceControlResponseKeyShape pins down the response
+// shape post-review-flag-4: the Frameworks map MUST be keyed by the
+// same machine ID the caller would pass in `framework` ("soc2" /
+// "hipaa" / "pci-dss") and each entry MUST carry the human-readable
+// name in its own field. An LLM client should be able to round-trip
+// any key it sees back into a follow-up MapComplianceControl call.
+func TestMapComplianceControlResponseKeyShape(t *testing.T) {
+	lib := newLibrary(t)
+	res, err := lib.MapComplianceControl("secret-detection", "", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.Frameworks) == 0 {
+		t.Fatal("expected at least one framework match for secret-detection")
+	}
+	validKeys := map[string]bool{"soc2": true, "hipaa": true, "pci-dss": true}
+	for k, v := range res.Frameworks {
+		if !validKeys[k] {
+			t.Errorf("framework key %q is not a machine identifier; expected one of %v", k, validKeys)
+		}
+		if v.Name == "" {
+			t.Errorf("framework %q must populate its human-readable Name field", k)
+		}
+		if len(v.Controls) == 0 {
+			t.Errorf("framework %q matched but Controls slice is empty", k)
+		}
+	}
+}
+
 func TestGetSigmaRuleByQuery(t *testing.T) {
 	lib := newLibrary(t)
 	res, err := lib.GetSigmaRule("", "s3", "cloud")

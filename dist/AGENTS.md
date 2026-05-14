@@ -33,6 +33,17 @@ scanning, or CI policy checks.
    directly under `skills/<skill-id>/SKILL.md` and the matching
    rule under `rules/<category>/`.
 
+## Supporting data
+
+Vulnerability summary, glossary, and MITRE ATT&CK mappings are
+not inlined; query them via MCP (or read the source on disk):
+
+- `vulnerabilities/` — `lookup_vulnerability`, `check_dependency`,
+  `check_typosquat`
+- `dictionaries/security_terms.yaml`, `attack_techniques.yaml`
+- `compliance/` — `map_compliance_control`
+- `rules/` — `get_sigma_rule`
+
 ## Available skills
 
 ### compliance

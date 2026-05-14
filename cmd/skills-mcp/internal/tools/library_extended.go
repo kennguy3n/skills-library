@@ -10,6 +10,7 @@ package tools
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -79,16 +80,30 @@ func (l *Library) ScanSecrets(text, filePath string) (*ScanSecretsResult, error)
 		if st.Size() > maxFileScanBytes {
 			return nil, fmt.Errorf("scan_secrets: %s is %d bytes; limit is %d", filePath, st.Size(), maxFileScanBytes)
 		}
-		body, err := os.ReadFile(filePath)
+		// Read through io.LimitReader rather than os.ReadFile so the cap
+		// is enforced on the actual bytes returned, not just on the
+		// stat'd size. This closes a TOCTOU window where a file (or the
+		// target of a symlink) could grow between the Stat above and the
+		// read here. Pulling +1 byte past the cap lets us distinguish
+		// "exactly at the limit" from "grew past the limit during read".
+		f, err := os.Open(filePath)
+		if err != nil {
+			return nil, fmt.Errorf("scan_secrets: open %s: %w", filePath, err)
+		}
+		defer f.Close()
+		body, err := io.ReadAll(io.LimitReader(f, maxFileScanBytes+1))
 		if err != nil {
 			return nil, fmt.Errorf("scan_secrets: read %s: %w", filePath, err)
+		}
+		if int64(len(body)) > maxFileScanBytes {
+			return nil, fmt.Errorf("scan_secrets: %s exceeded %d-byte limit during read", filePath, maxFileScanBytes)
 		}
 		text = string(body)
 		inner, err := l.CheckSecretPattern(text)
 		if err != nil {
 			return nil, err
 		}
-		return &ScanSecretsResult{FilePath: filePath, FileSize: st.Size(), Matches: inner.Matches}, nil
+		return &ScanSecretsResult{FilePath: filePath, FileSize: int64(len(body)), Matches: inner.Matches}, nil
 	}
 	inner, err := l.CheckSecretPattern(text)
 	if err != nil {
@@ -209,12 +224,15 @@ func (l *Library) CheckTyposquat(pkg, ecosystem string) (*CheckTyposquatResult, 
 }
 
 // ComplianceControl is the shape of one row in the compliance/ YAMLs.
+// Carries explicit yaml tags to mirror FrameworkMapping; relying on
+// yaml.v3's implicit case-insensitive field matching would tie the
+// on-disk format to that fallback behaviour.
 type ComplianceControl struct {
-	ID          string   `json:"id"`
-	Title       string   `json:"title"`
-	Description string   `json:"description,omitempty"`
-	Skills      []string `json:"skills,omitempty"`
-	References  []string `json:"references,omitempty"`
+	ID          string   `json:"id"                    yaml:"id"`
+	Title       string   `json:"title"                 yaml:"title"`
+	Description string   `json:"description,omitempty" yaml:"description,omitempty"`
+	Skills      []string `json:"skills,omitempty"      yaml:"skills,omitempty"`
+	References  []string `json:"references,omitempty"  yaml:"references,omitempty"`
 }
 
 // FrameworkMapping is one framework's compliance YAML on disk.
@@ -227,11 +245,24 @@ type FrameworkMapping struct {
 }
 
 // MapComplianceResult is what the map_compliance_control tool returns.
+//
+// Frameworks is keyed by the same machine identifier the caller passes
+// in `framework` ("soc2", "hipaa", "pci-dss") so the LLM can round-trip
+// any key it sees back into a subsequent query. The human-readable
+// name ("SOC 2", "HIPAA", "PCI-DSS") is preserved per-entry on the
+// FrameworkMatch value.
 type MapComplianceResult struct {
-	SkillID    string                         `json:"skill_id,omitempty"`
-	Query      string                         `json:"query,omitempty"`
-	Framework  string                         `json:"framework,omitempty"`
-	Frameworks map[string][]ComplianceControl `json:"frameworks"`
+	SkillID    string                    `json:"skill_id,omitempty"`
+	Query      string                    `json:"query,omitempty"`
+	Framework  string                    `json:"framework,omitempty"`
+	Frameworks map[string]FrameworkMatch `json:"frameworks"`
+}
+
+// FrameworkMatch wraps the controls matched in a single framework with
+// the human-readable display name from the YAML.
+type FrameworkMatch struct {
+	Name     string              `json:"name"`
+	Controls []ComplianceControl `json:"controls"`
 }
 
 // frameworkFiles maps the framework keys exposed via the MCP tool to
@@ -266,7 +297,7 @@ func (l *Library) MapComplianceControl(skillID, query, framework string) (*MapCo
 		SkillID:    skillID,
 		Query:      query,
 		Framework:  framework,
-		Frameworks: map[string][]ComplianceControl{},
+		Frameworks: map[string]FrameworkMatch{},
 	}
 	for _, fwKey := range frameworkOrder {
 		if framework != "" && fwKey != framework {
@@ -299,7 +330,10 @@ func (l *Library) MapComplianceControl(skillID, query, framework string) (*MapCo
 			}
 		}
 		if matches != nil {
-			out.Frameworks[mapping.Framework] = matches
+			out.Frameworks[fwKey] = FrameworkMatch{
+				Name:     mapping.Framework,
+				Controls: matches,
+			}
 		}
 	}
 	return out, nil
@@ -439,16 +473,16 @@ type cvePatternsFile struct {
 	} `json:"entries"`
 }
 
-var (
+// extendedCache backs the per-Library caches for the new tools. The
+// mutexes live on the cache itself (rather than as package-level
+// globals) so two Library instances under load don't contend on the
+// same locks just because they share a process. This matches the
+// per-instance pattern used by vulnsMu/secretsMu on the Library type.
+type extendedCache struct {
 	cveMu        sync.Mutex
 	complianceMu sync.Mutex
 	sigmaMu      sync.Mutex
-)
 
-// cveCache and friends live on the Library, not as package globals,
-// so multiple Library instances (one per server process, but
-// reused in tests) don't share state.
-type extendedCache struct {
 	cve         *cvePatternsFile
 	compliance  map[string]*FrameworkMapping
 	sigmaRules  []SigmaRule
@@ -458,14 +492,20 @@ type extendedCache struct {
 var extendedCaches sync.Map // *Library → *extendedCache
 
 func (l *Library) extended() *extendedCache {
+	// Cache hit is the hot path; avoid allocating a fresh extendedCache
+	// (and the empty compliance map it carries) on every loader call by
+	// trying Load first and only falling back to LoadOrStore on a miss.
+	if v, ok := extendedCaches.Load(l); ok {
+		return v.(*extendedCache)
+	}
 	v, _ := extendedCaches.LoadOrStore(l, &extendedCache{compliance: map[string]*FrameworkMapping{}})
 	return v.(*extendedCache)
 }
 
 func (l *Library) loadCVEPatterns() (*cvePatternsFile, error) {
-	cveMu.Lock()
-	defer cveMu.Unlock()
 	ec := l.extended()
+	ec.cveMu.Lock()
+	defer ec.cveMu.Unlock()
 	if ec.cve != nil {
 		return ec.cve, nil
 	}
@@ -487,9 +527,9 @@ func (l *Library) loadCompliance(fwKey string) (*FrameworkMapping, error) {
 	if !ok {
 		return nil, fmt.Errorf("unknown framework %q", fwKey)
 	}
-	complianceMu.Lock()
-	defer complianceMu.Unlock()
 	ec := l.extended()
+	ec.complianceMu.Lock()
+	defer ec.complianceMu.Unlock()
 	if cached, ok := ec.compliance[fwKey]; ok {
 		return cached, nil
 	}
@@ -520,9 +560,9 @@ type sigmaFileShape struct {
 }
 
 func (l *Library) loadSigmaRules() ([]SigmaRule, error) {
-	sigmaMu.Lock()
-	defer sigmaMu.Unlock()
 	ec := l.extended()
+	ec.sigmaMu.Lock()
+	defer ec.sigmaMu.Unlock()
 	if ec.sigmaLoaded {
 		return ec.sigmaRules, nil
 	}

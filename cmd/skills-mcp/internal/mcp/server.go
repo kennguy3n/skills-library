@@ -67,6 +67,16 @@ const (
 // echo back the requested version (see negotiateProtocolVersion).
 const SupportedProtocolVersion = "2025-11-25"
 
+// protocolVersionWithInstructions is the earliest MCP revision in which
+// the server's `initialize` response may carry an `instructions`
+// field. Per the MCP spec, claiming an older version while emitting
+// fields from a newer revision is a protocol violation.
+const protocolVersionWithInstructions = "2025-03-26"
+
+// protocolVersionWithTitle is the earliest MCP revision in which the
+// server's `initialize` response may carry `serverInfo.title`.
+const protocolVersionWithTitle = "2025-11-25"
+
 // supportedProtocolVersions is the descending list of MCP revisions this
 // server can speak. The first entry is the preferred version and matches
 // SupportedProtocolVersion.
@@ -156,18 +166,33 @@ func (s *Server) dispatch(req *request) *response {
 		if len(req.Params) > 0 {
 			_ = json.Unmarshal(req.Params, &p)
 		}
-		return successResponse(req.ID, map[string]interface{}{
-			"protocolVersion": negotiateProtocolVersion(p.ProtocolVersion),
-			"serverInfo": map[string]interface{}{
-				"name":    "skills-mcp",
-				"title":   "secure-code skills MCP server",
-				"version": "0.1.0",
-			},
+		negotiated := negotiateProtocolVersion(p.ProtocolVersion)
+		serverInfo := map[string]interface{}{
+			"name":    "skills-mcp",
+			"version": "0.1.0",
+		}
+		// serverInfo.title was introduced in 2025-11-25; emit it only
+		// when we negotiated at least that revision. Per the MCP
+		// lifecycle spec, claiming an older version while emitting
+		// newer-spec fields is a protocol violation even though most
+		// clients tolerate unknown fields.
+		if negotiated >= protocolVersionWithTitle {
+			serverInfo["title"] = "secure-code skills MCP server"
+		}
+		result := map[string]interface{}{
+			"protocolVersion": negotiated,
+			"serverInfo":      serverInfo,
 			"capabilities": map[string]interface{}{
 				"tools": map[string]interface{}{},
 			},
-			"instructions": "Use the secure-code skills before generating or reviewing security-sensitive code. For dependencies call check_dependency / check_typosquat / lookup_vulnerability; for secrets call scan_secrets or check_secret_pattern; for detection logic call get_sigma_rule; to map findings to compliance call map_compliance_control; to fetch a curated skill call get_skill / search_skills. Use version_status to confirm the data version and signature state before relying on results.",
-		})
+		}
+		// instructions was introduced in 2025-03-26; older clients
+		// won't recognise it and we shouldn't claim to speak their
+		// version while emitting it.
+		if negotiated >= protocolVersionWithInstructions {
+			result["instructions"] = "Use the secure-code skills before generating or reviewing security-sensitive code. For dependencies call check_dependency / check_typosquat / lookup_vulnerability; for secrets call scan_secrets or check_secret_pattern; for detection logic call get_sigma_rule; to map findings to compliance call map_compliance_control; to fetch a curated skill call get_skill / search_skills. Use version_status to confirm the data version and signature state before relying on results."
+		}
+		return successResponse(req.ID, result)
 	case "tools/list":
 		return successResponse(req.ID, map[string]interface{}{
 			"tools": toolDefinitions(),

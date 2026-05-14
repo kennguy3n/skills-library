@@ -103,6 +103,55 @@ func TestInitializeNegotiatesProtocolVersion(t *testing.T) {
 	}
 }
 
+// TestInitializeGatesNewerFieldsByNegotiatedVersion pins down that the
+// server does not emit fields from newer MCP revisions in a response
+// that claims an older protocolVersion. See review flag at server.go:159.
+//
+//   - instructions:        added in 2025-03-26
+//   - serverInfo.title:    added in 2025-11-25
+func TestInitializeGatesNewerFieldsByNegotiatedVersion(t *testing.T) {
+	srv := newServer(t)
+	cases := []struct {
+		requested        string
+		wantInstructions bool
+		wantTitle        bool
+	}{
+		{"2024-11-05", false, false},
+		{"2025-03-26", true, false},
+		{"2025-06-18", true, false},
+		{"2025-11-25", true, true},
+	}
+	for _, tc := range cases {
+		t.Run(tc.requested, func(t *testing.T) {
+			req := mustMarshal(t, map[string]interface{}{
+				"jsonrpc": "2.0",
+				"id":      1,
+				"method":  "initialize",
+				"params": map[string]interface{}{
+					"protocolVersion": tc.requested,
+				},
+			})
+			resp := srv.HandleLine(req)
+			if resp == nil || resp.Error != nil {
+				t.Fatalf("expected ok response, got %+v", resp)
+			}
+			result := resp.Result.(map[string]interface{})
+			if got := result["protocolVersion"]; got != tc.requested {
+				t.Fatalf("protocolVersion=%v, want %s", got, tc.requested)
+			}
+			_, hasInstructions := result["instructions"]
+			if hasInstructions != tc.wantInstructions {
+				t.Errorf("v=%s: hasInstructions=%v, want %v", tc.requested, hasInstructions, tc.wantInstructions)
+			}
+			info := result["serverInfo"].(map[string]interface{})
+			_, hasTitle := info["title"]
+			if hasTitle != tc.wantTitle {
+				t.Errorf("v=%s: serverInfo.hasTitle=%v, want %v", tc.requested, hasTitle, tc.wantTitle)
+			}
+		})
+	}
+}
+
 func TestToolsListReturnsExpectedTools(t *testing.T) {
 	srv := newServer(t)
 	req := mustMarshal(t, map[string]interface{}{
