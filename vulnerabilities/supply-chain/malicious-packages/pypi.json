@@ -555,7 +555,9 @@
       "severity": "high",
       "discovered": "2025-03-28",
       "description": "Malicious code in 0-8 (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-2925"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -586,7 +588,9 @@
       "severity": "high",
       "discovered": "2024-12-09",
       "description": "Malicious code in afriton (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-11514"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -635,7 +639,9 @@
       "severity": "high",
       "discovered": "2025-07-31",
       "description": "Malicious code in aphisher (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-6434"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -701,7 +707,9 @@
       "severity": "high",
       "discovered": "2023-07-12",
       "description": "Malicious code in barcodegeneratorqr (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2023-1354"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -780,7 +788,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in browser-web (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-4833"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -885,7 +895,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in checkscrapeinfo (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-4888"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -932,7 +944,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in colorate-raimbow (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-4944"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -947,7 +961,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in colors5 (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-4978"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -962,7 +978,9 @@
       "severity": "high",
       "discovered": "2025-03-19",
       "description": "Malicious code in connector-bsb (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-2602"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -994,7 +1012,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in cra-template-snap (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-4999"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -1111,7 +1131,9 @@
       "severity": "high",
       "discovered": "2024-12-09",
       "description": "Malicious code in devilpy (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-11574"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -1126,7 +1148,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in discord-client (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-5058"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -1708,7 +1732,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in habboapp (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-5192"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -1811,7 +1837,9 @@
       "severity": "high",
       "discovered": "2025-10-23",
       "description": "Malicious code in image2hex (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-48893"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -1886,7 +1914,9 @@
       "severity": "high",
       "discovered": "2025-07-31",
       "description": "Malicious code in karma-jasmine-sinon (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-6532"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -1901,7 +1931,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in kjfgjsfgj12345678 (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-5300"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -1916,7 +1948,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in lastweb3toolzbro (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-5305"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -1931,7 +1965,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in libaryscraper (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-5309"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -2346,7 +2382,9 @@
       "severity": "high",
       "discovered": "2023-12-25",
       "description": "Malicious code in multicolored (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2023-8765"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -2361,7 +2399,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in nageir (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-5394"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3004,7 +3044,9 @@
       "severity": "high",
       "discovered": "2025-03-28",
       "description": "Malicious code in pychaosvm (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-2988"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3054,7 +3096,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in pydisk (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-5699"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3091,7 +3135,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in pylibarys (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-5729"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3106,7 +3152,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in pyou (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-5755"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3121,7 +3169,9 @@
       "severity": "high",
       "discovered": "2024-10-16",
       "description": "Malicious code in pysigner (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-10121"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3219,7 +3269,9 @@
       "severity": "high",
       "discovered": "2024-10-16",
       "description": "Malicious code in pyzelf (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-10149"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3264,7 +3316,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in realtek (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-5855"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3315,7 +3369,9 @@
       "severity": "high",
       "discovered": "2025-08-28",
       "description": "Malicious code in requests-beta (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-41745"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3330,7 +3386,9 @@
       "severity": "high",
       "discovered": "2025-03-28",
       "description": "Malicious code in requests-wiki (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-2995"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3417,7 +3475,9 @@
       "severity": "high",
       "discovered": "2024-09-27",
       "description": "Malicious code in saywhu (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-9002"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3766,7 +3826,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in simple-api-py (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-6011"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3781,7 +3843,9 @@
       "severity": "high",
       "discovered": "2023-05-10",
       "description": "Malicious code in smsobfuscate (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2023-1409"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3830,7 +3894,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in squeezieontop (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-6036"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4360,7 +4426,9 @@
       "severity": "high",
       "discovered": "2025-03-03",
       "description": "Malicious code in tronyx (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-2005"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4405,7 +4473,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in urz (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-6189"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4466,7 +4536,9 @@
       "severity": "high",
       "discovered": "2024-10-16",
       "description": "Malicious code in walletdecoders (PyPI)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-10190"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",

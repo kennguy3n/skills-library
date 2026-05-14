@@ -181,6 +181,13 @@ def reshape(record: dict) -> dict | None:
     discovered = (record.get("published") or "")[:10]
     versions = parse_versions(affected)
     osv_id = record.get("id") or ""
+    # Validator (.github/workflows/validate.yml) requires every entry
+    # to have at least one external reference URL. Many OSSF MAL-*
+    # records have no upstream references, in which case we fall back
+    # to the canonical osv.dev viewer URL — it's an authoritative
+    # public source that resolves to the same advisory.
+    if not references and osv_id:
+        references = ["https://osv.dev/vulnerability/" + osv_id]
     aliases = record.get("aliases") or []
 
     row = {

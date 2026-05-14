@@ -107,6 +107,15 @@ def extract_subset(zip_path: Path, dest_dir: Path, target: int, verbose: bool) -
                 if verbose:
                     print(f"    skip {name}: {exc}", file=sys.stderr)
                 continue
+            # CI's rule-file-schema check requires every vulnerability/**
+            # JSON file to carry both `schema_version` and `last_updated`.
+            # OSV records already have `schema_version`; surface `modified`
+            # (the OSV equivalent of last_updated) as the latter.
+            doc = json.loads(body)
+            modified = doc.get("modified") or doc.get("published") or ""
+            if modified and "last_updated" not in doc:
+                doc["last_updated"] = modified[:10]
+                body = (json.dumps(doc, indent=2) + "\n").encode("utf-8")
             out = dest_dir / Path(name).name
             out.write_bytes(body)
             written += 1
@@ -119,9 +128,11 @@ def write_index(dest_dir: Path) -> None:
     The MCP-side loader uses this so it can map a package name to its
     advisories in O(1) instead of scanning every file.
     """
+    now = dt.datetime.now(dt.timezone.utc)
     index: dict = {
         "schema_version": "1.0",
-        "generated_at": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "last_updated": now.strftime("%Y-%m-%d"),
+        "generated_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "by_package": {},
     }
     for path in sorted(dest_dir.glob("*.json")):

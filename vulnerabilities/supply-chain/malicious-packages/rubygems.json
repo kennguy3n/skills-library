@@ -822,7 +822,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in actions-broker (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46890"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -1364,7 +1366,9 @@
       "severity": "high",
       "discovered": "2025-12-23",
       "description": "Malicious code in activestorage-redundancy (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-192894"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -2586,7 +2590,9 @@
       "severity": "high",
       "discovered": "2023-06-19",
       "description": "Malicious code in att-codekit (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2023-1423"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -2635,7 +2641,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in authnd-client (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46894"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -2752,7 +2760,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in badge-ruler (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46895"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -2954,7 +2964,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in blackbird-client (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46897"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3190,7 +3202,9 @@
       "severity": "high",
       "discovered": "2025-12-23",
       "description": "Malicious code in chalk-consul (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-192897"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3205,7 +3219,9 @@
       "severity": "high",
       "discovered": "2025-12-23",
       "description": "Malicious code in chalk-sentry (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-192901"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3339,7 +3355,9 @@
       "severity": "high",
       "discovered": "2025-12-23",
       "description": "Malicious code in critter (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-192905"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3354,7 +3372,9 @@
       "severity": "high",
       "discovered": "2026-02-15",
       "description": "Malicious code in cucumber_json_schema (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2026-906"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3437,7 +3457,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in delorean_client (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46900"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3452,7 +3474,9 @@
       "severity": "high",
       "discovered": "2024-05-08",
       "description": "Malicious code in dependency_confusion123 (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-1341"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3467,7 +3491,9 @@
       "severity": "high",
       "discovered": "2025-02-03",
       "description": "Malicious code in dextester (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-1010"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3486,7 +3512,9 @@
       "severity": "high",
       "discovered": "2026-03-18",
       "description": "Malicious code in doctolib (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2026-1915"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3637,7 +3665,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in endosome (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-6890"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3661,7 +3691,9 @@
       "severity": "high",
       "discovered": "2025-03-28",
       "description": "Malicious code in evenote-thrift (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-3021"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3676,7 +3708,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in feature-flags-client (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46907"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3878,7 +3912,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in generate-object-property (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-6930"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -3910,7 +3946,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in github-orca (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46910"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4010,7 +4048,9 @@
       "severity": "high",
       "discovered": "2025-12-23",
       "description": "Malicious code in hola_rreichel3github (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-192908"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4025,7 +4065,9 @@
       "severity": "high",
       "discovered": "2023-05-15",
       "description": "Malicious code in i18n_sonder (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2023-1427"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4142,7 +4184,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in kwai-gitlab (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-6954"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4327,7 +4371,9 @@
       "severity": "high",
       "discovered": "2025-12-23",
       "description": "Malicious code in macklemore (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-192910"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4361,7 +4407,9 @@
       "severity": "high",
       "discovered": "2025-07-27",
       "description": "Malicious code in message_gateway (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-6265"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4376,7 +4424,9 @@
       "severity": "high",
       "discovered": "2026-03-27",
       "description": "Malicious code in monolith-twirp-codingagentintegrations-codingagentintegrations (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2026-2265"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4391,7 +4441,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in monolith-twirp-features-actors (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46948"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4406,7 +4458,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in monolith-twirp-features-featuresync (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46949"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4421,7 +4475,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in monolith-twirp-git_src_migrator-monolith (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46928"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4436,7 +4492,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in monolith-twirp-mailreplies-replies (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46930"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4451,7 +4509,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in monolith-twirp-modelsgateway-access (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46953"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4466,7 +4526,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in monolith-twirp-octoshift-imports (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46954"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4481,7 +4543,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in monolith-twirp-packageregistry-auditlog (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46935"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4496,7 +4560,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in monolith-twirp-pipelinemonitor-monitoring (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46957"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4511,7 +4577,9 @@
       "severity": "high",
       "discovered": "2026-03-27",
       "description": "Malicious code in monolith-twirp-pullsd-pullrequestinfo (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2026-2260"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4527,7 +4595,9 @@
       "severity": "high",
       "discovered": "2026-04-16",
       "description": "Malicious code in monolith-twirp-pullsd-users (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2026-2816"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4542,7 +4612,9 @@
       "severity": "high",
       "discovered": "2026-03-27",
       "description": "Malicious code in monolith-twirp-scribe-scribe (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2026-2264"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4557,7 +4629,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in monolith-twirp-trusttiers-trusttier (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46918"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4623,7 +4697,9 @@
       "severity": "high",
       "discovered": "2023-07-15",
       "description": "Malicious code in naveengem (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2023-1431"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4638,7 +4714,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in octolytics (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46960"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4704,7 +4782,9 @@
       "severity": "high",
       "discovered": "2025-03-06",
       "description": "Malicious code in poc-genrateed-by-noob (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-2210"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4723,7 +4803,9 @@
       "severity": "high",
       "discovered": "2025-12-23",
       "description": "Malicious code in prometheus_gcstat (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-192913"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4738,7 +4820,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in proto-dependency-graph-api (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46919"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4753,7 +4837,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in proto-registry-metadata-migrator-api (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46962"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4768,7 +4854,9 @@
       "severity": "high",
       "discovered": "2023-08-09",
       "description": "Malicious code in puppet-module-posix-system-r (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2023-1433"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4791,7 +4879,9 @@
       "severity": "high",
       "discovered": "2025-12-23",
       "description": "Malicious code in queenbee-plugin (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-192914"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4806,7 +4896,9 @@
       "severity": "high",
       "discovered": "2025-12-23",
       "description": "Malicious code in rails-structured-logging (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-192915"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4855,7 +4947,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in rollbar-blanket (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-7013"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4904,7 +4998,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in s4-client (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46963"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4942,7 +5038,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in shopify-oor (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-7023"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -4991,7 +5089,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in spokes-proto (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46944"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -5006,7 +5106,9 @@
       "severity": "high",
       "discovered": "2025-12-23",
       "description": "Malicious code in sq-samsa (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-192919"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -5021,7 +5123,9 @@
       "severity": "high",
       "discovered": "2025-12-23",
       "description": "Malicious code in stripe-rubocop (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-192921"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -5036,7 +5140,9 @@
       "severity": "high",
       "discovered": "2023-07-17",
       "description": "Malicious code in systemd-daemon (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2023-1434"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -5085,7 +5191,9 @@
       "severity": "high",
       "discovered": "2025-12-23",
       "description": "Malicious code in test_gem_978483406ebb19126a2e8c001649a4eb (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-192923"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -5100,7 +5208,9 @@
       "severity": "high",
       "discovered": "2025-09-01",
       "description": "Malicious code in treelights-client (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-46945"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -5132,7 +5242,9 @@
       "severity": "high",
       "discovered": "2024-06-25",
       "description": "Malicious code in vacuole (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2024-7043"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -5185,7 +5297,9 @@
       "severity": "high",
       "discovered": "2025-09-26",
       "description": "Malicious code in your-gem-name12 (RubyGems)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-47816"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",

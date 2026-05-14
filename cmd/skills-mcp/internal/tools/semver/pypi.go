@@ -21,15 +21,15 @@ import (
 // We model the segments the malicious-packages / OSV data uses in
 // practice and accept anything that round-trips through that subset.
 type pypiVersion struct {
-	epoch     int
-	release   []int
-	preStage  string // "a"|"b"|"rc"|""
-	preNum    int
-	hasPre    bool
-	postNum   int
-	hasPost   bool
-	devNum    int
-	hasDev    bool
+	epoch    int
+	release  []int
+	preStage string // "a"|"b"|"rc"|""
+	preNum   int
+	hasPre   bool
+	postNum  int
+	hasPost  bool
+	devNum   int
+	hasDev   bool
 }
 
 // pypiRe matches the PEP 440 "public version identifier" we care about.

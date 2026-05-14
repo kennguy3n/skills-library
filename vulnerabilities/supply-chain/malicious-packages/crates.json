@@ -162,7 +162,9 @@
       "severity": "high",
       "discovered": "2026-04-27",
       "description": "Malicious code in amzn_codewhisperer_streaming_client (crates.io)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2026-3103"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -177,7 +179,9 @@
       "severity": "high",
       "discovered": "2026-04-27",
       "description": "Malicious code in amzn_consolas_client (crates.io)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2026-3101"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -192,7 +196,9 @@
       "severity": "high",
       "discovered": "2023-11-03",
       "description": "Malicious code in littest (crates.io)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2023-8429"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -208,7 +214,9 @@
       "severity": "high",
       "discovered": "2026-04-28",
       "description": "Malicious code in lsh (crates.io)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2026-3126"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -223,7 +231,9 @@
       "severity": "high",
       "discovered": "2026-04-20",
       "description": "Malicious code in mysten_metrics (crates.io)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2026-2958"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -238,7 +248,9 @@
       "severity": "high",
       "discovered": "2025-11-04",
       "description": "Malicious code in replit_ruspty (crates.io)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2025-49350"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -253,7 +265,9 @@
       "severity": "high",
       "discovered": "2026-04-27",
       "description": "Malicious code in semantic_search_client (crates.io)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2026-3102"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
@@ -268,7 +282,9 @@
       "severity": "high",
       "discovered": "2026-04-28",
       "description": "Malicious code in supertag (crates.io)",
-      "references": [],
+      "references": [
+        "https://osv.dev/vulnerability/MAL-2026-3129"
+      ],
       "indicators": [],
       "attack_type": "embedded_malicious_code",
       "source": "ossf-malicious-packages",
