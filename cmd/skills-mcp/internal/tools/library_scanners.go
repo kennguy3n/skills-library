@@ -182,6 +182,28 @@ func (l *Library) ScanDependencies(filePath string) (*ScanDependenciesResult, er
 				References: c.References,
 			})
 		}
+		// OSV cache hits surface every advisory osv.dev knows for
+		// this package, regardless of CVE alias. Severity is left
+		// as "medium" because the OSV record itself has no single
+		// canonical severity (CVSS payloads sit under a structured
+		// "severity" array we don't translate yet).
+		for _, adv := range inner.OSVAdvisories {
+			refs := []string{adv.Reference}
+			out.Findings = append(out.Findings, DependencyFinding{
+				Package:    dep.Name,
+				Version:    dep.Version,
+				Ecosystem:  dep.Ecosystem,
+				Source:     dep.Source,
+				Severity:   "medium",
+				Category:   "osv-advisory",
+				Message:    fmt.Sprintf("%s: %s", adv.ID, adv.Summary),
+				References: refs,
+				Extra: map[string]string{
+					"osv_id":  adv.ID,
+					"aliases": strings.Join(adv.Aliases, ","),
+				},
+			})
+		}
 	}
 	return out, nil
 }

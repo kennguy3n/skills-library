@@ -1,0 +1,321 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-05-14T16:13:02Z",
+  "by_package": {
+    "rubygems-update": [
+      {
+        "id": "GHSA-228f-g3h7-3fj3",
+        "file": "GHSA-228f-g3h7-3fj3.json",
+        "summary": "RubyGems HTTPS to HTTP redirect",
+        "aliases": [
+          "CVE-2012-2125"
+        ]
+      }
+    ],
+    "goliath": [
+      {
+        "id": "GHSA-3892-2r52-p65m",
+        "file": "GHSA-3892-2r52-p65m.json",
+        "summary": "HTTP Request Smuggling in goliath",
+        "aliases": [
+          "CVE-2020-7671"
+        ]
+      }
+    ],
+    "ember-source": [
+      {
+        "id": "GHSA-4q53-fqhc-cr46",
+        "file": "GHSA-4q53-fqhc-cr46.json",
+        "summary": "ember-source Cross-site Scripting vulnerability",
+        "aliases": [
+          "CVE-2014-0046"
+        ]
+      },
+      {
+        "id": "GHSA-4q53-fqhc-cr46",
+        "file": "GHSA-4q53-fqhc-cr46.json",
+        "summary": "ember-source Cross-site Scripting vulnerability",
+        "aliases": [
+          "CVE-2014-0046"
+        ]
+      },
+      {
+        "id": "GHSA-4q53-fqhc-cr46",
+        "file": "GHSA-4q53-fqhc-cr46.json",
+        "summary": "ember-source Cross-site Scripting vulnerability",
+        "aliases": [
+          "CVE-2014-0046"
+        ]
+      }
+    ],
+    "actionpack": [
+      {
+        "id": "GHSA-5xmj-wm96-fmw8",
+        "file": "GHSA-5xmj-wm96-fmw8.json",
+        "summary": "Moderate severity vulnerability that affects actionpack",
+        "aliases": []
+      },
+      {
+        "id": "GHSA-5xmj-wm96-fmw8",
+        "file": "GHSA-5xmj-wm96-fmw8.json",
+        "summary": "Moderate severity vulnerability that affects actionpack",
+        "aliases": []
+      },
+      {
+        "id": "GHSA-5xmj-wm96-fmw8",
+        "file": "GHSA-5xmj-wm96-fmw8.json",
+        "summary": "Moderate severity vulnerability that affects actionpack",
+        "aliases": []
+      },
+      {
+        "id": "GHSA-8877-prq4-9xfw",
+        "file": "GHSA-8877-prq4-9xfw.json",
+        "summary": "Actionpack Open Redirect Vulnerability ",
+        "aliases": [
+          "CVE-2021-22881"
+        ]
+      },
+      {
+        "id": "GHSA-8877-prq4-9xfw",
+        "file": "GHSA-8877-prq4-9xfw.json",
+        "summary": "Actionpack Open Redirect Vulnerability ",
+        "aliases": [
+          "CVE-2021-22881"
+        ]
+      }
+    ],
+    "camaleon_cms": [
+      {
+        "id": "GHSA-75j2-9gmc-m855",
+        "file": "GHSA-75j2-9gmc-m855.json",
+        "summary": "Camaleon CMS vulnerable to stored XSS through user file upload (GHSL-2024-184)",
+        "aliases": []
+      },
+      {
+        "id": "GHSA-cp65-5m9r-vc2c",
+        "file": "GHSA-cp65-5m9r-vc2c.json",
+        "summary": "Camaleon CMS vulnerable to arbitrary path traversal (GHSL-2024-183)",
+        "aliases": [
+          "CVE-2024-46987"
+        ]
+      }
+    ],
+    "show_in_browser": [
+      {
+        "id": "GHSA-9hx9-w2j6-rw76",
+        "file": "GHSA-9hx9-w2j6-rw76.json",
+        "summary": "Script Injection in Show In Browser gem",
+        "aliases": [
+          "CVE-2013-2105"
+        ]
+      }
+    ],
+    "rack": [
+      {
+        "id": "GHSA-g2pf-xv49-m2h5",
+        "file": "GHSA-g2pf-xv49-m2h5.json",
+        "summary": "Rack::Request accepts invalid Host characters, enabling host allowlist bypass",
+        "aliases": [
+          "CVE-2026-34835"
+        ]
+      },
+      {
+        "id": "GHSA-g2pf-xv49-m2h5",
+        "file": "GHSA-g2pf-xv49-m2h5.json",
+        "summary": "Rack::Request accepts invalid Host characters, enabling host allowlist bypass",
+        "aliases": [
+          "CVE-2026-34835"
+        ]
+      },
+      {
+        "id": "GHSA-hg78-4f6x-99wq",
+        "file": "GHSA-hg78-4f6x-99wq.json",
+        "summary": "Rack vulnerable to Denial of Service",
+        "aliases": [
+          "CVE-2018-16470"
+        ]
+      }
+    ],
+    "json": [
+      {
+        "id": "GHSA-jphg-qwrw-7w9g",
+        "file": "GHSA-jphg-qwrw-7w9g.json",
+        "summary": "Unsafe object creation in json RubyGem",
+        "aliases": [
+          "CVE-2020-10663"
+        ]
+      }
+    ],
+    "dragonfly": [
+      {
+        "id": "GHSA-p463-639r-q9g9",
+        "file": "GHSA-p463-639r-q9g9.json",
+        "summary": "Dragonfly Code Injection vulnerability",
+        "aliases": [
+          "CVE-2013-1756"
+        ]
+      },
+      {
+        "id": "GHSA-p463-639r-q9g9",
+        "file": "GHSA-p463-639r-q9g9.json",
+        "summary": "Dragonfly Code Injection vulnerability",
+        "aliases": [
+          "CVE-2013-1756"
+        ]
+      }
+    ],
+    "mail": [
+      {
+        "id": "GHSA-q86f-fmqf-qrf6",
+        "file": "GHSA-q86f-fmqf-qrf6.json",
+        "summary": "Mail Gem CRLF Injection vulnerability",
+        "aliases": [
+          "CVE-2015-9097"
+        ]
+      }
+    ],
+    "publify_core": [
+      {
+        "id": "GHSA-rc42-jghf-vr8f",
+        "file": "GHSA-rc42-jghf-vr8f.json",
+        "summary": "Integer overflow in publify_core",
+        "aliases": [
+          "BIT-publify-2022-1812",
+          "CVE-2022-1812"
+        ]
+      }
+    ],
+    "twitter-bootstrap-rails": [
+      {
+        "id": "GHSA-vpqv-mqvc-pcx2",
+        "file": "GHSA-vpqv-mqvc-pcx2.json",
+        "summary": "Reflective Cross-site Scripting Vulnerability in twitter-bootstrap-rails",
+        "aliases": [
+          "CVE-2014-4920"
+        ]
+      }
+    ],
+    "omniauth": [
+      {
+        "id": "GHSA-ww4x-rwq6-qpgf",
+        "file": "GHSA-ww4x-rwq6-qpgf.json",
+        "summary": "OmniAuth Ruby gem Cross-site Request Forgery in request phase",
+        "aliases": [
+          "CVE-2015-9284"
+        ]
+      }
+    ],
+    "puppet-module-posix-system-r3.2": [
+      {
+        "id": "MAL-2023-1436",
+        "file": "MAL-2023-1436.json",
+        "summary": "Malicious code in puppet-module-posix-system-r3.2 (RubyGems)",
+        "aliases": []
+      }
+    ],
+    "abbyy_ruby": [
+      {
+        "id": "MAL-2024-6324",
+        "file": "MAL-2024-6324.json",
+        "summary": "Malicious code in abbyy_ruby (RubyGems)",
+        "aliases": []
+      }
+    ],
+    "active-admin_filters_visibility": [
+      {
+        "id": "MAL-2024-6391",
+        "file": "MAL-2024-6391.json",
+        "summary": "Malicious code in active-admin_filters_visibility (RubyGems)",
+        "aliases": []
+      }
+    ],
+    "activemerchant_payline": [
+      {
+        "id": "MAL-2024-6458",
+        "file": "MAL-2024-6458.json",
+        "summary": "Malicious code in activemerchant_payline (RubyGems)",
+        "aliases": []
+      }
+    ],
+    "ae-validates-timeliness": [
+      {
+        "id": "MAL-2024-6525",
+        "file": "MAL-2024-6525.json",
+        "summary": "Malicious code in ae-validates-timeliness (RubyGems)",
+        "aliases": []
+      }
+    ],
+    "alphabetic-paginate": [
+      {
+        "id": "MAL-2024-6592",
+        "file": "MAL-2024-6592.json",
+        "summary": "Malicious code in alphabetic-paginate (RubyGems)",
+        "aliases": []
+      }
+    ],
+    "apress_validators": [
+      {
+        "id": "MAL-2024-6659",
+        "file": "MAL-2024-6659.json",
+        "summary": "Malicious code in apress_validators (RubyGems)",
+        "aliases": []
+      }
+    ],
+    "auto-click": [
+      {
+        "id": "MAL-2024-6726",
+        "file": "MAL-2024-6726.json",
+        "summary": "Malicious code in auto-click (RubyGems)",
+        "aliases": []
+      }
+    ],
+    "branch-raker": [
+      {
+        "id": "MAL-2024-6793",
+        "file": "MAL-2024-6793.json",
+        "summary": "Malicious code in branch-raker (RubyGems)",
+        "aliases": []
+      }
+    ],
+    "delayed_plugins-airbrake": [
+      {
+        "id": "MAL-2024-6860",
+        "file": "MAL-2024-6860.json",
+        "summary": "Malicious code in delayed_plugins-airbrake (RubyGems)",
+        "aliases": []
+      }
+    ],
+    "game-shuffle_cards": [
+      {
+        "id": "MAL-2024-6927",
+        "file": "MAL-2024-6927.json",
+        "summary": "Malicious code in game-shuffle_cards (RubyGems)",
+        "aliases": []
+      }
+    ],
+    "multi-movingsign": [
+      {
+        "id": "MAL-2024-6994",
+        "file": "MAL-2024-6994.json",
+        "summary": "Malicious code in multi-movingsign (RubyGems)",
+        "aliases": []
+      }
+    ],
+    "chalk-sentry": [
+      {
+        "id": "MAL-2025-192901",
+        "file": "MAL-2025-192901.json",
+        "summary": "Malicious code in chalk-sentry (RubyGems)",
+        "aliases": []
+      }
+    ],
+    "monolith-twirp-features-featureflaghub": [
+      {
+        "id": "MAL-2025-46927",
+        "file": "MAL-2025-46927.json",
+        "summary": "Malicious code in monolith-twirp-features-featureflaghub (RubyGems)",
+        "aliases": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,252 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-05-14T16:13:01Z",
+  "by_package": {
+    "hono": [
+      {
+        "id": "GHSA-2234-fmw7-43wr",
+        "file": "GHSA-2234-fmw7-43wr.json",
+        "summary": "Hono allows bypass of CSRF Middleware by a request without Content-Type header.",
+        "aliases": [
+          "CVE-2024-48913"
+        ]
+      }
+    ],
+    "colors-1.2.0": [
+      {
+        "id": "MAL-2022-2007",
+        "file": "MAL-2022-2007.json",
+        "summary": "Malicious code in colors-1.2.0 (npm)",
+        "aliases": [
+          "GHSA-55fm-2hpm-f7rq"
+        ]
+      }
+    ],
+    "juno-branding": [
+      {
+        "id": "MAL-2023-544",
+        "file": "MAL-2023-544.json",
+        "summary": "Malicious code in juno-branding (npm)",
+        "aliases": [
+          "GHSA-j886-rgcg-h9cj"
+        ]
+      }
+    ],
+    "inline-icons": [
+      {
+        "id": "MAL-2024-7746",
+        "file": "MAL-2024-7746.json",
+        "summary": "Malicious code in inline-icons (npm)",
+        "aliases": []
+      }
+    ],
+    "irma-sasag55-ruro": [
+      {
+        "id": "MAL-2025-104409",
+        "file": "MAL-2025-104409.json",
+        "summary": "Malicious code in irma-sasag55-ruro (npm)",
+        "aliases": []
+      }
+    ],
+    "wispy_python_0xrequest": [
+      {
+        "id": "MAL-2025-110966",
+        "file": "MAL-2025-110966.json",
+        "summary": "Malicious code in wispy_python_0xrequest (npm)",
+        "aliases": []
+      }
+    ],
+    "tomi-ubi30-miaww": [
+      {
+        "id": "MAL-2025-117523",
+        "file": "MAL-2025-117523.json",
+        "summary": "Malicious code in tomi-ubi30-miaww (npm)",
+        "aliases": []
+      }
+    ],
+    "@zalastax/nolb-mph": [
+      {
+        "id": "MAL-2025-12408",
+        "file": "MAL-2025-12408.json",
+        "summary": "Malicious code in @zalastax/nolb-mph (npm)",
+        "aliases": []
+      }
+    ],
+    "tomi-nasipecel35-riris": [
+      {
+        "id": "MAL-2025-130637",
+        "file": "MAL-2025-130637.json",
+        "summary": "Malicious code in tomi-nasipecel35-riris (npm)",
+        "aliases": []
+      }
+    ],
+    "tania-getuk78-sluey": [
+      {
+        "id": "MAL-2025-137194",
+        "file": "MAL-2025-137194.json",
+        "summary": "Malicious code in tania-getuk78-sluey (npm)",
+        "aliases": []
+      }
+    ],
+    "iota-wezen-sqlite-hugo": [
+      {
+        "id": "MAL-2025-143750",
+        "file": "MAL-2025-143750.json",
+        "summary": "Malicious code in iota-wezen-sqlite-hugo (npm)",
+        "aliases": []
+      }
+    ],
+    "@mipta1/xsdsoopa": [
+      {
+        "id": "MAL-2025-150306",
+        "file": "MAL-2025-150306.json",
+        "summary": "Malicious code in @mipta1/xsdsoopa (npm)",
+        "aliases": []
+      }
+    ],
+    "iqbal-poke6": [
+      {
+        "id": "MAL-2025-156868",
+        "file": "MAL-2025-156868.json",
+        "summary": "Malicious code in iqbal-poke6 (npm)",
+        "aliases": []
+      }
+    ],
+    "nokire-sekiya35": [
+      {
+        "id": "MAL-2025-163423",
+        "file": "MAL-2025-163423.json",
+        "summary": "Malicious code in nokire-sekiya35 (npm)",
+        "aliases": []
+      }
+    ],
+    "uinsu-lotahmi-nakaimlu": [
+      {
+        "id": "MAL-2025-169981",
+        "file": "MAL-2025-169981.json",
+        "summary": "Malicious code in uinsu-lotahmi-nakaimlu (npm)",
+        "aliases": []
+      }
+    ],
+    "nokire-tanjiro48": [
+      {
+        "id": "MAL-2025-176537",
+        "file": "MAL-2025-176537.json",
+        "summary": "Malicious code in nokire-tanjiro48 (npm)",
+        "aliases": []
+      }
+    ],
+    "item-ati-kubika": [
+      {
+        "id": "MAL-2025-183093",
+        "file": "MAL-2025-183093.json",
+        "summary": "Malicious code in item-ati-kubika (npm)",
+        "aliases": []
+      }
+    ],
+    "standard-saturnology-webpack-pm2": [
+      {
+        "id": "MAL-2025-189650",
+        "file": "MAL-2025-189650.json",
+        "summary": "Malicious code in standard-saturnology-webpack-pm2 (npm)",
+        "aliases": []
+      }
+    ],
+    "idig-openstack": [
+      {
+        "id": "MAL-2025-22974",
+        "file": "MAL-2025-22974.json",
+        "summary": "Malicious code in idig-openstack (npm)",
+        "aliases": []
+      }
+    ],
+    "prairie-tornado-thw521-project": [
+      {
+        "id": "MAL-2025-29591",
+        "file": "MAL-2025-29591.json",
+        "summary": "Malicious code in prairie-tornado-thw521-project (npm)",
+        "aliases": []
+      }
+    ],
+    "test-mlw2-slued-fents": [
+      {
+        "id": "MAL-2025-36260",
+        "file": "MAL-2025-36260.json",
+        "summary": "Malicious code in test-mlw2-slued-fents (npm)",
+        "aliases": []
+      }
+    ],
+    "@zalastax/nolb-_rul": [
+      {
+        "id": "MAL-2025-43062",
+        "file": "MAL-2025-43062.json",
+        "summary": "Malicious code in @zalastax/nolb-_rul (npm)",
+        "aliases": []
+      }
+    ],
+    "andi-telurtahu33-breki": [
+      {
+        "id": "MAL-2025-49795",
+        "file": "MAL-2025-49795.json",
+        "summary": "Malicious code in andi-telurtahu33-breki (npm)",
+        "aliases": []
+      }
+    ],
+    "galih-empal77-sukiwir": [
+      {
+        "id": "MAL-2025-56400",
+        "file": "MAL-2025-56400.json",
+        "summary": "Malicious code in galih-empal77-sukiwir (npm)",
+        "aliases": []
+      }
+    ],
+    "fauzi-mieaceh69-sluey": [
+      {
+        "id": "MAL-2025-62968",
+        "file": "MAL-2025-62968.json",
+        "summary": "Malicious code in fauzi-mieaceh69-sluey (npm)",
+        "aliases": []
+      }
+    ],
+    "olympic-cyan-marsupial": [
+      {
+        "id": "MAL-2025-69713",
+        "file": "MAL-2025-69713.json",
+        "summary": "Malicious code in olympic-cyan-marsupial (npm)",
+        "aliases": []
+      }
+    ],
+    "wibowo-ragi52-breki": [
+      {
+        "id": "MAL-2025-76271",
+        "file": "MAL-2025-76271.json",
+        "summary": "Malicious code in wibowo-ragi52-breki (npm)",
+        "aliases": []
+      }
+    ],
+    "zul-wajit56-sukiwir": [
+      {
+        "id": "MAL-2025-82828",
+        "file": "MAL-2025-82828.json",
+        "summary": "Malicious code in zul-wajit56-sukiwir (npm)",
+        "aliases": []
+      }
+    ],
+    "patria-gorengan73-crottsekebon": [
+      {
+        "id": "MAL-2025-89386",
+        "file": "MAL-2025-89386.json",
+        "summary": "Malicious code in patria-gorengan73-crottsekebon (npm)",
+        "aliases": []
+      }
+    ],
+    "pretty_newt_z3n": [
+      {
+        "id": "MAL-2025-96001",
+        "file": "MAL-2025-96001.json",
+        "summary": "Malicious code in pretty_newt_z3n (npm)",
+        "aliases": []
+      }
+    ]
+  }
+}

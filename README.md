@@ -268,10 +268,13 @@ secure-code/
 ├── vulnerabilities/                     # Supply-chain vulnerability database
 │   ├── manifest.json                    #   versioned, checksummed, delta-updatable
 │   ├── supply-chain/
-│   │   ├── malicious-packages/          #   npm / pypi / crates / go / rubygems
-│   │   │                                #   + maven / nuget / github-actions / docker
-│   │   ├── typosquat-db/                #   71 known typosquats
+│   │   ├── malicious-packages/          #   ~1,900 entries across 9 ecosystems
+│   │   │                                #   (npm/pypi/crates/go/rubygems/maven/nuget/
+│   │   │                                #   github-actions/docker)
+│   │   ├── typosquat-db/                #   ~270 known typosquats (curated + derived)
 │   │   └── dependency-confusion/        #   internal-namespace patterns
+│   ├── osv/                             #   per-ecosystem OSV.dev cache (refreshed
+│   │                                    #   weekly via scripts/ingest-osv.py)
 │   └── cve/
 │       └── code-relevant/               #   58 CVE → code-pattern mappings (2015-2025)
 ├── rules/                               # Sigma detection rules
@@ -382,7 +385,8 @@ skills-mcp --path /path/to/secure-code
 The server registers fifteen tools on `tools/list`:
 
 - `lookup_vulnerability(package, ecosystem?, version?)` — search the supply-chain
-  malicious-packages database and the typosquat DB.
+  malicious-packages database, the typosquat DB, AND the local OSV cache
+  (vulnerabilities/osv/) for known CVE / GHSA / OSV-ID advisories.
 - `check_secret_pattern(text)` — run the secret-detection regex rules against
   `text`, returning matches with severity and whether they are known false
   positives.
@@ -392,7 +396,9 @@ The server registers fifteen tools on `tools/list`:
 - `scan_secrets(text | file_path, format?)` — DLP scan of inline text or a path
   under the configured allowed roots; supports the `sarif` output format.
 - `check_dependency(package, version?, ecosystem, format?)` — check a dependency
-  against the malicious-packages corpus with optional SARIF output.
+  against the malicious-packages corpus, the typosquat DB, the CVE-pattern list,
+  and the local OSV cache; ecosystem-native semver matching (node-semver, PEP 440,
+  Go module pseudo-versions) is used when both sides parse. Optional SARIF output.
 - `check_typosquat(package, ecosystem?)` — flag candidate typosquats from the
   curated typosquat database.
 - `map_compliance_control(skill_id | query, framework?)` — map an installed

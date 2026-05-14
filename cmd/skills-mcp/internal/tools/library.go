@@ -71,6 +71,14 @@ type Library struct {
 	vulnCache  map[string]*vulnFile
 	typosquats *typosquatFile
 
+	// osvMu protects osvIndex. osvIndex is keyed by ecosystem and
+	// holds the lazily-loaded vulnerabilities/osv/<eco>/index.json
+	// contents. A nil per-eco map means the cache for that ecosystem
+	// is empty or unreadable; LookupVulnerability degrades gracefully
+	// (returns only malicious-package matches, no OSV advisories).
+	osvMu    sync.Mutex
+	osvIndex map[string]*osvIndexFile
+
 	// allowedRoots, when non-nil and non-empty, restricts ScanSecrets
 	// file_path inputs to paths under one of these absolute,
 	// symlink-resolved directories. A nil/empty slice preserves the
@@ -94,7 +102,11 @@ func NewLibrary(root string) (*Library, error) {
 	if _, err := os.Stat(filepath.Join(abs, "skills")); err != nil {
 		return nil, fmt.Errorf("library root %q has no skills/ subdirectory: %w", abs, err)
 	}
-	return &Library{root: abs, vulnCache: map[string]*vulnFile{}}, nil
+	return &Library{
+		root:      abs,
+		vulnCache: map[string]*vulnFile{},
+		osvIndex:  map[string]*osvIndexFile{},
+	}, nil
 }
 
 // Root returns the absolute path of the library checkout this Library
@@ -228,10 +240,42 @@ type typosquatFile struct {
 
 // LookupVulnerabilityResult is what the MCP tool returns.
 type LookupVulnerabilityResult struct {
-	Package    string           `json:"package"`
-	Ecosystem  string           `json:"ecosystem,omitempty"`
-	Matches    []VulnEntry      `json:"matches"`
-	Typosquats []TyposquatEntry `json:"typosquats"`
+	Package       string           `json:"package"`
+	Ecosystem     string           `json:"ecosystem,omitempty"`
+	Matches       []VulnEntry      `json:"matches"`
+	Typosquats    []TyposquatEntry `json:"typosquats"`
+	OSVAdvisories []OSVAdvisory    `json:"osv_advisories,omitempty"`
+}
+
+// OSVAdvisory is the projection of one OSV record we return to MCP
+// callers. The on-disk OSV format is large and contains fields most
+// callers don't need (full CVSS payloads, PoC code, etc); we keep
+// the cache compact by including only the fields downstream tools
+// (skills-check, IDE plugins) actually read.
+type OSVAdvisory struct {
+	ID        string   `json:"id"`
+	Package   string   `json:"package,omitempty"`
+	Ecosystem string   `json:"ecosystem,omitempty"`
+	Aliases   []string `json:"aliases,omitempty"`
+	Summary   string   `json:"summary,omitempty"`
+	Published string   `json:"published,omitempty"`
+	Modified  string   `json:"modified,omitempty"`
+	Reference string   `json:"reference,omitempty"`
+}
+
+// osvIndexEntry mirrors the per-package entries in
+// vulnerabilities/osv/<eco>/index.json.
+type osvIndexEntry struct {
+	ID      string   `json:"id"`
+	File    string   `json:"file"`
+	Summary string   `json:"summary"`
+	Aliases []string `json:"aliases"`
+}
+
+type osvIndexFile struct {
+	SchemaVersion string                     `json:"schema_version"`
+	GeneratedAt   string                     `json:"generated_at"`
+	ByPackage     map[string][]osvIndexEntry `json:"by_package"`
 }
 
 // LookupVulnerability searches the malicious-packages database for the
@@ -282,7 +326,69 @@ func (l *Library) LookupVulnerability(pkg, ecosystem, version string) (*LookupVu
 			out.Typosquats = append(out.Typosquats, t)
 		}
 	}
+	// Append OSV cache hits. Lookups are case-insensitive on package
+	// name. Errors in the OSV layer never fail the whole tool: the
+	// cache is optional and the malicious-packages DB remains the
+	// authoritative result for unknown ecosystems.
+	for _, e := range ecosystems {
+		advs := l.lookupOSV(e, pkg)
+		out.OSVAdvisories = append(out.OSVAdvisories, advs...)
+	}
 	return out, nil
+}
+
+// loadOSVIndex returns the OSV index for the given ecosystem. A
+// missing or unreadable index is treated as an empty result (no
+// advisories), not an error.
+func (l *Library) loadOSVIndex(eco string) *osvIndexFile {
+	if !knownEcosystems[eco] {
+		return nil
+	}
+	l.osvMu.Lock()
+	defer l.osvMu.Unlock()
+	if cached, ok := l.osvIndex[eco]; ok {
+		return cached
+	}
+	path := filepath.Join(l.root, "vulnerabilities", "osv", eco, "index.json")
+	body, err := os.ReadFile(path)
+	if err != nil {
+		l.osvIndex[eco] = nil
+		return nil
+	}
+	var idx osvIndexFile
+	if err := json.Unmarshal(body, &idx); err != nil {
+		l.osvIndex[eco] = nil
+		return nil
+	}
+	l.osvIndex[eco] = &idx
+	return &idx
+}
+
+// lookupOSV returns any cached OSV advisories that affect `pkg` in
+// the given ecosystem. Errors are swallowed (an unavailable cache
+// must not break LookupVulnerability).
+func (l *Library) lookupOSV(eco, pkg string) []OSVAdvisory {
+	idx := l.loadOSVIndex(eco)
+	if idx == nil {
+		return nil
+	}
+	entries, ok := idx.ByPackage[strings.ToLower(pkg)]
+	if !ok {
+		return nil
+	}
+	out := make([]OSVAdvisory, 0, len(entries))
+	for _, e := range entries {
+		adv := OSVAdvisory{
+			ID:        e.ID,
+			Package:   pkg,
+			Ecosystem: eco,
+			Aliases:   e.Aliases,
+			Summary:   e.Summary,
+			Reference: "https://osv.dev/vulnerability/" + e.ID,
+		}
+		out = append(out, adv)
+	}
+	return out
 }
 
 func (l *Library) loadVulnFile(eco string) (*vulnFile, error) {

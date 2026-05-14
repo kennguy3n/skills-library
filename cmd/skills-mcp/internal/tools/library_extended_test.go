@@ -1049,3 +1049,72 @@ func TestVersionMatchesEcoUnknownFallsBack(t *testing.T) {
 		t.Errorf("rubygems fallback: >= 1.2.3 should match 1.5.0")
 	}
 }
+
+// TestLookupVulnerabilityIncludesOSVAdvisories wires the new
+// vulnerabilities/osv/<eco>/index.json into LookupVulnerability. We
+// expect every package present in the cache to be discoverable by
+// name (case-insensitive) and to come back with a stable osv.dev
+// reference URL. The cache for npm always contains at least 30 real
+// advisories drawn from osv.dev's bulk export (see
+// scripts/ingest-osv.py).
+func TestLookupVulnerabilityIncludesOSVAdvisories(t *testing.T) {
+	lib := newLibrary(t)
+	// Pick the first by_package key from the npm index so the test
+	// stays stable across cache refreshes.
+	idx := lib.loadOSVIndex("npm")
+	if idx == nil || len(idx.ByPackage) == 0 {
+		t.Skipf("vulnerabilities/osv/npm/index.json missing or empty; run scripts/ingest-osv.py")
+	}
+	var pkg string
+	for k := range idx.ByPackage {
+		pkg = k
+		break
+	}
+	res, err := lib.LookupVulnerability(pkg, "npm", "")
+	if err != nil {
+		t.Fatalf("LookupVulnerability(%q, npm, _): %v", pkg, err)
+	}
+	if len(res.OSVAdvisories) == 0 {
+		t.Fatalf("expected at least one OSV advisory for %q, got none", pkg)
+	}
+	got := res.OSVAdvisories[0]
+	if got.ID == "" {
+		t.Errorf("OSVAdvisory.ID must be populated")
+	}
+	if got.Reference != "https://osv.dev/vulnerability/"+got.ID {
+		t.Errorf("OSVAdvisory.Reference = %q, want osv.dev URL", got.Reference)
+	}
+	if got.Ecosystem != "npm" {
+		t.Errorf("OSVAdvisory.Ecosystem = %q, want npm", got.Ecosystem)
+	}
+}
+
+// TestLookupVulnerabilityMissingOSVIndexIsSafe ensures that an
+// ecosystem with no on-disk OSV cache does not break the tool. The
+// "rubygems" cache exists in this repo, so simulate a missing index
+// by pointing the library at a temp root with no vulnerabilities/osv
+// subdirectory.
+func TestLookupVulnerabilityMissingOSVIndexIsSafe(t *testing.T) {
+	tmp := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(tmp, "skills"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmp, "vulnerabilities", "supply-chain", "malicious-packages"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmp, "vulnerabilities", "supply-chain", "malicious-packages", "npm.json"),
+		[]byte(`{"ecosystem":"npm","entries":[]}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	lib, err := NewLibrary(tmp)
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := lib.LookupVulnerability("anything", "npm", "")
+	if err != nil {
+		t.Fatalf("LookupVulnerability must not fail when OSV cache is absent: %v", err)
+	}
+	if len(res.OSVAdvisories) != 0 {
+		t.Errorf("OSVAdvisories must be empty when cache missing; got %d", len(res.OSVAdvisories))
+	}
+}

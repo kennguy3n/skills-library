@@ -1,0 +1,583 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-05-14T16:13:02Z",
+  "by_package": {
+    "com.liferay.portal:release.portal.bom": [
+      {
+        "id": "GHSA-222w-xmc5-jhp3",
+        "file": "GHSA-222w-xmc5-jhp3.json",
+        "summary": "Liferay Portal and Liferay DXP have a reflected cross-site scripting vulnerability",
+        "aliases": [
+          "CVE-2025-43735"
+        ]
+      },
+      {
+        "id": "GHSA-8j5r-9687-88w5",
+        "file": "GHSA-8j5r-9687-88w5.json",
+        "summary": "Liferay Portal and Liferay DXP Fails to Sanitize API Data",
+        "aliases": [
+          "CVE-2020-13444"
+        ]
+      }
+    ],
+    "com.liferay.portal:release.dxp.bom": [
+      {
+        "id": "GHSA-222w-xmc5-jhp3",
+        "file": "GHSA-222w-xmc5-jhp3.json",
+        "summary": "Liferay Portal and Liferay DXP have a reflected cross-site scripting vulnerability",
+        "aliases": [
+          "CVE-2025-43735"
+        ]
+      },
+      {
+        "id": "GHSA-222w-xmc5-jhp3",
+        "file": "GHSA-222w-xmc5-jhp3.json",
+        "summary": "Liferay Portal and Liferay DXP have a reflected cross-site scripting vulnerability",
+        "aliases": [
+          "CVE-2025-43735"
+        ]
+      },
+      {
+        "id": "GHSA-222w-xmc5-jhp3",
+        "file": "GHSA-222w-xmc5-jhp3.json",
+        "summary": "Liferay Portal and Liferay DXP have a reflected cross-site scripting vulnerability",
+        "aliases": [
+          "CVE-2025-43735"
+        ]
+      },
+      {
+        "id": "GHSA-222w-xmc5-jhp3",
+        "file": "GHSA-222w-xmc5-jhp3.json",
+        "summary": "Liferay Portal and Liferay DXP have a reflected cross-site scripting vulnerability",
+        "aliases": [
+          "CVE-2025-43735"
+        ]
+      },
+      {
+        "id": "GHSA-222w-xmc5-jhp3",
+        "file": "GHSA-222w-xmc5-jhp3.json",
+        "summary": "Liferay Portal and Liferay DXP have a reflected cross-site scripting vulnerability",
+        "aliases": [
+          "CVE-2025-43735"
+        ]
+      },
+      {
+        "id": "GHSA-8j5r-9687-88w5",
+        "file": "GHSA-8j5r-9687-88w5.json",
+        "summary": "Liferay Portal and Liferay DXP Fails to Sanitize API Data",
+        "aliases": [
+          "CVE-2020-13444"
+        ]
+      },
+      {
+        "id": "GHSA-8j5r-9687-88w5",
+        "file": "GHSA-8j5r-9687-88w5.json",
+        "summary": "Liferay Portal and Liferay DXP Fails to Sanitize API Data",
+        "aliases": [
+          "CVE-2020-13444"
+        ]
+      },
+      {
+        "id": "GHSA-8j5r-9687-88w5",
+        "file": "GHSA-8j5r-9687-88w5.json",
+        "summary": "Liferay Portal and Liferay DXP Fails to Sanitize API Data",
+        "aliases": [
+          "CVE-2020-13444"
+        ]
+      }
+    ],
+    "com.liferay.portal:com.liferay.portal.impl": [
+      {
+        "id": "GHSA-222w-xmc5-jhp3",
+        "file": "GHSA-222w-xmc5-jhp3.json",
+        "summary": "Liferay Portal and Liferay DXP have a reflected cross-site scripting vulnerability",
+        "aliases": [
+          "CVE-2025-43735"
+        ]
+      }
+    ],
+    "org.elasticsearch:elasticsearch": [
+      {
+        "id": "GHSA-2hjr-vmf3-xwvp",
+        "file": "GHSA-2hjr-vmf3-xwvp.json",
+        "summary": "Elasticsearch Insertion of Sensitive Information into Log File",
+        "aliases": [
+          "BIT-elasticsearch-2023-49921",
+          "CVE-2023-49921"
+        ]
+      },
+      {
+        "id": "GHSA-2hjr-vmf3-xwvp",
+        "file": "GHSA-2hjr-vmf3-xwvp.json",
+        "summary": "Elasticsearch Insertion of Sensitive Information into Log File",
+        "aliases": [
+          "BIT-elasticsearch-2023-49921",
+          "CVE-2023-49921"
+        ]
+      }
+    ],
+    "org.apache.geode:geode-core": [
+      {
+        "id": "GHSA-37m3-qp37-x3c6",
+        "file": "GHSA-37m3-qp37-x3c6.json",
+        "summary": "Apache Geode gfsh query vulnerability",
+        "aliases": [
+          "CVE-2017-9794"
+        ]
+      }
+    ],
+    "io.undertow:undertow-core": [
+      {
+        "id": "GHSA-3x7h-5hfr-hvjm",
+        "file": "GHSA-3x7h-5hfr-hvjm.json",
+        "summary": "Moderate severity vulnerability that affects io.undertow:undertow-core",
+        "aliases": [
+          "CVE-2017-2670"
+        ]
+      }
+    ],
+    "com.enonic.xp:lib-auth": [
+      {
+        "id": "GHSA-4hrp-m3f2-643j",
+        "file": "GHSA-4hrp-m3f2-643j.json",
+        "summary": "Duplicate Advisory: Session fixation in Enonic XP",
+        "aliases": [
+          "CVE-2024-23679",
+          "GHSA-4m5p-5w5w-3jcf"
+        ]
+      }
+    ],
+    "org.springframework.boot:spring-boot-devtools": [
+      {
+        "id": "GHSA-56v8-86gj-66jp",
+        "file": "GHSA-56v8-86gj-66jp.json",
+        "summary": "Spring Boot DevTools remote secret comparison is vulnerable to timing attacks",
+        "aliases": [
+          "CVE-2026-40972"
+        ]
+      },
+      {
+        "id": "GHSA-56v8-86gj-66jp",
+        "file": "GHSA-56v8-86gj-66jp.json",
+        "summary": "Spring Boot DevTools remote secret comparison is vulnerable to timing attacks",
+        "aliases": [
+          "CVE-2026-40972"
+        ]
+      },
+      {
+        "id": "GHSA-56v8-86gj-66jp",
+        "file": "GHSA-56v8-86gj-66jp.json",
+        "summary": "Spring Boot DevTools remote secret comparison is vulnerable to timing attacks",
+        "aliases": [
+          "CVE-2026-40972"
+        ]
+      },
+      {
+        "id": "GHSA-56v8-86gj-66jp",
+        "file": "GHSA-56v8-86gj-66jp.json",
+        "summary": "Spring Boot DevTools remote secret comparison is vulnerable to timing attacks",
+        "aliases": [
+          "CVE-2026-40972"
+        ]
+      },
+      {
+        "id": "GHSA-56v8-86gj-66jp",
+        "file": "GHSA-56v8-86gj-66jp.json",
+        "summary": "Spring Boot DevTools remote secret comparison is vulnerable to timing attacks",
+        "aliases": [
+          "CVE-2026-40972"
+        ]
+      }
+    ],
+    "it.infuse.jenkins:usemango-runner": [
+      {
+        "id": "GHSA-5x89-75r7-8rjh",
+        "file": "GHSA-5x89-75r7-8rjh.json",
+        "summary": "XSS vulnerability in Jenkins useMango Runner Plugin",
+        "aliases": [
+          "CVE-2020-2176"
+        ]
+      }
+    ],
+    "org.apache.tika:tika-core": [
+      {
+        "id": "GHSA-6jq2-789q-fff2",
+        "file": "GHSA-6jq2-789q-fff2.json",
+        "summary": "High severity vulnerability that affects org.apache.tika:tika-core",
+        "aliases": [
+          "CVE-2018-11761"
+        ]
+      }
+    ],
+    "org.apache.continuum:continuum": [
+      {
+        "id": "GHSA-77p9-w6pj-rmvg",
+        "file": "GHSA-77p9-w6pj-rmvg.json",
+        "summary": "Apache Continuum vulnerable to Command Injection through Installations REST API",
+        "aliases": [
+          "CVE-2016-15057"
+        ]
+      }
+    ],
+    "com.vaadin:vaadin-server": [
+      {
+        "id": "GHSA-7wwv-79xw-rvvg",
+        "file": "GHSA-7wwv-79xw-rvvg.json",
+        "summary": "Vaadin vulnerable to Cross-site Scripting",
+        "aliases": [
+          "CVE-2025-15022"
+        ]
+      },
+      {
+        "id": "GHSA-7wwv-79xw-rvvg",
+        "file": "GHSA-7wwv-79xw-rvvg.json",
+        "summary": "Vaadin vulnerable to Cross-site Scripting",
+        "aliases": [
+          "CVE-2025-15022"
+        ]
+      }
+    ],
+    "com.vaadin:vaadin": [
+      {
+        "id": "GHSA-7wwv-79xw-rvvg",
+        "file": "GHSA-7wwv-79xw-rvvg.json",
+        "summary": "Vaadin vulnerable to Cross-site Scripting",
+        "aliases": [
+          "CVE-2025-15022"
+        ]
+      },
+      {
+        "id": "GHSA-7wwv-79xw-rvvg",
+        "file": "GHSA-7wwv-79xw-rvvg.json",
+        "summary": "Vaadin vulnerable to Cross-site Scripting",
+        "aliases": [
+          "CVE-2025-15022"
+        ]
+      },
+      {
+        "id": "GHSA-7wwv-79xw-rvvg",
+        "file": "GHSA-7wwv-79xw-rvvg.json",
+        "summary": "Vaadin vulnerable to Cross-site Scripting",
+        "aliases": [
+          "CVE-2025-15022"
+        ]
+      }
+    ],
+    "com.vaadin:vaadin-spreadsheet-flow": [
+      {
+        "id": "GHSA-7wwv-79xw-rvvg",
+        "file": "GHSA-7wwv-79xw-rvvg.json",
+        "summary": "Vaadin vulnerable to Cross-site Scripting",
+        "aliases": [
+          "CVE-2025-15022"
+        ]
+      },
+      {
+        "id": "GHSA-7wwv-79xw-rvvg",
+        "file": "GHSA-7wwv-79xw-rvvg.json",
+        "summary": "Vaadin vulnerable to Cross-site Scripting",
+        "aliases": [
+          "CVE-2025-15022"
+        ]
+      },
+      {
+        "id": "GHSA-7wwv-79xw-rvvg",
+        "file": "GHSA-7wwv-79xw-rvvg.json",
+        "summary": "Vaadin vulnerable to Cross-site Scripting",
+        "aliases": [
+          "CVE-2025-15022"
+        ]
+      }
+    ],
+    "org.nokogiri:nekohtml": [
+      {
+        "id": "GHSA-9849-p7jc-9rmv",
+        "file": "GHSA-9849-p7jc-9rmv.json",
+        "summary": "org.nokogiri:nekohtml vulnerable to Uncontrolled Resource Consumption",
+        "aliases": [
+          "CVE-2022-24839"
+        ]
+      }
+    ],
+    "org.jenkins-ci.plugins:mongodb": [
+      {
+        "id": "GHSA-c26h-8h4p-4jgj",
+        "file": "GHSA-c26h-8h4p-4jgj.json",
+        "summary": "Missing permission checks in MongoDB Plugin",
+        "aliases": [
+          "CVE-2020-2267"
+        ]
+      }
+    ],
+    "org.apache.xmlgraphics:batik": [
+      {
+        "id": "GHSA-cmx4-p4v5-hmr5",
+        "file": "GHSA-cmx4-p4v5-hmr5.json",
+        "summary": "Server-side request forgery (SSRF) in Apache Batik",
+        "aliases": [
+          "CVE-2019-17566"
+        ]
+      }
+    ],
+    "com.xuxueli:xxl-job-core": [
+      {
+        "id": "GHSA-f8vw-8vgh-22r9",
+        "file": "GHSA-f8vw-8vgh-22r9.json",
+        "summary": "XXL-JOB is vulnerable to SSRF attacks",
+        "aliases": [
+          "CVE-2025-7787"
+        ]
+      }
+    ],
+    "org.jenkins-ci.plugins:jira-steps": [
+      {
+        "id": "GHSA-g29v-5pwh-wxx4",
+        "file": "GHSA-g29v-5pwh-wxx4.json",
+        "summary": "Plaintext Storage of a Password in Jenkins JIRA Pipeline Steps Plugin",
+        "aliases": [
+          "CVE-2023-24439"
+        ]
+      }
+    ],
+    "org.apache.zeppelin:zeppelin": [
+      {
+        "id": "GHSA-gm67-h5wr-w3cv",
+        "file": "GHSA-gm67-h5wr-w3cv.json",
+        "summary": "Apache Zeppelin Improper Input Validation vulnerability",
+        "aliases": [
+          "CVE-2021-28655"
+        ]
+      }
+    ],
+    "org.geoserver.web:gs-web-app": [
+      {
+        "id": "GHSA-h86g-x8mm-78m5",
+        "file": "GHSA-h86g-x8mm-78m5.json",
+        "summary": "GeoServer Missing Authorization on REST API Index",
+        "aliases": [
+          "CVE-2025-27505"
+        ]
+      },
+      {
+        "id": "GHSA-h86g-x8mm-78m5",
+        "file": "GHSA-h86g-x8mm-78m5.json",
+        "summary": "GeoServer Missing Authorization on REST API Index",
+        "aliases": [
+          "CVE-2025-27505"
+        ]
+      }
+    ],
+    "org.geoserver:gs-rest": [
+      {
+        "id": "GHSA-h86g-x8mm-78m5",
+        "file": "GHSA-h86g-x8mm-78m5.json",
+        "summary": "GeoServer Missing Authorization on REST API Index",
+        "aliases": [
+          "CVE-2025-27505"
+        ]
+      },
+      {
+        "id": "GHSA-h86g-x8mm-78m5",
+        "file": "GHSA-h86g-x8mm-78m5.json",
+        "summary": "GeoServer Missing Authorization on REST API Index",
+        "aliases": [
+          "CVE-2025-27505"
+        ]
+      }
+    ],
+    "org.apache.kylin:kylin-server-base": [
+      {
+        "id": "GHSA-hx5g-8hq2-8x4w",
+        "file": "GHSA-hx5g-8hq2-8x4w.json",
+        "summary": "SQL Injection in Kylin",
+        "aliases": [
+          "CVE-2020-13926"
+        ]
+      }
+    ],
+    "com.fasterxml.jackson.core:jackson-databind": [
+      {
+        "id": "GHSA-jjjh-jjxp-wpff",
+        "file": "GHSA-jjjh-jjxp-wpff.json",
+        "summary": "Uncontrolled Resource Consumption in Jackson-databind",
+        "aliases": [
+          "CVE-2022-42003"
+        ]
+      },
+      {
+        "id": "GHSA-jjjh-jjxp-wpff",
+        "file": "GHSA-jjjh-jjxp-wpff.json",
+        "summary": "Uncontrolled Resource Consumption in Jackson-databind",
+        "aliases": [
+          "CVE-2022-42003"
+        ]
+      },
+      {
+        "id": "GHSA-m6x4-97wx-4q27",
+        "file": "GHSA-m6x4-97wx-4q27.json",
+        "summary": "Unsafe Deserialization in jackson-databind",
+        "aliases": [
+          "CVE-2020-36184"
+        ]
+      }
+    ],
+    "org.xwiki.platform:xwiki-platform-web": [
+      {
+        "id": "GHSA-mxf2-4r22-5hq9",
+        "file": "GHSA-mxf2-4r22-5hq9.json",
+        "summary": "XWiki Platform Web Parent POM vulnerable to XSS in the attachment history",
+        "aliases": [
+          "CVE-2022-36094"
+        ]
+      },
+      {
+        "id": "GHSA-mxf2-4r22-5hq9",
+        "file": "GHSA-mxf2-4r22-5hq9.json",
+        "summary": "XWiki Platform Web Parent POM vulnerable to XSS in the attachment history",
+        "aliases": [
+          "CVE-2022-36094"
+        ]
+      }
+    ],
+    "org.jenkins-ci.plugins:swarm-client": [
+      {
+        "id": "GHSA-pj45-8vhc-mh2f",
+        "file": "GHSA-pj45-8vhc-mh2f.json",
+        "summary": "Jenkins Swarm Plugin Client vulnerable to man-in-the-middle attacks",
+        "aliases": [
+          "CVE-2017-1000402"
+        ]
+      }
+    ],
+    "org.jvnet.hudson.plugins:swarm-plugin": [
+      {
+        "id": "GHSA-pj45-8vhc-mh2f",
+        "file": "GHSA-pj45-8vhc-mh2f.json",
+        "summary": "Jenkins Swarm Plugin Client vulnerable to man-in-the-middle attacks",
+        "aliases": [
+          "CVE-2017-1000402"
+        ]
+      }
+    ],
+    "io.jenkins.plugins:oidc-provider": [
+      {
+        "id": "GHSA-q7c3-x7hm-qq72",
+        "file": "GHSA-q7c3-x7hm-qq72.json",
+        "summary": "Jenkins OpenID Connect Provider Plugin Incorrectly Validates Crafted Build ID Tokens",
+        "aliases": [
+          "CVE-2025-47884"
+        ]
+      }
+    ],
+    "net.mingsoft:ms-mcms": [
+      {
+        "id": "GHSA-qwh6-xwj4-9cjg",
+        "file": "GHSA-qwh6-xwj4-9cjg.json",
+        "summary": "Remote code execution in net.mingsoft:ms-mcms",
+        "aliases": [
+          "CVE-2021-46384"
+        ]
+      }
+    ],
+    "org.biouno:uno-choice": [
+      {
+        "id": "GHSA-rjch-j5x9-fgph",
+        "file": "GHSA-rjch-j5x9-fgph.json",
+        "summary": "Stored XSS vulnerability in Jenkins Active Choices Plugin",
+        "aliases": [
+          "CVE-2020-2290"
+        ]
+      }
+    ],
+    "com.liferay:com.liferay.roles.selector.web": [
+      {
+        "id": "GHSA-v6xr-v2qg-h22h",
+        "file": "GHSA-v6xr-v2qg-h22h.json",
+        "summary": "Liferay Portal Vulnerable to Insecure Direct Object Reference",
+        "aliases": [
+          "CVE-2025-43732"
+        ]
+      }
+    ],
+    "org.apache.logging.log4j:log4j": [
+      {
+        "id": "GHSA-vwqq-5vrc-xw9h",
+        "file": "GHSA-vwqq-5vrc-xw9h.json",
+        "summary": "Improper validation of certificate with host mismatch in Apache Log4j SMTP appender",
+        "aliases": [
+          "CVE-2020-9488"
+        ]
+      },
+      {
+        "id": "GHSA-vwqq-5vrc-xw9h",
+        "file": "GHSA-vwqq-5vrc-xw9h.json",
+        "summary": "Improper validation of certificate with host mismatch in Apache Log4j SMTP appender",
+        "aliases": [
+          "CVE-2020-9488"
+        ]
+      },
+      {
+        "id": "GHSA-vwqq-5vrc-xw9h",
+        "file": "GHSA-vwqq-5vrc-xw9h.json",
+        "summary": "Improper validation of certificate with host mismatch in Apache Log4j SMTP appender",
+        "aliases": [
+          "CVE-2020-9488"
+        ]
+      }
+    ],
+    "org.apache.logging.log4j:log4j-core": [
+      {
+        "id": "GHSA-vwqq-5vrc-xw9h",
+        "file": "GHSA-vwqq-5vrc-xw9h.json",
+        "summary": "Improper validation of certificate with host mismatch in Apache Log4j SMTP appender",
+        "aliases": [
+          "CVE-2020-9488"
+        ]
+      },
+      {
+        "id": "GHSA-vwqq-5vrc-xw9h",
+        "file": "GHSA-vwqq-5vrc-xw9h.json",
+        "summary": "Improper validation of certificate with host mismatch in Apache Log4j SMTP appender",
+        "aliases": [
+          "CVE-2020-9488"
+        ]
+      },
+      {
+        "id": "GHSA-vwqq-5vrc-xw9h",
+        "file": "GHSA-vwqq-5vrc-xw9h.json",
+        "summary": "Improper validation of certificate with host mismatch in Apache Log4j SMTP appender",
+        "aliases": [
+          "CVE-2020-9488"
+        ]
+      }
+    ],
+    "org.codehaus.plexus:plexus-archiver": [
+      {
+        "id": "GHSA-wh3p-fphp-9h2m",
+        "file": "GHSA-wh3p-fphp-9h2m.json",
+        "summary": "Arbitrary File Creation in AbstractUnArchiver",
+        "aliases": [
+          "CVE-2023-37460"
+        ]
+      }
+    ],
+    "org.apache.cxf:cxf-core": [
+      {
+        "id": "GHSA-x7xf-253v-x3w8",
+        "file": "GHSA-x7xf-253v-x3w8.json",
+        "summary": "Improper Restriction of XML External Entity Reference in Apache CXF JAX-RS",
+        "aliases": [
+          "CVE-2016-8739"
+        ]
+      },
+      {
+        "id": "GHSA-x7xf-253v-x3w8",
+        "file": "GHSA-x7xf-253v-x3w8.json",
+        "summary": "Improper Restriction of XML External Entity Reference in Apache CXF JAX-RS",
+        "aliases": [
+          "CVE-2016-8739"
+        ]
+      }
+    ]
+  }
+}
