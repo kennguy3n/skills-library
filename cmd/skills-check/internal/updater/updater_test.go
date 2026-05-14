@@ -303,9 +303,12 @@ func TestUnsignedManifestPolicy(t *testing.T) {
 	defer src.Close()
 	localRoot, _ := localLibrary(t, map[string]string{}, "v1")
 
-	// Case 1: no public key + unsigned manifest = permitted.
-	if _, err := CheckOnly(localRoot, src, Options{}); err != nil {
-		t.Errorf("no key + unsigned should be permitted: %v", err)
+	// Case 1: no public key + unsigned manifest = rejected. There is no
+	// way to authenticate the bytes, so the updater must refuse rather
+	// than silently install attacker-controlled content. The only
+	// permitted bypass is the explicit SkipSignature opt-in (Case 3).
+	if _, err := CheckOnly(localRoot, src, Options{}); err == nil {
+		t.Errorf("no key + unsigned must be rejected without SkipSignature")
 	}
 	// Case 2: explicit public key + unsigned manifest = rejected.
 	pub, _, err := manifest.GenerateKeyPair()
@@ -315,7 +318,11 @@ func TestUnsignedManifestPolicy(t *testing.T) {
 	if _, err := CheckOnly(localRoot, src, Options{PublicKey: pub}); err == nil {
 		t.Errorf("explicit key + unsigned should be rejected")
 	}
-	// Case 3: SkipSignature overrides everything.
+	// Case 3: SkipSignature overrides everything, including the
+	// no-key/no-signature path. This is the only intentional bypass.
+	if _, err := CheckOnly(localRoot, src, Options{SkipSignature: true}); err != nil {
+		t.Errorf("SkipSignature should override no-key/unsigned: %v", err)
+	}
 	if _, err := CheckOnly(localRoot, src, Options{PublicKey: pub, SkipSignature: true}); err != nil {
 		t.Errorf("SkipSignature should override: %v", err)
 	}

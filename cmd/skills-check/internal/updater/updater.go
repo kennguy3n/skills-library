@@ -295,13 +295,11 @@ func verifyRemoteSignature(m *manifest.Manifest, opts Options) error {
 	case manifest.HasEmbeddedKey():
 		return m.VerifyManifest()
 	}
-	// No key available at all. Refuse silently to walk a signed manifest;
-	// however an unsigned manifest is permitted as long as the caller is
-	// aware (and CheckOnly will report it).
-	if m.Signature != "" && m.Signature != manifest.PlaceholderSignature {
-		return errors.New("remote manifest is signed but no public key is available; use --skip-signature to override")
-	}
-	return nil
+	// No key available at all. Refuse — silently accepting an unsigned
+	// (or signed-but-unverifiable) manifest here would let a network
+	// attacker substitute arbitrary content. The only intentional
+	// bypass is the explicit SkipSignature opt-in handled above.
+	return errors.New("no public key available to verify manifest; use --skip-signature to explicitly bypass")
 }
 
 func diffManifests(local, remote *manifest.Manifest) []Change {

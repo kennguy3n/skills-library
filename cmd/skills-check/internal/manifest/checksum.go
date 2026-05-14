@@ -21,6 +21,10 @@ var DefaultDistributableRoots = []string{
 	"vulnerabilities",
 	"dictionaries",
 	"dist",
+	"rules",
+	"compliance",
+	"profiles",
+	"locales",
 }
 
 // ComputeChecksums walks the configured distributable roots under repoRoot,

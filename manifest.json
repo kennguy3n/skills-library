@@ -7,6 +7,24 @@
   "description": "Root manifest. Phase 2 will populate SHA-256 checksums and Ed25519 signature. Phase 1 ships an unsigned scaffold so the format is exercised end-to-end.",
   "files": [
     {
+      "path": "compliance/hipaa_mapping.yaml",
+      "sha256": "d5ca5b7de67f316001d617192a0b3d052fab28d48ce572656eef5f7299ecb180",
+      "size": 3069,
+      "action": "added"
+    },
+    {
+      "path": "compliance/pci_dss_mapping.yaml",
+      "sha256": "3d08a4ae7ad36cc4d322459ba55c52dd304727f429887ccde45e8f9180756596",
+      "size": 3820,
+      "action": "added"
+    },
+    {
+      "path": "compliance/soc2_mapping.yaml",
+      "sha256": "f9d50d4f3c63502c6bef34c7a1b480efd04d92512a452d0334c1234dfaf451c8",
+      "size": 2978,
+      "action": "added"
+    },
+    {
       "path": "dictionaries/attack_techniques.yaml",
       "sha256": "d17ed6201283cb8e09e4fcd981646c3d0635834b5e7be5ae360b44cc11dc8790",
       "size": 8244,
@@ -77,6 +95,252 @@
       "sha256": "6f9f7302fd4e21973b0de3d456d22d67cd549b95155481696ed1d7240e1abd8c",
       "size": 126471,
       "action": "unchanged"
+    },
+    {
+      "path": "locales/README.md",
+      "sha256": "bae9ac2deed1c85194c736146c552f9a5deaf24660825a6030a612f790081ce7",
+      "size": 1175,
+      "action": "added"
+    },
+    {
+      "path": "locales/de/infrastructure-security/SKILL.md",
+      "sha256": "e5ea51d3f45433192f7cbd5a6a63eab39a5633d87d11760b61ca4e89a8afa994",
+      "size": 2035,
+      "action": "added"
+    },
+    {
+      "path": "locales/de/secret-detection/SKILL.md",
+      "sha256": "07d5326b066724f3906e25e124abc1d1d866ee2bd95260cf159c35487bab292c",
+      "size": 2797,
+      "action": "added"
+    },
+    {
+      "path": "locales/de/supply-chain-security/SKILL.md",
+      "sha256": "86b99f699de3585b653eb6b7be1808ea2dd1cf285f2009af3a042d0872dd178a",
+      "size": 2296,
+      "action": "added"
+    },
+    {
+      "path": "locales/es/infrastructure-security/SKILL.md",
+      "sha256": "4c7e089b4388af4f13fd4368df992b4ef5d2f5e72d451a37d51087c095a34b30",
+      "size": 2034,
+      "action": "added"
+    },
+    {
+      "path": "locales/es/secret-detection/SKILL.md",
+      "sha256": "c51bb41331725a76522859856649b13cd9e1d7a06b6f327db2640ba56ef9f25d",
+      "size": 2741,
+      "action": "added"
+    },
+    {
+      "path": "locales/es/supply-chain-security/SKILL.md",
+      "sha256": "49aecf73b8e4e3e45d2850da9a3c0bba3986bf79d162b5d54e40031f359f979f",
+      "size": 2468,
+      "action": "added"
+    },
+    {
+      "path": "locales/fr/infrastructure-security/SKILL.md",
+      "sha256": "86298d8be624ed001c3aa49668dd732281ccfcd226b3e79c898a6f1612658c67",
+      "size": 2010,
+      "action": "added"
+    },
+    {
+      "path": "locales/fr/secret-detection/SKILL.md",
+      "sha256": "6f1ae9ebdec8eb7d2fc5f8d9e2fc3533a1094290d79227fe9447baac20a1415a",
+      "size": 2779,
+      "action": "added"
+    },
+    {
+      "path": "locales/fr/supply-chain-security/SKILL.md",
+      "sha256": "04313e235aa1cda7b5a7d74fe86752688c6d4c1626aee3064471cd372b4bf914",
+      "size": 2447,
+      "action": "added"
+    },
+    {
+      "path": "profiles/financial-services.yaml",
+      "sha256": "d3392efb25f0f34fac19a26cb633803c5e624d004df716c85903f2fc03cf7fcf",
+      "size": 1830,
+      "action": "added"
+    },
+    {
+      "path": "profiles/government.yaml",
+      "sha256": "aa3e68584d4831e90dcda54c20409e346f3989e77466c2d28cad9d0352e1de0f",
+      "size": 2360,
+      "action": "added"
+    },
+    {
+      "path": "profiles/healthcare.yaml",
+      "sha256": "f1a3684f3d307f278ebed47a72cd0ebc6e408921bccbe5c35195b3194f347d09",
+      "size": 1778,
+      "action": "added"
+    },
+    {
+      "path": "rules/README.md",
+      "sha256": "c7a044d7c3aacf02214a71f5b4cb0cf62e64760bd0b5a060e4efb793f2a24c12",
+      "size": 1648,
+      "action": "added"
+    },
+    {
+      "path": "rules/cloud/aws/aws_cloudtrail_disabled.yml",
+      "sha256": "3675f8e7b45574d023fa8bd338de360be07544e265d76365bc47d722cd276567",
+      "size": 885,
+      "action": "added"
+    },
+    {
+      "path": "rules/cloud/aws/aws_root_account_usage.yml",
+      "sha256": "3e950ba87cf864df07887ac283714b78c7951a48ed9368e3c591d3d257144572",
+      "size": 961,
+      "action": "added"
+    },
+    {
+      "path": "rules/cloud/aws/aws_s3_bucket_public.yml",
+      "sha256": "1d1a9b565a9e52d864b5f567289e52fbc8e4e6a56d2ee487e76386b4abe48e02",
+      "size": 980,
+      "action": "added"
+    },
+    {
+      "path": "rules/cloud/azure/azure_ad_user_added_to_admin.yml",
+      "sha256": "ab1110e286cbd16a227bc5715a69e2e8158502e4d07e12f9f92ed919988da83f",
+      "size": 1045,
+      "action": "added"
+    },
+    {
+      "path": "rules/cloud/azure/azure_nsg_rule_modified.yml",
+      "sha256": "8ef90efd0c1e07e3f5e0f963c3820628ceb1799bc44eb8014f1bb37566380279",
+      "size": 967,
+      "action": "added"
+    },
+    {
+      "path": "rules/cloud/gcp/gcp_firewall_rule_modified.yml",
+      "sha256": "207a9d022d3b88546a418d1f49c33a8e6ab2125c419e531d7678edbbc4bb32cf",
+      "size": 976,
+      "action": "added"
+    },
+    {
+      "path": "rules/cloud/gcp/gcp_iam_policy_change.yml",
+      "sha256": "30ba0e590c1df2bed76befdd5f4ded3f31c823e61e4d31dbfa59e0ffefd3ffd5",
+      "size": 748,
+      "action": "added"
+    },
+    {
+      "path": "rules/container/k8s/k8s_exec_into_pod.yml",
+      "sha256": "8f689ee4301988504de80456a0b9e7c4ba1798cc8bed5fb077e1afcac44d8861",
+      "size": 847,
+      "action": "added"
+    },
+    {
+      "path": "rules/container/k8s/k8s_privileged_container.yml",
+      "sha256": "e2139fc25748da75eb873cac00c18c28b7c35847cd68435f264110fec7a4021a",
+      "size": 995,
+      "action": "added"
+    },
+    {
+      "path": "rules/endpoint/linux/linux_cron_persistence.yml",
+      "sha256": "dbbcba4fe7eb257f06ab52aede0312aee0822f54dbf440886294a0b8d8856be9",
+      "size": 927,
+      "action": "added"
+    },
+    {
+      "path": "rules/endpoint/linux/linux_reverse_shell.yml",
+      "sha256": "ce37446ca557ada3074ff9b8badcd9acc0eab2fe86d06f16ac104f8579397449",
+      "size": 930,
+      "action": "added"
+    },
+    {
+      "path": "rules/endpoint/macos/macos_keychain_access.yml",
+      "sha256": "e38ee9d260d617d20ad9e6e1bee3271780352c4eb21a836aee23ea43e3801d72",
+      "size": 878,
+      "action": "added"
+    },
+    {
+      "path": "rules/endpoint/macos/macos_launchagent_persistence.yml",
+      "sha256": "f6edcb25bb434b582daa55fa2c48dbc3bc60e84e87d41791743fa77b0626a694",
+      "size": 978,
+      "action": "added"
+    },
+    {
+      "path": "rules/endpoint/windows/windows_mimikatz_execution.yml",
+      "sha256": "2523a4aed9ed19ddd094992f53c7f264dad5d37d68cc95ec75900f337064d2ab",
+      "size": 931,
+      "action": "added"
+    },
+    {
+      "path": "rules/endpoint/windows/windows_powershell_encoded_command.yml",
+      "sha256": "fc5a3f49f5da2a832bc5b83f4bf00c2d78571a6a23239caa08268557a4ea0f1a",
+      "size": 944,
+      "action": "added"
+    },
+    {
+      "path": "rules/saas/google_workspace/gws_admin_role_grant.yml",
+      "sha256": "825996d90be751a0ecac1de5596b375764cf6ddda5d61c7d10483567243bc5c6",
+      "size": 1023,
+      "action": "added"
+    },
+    {
+      "path": "rules/saas/google_workspace/gws_domain_wide_delegation_change.yml",
+      "sha256": "c14fd777a1f8f25f10cefee6e7c5b36284a58f9efa80445a4cf171960931faae",
+      "size": 1077,
+      "action": "added"
+    },
+    {
+      "path": "rules/saas/google_workspace/gws_mass_data_export.yml",
+      "sha256": "02a29f16f20c59c623b13a97513c2a001aab7da15524a14f24c48c57e16e8859",
+      "size": 905,
+      "action": "added"
+    },
+    {
+      "path": "rules/saas/google_workspace/gws_suspicious_mail_forwarding.yml",
+      "sha256": "527ff095da954afc8517447291b696f088898a72c942c5b663f7695891438321",
+      "size": 910,
+      "action": "added"
+    },
+    {
+      "path": "rules/saas/o365/o365_admin_role_assignment.yml",
+      "sha256": "090455ccefb73acffa7d026b99b9acd4b73c9f587b1aefc04da88918d6da52af",
+      "size": 1047,
+      "action": "added"
+    },
+    {
+      "path": "rules/saas/o365/o365_mailbox_forwarding_rule.yml",
+      "sha256": "554c4e3e42dbd229abae6fcaae556e215ec75218c8428c7f830e42728f1042f8",
+      "size": 956,
+      "action": "added"
+    },
+    {
+      "path": "rules/saas/salesforce/sf_data_export_scheduled.yml",
+      "sha256": "e636b7fec842a840bd9572a1b74181c3380b4cece042a1c05eb0ff61fa6604b6",
+      "size": 798,
+      "action": "added"
+    },
+    {
+      "path": "rules/saas/salesforce/sf_mass_record_export.yml",
+      "sha256": "02016a9fc5928c1db28a578ba30c039d39e7e51a834570b1dbe9e399836091eb",
+      "size": 903,
+      "action": "added"
+    },
+    {
+      "path": "rules/saas/salesforce/sf_permission_set_modify_all.yml",
+      "sha256": "a2bcd12e66113be8b161337ca442f1d2caad2a890f3eaa90fd5f2f6cd6417980",
+      "size": 1037,
+      "action": "added"
+    },
+    {
+      "path": "rules/saas/slack/slack_app_installed_broad_scopes.yml",
+      "sha256": "b2df40489467da0a54ece4d34fa84870f7f0915b0ce8983dc75e9289dcd22c0f",
+      "size": 1248,
+      "action": "added"
+    },
+    {
+      "path": "rules/saas/slack/slack_bulk_message_export.yml",
+      "sha256": "99e7128b762aeea03c5a38afe375430aee8c7410538de28ffa5d3c37a8f5437e",
+      "size": 727,
+      "action": "added"
+    },
+    {
+      "path": "rules/saas/slack/slack_org_admin_promotion.yml",
+      "sha256": "e58719222db70156735bff090d9ecd3ee0069087116ce680a77a9d11c286c7c2",
+      "size": 931,
+      "action": "added"
     },
     {
       "path": "skills/api-security/SKILL.md",
@@ -650,8 +914,8 @@
     },
     {
       "path": "vulnerabilities/manifest.json",
-      "sha256": "6bb3ac0cb45e38c5d90b6b5c003e90853388c637cdd9ea112ccac3194cf3ba33",
-      "size": 488,
+      "sha256": "20271c1f82256e52e1db0d61a17ec295cc07a09796091465b66695813bada7e1",
+      "size": 2365,
       "action": "unchanged"
     },
     {
