@@ -2,6 +2,7 @@ package tools
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -864,5 +865,134 @@ func TestScanSecretsSARIFRuleIDCollisionGuard(t *testing.T) {
 			t.Errorf("result %d ruleID=%q does not match rules[%d].ID=%q",
 				i, r.RuleID, r.RuleIndex, run.Tool.Driver.Rules[r.RuleIndex].ID)
 		}
+	}
+}
+
+// TestLoadPopularPackagesDoesNotCacheNonENOENTErrors verifies that
+// loadPopularPackages only caches an empty list when the data file is
+// genuinely absent (os.IsNotExist). Other ReadFile errors (permission,
+// I/O, EISDIR) must propagate AND must not be cached, so the next call
+// can succeed when the underlying condition clears.
+//
+// We provoke a non-ENOENT error by replacing one ecosystem's JSON
+// file with a directory of the same name; os.ReadFile then fails
+// with EISDIR (a typed error that is not os.ErrNotExist).
+func TestLoadPopularPackagesDoesNotCacheNonENOENTErrors(t *testing.T) {
+	tempRoot := t.TempDir()
+	// NewLibrary requires a skills/ subdirectory.
+	if err := os.MkdirAll(filepath.Join(tempRoot, "skills"), 0o755); err != nil {
+		t.Fatalf("mkdir skills: %v", err)
+	}
+	popDir := filepath.Join(tempRoot, "vulnerabilities", "supply-chain", "popular-packages")
+	if err := os.MkdirAll(popDir, 0o755); err != nil {
+		t.Fatalf("mkdir popular-packages: %v", err)
+	}
+	// Replace npm.json with a directory so ReadFile fails with EISDIR
+	// rather than ENOENT.
+	if err := os.MkdirAll(filepath.Join(popDir, "npm.json"), 0o755); err != nil {
+		t.Fatalf("mkdir npm.json/: %v", err)
+	}
+	lib, err := NewLibrary(tempRoot)
+	if err != nil {
+		t.Fatalf("NewLibrary: %v", err)
+	}
+	// First call: must return an error, not silently swallow it.
+	if _, err = lib.loadPopularPackages("npm"); err == nil {
+		t.Fatalf("expected error for unreadable npm.json (it is a directory)")
+	} else if errors.Is(err, os.ErrNotExist) {
+		t.Errorf("error must not be ENOENT (npm.json exists as a directory): %v", err)
+	}
+	// Replace the bad directory with a valid file. If the previous
+	// error path had cached an empty list, this recovery call would
+	// return that stale empty list and mask the fix.
+	if err := os.RemoveAll(filepath.Join(popDir, "npm.json")); err != nil {
+		t.Fatalf("rm npm.json/: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(popDir, "npm.json"),
+		[]byte(`{"ecosystem":"npm","packages":["lodash","react"]}`),
+		0o644); err != nil {
+		t.Fatalf("write npm.json: %v", err)
+	}
+	pkgs, err := lib.loadPopularPackages("npm")
+	if err != nil {
+		t.Fatalf("recovery call must succeed (a cached error would block this): %v", err)
+	}
+	if len(pkgs) != 2 {
+		t.Errorf("expected 2 packages after recovery, got %d: %v", len(pkgs), pkgs)
+	}
+}
+
+// TestScanSecretsRejectsRelativeFilePath verifies the schema contract
+// advertised in tools.go ("Absolute path to a local file to scan"):
+// validateScanPath must reject a relative file_path with a clear error
+// rather than silently resolving it against the MCP server's CWD.
+func TestScanSecretsRejectsRelativeFilePath(t *testing.T) {
+	lib := newLibrary(t)
+	_, err := lib.ScanSecrets("", "relative/path/to/file.txt")
+	if err == nil {
+		t.Fatalf("ScanSecrets must reject a relative file_path")
+	}
+	if !strings.Contains(err.Error(), "must be absolute") {
+		t.Errorf("error should mention 'must be absolute', got: %v", err)
+	}
+	// Plain bare name (no separator) is also relative.
+	if _, err := lib.ScanSecrets("", "leak.txt"); err == nil {
+		t.Errorf("ScanSecrets must reject a bare filename as relative")
+	}
+}
+
+// TestScanSecretsSARIFFileURI pins the SARIF artifact-URI shape so
+// downstream consumers (CI dashboards, strict SARIF validators) get a
+// well-formed RFC 3986 file:// URI for file scans and the
+// stdin://text placeholder for inline scans. SARIF 2.1.0 §3.4.4 says
+// artifactLocation.uri SHOULD conform to RFC 3986.
+func TestScanSecretsSARIFFileURI(t *testing.T) {
+	// File scan: artifact URI must be a file:// URI, not a bare path.
+	lib := newLibrary(t)
+	dir := t.TempDir()
+	path := filepath.Join(dir, "leak.txt")
+	if err := os.WriteFile(path, []byte("creds: AKIA1234567890ABCDEF\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	res, err := lib.ScanSecrets("", path)
+	if err != nil {
+		t.Fatalf("scan_secrets file: %v", err)
+	}
+	log := ScanSecretsSARIF(res)
+	if len(log.Runs) != 1 || len(log.Runs[0].Results) == 0 {
+		t.Fatalf("expected at least one result, got runs=%d", len(log.Runs))
+	}
+	gotURI := log.Runs[0].Results[0].Locations[0].PhysicalLocation.ArtifactLocation.URI
+	wantPrefix := "file://"
+	if !strings.HasPrefix(gotURI, wantPrefix) {
+		t.Errorf("artifact URI = %q, want prefix %q (RFC 3986 file:// URI)", gotURI, wantPrefix)
+	}
+	// The URI must round-trip through net/url so strict validators
+	// don't reject the SARIF document.
+	if !strings.Contains(gotURI, path) {
+		t.Errorf("artifact URI = %q does not contain the scanned path %q", gotURI, path)
+	}
+	// JSON round-trip: the URI must survive marshalling intact.
+	blob, err := json.Marshal(log)
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	if !strings.Contains(string(blob), "file://") {
+		t.Errorf("marshalled SARIF must contain a file:// URI: %s", string(blob))
+	}
+
+	// Inline-text scan: artifact URI must remain stdin://text (the
+	// previously-stable placeholder), not a file:// URI.
+	resInline, err := lib.ScanSecrets("creds: AKIA1234567890ABCDEF", "")
+	if err != nil {
+		t.Fatalf("scan_secrets text: %v", err)
+	}
+	logInline := ScanSecretsSARIF(resInline)
+	if len(logInline.Runs[0].Results) == 0 {
+		t.Fatalf("expected at least one inline result")
+	}
+	gotInline := logInline.Runs[0].Results[0].Locations[0].PhysicalLocation.ArtifactLocation.URI
+	if gotInline != "stdin://text" {
+		t.Errorf("inline artifact URI = %q, want %q", gotInline, "stdin://text")
 	}
 }

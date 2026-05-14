@@ -18,7 +18,9 @@ package tools
 
 import (
 	"fmt"
+	"net/url"
 	"sort"
+	"strings"
 )
 
 // SARIFVersion / SARIFSchema pin the spec revision we emit.
@@ -150,14 +152,17 @@ type SARIFRegion struct {
 // ScanSecretsSARIF converts a ScanSecretsResult into a SARIF 2.1.0
 // log. When res.FilePath is empty (i.e. the scan ran against inline
 // text) the artifact URI is "stdin://text" so the result is still
-// well-formed SARIF.
+// well-formed SARIF. File-scan paths are emitted as RFC 3986
+// file:// URIs (SARIF 2.1.0 §3.4.4 says uri SHOULD conform to RFC
+// 3986; a bare absolute path is technically a valid relative URI
+// reference, but strict SARIF validators flag it).
 func ScanSecretsSARIF(res *ScanSecretsResult) *SARIFLog {
 	if res == nil {
 		return emptyLog("scan_secrets")
 	}
-	uri := res.FilePath
-	if uri == "" {
-		uri = "stdin://text"
+	uri := "stdin://text"
+	if res.FilePath != "" {
+		uri = fileURI(res.FilePath)
 	}
 	// Build one rule per distinct pattern name so the rules table
 	// stays deduplicated.
@@ -389,6 +394,24 @@ func CheckDependencySARIF(res *CheckDependencyResult) *SARIFLog {
 			Results: results,
 		}},
 	}
+}
+
+// fileURI converts a local absolute path to an RFC 3986 file:// URI.
+// validateScanPath guarantees the path is absolute when reaching
+// the SARIF emitter; if a non-absolute or empty path slips through
+// (e.g. tests passing a bare name) we fall back to the raw string
+// to keep the SARIF document well-formed rather than panicking.
+func fileURI(path string) string {
+	if path == "" {
+		return path
+	}
+	if strings.HasPrefix(path, "/") {
+		return (&url.URL{Scheme: "file", Path: path}).String()
+	}
+	// Non-absolute (e.g. Windows-style "C:\\..." before normalisation,
+	// or a test fixture) — emit as-is. Callers that need a strict
+	// file:// scheme on Windows can pre-normalise the path.
+	return path
 }
 
 // emptyLog returns a SARIF document with a single empty run so a

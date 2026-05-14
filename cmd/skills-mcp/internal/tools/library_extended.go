@@ -760,10 +760,19 @@ func (l *Library) loadPopularPackages(ecosystem string) ([]string, error) {
 	path := filepath.Join(l.root, "vulnerabilities", "supply-chain", "popular-packages", eco+".json")
 	body, err := os.ReadFile(path)
 	if err != nil {
-		// Cache the empty list so we don't re-stat on every call when
-		// the optional data file is absent.
-		ec.popular[eco] = []string{}
-		return ec.popular[eco], nil
+		if os.IsNotExist(err) {
+			// Cache the empty list ONLY when the data file is missing —
+			// that's a legitimate "minimally-provisioned environment"
+			// signal and re-stat'ing on every call would be wasteful.
+			ec.popular[eco] = []string{}
+			return ec.popular[eco], nil
+		}
+		// Permission / I/O / broken-symlink errors are not cached:
+		// they may be transient (e.g. NFS hiccup, EACCES from a
+		// half-finished chmod) and silently swallowing them on every
+		// subsequent call would mask a real deployment problem. The
+		// data file is small, so retrying on the next call is cheap.
+		return nil, fmt.Errorf("read %s: %w", path, err)
 	}
 	var f struct {
 		Ecosystem string   `json:"ecosystem"`
@@ -878,6 +887,16 @@ func levenshtein(a, b string) int {
 func (l *Library) validateScanPath(p string) error {
 	if strings.TrimSpace(p) == "" {
 		return fmt.Errorf("scan_secrets: file_path is empty")
+	}
+	// Enforce the schema contract advertised in tools.go:66
+	// ("Absolute path to a local file to scan"). Without this the
+	// downstream filepath.Abs call would silently resolve a relative
+	// path against the MCP server's CWD, which is non-portable and
+	// surprising to LLM callers that don't know the server's launch
+	// directory. Reject explicitly so callers get a clear error
+	// instead of a CWD-dependent scan.
+	if !filepath.IsAbs(p) {
+		return fmt.Errorf("scan_secrets: file_path must be absolute, got %q", p)
 	}
 	if containsTraversal(p) {
 		return fmt.Errorf("scan_secrets: file_path may not contain '..' segments: %s", p)
