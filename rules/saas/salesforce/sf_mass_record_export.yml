@@ -20,9 +20,9 @@ logsource:
 detection:
   selection:
     EventType: REPORT_EXPORT
-  filter:
+  threshold:
     NUM_ROWS|gt: 50000
-  condition: selection and filter
+  condition: selection and threshold
 falsepositives:
   - Scheduled large reports (e.g. finance month-end extracts) run by a
     known service account or BI integration.
