@@ -677,3 +677,37 @@ func TestSetAllowedRootsSymlinkedRootAcceptsScan(t *testing.T) {
 		t.Errorf("symlink redirecting outside the allow-list must be denied even when the root itself is symlinked")
 	}
 }
+
+// TestCheckDependencySARIFEmptyResultsArray pins the fix for the
+// `"results": null` regression. A CheckDependencyResult with no
+// findings must marshal to a SARIF document where Run.Results is the
+// empty JSON array `[]`, not `null`. SARIF 2.1.0 specifies results as
+// an array; `null` is interpreted as "results not computed" and GHAS
+// will reject the upload.
+func TestCheckDependencySARIFEmptyResultsArray(t *testing.T) {
+	res := &CheckDependencyResult{
+		Package:   "nonexistent-package-xyz",
+		Ecosystem: "npm",
+		Version:   "1.0.0",
+	}
+	log := CheckDependencySARIF(res)
+	if log == nil || len(log.Runs) != 1 {
+		t.Fatalf("expected exactly one SARIF run, got %+v", log)
+	}
+	if log.Runs[0].Results == nil {
+		t.Fatalf("SARIF Run.Results must be a non-nil slice; got nil")
+	}
+	if len(log.Runs[0].Results) != 0 {
+		t.Fatalf("expected empty results for a clean scan, got %d entries", len(log.Runs[0].Results))
+	}
+	body, err := json.Marshal(log)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(body), `"results":[]`) {
+		t.Errorf("SARIF JSON must contain \"results\":[]; got: %s", string(body))
+	}
+	if strings.Contains(string(body), `"results":null`) {
+		t.Errorf("SARIF JSON must not contain \"results\":null; got: %s", string(body))
+	}
+}

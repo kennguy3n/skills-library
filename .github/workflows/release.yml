@@ -342,7 +342,7 @@ jobs:
             - `skills-check-<goos>-<goarch>[.exe]` — CLI binary (reproducible build).
             - `checksums-<goos>-<goarch>.txt` — SHA-256 of each binary.
             - `manifest.json` — signed library manifest.
-            - `skills-library-data.tar.gz` — library payload (skills, vulnerabilities, dictionaries, dist, manifest.json). This is what `skills-check update` downloads by default.
+            - `skills-library-data.tar.gz` — library payload (skills, vulnerabilities, dictionaries, dist, rules, compliance, profiles, locales, manifest.json). This is what `skills-check update` downloads by default.
             - `deltas.tar.gz` — patch set against the previous release (best effort).
             - `SHA256SUMS.txt` — checksum of every asset above.
 

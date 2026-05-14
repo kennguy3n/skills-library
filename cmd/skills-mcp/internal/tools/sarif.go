@@ -261,7 +261,13 @@ func CheckDependencySARIF(res *CheckDependencyResult) *SARIFLog {
 		"skills-mcp.typosquat":         1,
 		"skills-mcp.cve-pattern":       2,
 	}
-	var results []SARIFResult
+	// Use make([], 0) rather than `var results []SARIFResult` so that
+	// when zero rules match, the marshalled SARIF Run.Results is "[]"
+	// rather than "null". SARIF 2.1.0 specifies results as an array;
+	// `null` means "results were not computed", which is misleading
+	// for a clean scan, and GitHub Advanced Security rejects the
+	// null form on ingestion.
+	results := make([]SARIFResult, 0)
 	for _, m := range res.Malicious {
 		results = append(results, SARIFResult{
 			RuleID:    "skills-mcp.malicious-package",
