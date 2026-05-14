@@ -47,7 +47,7 @@
         "torch.load(path, weights_only=True) — required for any downloaded checkpoint",
         "msgpack with strict_types=True and a model layer on top"
       ],
-      "cves": ["CVE-2017-18342 (PyYAML)", "CVE-2022-32149 (numpy load)"]
+      "cves": ["CVE-2017-18342 (PyYAML)"]
     },
     {
       "language": "csharp",

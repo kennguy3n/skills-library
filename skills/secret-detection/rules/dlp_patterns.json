@@ -622,8 +622,7 @@
       "severity": "critical",
       "score_weight": 1,
       "hotwords": [
-        "clerk",
-        "secret"
+        "clerk"
       ],
       "hotword_window": 80,
       "hotword_boost": 2,
