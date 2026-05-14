@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "ecosystem": "maven",
-  "last_updated": "2026-05-13T00:00:00Z",
+  "last_updated": "2026-05-14T16:01:45Z",
   "description": "Documented malicious or vulnerable Maven Central packages and namespace incidents. Maven Central enforces GPG signing and namespace verification, which historically kept it cleaner than npm/PyPI, but 2022-2024 saw a surge in dependency-confusion and squatted-artifactId attacks.",
   "entries": [
     {
@@ -153,6 +153,48 @@
         "Confluent internal squat"
       ],
       "attack_type": "dependency_confusion"
+    },
+    {
+      "name": "io.github.leetcrunch:scribejava-core",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2025-03-19",
+      "description": "Malicious code in io.github.leetcrunch:scribejava-core (Maven)",
+      "references": [
+        "https://socket.dev/blog/malicious-maven-package-exfiltrates-oauth-credentials"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2025-2552"
+    },
+    {
+      "name": "org.mvnpm:posthog-node",
+      "versions_affected": [
+        "4.18.1"
+      ],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2025-11-26",
+      "description": "Malicious code in org.mvnpm:posthog-node (Maven)",
+      "references": [
+        "https://www.aikido.dev/blog/shai-hulud-strikes-again-hitting-zapier-ensdomains",
+        "https://www.wiz.io/blog/shai-hulud-2-0-ongoing-supply-chain-attack",
+        "https://www.stepsecurity.io/blog/sha1-hulud-the-second-coming-zapier-ens-domains-and-other-prominent-npm-packages-compromised"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2025-191470"
     }
-  ]
+  ],
+  "sources": {
+    "ossf-malicious-packages": {
+      "url": "https://github.com/ossf/malicious-packages",
+      "commit": "aa66cb2d5ed2b95be1e33d08777b34264b5e0354",
+      "ingested_at": "2026-05-14T16:01:45Z",
+      "entries_from_source": 2
+    }
+  }
 }
