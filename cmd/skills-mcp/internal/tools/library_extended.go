@@ -14,6 +14,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
 	"sync"
@@ -731,11 +732,20 @@ func (l *Library) loadSigmaRules() ([]SigmaRule, error) {
 }
 
 // loadPopularPackages reads the per-ecosystem top-N package list used
-// for runtime Levenshtein typosquat detection. Missing or unparseable
-// files produce an empty list rather than an error so the rest of
-// CheckTyposquat (the curated DB lookup) keeps working in
-// minimally-provisioned environments. The returned slice is cached
-// per Library instance.
+// for runtime Levenshtein typosquat detection.
+//
+// Missing data files produce an empty cached list rather than an
+// error so the rest of CheckTyposquat (the curated DB lookup) keeps
+// working in minimally-provisioned environments. Parse failures, in
+// contrast, return an explicit error and are deliberately NOT cached
+// — caching an empty list on a JSON syntax error would silently
+// mask the problem on every subsequent call. The data file is small,
+// so retrying on each call until it parses is cheap.
+//
+// The successfully-parsed slice is cached per Library instance.
+// CheckTyposquat ignores any error returned here so a corrupt data
+// file degrades gracefully to "no Levenshtein hits" while still
+// surfacing the error to direct callers.
 func (l *Library) loadPopularPackages(ecosystem string) ([]string, error) {
 	eco := strings.ToLower(strings.TrimSpace(ecosystem))
 	if !knownEcosystems[eco] {
@@ -932,12 +942,40 @@ func containsTraversal(p string) bool {
 // pathUnder reports whether child is the same path as parent or one
 // of its descendants. Both inputs are expected to be cleaned absolute
 // paths.
+//
+// Case sensitivity follows the host filesystem's typical default:
+// case-sensitive on Linux (and other Unixes), case-insensitive on
+// macOS (HFS+ / APFS default) and Windows (NTFS default). Without
+// this distinction, a request for ~/.SSH/id_rsa or ~/.Aws/credentials
+// on macOS would bypass the sensitive-paths deny-list because it
+// only contains lowercase canonical entries, even though those
+// uppercase paths resolve to the *same* file on disk. We accept the
+// false-negative on the rare Linux box mounted with case-insensitive
+// ext4/xfs because such configurations are uncommon and the policy
+// is defence in depth anyway.
 func pathUnder(child, parent string) bool {
+	if pathsCaseInsensitive() {
+		child = strings.ToLower(child)
+		parent = strings.ToLower(parent)
+	}
 	if child == parent {
 		return true
 	}
 	parent = strings.TrimRight(parent, string(filepath.Separator))
 	return strings.HasPrefix(child, parent+string(filepath.Separator))
+}
+
+// pathsCaseInsensitive returns true on the host OSes whose default
+// filesystems treat paths case-insensitively. macOS (APFS / HFS+) and
+// Windows (NTFS) qualify; Linux ext4/xfs/btrfs default to case-
+// sensitive. A user who deliberately mounts a case-insensitive Linux
+// filesystem is responsible for tightening this themselves.
+func pathsCaseInsensitive() bool {
+	switch runtime.GOOS {
+	case "darwin", "windows":
+		return true
+	}
+	return false
 }
 
 // sensitivePaths returns the absolute paths — both directories AND

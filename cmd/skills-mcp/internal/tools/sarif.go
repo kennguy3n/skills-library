@@ -51,11 +51,18 @@ type SARIFTool struct {
 }
 
 // SARIFDriver describes the analyzer that produced the run.
+//
+// Rules deliberately omits `omitempty` so a zero-finding run still
+// serialises driver.rules as `[]`, matching the shape downstream
+// CI consumers (e.g. GitHub Advanced Security) expect and keeping
+// ScanSecretsSARIF / CheckDependencySARIF output symmetric. All
+// emitters use make([]SARIFRule, 0) or a populated slice so the
+// field is never nil.
 type SARIFDriver struct {
 	Name           string      `json:"name"`
 	Version        string      `json:"version,omitempty"`
 	InformationURI string      `json:"informationUri,omitempty"`
-	Rules          []SARIFRule `json:"rules,omitempty"`
+	Rules          []SARIFRule `json:"rules"`
 }
 
 // SARIFRule documents one detection rule. We emit one rule per
@@ -78,8 +85,17 @@ type SARIFRuleConfig struct {
 
 // SARIFMultiformat carries plain-text / Markdown variants of a
 // human-readable description.
+//
+// Text deliberately omits `omitempty`. SARIF 2.1.0 §3.11.11 requires
+// a `message` object to have at least `text` or `id`; since we never
+// emit `id`, the `text` key must always be present even when empty.
+// All current call sites populate it via fmt.Sprintf with a non-empty
+// format, but the tag was a foot-gun: a future code path passing an
+// empty string would otherwise produce invalid SARIF that GitHub
+// Advanced Security rejects on ingest. Markdown stays omitempty
+// because the spec lists it as optional.
 type SARIFMultiformat struct {
-	Text     string `json:"text,omitempty"`
+	Text     string `json:"text"`
 	Markdown string `json:"markdown,omitempty"`
 }
 
@@ -145,15 +161,42 @@ func ScanSecretsSARIF(res *ScanSecretsResult) *SARIFLog {
 	}
 	// Build one rule per distinct pattern name so the rules table
 	// stays deduplicated.
+	//
+	// Use make([], 0) rather than `var rules []SARIFRule` so the
+	// driver.rules JSON is `[]` rather than `null` on a zero-finding
+	// scan — mirrors the fix CheckDependencySARIF received and keeps
+	// the output shape consistent across the two tools for downstream
+	// CI consumers.
+	//
+	// ruleIndex is keyed by m.Name so the dedup loop stays O(matches);
+	// a second map (idByName) prevents the rare slug-collision case
+	// where two distinct pattern names map to the same
+	// sarifIDForPattern slug. Without this guard the second pattern
+	// would silently overwrite the first in idxAfterSort and every
+	// finding for the loser pattern would point at the wrong
+	// ruleIndex. We currently have no colliding patterns, but the
+	// guard is cheap insurance against a future pattern addition.
 	ruleIndex := map[string]int{}
-	var rules []SARIFRule
+	idByName := map[string]string{}
+	usedIDs := map[string]string{} // id -> firstName that claimed it
+	rules := make([]SARIFRule, 0)
 	for _, m := range res.Matches {
 		if _, ok := ruleIndex[m.Name]; ok {
 			continue
 		}
+		id := sarifIDForPattern(m.Name)
+		if firstName, clash := usedIDs[id]; clash && firstName != m.Name {
+			// Disambiguate by appending a stable per-name suffix. We
+			// use a short hex of len(rules) to avoid leaking the
+			// original name into the slug while keeping it
+			// deterministic for a given match order.
+			id = fmt.Sprintf("%s.dup-%d", id, len(rules))
+		}
+		usedIDs[id] = m.Name
+		idByName[m.Name] = id
 		ruleIndex[m.Name] = len(rules)
 		rules = append(rules, SARIFRule{
-			ID:   sarifIDForPattern(m.Name),
+			ID:   id,
 			Name: m.Name,
 			ShortDescription: &SARIFMultiformat{
 				Text: fmt.Sprintf("Secret-detection rule %q (severity %s)", m.Name, m.Severity),
@@ -168,7 +211,7 @@ func ScanSecretsSARIF(res *ScanSecretsResult) *SARIFLog {
 	results := make([]SARIFResult, 0, len(res.Matches))
 	for _, m := range res.Matches {
 		results = append(results, SARIFResult{
-			RuleID:    sarifIDForPattern(m.Name),
+			RuleID:    idByName[m.Name],
 			RuleIndex: ruleIndex[m.Name],
 			Level:     sarifLevel(m.Severity),
 			Message: SARIFMultiformat{
@@ -358,6 +401,7 @@ func emptyLog(tool string) *SARIFLog {
 			Tool: SARIFTool{Driver: SARIFDriver{
 				Name:           SARIFToolName,
 				InformationURI: "https://github.com/kennguy3n/skills-library",
+				Rules:          []SARIFRule{},
 			}},
 			Results: []SARIFResult{},
 		}},

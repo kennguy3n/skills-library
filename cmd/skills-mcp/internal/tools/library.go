@@ -695,15 +695,6 @@ func (l *Library) SearchSkills(query string) (*SearchSkillsResult, error) {
 	return out, nil
 }
 
-func containsString(haystack []string, needle string) bool {
-	for _, s := range haystack {
-		if s == needle {
-			return true
-		}
-	}
-	return false
-}
-
 // versionInAnyRange reports whether the concrete `version` is
 // affected by at least one of the declared ranges. See
 // versionMatches for the supported range syntax. The function never
@@ -730,7 +721,8 @@ func versionInAnyRange(version string, affected []string) bool {
 //
 // Any input that does not match one of the structured forms falls
 // back to case-insensitive string equality, preserving the prior
-// containsString behaviour for entries the parser does not recognise.
+// exact-string-match behaviour for entries the parser does not
+// recognise.
 func versionMatches(affected, version string) bool {
 	a := strings.TrimSpace(affected)
 	v := strings.TrimSpace(version)

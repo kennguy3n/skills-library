@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -758,6 +759,110 @@ func TestLookupVulnerabilityWildcardMatchesRealEntries(t *testing.T) {
 		}
 		if len(hit.Matches) == 0 {
 			t.Errorf("expected wildcard match for %s@%s (%s); got none", c.pkg, c.version, c.ecosystem)
+		}
+	}
+}
+
+// TestPathUnderCaseInsensitiveOnDarwinWindows pins the case-handling
+// of pathUnder on case-insensitive host filesystems. On macOS HFS+ /
+// APFS and Windows NTFS, /Users/foo/.SSH and /Users/foo/.ssh refer
+// to the *same* directory, so a deny-list entry of /Users/foo/.ssh
+// must match either spelling. On Linux the comparison stays
+// case-sensitive so we don't introduce false positives where
+// distinct files share a prefix.
+func TestPathUnderCaseInsensitiveOnDarwinWindows(t *testing.T) {
+	parent := "/users/foo/.ssh"
+	upper := "/Users/Foo/.SSH/id_rsa"
+	switch runtime.GOOS {
+	case "darwin", "windows":
+		if !pathUnder(upper, parent) {
+			t.Errorf("pathUnder(%q, %q) must be true on %s (case-insensitive FS)", upper, parent, runtime.GOOS)
+		}
+	default:
+		if pathUnder(upper, parent) {
+			t.Errorf("pathUnder(%q, %q) must stay case-sensitive on %s", upper, parent, runtime.GOOS)
+		}
+	}
+}
+
+// TestSARIFMessageTextAlwaysEmitted pins that SARIF message.text is
+// emitted even when empty. SARIF 2.1.0 §3.11.11 requires a message
+// to have at least text or id; since we never emit id, dropping the
+// text key with omitempty would produce invalid SARIF on the (rare)
+// future call site that passes "".
+func TestSARIFMessageTextAlwaysEmitted(t *testing.T) {
+	m := SARIFMultiformat{Text: ""}
+	b, err := json.Marshal(m)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(b), `"text":""`) {
+		t.Errorf("SARIFMultiformat must always emit a text key, got %s", string(b))
+	}
+}
+
+// TestScanSecretsSARIFEmptyRulesArray pins that a zero-finding
+// scan_secrets SARIF emits driver.rules as [] rather than omitting
+// the key or producing null. Mirrors the equivalent check on
+// CheckDependencySARIF so consumers can rely on a consistent output
+// shape across the two tools.
+func TestScanSecretsSARIFEmptyRulesArray(t *testing.T) {
+	res := &ScanSecretsResult{Matches: nil}
+	log := ScanSecretsSARIF(res)
+	b, err := json.Marshal(log)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := string(b)
+	if !strings.Contains(s, `"rules":[]`) {
+		t.Errorf("expected driver.rules to serialise as \"[]\" on zero findings, got: %s", s)
+	}
+	if !strings.Contains(s, `"results":[]`) {
+		t.Errorf("expected run.results to serialise as \"[]\" on zero findings, got: %s", s)
+	}
+}
+
+// TestScanSecretsSARIFRuleIDCollisionGuard pins the disambiguation
+// behaviour for the unlikely case where two distinct pattern names
+// produce the same sarifIDForPattern slug. Without the guard the
+// second pattern would silently overwrite the first in
+// idxAfterSort. We construct a ScanSecretsResult manually because
+// the live dlp_patterns.json has no colliding names.
+func TestScanSecretsSARIFRuleIDCollisionGuard(t *testing.T) {
+	// sarifIDForPattern lowercases + non-alnum-collapses, so these
+	// two names collide under the slug rule.
+	res := &ScanSecretsResult{
+		Matches: []SecretMatch{
+			{Name: "Foo Bar", Severity: "high", Start: 0, End: 3, Score: 1, Entropy: 1},
+			{Name: "foo_bar", Severity: "low", Start: 5, End: 8, Score: 0.5, Entropy: 0.5},
+		},
+	}
+	log := ScanSecretsSARIF(res)
+	if len(log.Runs) != 1 {
+		t.Fatalf("expected one run, got %d", len(log.Runs))
+	}
+	run := log.Runs[0]
+	if len(run.Tool.Driver.Rules) < 2 {
+		t.Fatalf("expected at least two distinct rules after collision guard, got %d", len(run.Tool.Driver.Rules))
+	}
+	ids := make(map[string]int)
+	for _, r := range run.Tool.Driver.Rules {
+		ids[r.ID]++
+	}
+	for id, n := range ids {
+		if n > 1 {
+			t.Errorf("rule ID %q appears %d times after collision guard; expected 1", id, n)
+		}
+	}
+	// Each result must point at a real rule index.
+	for i, r := range run.Results {
+		if r.RuleIndex < 0 || r.RuleIndex >= len(run.Tool.Driver.Rules) {
+			t.Errorf("result %d ruleIndex=%d out of range [0, %d)", i, r.RuleIndex, len(run.Tool.Driver.Rules))
+			continue
+		}
+		if run.Tool.Driver.Rules[r.RuleIndex].ID != r.RuleID {
+			t.Errorf("result %d ruleID=%q does not match rules[%d].ID=%q",
+				i, r.RuleID, r.RuleIndex, run.Tool.Driver.Rules[r.RuleIndex].ID)
 		}
 	}
 }
