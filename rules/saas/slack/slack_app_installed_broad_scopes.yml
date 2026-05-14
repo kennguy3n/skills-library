@@ -20,13 +20,15 @@ logsource:
   product: slack
   service: audit_log
 detection:
-  selection:
+  sel_action:
     action: app_installed
-    scopes|contains:
-      - chat:write
-      - files:read
-      - users:read.email
-  condition: selection
+  sel_scope_chat:
+    scopes|contains: "chat:write"
+  sel_scope_files:
+    scopes|contains: "files:read"
+  sel_scope_email:
+    scopes|contains: "users:read.email"
+  condition: sel_action and sel_scope_chat and sel_scope_files and sel_scope_email
 falsepositives:
   - Approved internal automation or vetted vendor app that legitimately
     needs all three scopes (should be reviewed during the app-approval
