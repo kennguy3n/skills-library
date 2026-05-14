@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-05-14",
+  "fixture": "pull-request-target-checkout.yml",
+  "expected_findings": [
+    {
+      "rule": "pull-request-target-checkout",
+      "ecosystem": "github-actions",
+      "source": "skills/cicd-security/checklists/github_actions_hardening.yaml"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-05-14",
+  "fixture": "curl-pipe-sh.yml",
+  "expected_findings": [
+    {
+      "rule": "curl-pipe-sh",
+      "ecosystem": "github-actions",
+      "source": "skills/cicd-security/checklists/github_actions_hardening.yaml"
+    }
+  ]
+}

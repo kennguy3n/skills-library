@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-05-14",
+  "description": "Expected finding for the pypi-malicious fixture. 'ctx==0.2.2' is the version range the malicious 2022 release fell into; see vulnerabilities/supply-chain/malicious-packages/pypi.json for the upstream advisory.",
+  "expected_findings": [
+    {
+      "ecosystem": "pypi",
+      "package": "ctx",
+      "version": "0.2.2",
+      "kind": "malicious",
+      "source": "vulnerabilities/supply-chain/malicious-packages/pypi.json"
+    }
+  ],
+  "expected_clean": ["requests"]
+}
