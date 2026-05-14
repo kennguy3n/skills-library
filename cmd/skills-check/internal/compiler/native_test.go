@@ -107,4 +107,3 @@ func TestNativeMetadataJSONPreservesFullFrontmatter(t *testing.T) {
 		t.Errorf("metadata.json token_budget.compact = %d, want %d", m.TokenBudget.Compact, s.Frontmatter.TokenBudget.Compact)
 	}
 }
-

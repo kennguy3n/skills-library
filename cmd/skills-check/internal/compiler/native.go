@@ -190,14 +190,14 @@ type nativeMetadata struct {
 // it without reparsing the human-facing SKILL.md.
 func renderNativeMetadataJSON(s *skill.Skill) ([]byte, error) {
 	m := nativeMetadata{
-		ID:            s.Frontmatter.ID,
-		Version:       s.Frontmatter.Version,
-		Title:         s.Frontmatter.Title,
-		Description:   s.Frontmatter.Description,
-		Category:      s.Frontmatter.Category,
-		Severity:      s.Frontmatter.Severity,
-		AppliesTo:     s.Frontmatter.AppliesTo,
-		Languages:     s.Frontmatter.Languages,
+		ID:          s.Frontmatter.ID,
+		Version:     s.Frontmatter.Version,
+		Title:       s.Frontmatter.Title,
+		Description: s.Frontmatter.Description,
+		Category:    s.Frontmatter.Category,
+		Severity:    s.Frontmatter.Severity,
+		AppliesTo:   s.Frontmatter.AppliesTo,
+		Languages:   s.Frontmatter.Languages,
 		TokenBudget: nativeTokenBudget{
 			Minimal: s.Frontmatter.TokenBudget.Minimal,
 			Compact: s.Frontmatter.TokenBudget.Compact,
