@@ -996,3 +996,56 @@ func TestScanSecretsSARIFFileURI(t *testing.T) {
 		t.Errorf("inline artifact URI = %q, want %q", gotInline, "stdin://text")
 	}
 }
+
+// TestVersionMatchesEcoNpmCaretRange pins the ecosystem-native semver
+// matcher wired in by P4d. The approximate matcher in library.go
+// silently treats a caret prefix as part of an unrecognised string,
+// so before this change versionInAnyRange("^1.2.0", "1.5.0") returned
+// false. The native matcher in cmd/skills-mcp/internal/tools/semver
+// returns true. This test catches any future regression in the
+// dispatch path.
+func TestVersionMatchesEcoNpmCaretRange(t *testing.T) {
+	if !versionInAnyRangeEco("npm", "1.5.0", []string{"^1.2.0"}) {
+		t.Errorf("npm: ^1.2.0 should match 1.5.0 via the native matcher")
+	}
+	if versionInAnyRangeEco("npm", "2.0.0", []string{"^1.2.0"}) {
+		t.Errorf("npm: ^1.2.0 should NOT match 2.0.0")
+	}
+}
+
+// TestVersionMatchesEcoPypiCompatible pins PEP 440 compatible-release
+// semantics through the dispatcher. ~=1.2.3 := >=1.2.3, <1.3.
+func TestVersionMatchesEcoPypiCompatible(t *testing.T) {
+	if !versionInAnyRangeEco("pypi", "1.2.9", []string{"~=1.2.3"}) {
+		t.Errorf("pypi: ~=1.2.3 should match 1.2.9")
+	}
+	if versionInAnyRangeEco("pypi", "1.3.0", []string{"~=1.2.3"}) {
+		t.Errorf("pypi: ~=1.2.3 should NOT match 1.3.0")
+	}
+}
+
+// TestVersionMatchesEcoGoPseudoVersion locks in pseudo-version
+// timestamp ordering: a later pseudo timestamp must compare greater
+// than an earlier one even when M.m.p are identical.
+func TestVersionMatchesEcoGoPseudoVersion(t *testing.T) {
+	earlier := "v0.0.0-20210101000000-000000000000"
+	later := "v0.0.0-20210101120000-aaaaaaaaaaaa"
+	if !versionInAnyRangeEco("go", later, []string{">=" + earlier}) {
+		t.Errorf("go: later pseudo must satisfy >= earlier pseudo")
+	}
+	if versionInAnyRangeEco("go", earlier, []string{">" + later}) {
+		t.Errorf("go: earlier pseudo must NOT satisfy > later pseudo")
+	}
+}
+
+// TestVersionMatchesEcoUnknownFallsBack ensures versionMatchesEco
+// for an ecosystem without a native matcher still uses the legacy
+// approximate matcher and returns the same answer it always did.
+func TestVersionMatchesEcoUnknownFallsBack(t *testing.T) {
+	// "rubygems" has no native matcher here (not in the dispatch
+	// list), so the approximate matcher in versionMatches is what
+	// runs. ">= 1.2.3" should match 1.5.0 just like before.
+	if !versionInAnyRangeEco("rubygems", "1.5.0", []string{">= 1.2.3"}) {
+		t.Errorf("rubygems fallback: >= 1.2.3 should match 1.5.0")
+	}
+}

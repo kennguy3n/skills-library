@@ -16,6 +16,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/kennguy3n/skills-library/cmd/skills-mcp/internal/tools/semver"
 	"github.com/kennguy3n/skills-library/internal/skill"
 )
 
@@ -260,7 +261,7 @@ func (l *Library) LookupVulnerability(pkg, ecosystem, version string) (*LookupVu
 				continue
 			}
 			if version != "" && len(ent.VersionsAffected) > 0 {
-				if !versionInAnyRange(version, ent.VersionsAffected) {
+				if !versionInAnyRangeEco(e, version, ent.VersionsAffected) {
 					continue
 				}
 			}
@@ -695,10 +696,24 @@ func (l *Library) SearchSkills(query string) (*SearchSkillsResult, error) {
 	return out, nil
 }
 
-// versionInAnyRange reports whether the concrete `version` is
-// affected by at least one of the declared ranges. See
-// versionMatches for the supported range syntax. The function never
-// errors: an unparseable range simply does not match.
+// versionInAnyRangeEco reports whether the concrete `version` is
+// affected by at least one of the declared ranges, preferring the
+// ecosystem-native matcher in internal/tools/semver when it can
+// parse both sides. Falls back to the approximate matcher in
+// versionMatches for ecosystems without a native impl (or when the
+// native matcher signals it couldn't parse the input).
+func versionInAnyRangeEco(ecosystem, version string, affected []string) bool {
+	for _, a := range affected {
+		if versionMatchesEco(ecosystem, a, version) {
+			return true
+		}
+	}
+	return false
+}
+
+// versionInAnyRange is the legacy ecosystem-agnostic form. It is
+// kept for callers that don't have an ecosystem in scope and for
+// versionMatchesEco's fallback path.
 func versionInAnyRange(version string, affected []string) bool {
 	for _, a := range affected {
 		if versionMatches(a, version) {
@@ -706,6 +721,17 @@ func versionInAnyRange(version string, affected []string) bool {
 		}
 	}
 	return false
+}
+
+// versionMatchesEco tries the ecosystem-native matcher first; if it
+// reports ok=false (couldn't parse either side), falls back to the
+// approximate matcher. This means callers always get at least the
+// previous behaviour and gain native correctness wherever possible.
+func versionMatchesEco(ecosystem, affected, version string) bool {
+	if matched, ok := semver.Match(ecosystem, affected, version); ok {
+		return matched
+	}
+	return versionMatches(affected, version)
 }
 
 // versionMatches reports whether `version` falls within the range
