@@ -17,7 +17,7 @@ import (
 
 func initCmd() *cobra.Command {
 	var libraryPath, tool, skillsList, budget, outDir, profileName string
-	var noPrompt bool
+	var noPrompt, fullInline, legacy bool
 	c := &cobra.Command{
 		Use:   "init",
 		Short: "Generate an IDE-specific config file in the current project",
@@ -70,6 +70,14 @@ func initCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			// --full-inline (alias --legacy) restores the pre-v2
+			// monolithic AGENTS.md output. Mirrors the same flag on
+			// `regenerate` so operators have parity between the two
+			// entry points; without it, --tool agents now emits the
+			// minimal pointer file by default.
+			if fullInline || legacy {
+				ctx.AgentsFullInline = true
+			}
 			if outDir == "" {
 				outDir, err = os.Getwd()
 				if err != nil {
@@ -100,6 +108,8 @@ func initCmd() *cobra.Command {
 	c.Flags().StringVar(&outDir, "out", "", "output directory (default: cwd)")
 	c.Flags().BoolVar(&noPrompt, "no-prompt", false, "skip the interactive prompt to set up scheduled updates")
 	c.Flags().StringVar(&profileName, "profile", "", "enterprise profile (e.g., financial-services|healthcare|government) — restricts the skill set")
+	c.Flags().BoolVar(&fullInline, "full-inline", false, "with --tool agents, render the legacy AGENTS.md output that inlines every skill body (default is the minimal pointer file)")
+	c.Flags().BoolVar(&legacy, "legacy", false, "alias for --full-inline")
 	return c
 }
 
