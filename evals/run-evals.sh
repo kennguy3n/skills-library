@@ -41,17 +41,20 @@ fi
 
 echo
 echo "==> 2. precision/recall benchmark"
+# Use a bash array, not an unquoted string, so a gitleaks binary path that
+# contains spaces is passed through as a single argv element. Unquoted
+# expansion would word-split such a path into multiple argparse arguments.
 if [[ "${SKIP_GITLEAKS:-}" == "1" ]]; then
-  GITLEAKS_OPT="--gitleaks skip"
+  GITLEAKS_OPT=(--gitleaks skip)
 elif command -v gitleaks >/dev/null 2>&1; then
-  GITLEAKS_OPT="--gitleaks $(command -v gitleaks)"
+  GITLEAKS_OPT=(--gitleaks "$(command -v gitleaks)")
 elif [[ -x "$HOME/go/bin/gitleaks" ]]; then
-  GITLEAKS_OPT="--gitleaks $HOME/go/bin/gitleaks"
+  GITLEAKS_OPT=(--gitleaks "$HOME/go/bin/gitleaks")
 else
-  GITLEAKS_OPT="--gitleaks skip"
+  GITLEAKS_OPT=(--gitleaks skip)
 fi
 python3 evals/benchmarks/secret-detection-vs-gitleaks.py \
-  $GITLEAKS_OPT \
+  "${GITLEAKS_OPT[@]}" \
   --out evals/baselines/secret-detection-static.md
 cat evals/baselines/secret-detection-static.md
 

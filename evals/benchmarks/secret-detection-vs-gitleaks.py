@@ -85,11 +85,23 @@ def load_patterns() -> list[CompiledPattern]:
 
 
 def hotword_near(text: str, span: tuple[int, int], hotwords: list[str], window: int) -> bool:
+    """Mirrors Go's hotwordNear (cmd/skills-check/cmd/test.go:252) which
+    measures the window in *UTF-8 bytes*, not characters. Python's `re`
+    returns character spans, so we convert to byte offsets before applying
+    the window. The slice is then decoded with ``errors='replace'`` to
+    survive partial multi-byte sequences at the window edges — Go's
+    ``string[i:j]`` has the same byte-truncation semantics. For the current
+    ASCII-only corpus the character and byte arithmetic agree, but this
+    keeps the two implementations equivalent under future non-ASCII
+    fixtures."""
     if window <= 0:
         window = 80
-    start = max(0, span[0] - window)
-    end = min(len(text), span[1] + window)
-    region = text[start:end].lower()
+    text_b = text.encode("utf-8")
+    start_b = len(text[: span[0]].encode("utf-8"))
+    end_b = len(text[: span[1]].encode("utf-8"))
+    win_start = max(0, start_b - window)
+    win_end = min(len(text_b), end_b + window)
+    region = text_b[win_start:win_end].decode("utf-8", errors="replace").lower()
     return any(h.lower() in region for h in hotwords)
 
 
@@ -100,9 +112,15 @@ def denylisted(match_text: str, denylist: list[str]) -> bool:
 
 def skills_match(text: str, patterns: list[CompiledPattern]) -> bool:
     """Returns True iff at least one pattern fires on `text`,
-    respecting hotwords and denylists. This is the same selection
-    rule the Go runner uses; the per-pattern *name* doesn't matter
-    for precision/recall, only the binary detect/ignore outcome."""
+    respecting hotwords and denylists.
+
+    Mirrors Go's ``matchAny`` (cmd/skills-check/cmd/test.go:196) which
+    iterates every pattern and tracks the *last non-Generic* match as the
+    "best". The binary precision/recall outcome is the same whether we
+    return on the first match or iterate everything, but the Go-aligned
+    walk preserves the selection invariant for any future extension that
+    surfaces the matched pattern name out of this harness."""
+    best_name = ""
     for p in patterns:
         m = p.regex.search(text)
         if not m:
@@ -113,8 +131,10 @@ def skills_match(text: str, patterns: list[CompiledPattern]) -> bool:
             if not hotword_near(text, m.span(), p.hotwords, p.hotword_window):
                 if p.require_hotword:
                     continue
-        return True
-    return False
+        is_generic = p.name.startswith("Generic ")
+        if best_name == "" or not is_generic:
+            best_name = p.name
+    return best_name != ""
 
 
 def gitleaks_match(text: str, binary: str) -> bool:
@@ -126,35 +146,40 @@ def gitleaks_match(text: str, binary: str) -> bool:
         tmp.flush()
         report = tmp.name + ".json"
     try:
-        result = subprocess.run(
-            [
-                binary,
-                "detect",
-                "--no-git",
-                "--source",
-                tmp.name,
-                "--report-format",
-                "json",
-                "--report-path",
-                report,
-                "--exit-code",
-                "0",
-                "--no-banner",
-            ],
-            capture_output=True,
-            text=True,
-            timeout=30,
-        )
-    except (FileNotFoundError, subprocess.TimeoutExpired):
-        return False
+        try:
+            subprocess.run(
+                [
+                    binary,
+                    "detect",
+                    "--no-git",
+                    "--source",
+                    tmp.name,
+                    "--report-format",
+                    "json",
+                    "--report-path",
+                    report,
+                    "--exit-code",
+                    "0",
+                    "--no-banner",
+                ],
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            return False
+        try:
+            leaks = json.loads(pathlib.Path(report).read_text() or "[]")
+        except (FileNotFoundError, json.JSONDecodeError):
+            leaks = []
+        return bool(leaks)
     finally:
+        # Clean up BOTH the source tempfile AND the gitleaks report on
+        # every exit path — including the early returns triggered by
+        # FileNotFoundError / TimeoutExpired, which previously left a
+        # partial `*.json` report behind on timeout.
         pathlib.Path(tmp.name).unlink(missing_ok=True)
-    try:
-        leaks = json.loads(pathlib.Path(report).read_text() or "[]")
-    except (FileNotFoundError, json.JSONDecodeError):
-        leaks = []
-    pathlib.Path(report).unlink(missing_ok=True)
-    return bool(leaks)
+        pathlib.Path(report).unlink(missing_ok=True)
 
 
 @dataclass
@@ -263,8 +288,14 @@ def main() -> int:
         f"{fmt_pct(skills_counts.f1)} |"
     )
     if gitleaks_counts is not None:
+        # Strip the absolute path of the gitleaks binary out of the
+        # report — only its basename. The full path varies per
+        # contributor (`/home/ubuntu/go/bin/gitleaks` vs
+        # `/usr/local/bin/gitleaks` vs `~/go/bin/gitleaks` …) and would
+        # otherwise churn the committed baseline on every run.
+        gitleaks_name = pathlib.Path(gitleaks_bin).name if gitleaks_bin else "gitleaks"
         lines.append(
-            f"| gitleaks (default ruleset, `{gitleaks_bin}`) | "
+            f"| gitleaks (default ruleset, `{gitleaks_name}`) | "
             f"{gitleaks_counts.tp} | {gitleaks_counts.fp} | {gitleaks_counts.fn} | {gitleaks_counts.tn} | "
             f"{fmt_pct(gitleaks_counts.precision)} | {fmt_pct(gitleaks_counts.recall)} | "
             f"{fmt_pct(gitleaks_counts.f1)} |"
