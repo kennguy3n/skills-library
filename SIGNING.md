@@ -1,7 +1,7 @@
-# Manifest Signing Procedure
+# Manifest signing procedure
 
 This document describes the out-of-band signing step required to authenticate
-Skills Library releases. The Ed25519 private key **never** enters CI; signing
+**secure-code** releases. The Ed25519 private key **never** enters CI; signing
 happens offline on a hardware-backed device.
 
 ## Rationale
@@ -62,7 +62,7 @@ must *also* possess the physical signing device.
    ```bash
    go run ./cmd/skills-check manifest verify \
      --path /tmp/release-staging \
-     --public-key keys/skills-library-release-2026.pub
+     --public-key keys/secure-code-release-2026.pub
    ```
 
 ## Key Rotation
@@ -77,7 +77,7 @@ must *also* possess the physical signing device.
    `-ldflags`:
    ```
    -X github.com/.../manifest.EmbeddedPublicKey=$(base64 -w0 < new.pub)
-   -X github.com/.../manifest.EmbeddedPublicKeyID=skills-library-release-YYYY
+   -X github.com/.../manifest.EmbeddedPublicKeyID=secure-code-release-YYYY
    ```
 
 3. Tag a new release with the updated binary. Older CLI versions will reject
@@ -102,4 +102,4 @@ If the signing key is compromised:
 
 | Key ID | Fingerprint (SHA-256) | Status |
 |--------|-----------------------|--------|
-| `skills-library-release-2026` | *(populated at release time)* | active |
+| `secure-code-release-2026` | *(populated at release time)* | active |

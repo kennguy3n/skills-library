@@ -1,6 +1,6 @@
-# Skills Library — Python SDK
+# secure-code — Python SDK
 
-`skillslib` is a thin Python loader and validator for the Skills Library
+`skillslib` is a thin Python loader and validator for the **secure-code**
 SKILL.md format.
 
 ## Install
@@ -33,4 +33,5 @@ print(len(all_skills), "skills loaded")
 
 ## License
 
-MIT — same as the parent repository.
+MIT — same as the parent repository. Copyright (c) 2024-2026
+[ShieldNet360](https://www.shieldnet360.com).

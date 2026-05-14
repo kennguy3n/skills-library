@@ -1,4 +1,4 @@
-# Roll out Skills Library to a team
+# Roll out secure-code to a team
 
 This guide is for the engineering / security lead who wants every developer
 on the team to have the same security rules injected into their AI coding
@@ -47,7 +47,7 @@ Add a job that asserts the committed IDE files match the current skills
 set:
 
 ```yaml
-- name: Skills Library — validate
+- name: secure-code — validate
   run: |
     go install github.com/kennguy3n/skills-library/cmd/skills-check@latest
     skills-check validate

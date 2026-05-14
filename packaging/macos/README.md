@@ -1,7 +1,8 @@
-# macOS .pkg Installer
+# secure-code — macOS .pkg installer
 
-Build a macOS installer package using `pkgbuild` + `productbuild` (from
-Xcode Command Line Tools).
+Build a macOS installer package for the `skills-check` CLI (part of
+**secure-code**) using `pkgbuild` + `productbuild` from Xcode Command
+Line Tools.
 
 ## Quick Start
 

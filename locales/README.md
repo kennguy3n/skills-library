@@ -1,12 +1,14 @@
 # Localizations
 
-This tree holds translated copies of selected SKILL.md files for human
-review and downstream LLM use in non-English contexts.
+This tree holds translated copies of selected `SKILL.md` files from
+**secure-code**, intended for human review and downstream LLM use in
+non-English contexts.
 
-Translations are **informational** — they are not auto-loaded by the
-CLI. The canonical English file under `skills/<id>/SKILL.md` remains the
-source of truth for the validator, evidence reports, and IDE config
-generators.
+Translations are **informational** — they are not auto-loaded by the CLI.
+The canonical English file under `skills/<id>/SKILL.md` remains the source
+of truth for the validator, evidence reports, and IDE config generators.
+See [`docs/LOCALE_AUDIT.md`](../docs/LOCALE_AUDIT.md) for the coverage
+roadmap (top-10 world languages, GCC, Southeast Asia, Germany).
 
 Initial coverage (Phase 5):
 

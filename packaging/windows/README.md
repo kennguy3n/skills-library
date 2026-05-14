@@ -1,6 +1,7 @@
-# Windows MSI Installer
+# secure-code — Windows MSI installer
 
-Build a Windows `.msi` using the [WiX Toolset](https://wixtoolset.org/) v4+.
+Build a Windows `.msi` for the `skills-check` CLI (part of **secure-code**)
+using the [WiX Toolset](https://wixtoolset.org/) v4+.
 
 ## Prerequisites
 

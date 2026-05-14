@@ -1,7 +1,8 @@
-# Skills Library — TypeScript SDK
+# secure-code — TypeScript SDK
 
-`@skills-library/skillslib` is a thin TypeScript loader and validator for the
-SKILL.md format used by the Skills Library.
+`skillslib` is a thin TypeScript loader and validator for the SKILL.md
+format used by **secure-code**. (The published npm package name remains
+`@skills-library/skillslib` for backwards compatibility.)
 
 ## Install
 
@@ -33,4 +34,5 @@ console.log(`loaded ${all.length} skills`);
 
 ## License
 
-MIT — same as the parent repository.
+MIT — same as the parent repository. Copyright (c) 2024-2026
+[ShieldNet360](https://www.shieldnet360.com).

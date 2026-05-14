@@ -27,7 +27,7 @@ the step, set the following secrets on the GitHub repository:
 
 | Secret | Description |
 |--------|-------------|
-| `APPLE_DEVELOPER_ID` | Identity string, e.g. `Developer ID Application: Skills Library (TEAMID)` |
+| `APPLE_DEVELOPER_ID` | Identity string, e.g. `Developer ID Application: ShieldNet360 (TEAMID)` |
 | `APPLE_DEVELOPER_ID_CERT_P12_BASE64` | Base64-encoded `.p12` export of the Developer ID certificate |
 | `APPLE_DEVELOPER_ID_CERT_PASSWORD` | Password for the `.p12` |
 | `APPLE_ID` | Apple ID email used for notarytool authentication |

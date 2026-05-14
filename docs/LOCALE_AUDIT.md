@@ -1,8 +1,8 @@
-# Locale & Language-Support Audit
+# Locale & language-support audit
 
 **Last updated:** 2026-05-14
-**Scope:** Audit the natural-language coverage of `skills-library` against
-the user-supplied target set (top-10 world languages, GCC region, South-East
+**Scope:** Audit the natural-language coverage of **secure-code** against
+the user-supplied target set (top-10 world languages, GCC region, Southeast
 Asia, Germany). Recommendations only — no code or content changes are
 implemented in this audit.
 
@@ -10,7 +10,7 @@ implemented in this audit.
 
 ## 1. What "locale" means in this repo
 
-`skills-library` has **two** orthogonal language axes:
+secure-code has **two** orthogonal language axes:
 
 | Axis | Where | Purpose |
 |---|---|---|
@@ -210,7 +210,7 @@ across **every** locale:
 - The compiled `SECURITY-SKILLS.md` distribution under `dist/`.
 - The validator/CLI output strings (`go run ./cmd/skills-check …`).
 
-For an Arabic-speaking team using `skills-library`, the impact of having
+For an Arabic-speaking team using secure-code, the impact of having
 `locales/ar/secret-detection/SKILL.md` translated would still leave them
 reading every rule, every CVE write-up, every CLI message in English.
 
@@ -338,7 +338,7 @@ To keep translations maintainable as English content evolves:
   engineer (to catch term-of-art mistranslations like translating
   "JWT" or "RBAC" literally).
 
-### 5.5 Out-of-scope for `skills-library`
+### 5.5 Out-of-scope for secure-code
 
 - Translating CVE descriptions / public advisory text in
   `vulnerabilities/cve/`. Those are quoted from the upstream advisory

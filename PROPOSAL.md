@@ -1,4 +1,12 @@
-# Skills Library — Project Proposal
+# secure-code — Project Proposal
+
+This proposal describes the design and scope of **secure-code**, a security
+knowledge framework for AI-assisted coding maintained by
+[ShieldNet360](https://www.shieldnet360.com) and released under the
+[MIT license](./LICENSE). The Go module path remains
+[`github.com/kennguy3n/skills-library`](https://github.com/kennguy3n/skills-library)
+and the CLI binary remains `skills-check`; these are stable technical identifiers.
+The project's brand is **secure-code**.
 
 ## Problem Statement
 
@@ -34,8 +42,9 @@ Every existing answer to this question is one of three flavors:
 3. **Infrastructure-heavy** — requires servers, agents, and IT involvement before any
    developer benefits.
 
-Skills Library exists to solve this gap with an MIT-licensed, file-based, offline-capable
-library that any developer can drop into their IDE in under five minutes.
+secure-code exists to solve this gap with an MIT-licensed, file-based,
+offline-capable library that any developer can drop into their IDE in under five
+minutes.
 
 ## Proposed Solution
 
@@ -229,9 +238,9 @@ The vulnerability database is opinionated about what it covers and what it does 
 - **Binary vulnerability scanning** — defer to Trivy / Grype.
 - **Container image vulnerability scanning** — defer to Trivy / Grype.
 
-Skills Library is intentionally narrow: it covers the **supply-chain attack surface
-that AI coding tools introduce** and nothing else. Trying to be a general CVE database
-would be a strategic mistake.
+secure-code is intentionally narrow: it covers the **supply-chain attack surface
+that AI coding tools introduce** and nothing else. Trying to be a general CVE
+database would be a strategic mistake.
 
 ## Token Budget Strategy
 
@@ -255,11 +264,11 @@ verifies the resulting file is within budget and fails the build if it isn't.
 
 ## Scope Boundaries — What This Does NOT Deliver
 
-- **Runtime application security** (WAF, RASP). Skills Library is a *development-time*
+- **Runtime application security** (WAF, RASP). secure-code is a *development-time*
   tool. Runtime defense is a different category entirely.
-- **SAST / DAST scanning.** Complementary, not replacement. Skills Library shifts
+- **SAST / DAST scanning.** Complementary, not replacement. secure-code shifts
   guidance *into* the AI generation step; SAST runs *after*. Both should run.
-- **Real-time CVE monitoring / alerting.** That is an ops tool. Skills Library
+- **Real-time CVE monitoring / alerting.** That is an ops tool. secure-code
   distributes structured knowledge; it does not page humans at 3am.
 - **Proprietary rule content.** Everything is MIT-licensed. If a rule is too sensitive
   to publish, it does not belong here.

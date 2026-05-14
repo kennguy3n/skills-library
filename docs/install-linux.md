@@ -1,7 +1,12 @@
-# Install on Linux
+# Install secure-code on Linux
 
-`skills-check` is a statically linked Go binary with no runtime
+The `skills-check` CLI is a statically linked Go binary with no runtime
 dependencies, so any glibc or musl Linux distribution can run it.
+
+> The CLI binary name (`skills-check`) and the hosted APT/YUM repository
+> paths (under `kennguy3n.github.io/skills-library/`) are stable technical
+> identifiers and are not renamed when the project's brand changed to
+> **secure-code**.
 
 ## APT (Debian / Ubuntu)
 

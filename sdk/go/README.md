@@ -1,6 +1,7 @@
-# Skills Library — Go SDK
+# secure-code — Go SDK
 
-`skillslib` is the public Go SDK for the Skills Library.
+`skillslib` is the public Go SDK for **secure-code** (Go module path
+`github.com/kennguy3n/skills-library`).
 
 It is a thin re-export of `internal/skill` so downstream Go programs can load
 and validate skills without depending on internal packages.
@@ -42,3 +43,8 @@ func main() {
 - `Extract(s *Skill, tier Tier) string` — render a tier-specific body.
 
 Tier constants: `TierMinimal`, `TierCompact`, `TierFull`.
+
+## License
+
+MIT — same as the parent repository. Copyright (c) 2024-2026
+[ShieldNet360](https://www.shieldnet360.com).
