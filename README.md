@@ -391,7 +391,7 @@ The server registers ten tools on `tools/list`:
 - `search_skills(query)` — substring match across skill metadata.
 - `scan_secrets(text | file_path, format?)` — DLP scan of inline text or a path
   under the configured allowed roots; supports the `sarif` output format.
-- `check_dependency(package, version, ecosystem, format?)` — check a dependency
+- `check_dependency(package, version?, ecosystem, format?)` — check a dependency
   against the malicious-packages corpus with optional SARIF output.
 - `check_typosquat(package, ecosystem?)` — flag candidate typosquats from the
   curated typosquat database.
