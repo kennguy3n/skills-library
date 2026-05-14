@@ -71,12 +71,14 @@ func initCmd() *cobra.Command {
 				return err
 			}
 			// --full-inline (alias --legacy) restores the pre-v2
-			// monolithic AGENTS.md output. Mirrors the same flag on
-			// `regenerate` so operators have parity between the two
-			// entry points; without it, --tool agents now emits the
-			// minimal pointer file by default.
+			// monolithic per-tool dist/ output that inlines every skill
+			// body. Mirrors the same flag on `regenerate` so operators
+			// have parity between the two entry points; without it,
+			// every per-tool file now emits the minimal pointer file by
+			// default. The universal SECURITY-SKILLS.md surface is the
+			// exception and always inlines, regardless of this flag.
 			if fullInline || legacy {
-				ctx.AgentsFullInline = true
+				ctx.FullInline = true
 			}
 			if outDir == "" {
 				outDir, err = os.Getwd()
@@ -108,7 +110,7 @@ func initCmd() *cobra.Command {
 	c.Flags().StringVar(&outDir, "out", "", "output directory (default: cwd)")
 	c.Flags().BoolVar(&noPrompt, "no-prompt", false, "skip the interactive prompt to set up scheduled updates")
 	c.Flags().StringVar(&profileName, "profile", "", "enterprise profile (e.g., financial-services|healthcare|government) — restricts the skill set")
-	c.Flags().BoolVar(&fullInline, "full-inline", false, "with --tool agents, render the legacy AGENTS.md output that inlines every skill body (default is the minimal pointer file)")
+	c.Flags().BoolVar(&fullInline, "full-inline", false, "render the legacy monolithic per-tool dist/ output that inlines every skill body (default is the minimal pointer file)")
 	c.Flags().BoolVar(&legacy, "legacy", false, "alias for --full-inline")
 	return c
 }

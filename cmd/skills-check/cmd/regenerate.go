@@ -13,7 +13,7 @@ import (
 
 func regenerateCmd() *cobra.Command {
 	var path, tool, budget, profileName string
-	var fullInline, legacy bool
+	var fullInline, legacy, skipNative bool
 	c := &cobra.Command{
 		Use:   "regenerate",
 		Short: "Rebuild dist/ files from the current skills/",
@@ -41,10 +41,13 @@ func regenerateCmd() *cobra.Command {
 				return err
 			}
 			// --full-inline (alias --legacy) restores the pre-v2
-			// monolithic AGENTS.md output. The default since v2 is
-			// the minimal pointer file documented in agents.go.
+			// monolithic dist/ output that inlines every skill body
+			// across all per-tool files (CLAUDE.md, .cursorrules,
+			// copilot-instructions.md, AGENTS.md, devin.md,
+			// .windsurfrules, .clinerules). The default since v2 is
+			// the minimal pointer file documented in pointer.go.
 			if fullInline || legacy {
-				ctx.AgentsFullInline = true
+				ctx.FullInline = true
 			}
 			outDir := filepath.Join(abs, "dist")
 
@@ -81,6 +84,24 @@ func regenerateCmd() *cobra.Command {
 			for _, w := range warnings {
 				fmt.Fprintln(c.ErrOrStderr(), "warn:", w)
 			}
+
+			// Native skill bundles. These are emitted alongside the
+			// per-tool pointer files so consumers of Claude / Copilot /
+			// agent-skills conventions get auto-discoverable SKILL.md
+			// trees out of the same `regenerate` run. Operators that
+			// only want to refresh the per-tool files (or scope a
+			// regen to a single tool with --tool) can suppress this
+			// with --skip-native.
+			if !skipNative && (tool == "" || tool == "all") {
+				if err := compiler.WriteNativeBundles(skills, outDir); err != nil {
+					return err
+				}
+				for _, bundle := range compiler.DefaultNativeBundles {
+					rel := filepath.Join("dist", bundle.Subdir, bundle.InstallPath)
+					fmt.Fprintf(out, "%-10s -> %s/<skill-id>/  (%d skills, native bundle)\n",
+						bundle.Subdir, rel, len(skills))
+				}
+			}
 			return nil
 		},
 	}
@@ -88,7 +109,8 @@ func regenerateCmd() *cobra.Command {
 	c.Flags().StringVar(&tool, "tool", "", "single tool to regenerate (default all)")
 	c.Flags().StringVar(&budget, "budget", "", "override tier (minimal|compact|full)")
 	c.Flags().StringVar(&profileName, "profile", "", "enterprise profile (e.g., financial-services|healthcare|government)")
-	c.Flags().BoolVar(&fullInline, "full-inline", false, "render the legacy AGENTS.md output that inlines every skill body (default is the minimal pointer file)")
+	c.Flags().BoolVar(&fullInline, "full-inline", false, "render the legacy monolithic per-tool dist/ output that inlines every skill body (default is the minimal pointer file)")
 	c.Flags().BoolVar(&legacy, "legacy", false, "alias for --full-inline")
+	c.Flags().BoolVar(&skipNative, "skip-native", false, "skip emitting dist/agent-skills, dist/copilot-skills, dist/claude-skills native bundles")
 	return c
 }

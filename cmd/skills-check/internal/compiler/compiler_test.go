@@ -49,17 +49,65 @@ func TestEachFormatterProducesOutput(t *testing.T) {
 			if len(out) < 200 {
 				t.Errorf("output suspiciously small: %d bytes", len(out))
 			}
-			// The "agents" formatter defaults to the minimal pointer
-			// file post-v2 (no inlined skill bodies). Every other
-			// formatter still inlines bodies and so must surface
-			// "Always" / "REQUIRE"-style imperatives.
-			if f.Name() != "agents" {
+			// Since v3 every per-tool formatter defaults to the
+			// minimal pointer file (no inlined skill bodies); only
+			// the universal SECURITY-SKILLS.md output still inlines
+			// bodies by default. So the inlined "Always" / "REQUIRE"
+			// imperatives are only required from universal here.
+			if f.Name() == "universal" {
 				if !strings.Contains(out, "Always") && !strings.Contains(out, "ALWAYS") && !strings.Contains(out, "REQUIRE") {
-					t.Errorf("output missing always-style rules")
+					t.Errorf("universal output missing always-style rules")
 				}
 			}
 			if report.Total.OpenAI == 0 {
 				t.Errorf("token count not populated")
+			}
+		})
+	}
+}
+
+// TestPerToolDefaultIsPointer locks in the v3 behaviour that every
+// per-tool formatter (everything except universal) emits the minimal
+// pointer body by default — no inlined skill bodies, mentions the
+// MCP server, and stays under 4 KiB.
+func TestPerToolDefaultIsPointer(t *testing.T) {
+	skills := loadAllSkills(t)
+	perTool := []string{"claude", "cursor", "copilot", "agents", "windsurf", "devin", "cline"}
+	for _, name := range perTool {
+		t.Run(name, func(t *testing.T) {
+			out, _, _, err := Compile(skills, name, Registry[name].DefaultTier(), Context{})
+			if err != nil {
+				t.Fatalf("compile %s: %v", name, err)
+			}
+			if len(out) >= 4*1024 {
+				t.Errorf("%s default = %d bytes; pointer body should stay under 4 KiB", name, len(out))
+			}
+			for _, want := range []string{"search_skills", "get_skill", "SAST, SCA", "skills/<skill-id>/SKILL.md"} {
+				if !strings.Contains(out, want) {
+					t.Errorf("%s pointer body missing %q", name, want)
+				}
+			}
+		})
+	}
+}
+
+// TestPerToolFullInlineRestoresBodies locks in that --full-inline (the
+// Context.FullInline flag) brings back the pre-v3 monolithic output
+// for every per-tool formatter, not only AGENTS.md.
+func TestPerToolFullInlineRestoresBodies(t *testing.T) {
+	skills := loadAllSkills(t)
+	perTool := []string{"claude", "cursor", "copilot", "agents", "windsurf", "devin", "cline"}
+	for _, name := range perTool {
+		t.Run(name, func(t *testing.T) {
+			out, _, _, err := Compile(skills, name, Registry[name].DefaultTier(), Context{FullInline: true})
+			if err != nil {
+				t.Fatalf("compile %s full-inline: %v", name, err)
+			}
+			if len(out) < 4*1024 {
+				t.Errorf("%s full-inline = %d bytes; legacy output should be substantially larger", name, len(out))
+			}
+			if !strings.Contains(out, "Always") && !strings.Contains(out, "ALWAYS") && !strings.Contains(out, "REQUIRE") {
+				t.Errorf("%s full-inline must inline always-style bullets", name)
 			}
 		})
 	}
@@ -214,6 +262,13 @@ func TestContextInjection(t *testing.T) {
 		VulnerabilitySummary: "- example-package — example description\n",
 		GlossaryEntries:      []string{"**SBOM** — bill of materials"},
 		AttackTechniques:     []string{"`T1195` Supply Chain Compromise"},
+		// Vulnerability / glossary / ATT&CK callouts are only
+		// emitted in the monolithic full-inline output. The
+		// default pointer file is intentionally body-less; it
+		// points consumers at the MCP server for these data
+		// instead. Lock the injection invariant down with the
+		// flag set so the test stays meaningful post-v3.
+		FullInline: true,
 	}
 	out, _, _, err := Compile(skills, "claude", skill.TierCompact, ctx)
 	if err != nil {

@@ -29,13 +29,36 @@ type Context struct {
 	VulnerabilitySummary string
 	GlossaryEntries      []string
 	AttackTechniques     []string
-	// AgentsFullInline opts the AGENTS.md / codex formatter back into
-	// the pre-v2 behaviour of inlining every skill. The default — when
-	// this field is false — emits a minimal <4 KiB pointer file that
+	// FullInline opts every per-tool dist/ file (CLAUDE.md,
+	// .cursorrules, copilot-instructions.md, AGENTS.md, devin.md,
+	// .windsurfrules, .clinerules) back into the pre-v2 behaviour
+	// of inlining every skill body. The default — when this field
+	// is false — emits a minimal <4 KiB pointer file per tool that
 	// refers consumers to the MCP server and the on-disk skills/
 	// directory. The CLI exposes this as `regenerate --full-inline`
 	// (alias `--legacy`).
+	//
+	// The universal SECURITY-SKILLS.md output is unaffected by this
+	// flag; it remains the canonical full-inline reference for
+	// users who want every skill body in a single file regardless
+	// of tool surface.
+	FullInline bool
+
+	// AgentsFullInline is the legacy alias for FullInline. It only
+	// affected the AGENTS.md formatter in v2; callers should
+	// migrate to FullInline. Either field set to true triggers the
+	// monolithic output across every per-tool formatter.
+	//
+	// Deprecated: use FullInline. Removed once external callers
+	// have migrated.
 	AgentsFullInline bool
+}
+
+// fullInline reports whether either the new or legacy flag is set.
+// Formatters and tests should call this helper instead of reading
+// the fields directly.
+func (c Context) fullInline() bool {
+	return c.FullInline || c.AgentsFullInline
 }
 
 // Report is the per-skill + total token accounting for a compiled output.
