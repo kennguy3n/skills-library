@@ -49,13 +49,67 @@ func TestEachFormatterProducesOutput(t *testing.T) {
 			if len(out) < 200 {
 				t.Errorf("output suspiciously small: %d bytes", len(out))
 			}
-			if !strings.Contains(out, "Always") && !strings.Contains(out, "ALWAYS") && !strings.Contains(out, "REQUIRE") {
-				t.Errorf("output missing always-style rules")
+			// The "agents" formatter defaults to the minimal pointer
+			// file post-v2 (no inlined skill bodies). Every other
+			// formatter still inlines bodies and so must surface
+			// "Always" / "REQUIRE"-style imperatives.
+			if f.Name() != "agents" {
+				if !strings.Contains(out, "Always") && !strings.Contains(out, "ALWAYS") && !strings.Contains(out, "REQUIRE") {
+					t.Errorf("output missing always-style rules")
+				}
 			}
 			if report.Total.OpenAI == 0 {
 				t.Errorf("token count not populated")
 			}
 		})
+	}
+}
+
+// The minimal AGENTS.md is the new default. It is a pointer file
+// directed at LLMs that reaches into the MCP server and skills/
+// directory rather than inlining every skill body. The output
+// MUST stay under 4 KiB and MUST mention the MCP server.
+func TestAgentsMinimalIsUnder4KiB(t *testing.T) {
+	skills := loadAllSkills(t)
+	out, _, _, err := Compile(skills, "agents", skill.TierCompact, Context{})
+	if err != nil {
+		t.Fatalf("compile agents: %v", err)
+	}
+	if len(out) >= 4*1024 {
+		t.Errorf("minimal AGENTS.md = %d bytes; must stay under 4 KiB", len(out))
+	}
+	for _, want := range []string{
+		"local skills MCP server",
+		"SAST, SCA",
+		"search_skills",
+		"get_skill",
+	} {
+		if !strings.Contains(out, want) {
+			t.Errorf("minimal AGENTS.md missing %q", want)
+		}
+	}
+	if strings.Contains(out, "Operating contract: you are an autonomous coding agent") {
+		t.Errorf("minimal output should not include the legacy operating-contract preamble")
+	}
+}
+
+// The legacy full-inline path remains available behind
+// Context.AgentsFullInline so that operators who depend on the
+// pre-v2 monolithic format can opt back in.
+func TestAgentsFullInlineRestoresLegacyOutput(t *testing.T) {
+	skills := loadAllSkills(t)
+	out, _, _, err := Compile(skills, "agents", skill.TierCompact, Context{AgentsFullInline: true})
+	if err != nil {
+		t.Fatalf("compile agents full-inline: %v", err)
+	}
+	if len(out) < 4*1024 {
+		t.Errorf("full-inline AGENTS.md = %d bytes; legacy output should be substantially larger", len(out))
+	}
+	if !strings.Contains(out, "Operating contract: you are an autonomous coding agent") {
+		t.Errorf("full-inline output should include the legacy operating-contract preamble")
+	}
+	if !strings.Contains(out, "Always") {
+		t.Errorf("full-inline output must inline always-style bullets")
 	}
 }
 
