@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"gopkg.in/yaml.v3"
 )
 
 func TestWriteNativeBundlesEmitsAllThreeTrees(t *testing.T) {
@@ -105,5 +107,54 @@ func TestNativeMetadataJSONPreservesFullFrontmatter(t *testing.T) {
 	}
 	if m.TokenBudget.Compact != s.Frontmatter.TokenBudget.Compact {
 		t.Errorf("metadata.json token_budget.compact = %d, want %d", m.TokenBudget.Compact, s.Frontmatter.TokenBudget.Compact)
+	}
+}
+
+// TestNativeSkillMDFrontmatterIsValidYAML parses the YAML frontmatter
+// of every generated native SKILL.md and asserts both that the parse
+// succeeds and that `description` round-trips to the same Go string
+// that nativeDescription() returns. This catches plain-scalar regressions
+// when descriptions contain ":", "—", or other YAML-significant punctuation
+// — which is the case for almost every skill in the library.
+func TestNativeSkillMDFrontmatterIsValidYAML(t *testing.T) {
+	skills := loadAllSkills(t)
+	if len(skills) == 0 {
+		t.Skip("no skills available")
+	}
+	outDir := t.TempDir()
+	if err := WriteNativeBundles(skills, outDir); err != nil {
+		t.Fatalf("WriteNativeBundles: %v", err)
+	}
+	for _, bundle := range DefaultNativeBundles {
+		for _, s := range skills {
+			p := filepath.Join(outDir, bundle.Subdir, bundle.InstallPath, s.Frontmatter.ID, "SKILL.md")
+			raw, err := os.ReadFile(p)
+			if err != nil {
+				t.Fatalf("read %s: %v", p, err)
+			}
+			body := string(raw)
+			if !strings.HasPrefix(body, "---\n") {
+				t.Fatalf("%s: missing leading `---` fence", p)
+			}
+			end := strings.Index(body[4:], "\n---\n")
+			if end < 0 {
+				t.Fatalf("%s: missing trailing `---` fence", p)
+			}
+			fm := body[4 : 4+end]
+			var parsed struct {
+				Name        string `yaml:"name"`
+				Description string `yaml:"description"`
+			}
+			if err := yaml.Unmarshal([]byte(fm), &parsed); err != nil {
+				t.Errorf("%s: frontmatter is not valid YAML: %v\n%s", p, err, fm)
+				continue
+			}
+			if parsed.Name != s.Frontmatter.ID {
+				t.Errorf("%s: parsed name = %q, want %q", p, parsed.Name, s.Frontmatter.ID)
+			}
+			if parsed.Description != nativeDescription(s) {
+				t.Errorf("%s: parsed description = %q, want %q", p, parsed.Description, nativeDescription(s))
+			}
+		}
 	}
 }
