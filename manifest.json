@@ -80,7 +80,7 @@
     },
     {
       "path": "dist/SECURITY-SKILLS.md",
-      "sha256": "f2bb199831965be26733541376033d72fd6ef0152008491600ca1e1919a411e9",
+      "sha256": "d2f51590e2f4b46eea92179f6f008e87a8aad7131e27cda3fe1bec871b7725d7",
       "size": 96320,
       "action": "unchanged"
     },
@@ -1927,6 +1927,1314 @@
       "action": "unchanged"
     },
     {
+      "path": "vulnerabilities/osv/README.md",
+      "sha256": "e2eb9c28182ae1cf88818c8a9a45b47b734a5e910dd68d9b7462017220e0b165",
+      "size": 2903,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-2226-4v3c-cff8.json",
+      "sha256": "eca845a563f1a6e5144ed5ae2d813e4c7f49d27f14d83066c7f2ff90bca6bcdf",
+      "size": 1442,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-3632-54q8-m96x.json",
+      "sha256": "682a5dd085c91b0b77d9b87c35922a8a0bb08b9645c707f91a4a8136e63bf00b",
+      "size": 2686,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-475v-pq2g-fp9g.json",
+      "sha256": "3783afc06a9e1d6f35fe1ffcfbbd77388db1e92273a08d1151251e1942c1959d",
+      "size": 1828,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-5pv5-xh52-hvrp.json",
+      "sha256": "ecbdf20944044490650a5dd2fc334c5e18ba646db033a3ce2fe1b858fc825d34",
+      "size": 1989,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-6wr5-jmpr-mjcx.json",
+      "sha256": "48ea6007b8c9e578598617a5122888d2c5d3567e4d8624faac15fe446ede8f40",
+      "size": 2317,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-852m-cvvp-9p4w.json",
+      "sha256": "f229af853413ecb6c477524103f0ba059ca822711ab97cbfddc23ed45fc781c7",
+      "size": 8422,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-978j-88f3-p5j3.json",
+      "sha256": "594b72aa083270eb0ce9746d11051d838c53d59c30a177b28f715accab23ad70",
+      "size": 1241,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-cgqf-3cq5-wvcj.json",
+      "sha256": "27d5e171ea89206988653189aca9908626ef9368fd9a67b86fe5bdf9df7902a4",
+      "size": 2092,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-fp5x-7m4q-449f.json",
+      "sha256": "8456a94ab1a866817832c3db313a04897d5e5d240bef337a3611dead83d849e0",
+      "size": 1752,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-gx5w-rrhp-f436.json",
+      "sha256": "b70acaf5851f212c749dc9af14886c56edb878d65800e0336ee4dd5e89370963",
+      "size": 3285,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-j57r-4qw6-58r3.json",
+      "sha256": "4cec52c253dced9158c9162bea1c390c4717ee05a701f92f7317650368b53058",
+      "size": 3144,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-m833-jv95-mfjh.json",
+      "sha256": "469e981496ee8376259fab77586cc07073bc6a26131af6b4b5481d32edcf69c5",
+      "size": 1267,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-pphf-f93w-gc84.json",
+      "sha256": "575acbfdee594016f49a0d3a74263e784d7eab0247f1679bee21adf392584265",
+      "size": 1296,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-qvc4-78gw-pv8p.json",
+      "sha256": "ff79abe2cf48ac0afd6a261a5e228813977a0a219ead04f37522a16ca187b3e3",
+      "size": 1792,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-v2p5-q653-9j99.json",
+      "sha256": "942e55763b2c774438f1752a92daf43870af98edb0c0563ba0f002ea2c020065",
+      "size": 1285,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-w59h-378f-2frm.json",
+      "sha256": "3fe067726ad892c925d7c7bb68fcc3994c9cad4a536b54935d76bb46c187ec82",
+      "size": 1619,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/GHSA-x7fr-pg8f-93f5.json",
+      "sha256": "f41692ae10a07ea32a1eb984b5012c16ab9cfd54f1d11c6b51fae7a2beb617ee",
+      "size": 1878,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/RUSTSEC-2017-0006.json",
+      "sha256": "91fe18ab193d0c9b5a1fa1b66f72376ccdae6d9b6b057bfa4109277db944f3b0",
+      "size": 1205,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/RUSTSEC-2020-0017.json",
+      "sha256": "711affa005125024de42e4777d9af23ad32793ef211fe18ed9f6c5b8fe0b12d8",
+      "size": 1453,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/RUSTSEC-2020-0098.json",
+      "sha256": "d37b956f8dd788f7f75e72c417d31ae77dbba42f50327e38fc7d4fcc1577f598",
+      "size": 1515,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/RUSTSEC-2021-0011.json",
+      "sha256": "319df8a2d4da590040f11e980fbb5f727668ffd6e64be428d68c13d8a8d8a0ea",
+      "size": 1331,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/RUSTSEC-2021-0092.json",
+      "sha256": "d8e288368eeeec5da93f4a63254e44b967f92f3b5debc40285730101617d3695",
+      "size": 1484,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/RUSTSEC-2022-0018.json",
+      "sha256": "c029b779899a7c4d4b7c792fd3d25537442807fe90a29b2e0d1c83edd17299df",
+      "size": 1342,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/RUSTSEC-2022-0099.json",
+      "sha256": "675a7db1175848e20406e07b5e1a39fac50149e04503b5ed4ded798150e7f778",
+      "size": 1339,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/RUSTSEC-2023-0077.json",
+      "sha256": "d43242c8edf96234d186c1eba9cb324d8650c2677c78eb017130c64790389813",
+      "size": 1335,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/RUSTSEC-2024-0341.json",
+      "sha256": "f5f00e989deae08d8cac5402d70356b6c315a859650e99cec3f4a88c0d212054",
+      "size": 1817,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/RUSTSEC-2024-0422.json",
+      "sha256": "c09b7de1bd3b7c9d055ee70fa83d9e7d2e7761f2099bc7fbbe36ca20bc57f752",
+      "size": 1289,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/RUSTSEC-2025-0055.json",
+      "sha256": "c43e01771f7811cced8728b45604f2be1197719f6e02336ebbf8c9aeabfe2039",
+      "size": 1763,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/RUSTSEC-2025-0136.json",
+      "sha256": "b385995f9134869309833ccc40dd5a28db8081db7537aecdfd9c2ed8d5ecd828",
+      "size": 1843,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/RUSTSEC-2026-0056.json",
+      "sha256": "d1f4b57846bd1f3f38798d39303415a85cce7680048b0d08ef55a2192b6b60f3",
+      "size": 1084,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/crates/index.json",
+      "sha256": "5254ad374c466dde9de7e8e87d6e41b311c268967402f080757b1e29cdebfe53",
+      "size": 8920,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-227x-7mh8-3cf6.json",
+      "sha256": "270dd296487d095f00b39c18f71792b6e86b228efd926ac6af0bd3f96d369186",
+      "size": 4805,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-36gq-35j3-p9r9.json",
+      "sha256": "6b6cfda1a3c9165a1308d7c055a98fed9d8091b706a7af5bceaf44eb334e1e2b",
+      "size": 2466,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-4h4p-553m-46qh.json",
+      "sha256": "dc36f8e9a4b3f8dcdbf15a1d0b1df3caf36bf288a54d1cda9cd70e4db07b12ab",
+      "size": 1760,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-5r2v-6gm6-vpvh.json",
+      "sha256": "fb17153b02b2c5bf92f052452f4d0c3c2a8d4a7cd7fe2309b884aad2ed8c9092",
+      "size": 1182,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-6w5f-5wgr-qjg5.json",
+      "sha256": "fb76a32764ad35f57595befb91e380f04b7db04b248fb139c5ebfe26d778b3ee",
+      "size": 1451,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-856q-xv3c-7f2f.json",
+      "sha256": "9dbe87c2ed91b86eab0fe7e01fd6440c460fb97103a3e011c7ad89199b744283",
+      "size": 3303,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-9983-vrx2-fg9c.json",
+      "sha256": "61f0b941349fdd5964fef8875b191d084e74323369d3f20d5200c5cc3638b1bb",
+      "size": 2728,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-cfpf-hrx2-8rv6.json",
+      "sha256": "8f987218bfc20848803b6e27b936871c68c2e818e561f58988f424ed2de3dacf",
+      "size": 3923,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-fpcr-4rr5-hpcp.json",
+      "sha256": "0d784ed47eec6f1b6c66cb12ce65962f065cdc01db4f8b65031db2de007387c3",
+      "size": 2082,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-gxvv-45f6-3ch8.json",
+      "sha256": "1558185cf822bfb7e9da1f447af11e3dfdbbc0e24f39ab993349e9af1667ccfe",
+      "size": 2158,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-j478-p7vq-3347.json",
+      "sha256": "ea730d45a320875577d3515bf97c591e663079c20bb040bcb73ddf9ac5bf8435",
+      "size": 1850,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-m6j8-rg6r-7mv8.json",
+      "sha256": "6ac2647ba939ac77cb9d3b2aab253c4eb448c1223d55d8124b67890fff0cfa81",
+      "size": 2030,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-pcqx-8qww-7f4v.json",
+      "sha256": "7ae71bdf6f06f7afd7ea6e56a77b0edbd2a350c5c1154ed3575aa50487237e64",
+      "size": 2282,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-qmvj-4qr9-v547.json",
+      "sha256": "65095824432a6a6a4a71a19dabb66f3092fc441491e2cca2c83db77d93355027",
+      "size": 2896,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-rvj4-q8q5-8grf.json",
+      "sha256": "baf0d92efcefda5f3740a606c365ae64fa6990da31eff0b32be06ac00866e461",
+      "size": 2477,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-w44m-8mv2-v78h.json",
+      "sha256": "4ffc66928687eb261e0a3d31b5e1ffcf94792dd5ef7b69bf1eb1c2b6061723ef",
+      "size": 1727,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GHSA-xchc-cqwg-g76q.json",
+      "sha256": "61943926c518baba858f61fb11cc0292227fbbd22d9b54dbecb569687afd845f",
+      "size": 4765,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GO-2021-0239.json",
+      "sha256": "334781e7250ee24ea2b9690809e32d32305f654eb0dd7c82a823a406fa6029fa",
+      "size": 1667,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GO-2022-0564.json",
+      "sha256": "a67f25e8ed7cbc5e5b1ccd73f264c872f30240274857656c1da2428fb2d14d85",
+      "size": 974,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GO-2022-1015.json",
+      "sha256": "d65b91e8c9b32610d21669419c37b92804d76869485c75031167ec0962daf87f",
+      "size": 1328,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GO-2023-1682.json",
+      "sha256": "b54b9dfd72937aaebc6ab81758ef4d2299e956d239ac078fc0a9768595c4bd41",
+      "size": 1066,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GO-2023-2166.json",
+      "sha256": "1e63f59e6c3a4a17ecb322d78e6fda859a6631270c71167b3c1b334c361adcc5",
+      "size": 1123,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GO-2024-2694.json",
+      "sha256": "211c54b622214d387d6c37410f57e24b155e847d659ab337275738abb6c29aee",
+      "size": 3978,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GO-2024-3026.json",
+      "sha256": "e866dc74393ae8dbddd3725f558e8e292924c467f9bd29aa610a8530b2171734",
+      "size": 1148,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GO-2024-3326.json",
+      "sha256": "d0ce5467f0248ad8640aa73fb080f3f973a9bb48b07d73e623c13c12b68934a7",
+      "size": 1045,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GO-2025-3647.json",
+      "sha256": "1ac31280075a5eb7a4e08eb578ff2514bd5acc3fa1e49da1d7d16ede5839935f",
+      "size": 1508,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GO-2025-3938.json",
+      "sha256": "cf352f782924b177ee845d636f6717ae0c7a8d60104e855a8bb8a6cfaca97bb9",
+      "size": 1816,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GO-2025-4190.json",
+      "sha256": "a958be197667d99405f27685f7b127aaac1daa3e429d8ce45ae47057b3e3d34c",
+      "size": 1258,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GO-2026-4455.json",
+      "sha256": "38332ddf95c10e087bec20901509de1e190f3e8040777d5afca1d03cdca4c448",
+      "size": 979,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/GO-2026-4710.json",
+      "sha256": "8e39978b098d835b970ebd557252a25918bd64463ee8b786d1cf829b59bef031",
+      "size": 1528,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/go/index.json",
+      "sha256": "2e3fd3aa096427cc5fe0924aee35b63e134aca5f2140d98e4289e69b51b0586b",
+      "size": 16583,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-222w-xmc5-jhp3.json",
+      "sha256": "e78b6e76144672195880d695331674bc95e7b5034c7e3335400960caa59497d0",
+      "size": 12396,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-2hjr-vmf3-xwvp.json",
+      "sha256": "87098e61ad9f06e1df6d35395c9ef8f510997c92eda21488fd15a7cf4a70f8ef",
+      "size": 5662,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-37m3-qp37-x3c6.json",
+      "sha256": "2a7dfbe9849b13307eb7ec13375be7f76078032f3d74f1b971179325db9ba153",
+      "size": 1557,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-3x7h-5hfr-hvjm.json",
+      "sha256": "24edfd44cfb70caa03cbb0884afbbe119aa17e43af3fe0711b7ff83bcc78b53c",
+      "size": 3709,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-4hrp-m3f2-643j.json",
+      "sha256": "24e4a8edd9b7b33bd759db72d9fed34322bd9631bf8e0b0a44d1703902d594c4",
+      "size": 2016,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-56v8-86gj-66jp.json",
+      "sha256": "5e728eff5fba93be3025791451a328f37e4376ef4323f325807481660ddd38d7",
+      "size": 5987,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-5x89-75r7-8rjh.json",
+      "sha256": "fb9f2c075f0e1762218730b4f892b0f89bd974062c0d375e94ab5802db1412e2",
+      "size": 1656,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-6jq2-789q-fff2.json",
+      "sha256": "6cb3384c41501ce491bafbe5055fc7c632ba6b5359bb46847f3abad685e40905",
+      "size": 1883,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-77p9-w6pj-rmvg.json",
+      "sha256": "dcdd8a61620757a4e59d1031307ab996d9d26d1694c2190d47b7e9f19fbaf80b",
+      "size": 1966,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-7wwv-79xw-rvvg.json",
+      "sha256": "8867d2175fe46253826ead9e091a34ad0676390ec2a95d72826facdb3ab703a7",
+      "size": 12763,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-8j5r-9687-88w5.json",
+      "sha256": "abbee7afe465840613d84cf206d8189a1231e23b76f45ffa5f0495732253888b",
+      "size": 3760,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-9849-p7jc-9rmv.json",
+      "sha256": "80556fab453b82077da5fddf87d1f9489583cd4b3ba5a4eb0fa099fc26043c11",
+      "size": 2235,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-c26h-8h4p-4jgj.json",
+      "sha256": "c517bfa95ecbccb8365ed0dca56c77b0ca41cc5caa229a82fbc5dd2bcc57faf0",
+      "size": 1441,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-cmx4-p4v5-hmr5.json",
+      "sha256": "d26e32ccf783a8dd7e909d20a233799b4a16ff0501062ae2553398b109586180",
+      "size": 2757,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-f8vw-8vgh-22r9.json",
+      "sha256": "3621929b56a12530ad692e192b55b80c2a507160455f40adc571f6b3fabab18e",
+      "size": 2005,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-g29v-5pwh-wxx4.json",
+      "sha256": "bb84cd7b2fa54cf239b6d06ce7f028299653124579f4639b3bec776e32359d1d",
+      "size": 1686,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-gm67-h5wr-w3cv.json",
+      "sha256": "0ab7662bfdd6e79d94a81069be01823fca46f3ecf794f1cfc8085e9b64854c76",
+      "size": 1507,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-h86g-x8mm-78m5.json",
+      "sha256": "936f26252d2e0e2531d1fb3e3309f807581436fe4af3fd4d72a0b7dfeebd83a3",
+      "size": 3143,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-hx5g-8hq2-8x4w.json",
+      "sha256": "7a8f77c6bbe967dba57c2345e39d49d080d59f6352888e9b8ebb05c884f73747",
+      "size": 1871,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-jjjh-jjxp-wpff.json",
+      "sha256": "9ea5cb0bc72e738baea082b21df238e7777ee9c7cbf5523673c7170b4159bec3",
+      "size": 5896,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-m6x4-97wx-4q27.json",
+      "sha256": "90a9142afc5253c8765152ac7144ba680e219def7c75051a9726124e70c05a0c",
+      "size": 3439,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-mxf2-4r22-5hq9.json",
+      "sha256": "f3fe6db3583bd769637c7f364dc036b5179bbc4721c5739c5961d6922cff05cc",
+      "size": 2621,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-pj45-8vhc-mh2f.json",
+      "sha256": "0686086e7b6a0be014443fcd09c9193503cd1ef8f157f2eff636d644b3798d8d",
+      "size": 1941,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-q7c3-x7hm-qq72.json",
+      "sha256": "d02cada6fe75e018411af3721d52751cd9ef9a359618298cef316f8a4ba8cbf0",
+      "size": 2041,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-qwh6-xwj4-9cjg.json",
+      "sha256": "36b54297e5b9e7321622d62aaea07c188764e036a93cca4cfbf44f03b891ba72",
+      "size": 1552,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-rjch-j5x9-fgph.json",
+      "sha256": "83fe079dbea132ecd4ff3024d769a00a0eb32ef4b381aa8fff63c749154f74f2",
+      "size": 2018,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-v6xr-v2qg-h22h.json",
+      "sha256": "42e9abdeb9e8acc12553c4d734a90003615d84ed6fcd8cf61723527e3c64d2fb",
+      "size": 3721,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-vwqq-5vrc-xw9h.json",
+      "sha256": "4c86e0d78f228c31abb8887f5b8edf176fb61119f45100ba7b14d2751cc6e890",
+      "size": 10566,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-wh3p-fphp-9h2m.json",
+      "sha256": "1b4b6280e7ae35da1e95297fea2f913d8d3c2916dc9b82068ce67d563b36f311",
+      "size": 9190,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/GHSA-x7xf-253v-x3w8.json",
+      "sha256": "d65b8bcb25e79860fb299cf52705e7126aeef02616ea89fc51fb4d72524b7188",
+      "size": 3139,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/maven/index.json",
+      "sha256": "ebdce69c2f35ba36ea8cb692fd13da6678d2bc1521d84896e8d4d7dd07df7005",
+      "size": 16999,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/GHSA-2234-fmw7-43wr.json",
+      "sha256": "e44c7bf06da371e7ec5764fedac0573a6ae9b563fbfa4a200d7ef8fb2b849902",
+      "size": 2629,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2022-2007.json",
+      "sha256": "4e8699cdbe6eeaa917351097adec5134cac5d6e17b814ae6c49bbb0778d47317",
+      "size": 1654,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2023-544.json",
+      "sha256": "697e98b8eb7fff4589f14c141c20be7d34a52c77faa7dcf373908259e511490a",
+      "size": 2485,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2024-7746.json",
+      "sha256": "502f5506e0ac5cc88e7d8a1f0a8fb2e455df3ea881622c058618e36cb0b8a130",
+      "size": 1862,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-104409.json",
+      "sha256": "44363f8dcdaef9536b32bddbb8282231d0415bef9a61afca7ffaca4c4fe80b5c",
+      "size": 1656,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-110966.json",
+      "sha256": "88224b83c9762ea1c437581c5f75ea400037276c3da925f8f83dba9b7d29ed99",
+      "size": 1676,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-117523.json",
+      "sha256": "4c108a86876cc58bfb1e569a33bbccb41c832f925674ecf093f83e83d4d01408",
+      "size": 1652,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-12408.json",
+      "sha256": "2ac2ad3ca7d30090b5c90260a065deb82c728da96042040f1312c51799c07104",
+      "size": 709,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-130637.json",
+      "sha256": "4cfc034494baca5dbec54488fe801d115c3fce69b2a51ae00eaa7d5e3d00aa0c",
+      "size": 1676,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-137194.json",
+      "sha256": "7492dad04a5fc5c762d789c94d2732974b40a22d953b786649409283e61d4012",
+      "size": 1664,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-143750.json",
+      "sha256": "db18b4c4fafc3d51932cf381dd5766bcbf280be129597c80944319e24412bb17",
+      "size": 1676,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-150306.json",
+      "sha256": "42b0028498476b62731b803eb22335e14bea7416e9aa3f899413c92ef0ea9072",
+      "size": 1654,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-156868.json",
+      "sha256": "28905b3415b89c503be18ac7832784bb154b07a2124875e931cd6df5abe0ca58",
+      "size": 1632,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-163423.json",
+      "sha256": "8a1fb42296f87f86d096d7ab3643c62a64f46d66058a5ba4b57c2785e57c8cdf",
+      "size": 1648,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-169981.json",
+      "sha256": "38712b6bb660aa102f83020aaf5e6ed845b13d272a42832e5ea78fae498f6abc",
+      "size": 1676,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-176537.json",
+      "sha256": "3e3950442d028405cc044b66a030e417226850882cdece0f52d089a28fd19d53",
+      "size": 1652,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-183093.json",
+      "sha256": "cf8310d6fd03b7349e2bf57f399388592518ba2a695539420333cb5b7fbee81d",
+      "size": 1648,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-189650.json",
+      "sha256": "48893d200ed9f55173b0b005546e67f46ffbdd7c30ac3402e44a97a728397dc1",
+      "size": 1716,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-22974.json",
+      "sha256": "7ceb799b91573beafad47e922b68c967f223fac921aa8e15282b8973bb54adac",
+      "size": 687,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-29591.json",
+      "sha256": "143c46b1bc736d7c877dded3b56e454c84d9d6905bec06195094e1b014de0fd5",
+      "size": 767,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-36260.json",
+      "sha256": "c859d97cf2079a9ae3b564c0c820bc32a7a9d11d20abfe61be06af978b9eb23f",
+      "size": 722,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-43062.json",
+      "sha256": "e6ab2742964661fcb3ff7dfc83c80627fd8b9a6c6f6c0a3877e3e41219b2add3",
+      "size": 714,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-49795.json",
+      "sha256": "f87772949b380f473c1661c75a73597dc3bf57d06280595de3613996e15c9a03",
+      "size": 1749,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-56400.json",
+      "sha256": "9d4aa6a7fbb59dbfe70608d1e3cc8075245ac7ba4201079e3ed6396ecdde408c",
+      "size": 1634,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-62968.json",
+      "sha256": "df5648313d18b7074158f97eeddbfb43ec61dc8486c49445790aa65c31556c16",
+      "size": 1634,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-69713.json",
+      "sha256": "8f224c87b11057da9d072ed759256e701133d2193614b3656cb9057dd1a78740",
+      "size": 1674,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-76271.json",
+      "sha256": "47f002e8c0318e13fa1ff56a261d3ffedbb5c1e47366ff13801eea1336c4dd59",
+      "size": 1662,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-82828.json",
+      "sha256": "2604e88eee245d39a35e32d1a8b805fafdd15b85a50b08e6237e335aea0f5183",
+      "size": 1662,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-89386.json",
+      "sha256": "413ed55ffc0a61071c9dcd6e89776822d01b37ccac466b7b2a54402873d57526",
+      "size": 1706,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/MAL-2025-96001.json",
+      "sha256": "eccee76131718f743c34b34fcf0824acf89733a0059ef8236c605e6f363e0185",
+      "size": 1646,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/npm/index.json",
+      "sha256": "cbd532cd04d17205e88eafb29421799c6b7af1b30f63f44942934e8f990ea601",
+      "size": 6595,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-223g-8w3x-98wr.json",
+      "sha256": "04169e423b558f5c583735f2f1fd7b5df2e1156ab8047a70eac603b4dbde387a",
+      "size": 3298,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-33gv-rvgq-gpxp.json",
+      "sha256": "e6484999c79c2a3d2524dc6ad5a5a92aba8c9d4768c875038336a9302d62ef58",
+      "size": 2243,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-4c29-gfrp-g6x9.json",
+      "sha256": "ea42ecb5eee3b9b3301322599a22d1111de3cbfe6f740b13411b0b76c1477ac9",
+      "size": 4809,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-5j48-826p-2w9r.json",
+      "sha256": "4241dcbfd15acd02685f66d3e67fa467beef6f2e0ba24ffdec3410183bdb7968",
+      "size": 2204,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-6mw4-phmc-x477.json",
+      "sha256": "d600bece89d2f80e4fc84c268df2de0796b37664bd6e4aee3f06611e2fbc51cb",
+      "size": 2287,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-7q36-4xx7-xcxf.json",
+      "sha256": "6a228dfbde88d049710401bd7edcbbf2cf830e6101f72b4f9bb1e99dd8672862",
+      "size": 16740,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-8xc6-g8xw-h2c4.json",
+      "sha256": "e4f83578f2b2e8e9aad999d996fc542780a5cdde33c01808f74b1420945d5b75",
+      "size": 2991,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-c6w8-7mp3-34j9.json",
+      "sha256": "2072f03bed7e7755b20c0ceba631c102889c1c58da72e459d0a40b081de79dfc",
+      "size": 75260,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-frxg-hf44-q765.json",
+      "sha256": "2ad72711ff12fde71c82b421c2824faf87416b632af686631a68f49406055177",
+      "size": 2833,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-gv85-xg33-553c.json",
+      "sha256": "19cc957bac8ca769c50426dad297dd60f46f12ead1975be741c41afa8fe73eb8",
+      "size": 4121,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-hrf4-ww4w-6rv6.json",
+      "sha256": "dfa808f0fdee50f32af567973b4ec6fe5d5788d35de4aaa5bdab4979069f5f2b",
+      "size": 2147,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-m4mm-534h-5cp5.json",
+      "sha256": "2a5656481022de526a5072ba6cb0f7d2f93e41b1f3db8220daa7fd57a9bd0438",
+      "size": 1730,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-pgvc-6h2p-q4f6.json",
+      "sha256": "10e2f7c7a5ad5d29d9653d51a834a441e54ae6538aade6b611b45538af0c4716",
+      "size": 2929,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-qxmj-3c5h-546c.json",
+      "sha256": "75351ed67329ad5aef7e8be182791f513778ea866ea9a9f3e15b1d1e9fcae73e",
+      "size": 2093,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-vc29-vg52-6643.json",
+      "sha256": "5a416762c9f6f0e5dfa5450589b3513286b6b58d8ac5fb5b5ce6a123f8778750",
+      "size": 2869,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-w8mw-frc6-r7m8.json",
+      "sha256": "830f947bc8195ecad068f325bc0db61568b80a1e4675a44a4a042eb8b5ef7b2e",
+      "size": 33010,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/GHSA-xc6x-cq47-9chw.json",
+      "sha256": "f4f47a7d3c5a7411b9a248f4837f26497b3422fef31e15c45c8d03d2dceea4ed",
+      "size": 1579,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/MAL-2024-4015.json",
+      "sha256": "dcad7c9fae4a93bc92a7cd963ece5951b6e84c8bc60f366c34213080234b0556",
+      "size": 924,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/MAL-2024-4072.json",
+      "sha256": "6d37565bc2414aa1202109aa299e99d6ab629fed7d9a6fdc474b78a5dd8acd42",
+      "size": 1030,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/MAL-2024-4129.json",
+      "sha256": "c0d381daf1ea2e331296acfb9f64c3dbcfdd183d7c935c9c225a80b990d835bf",
+      "size": 1082,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/MAL-2024-4186.json",
+      "sha256": "1e13899dd2d18b814ed0e6e038d1349fa6400b7d9ad106863c121957ea1af5d4",
+      "size": 1124,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/MAL-2024-4243.json",
+      "sha256": "f055bb77a3fb5b900a77380c533017816faeefa33574f88ac0c75a8c67d8374b",
+      "size": 1026,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/MAL-2024-4300.json",
+      "sha256": "cb3957ced31985f451750d4e1788b4face50fa1099aa5bca97c77feb834aa9c5",
+      "size": 1096,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/MAL-2024-4357.json",
+      "sha256": "6aeb3de908a3cb87c517a68698cf29f8dffb7440a36a1c8412f152716d152354",
+      "size": 962,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/MAL-2024-4414.json",
+      "sha256": "39392043a17e39f0457afff5d5a73cd9435ba2ffa05aa5dddabbc69fa66b77eb",
+      "size": 1076,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/MAL-2024-4471.json",
+      "sha256": "34f2f215004d11665431792e86a17ca1b04a5a733074f182d9d70c5c9b843097",
+      "size": 1322,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/MAL-2024-4528.json",
+      "sha256": "2846f023564fe6a8e7114dc87f0d9a37a6087268ed61ef31aa391c8e6ec0cd3a",
+      "size": 940,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/MAL-2024-4585.json",
+      "sha256": "0375e9224fead9e95efe350422dfa5e667aa1caa617f427a6469a5700eee4611",
+      "size": 1312,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/MAL-2024-4642.json",
+      "sha256": "f8f8f6aa92c9d73b583e991c66043fbf21fe8ccbd2f11d7dbd5a6b2a42d2e7dd",
+      "size": 976,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/MAL-2024-4699.json",
+      "sha256": "a2f60d8531db08c897938f87e44e1f268077e708fb299515ec6bd60cfab1b48e",
+      "size": 1040,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/nuget/index.json",
+      "sha256": "9e6f6efed8fcc73238f3eb027a57894de58472690c7a7aa8cb6b2d2d8061191c",
+      "size": 72827,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/GHSA-227r-w5j2-6243.json",
+      "sha256": "5b23e260ed003e9b4f4d670654a46d211beeb66133781a787ffc120b5f6291f5",
+      "size": 3167,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/GHSA-4q2w-rw7m-xqw6.json",
+      "sha256": "75dc271a1ed572ccdda1bc562237d8881529a16a9b4effdfcd92b71ff73a7dca",
+      "size": 1673,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/GHSA-772j-xvf9-qpf5.json",
+      "sha256": "c02d0f5bbf693e4094db87059c3b0f90062336e432b9ef8952b17380c7da73ce",
+      "size": 2058,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/GHSA-9p9m-jm8w-94p2.json",
+      "sha256": "e4d0d42819bebe74a50d24d1be0d57a956c8b72f75b48f9df8e51440623811ca",
+      "size": 2817,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/GHSA-g5j6-r3x9-gf2m.json",
+      "sha256": "9c4a691d3d3b2eba19dedb9b15f45257143426cca00686f1110cd3d39757985e",
+      "size": 1356,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/GHSA-jpr7-8rxm-4vgx.json",
+      "sha256": "53bfa1302d41d60ac7fa1b1475db8ff220cebc8d8208a26d60c44babcc7d3c8f",
+      "size": 4990,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/GHSA-q9pw-vmhh-384g.json",
+      "sha256": "fba213d94416259cc7caff23149446ebe91e62d5fca61ad17e89a2a6d82c4c2a",
+      "size": 9366,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/GHSA-vwhq-49r4-gj9v.json",
+      "sha256": "0d3671175272b351000fbaa3914e16e3e70c3b28a6084e6e726e09a100b02b83",
+      "size": 6916,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2023-1647.json",
+      "sha256": "0de62b6bfd356e70252093ffbd299d0d48de91087994b4b2a84edc61510309cc",
+      "size": 1404,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2023-2297.json",
+      "sha256": "8305a2842771d0575545fddded76d64a68f833a3021e1b81214e8d701b5618fb",
+      "size": 1396,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2023-2949.json",
+      "sha256": "4ec0f56818e53edb92ee7b23ae82f5a839132b9cce295ad5c4c31475ad073807",
+      "size": 1552,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2023-3599.json",
+      "sha256": "4cb98089e04546de263f99f7af824896a8fb3a60248367f8b5e30af772cf2450",
+      "size": 1536,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2023-4249.json",
+      "sha256": "2d29e1c1380952a8acf42abeb0318ea3ea17e961f0afd6945f75ac4a64c78986",
+      "size": 1540,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2023-4899.json",
+      "sha256": "f677a018b096a3c7056508a82b3ba434547003888030fc919f90de67f04b8cb9",
+      "size": 1540,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2023-5549.json",
+      "sha256": "0c038d959a74ff16d33a6ce81c0974422379df14721eb4cb70505ad38f07caa3",
+      "size": 1544,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2023-6199.json",
+      "sha256": "849374bad58590fe4c6fc2188cbf8d46d176d2b6a253086730383e850364facd",
+      "size": 1540,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2023-6849.json",
+      "sha256": "cc66aa53542b4cd5ef8e2a89488bc7db1ab6549e38f711b947f235f342ad3089",
+      "size": 1528,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2023-7499.json",
+      "sha256": "425cb982a233074f8dc5be11e6987cf3915c713735cf8b6237845e86d68566b0",
+      "size": 1532,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2024-10178.json",
+      "sha256": "32ead7ed5c7e49448351072d4bdd7d42e5cd81a07f51b80b680c4f7c454c2ce9",
+      "size": 1630,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2024-4721.json",
+      "sha256": "48db6ded29b64c7949edab00b59c88a4aa5122e8b09355d52b0313006a0f359b",
+      "size": 1073,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2024-5371.json",
+      "sha256": "006d40a1d67cd92c708e47c8eaa72221afa7bdb6718355fe98d7bbf8472c944f",
+      "size": 1526,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2024-6021.json",
+      "sha256": "5091c4e869d9e3481bdf15884e295c08ff90e6251dc8e0243c03df9684782b38",
+      "size": 1429,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2025-191900.json",
+      "sha256": "b64926206143b733e1f0ac525f883f133aaa586836a6ac73182d890bbb221542",
+      "size": 3765,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2025-47749.json",
+      "sha256": "fc31725b2d8f812d530d42be890ecaa06ddc2c0f51331534e40ada140531f721",
+      "size": 3348,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/MAL-2026-2146.json",
+      "sha256": "ac4056942a2eccdc5bb22a009109b051a9c7fd3ac1a68d9e0fa6ebe45773bece",
+      "size": 1955,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/PYSEC-2010-27.json",
+      "sha256": "eb8d6b95886e0f70a0c55d0a363e8e37662f65b1527564fa5eb2fc074d5847e0",
+      "size": 2131,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/PYSEC-2019-122.json",
+      "sha256": "7c98f62545b7dc9e1ac250422ab5a351aad481eaf75401d3595f13072a36716c",
+      "size": 930,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/PYSEC-2021-188.json",
+      "sha256": "695a6a901b413683a518e4d1372eacb78a0cd5c16915acef634554ebfac15b2f",
+      "size": 2638,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/PYSEC-2021-774.json",
+      "sha256": "7ad4c5f64323f2f8d0b5792c80e90523341f1d04d38a6be7fbf02aea9ff555d0",
+      "size": 2148,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/PYSEC-2022-93.json",
+      "sha256": "366a913f658484adbbe568c92baa44c6737c83434c1030709414fdea061713d1",
+      "size": 1821,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/pypi/index.json",
+      "sha256": "c8a14ee876424c76547e7d220353ae60ea16229c45a67a6bc16511a41c85912a",
+      "size": 11554,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/GHSA-228f-g3h7-3fj3.json",
+      "sha256": "9d61a7785ac87210b34785f267d7d82b5a70b0430f4ace59573a86c6319e6c53",
+      "size": 2219,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/GHSA-3892-2r52-p65m.json",
+      "sha256": "f7f6655294829fc491061d80c6f36ab479932dea71b82c09d2b9b7184db5fc0c",
+      "size": 1607,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/GHSA-4q53-fqhc-cr46.json",
+      "sha256": "856d060a75e0e8c5ef343d1aba3d8a165937f07e3303d2ef160f8af73112922a",
+      "size": 2916,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/GHSA-5xmj-wm96-fmw8.json",
+      "sha256": "6905a0db73ba5af4096b60d90fb57b5ad011b5650fa89590b8ac2a0f6e83df90",
+      "size": 4142,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/GHSA-75j2-9gmc-m855.json",
+      "sha256": "780ddcd806e259c04c6589c3042818fb6d41cdf91a0479b180e3bdba50bbe8f2",
+      "size": 2966,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/GHSA-8877-prq4-9xfw.json",
+      "sha256": "66bc74d1a86c13491452879266212f709f85a9489d1f9114ad0de7f15c479135",
+      "size": 3072,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/GHSA-9hx9-w2j6-rw76.json",
+      "sha256": "b20d3ee76f7d23fe09b111d36514ff5017a2036b42c535c1a6756e907765383c",
+      "size": 1360,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/GHSA-cp65-5m9r-vc2c.json",
+      "sha256": "5e8facacdff33cefa47adb7faa61fb018e11c438e8a9c0d969a3dffb2a85a94b",
+      "size": 4893,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/GHSA-g2pf-xv49-m2h5.json",
+      "sha256": "aef636af789b8457d03dcad8128aa17a9cd9323b4b757dcffa1ff37735e3033c",
+      "size": 4998,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/GHSA-hg78-4f6x-99wq.json",
+      "sha256": "9cbfc5521e36da7c117521ba11856cd10e7873a6e86175e9401f4b622c8bdaae",
+      "size": 1620,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/GHSA-jphg-qwrw-7w9g.json",
+      "sha256": "2b6001a1397551a6399dece712f7ca95d05ecaa67e46a21efeda3765353746bb",
+      "size": 4542,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/GHSA-p463-639r-q9g9.json",
+      "sha256": "2fba20dcc7b917edbe1c9bd5780e742a8a2aeddd2362e3dbe11e35160fd04e71",
+      "size": 2017,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/GHSA-q86f-fmqf-qrf6.json",
+      "sha256": "39b914eff31d163fb572f369d68c46d4a1e0d83b3271d545cb104794993855eb",
+      "size": 2361,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/GHSA-rc42-jghf-vr8f.json",
+      "sha256": "9c35ef0c2fda4035eab133c7a9f625fb16d9f27f2356f707a2e480491443cd86",
+      "size": 1638,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/GHSA-vpqv-mqvc-pcx2.json",
+      "sha256": "0e362d4e08d03bc8fe54329cd4d85a1b0455d6a074b69b2720db8a5eb9f59d3f",
+      "size": 1841,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/GHSA-ww4x-rwq6-qpgf.json",
+      "sha256": "6e11b63061f6363a1ec9a8f35a584986f9cd1472476b1cbe64ca07a510eda254",
+      "size": 3058,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/MAL-2023-1436.json",
+      "sha256": "5df3a2440622f663865bf5bc81720827902c71a2fa24a92231d21e6a823a45a2",
+      "size": 1378,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/MAL-2024-6324.json",
+      "sha256": "78ceccbe5d4113b86793abd858d6a39fcf519bed6f10931c85e93b5f73236906",
+      "size": 1208,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/MAL-2024-6391.json",
+      "sha256": "7b686bda0d8fd790b5ee64fd9620f64af142434a945f6b66c28f550e5389aa0f",
+      "size": 1293,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/MAL-2024-6458.json",
+      "sha256": "d38e24411a19d887e6a1cb4528877bdfbef53a2c8fe0cf3d55a200251e083401",
+      "size": 1255,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/MAL-2024-6525.json",
+      "sha256": "2ccdfd2c8b7e60d60a0295d868bd701fd74c1da85ad8d81391836e9df272df81",
+      "size": 1261,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/MAL-2024-6592.json",
+      "sha256": "175fa3a587082f1cd35d01e3036cade56708d3ba1e0e3da13d908f239c45f5ec",
+      "size": 1246,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/MAL-2024-6659.json",
+      "sha256": "88cadecd99544bbfd03bb5d17538ebf1dc225653a51115f207ff02a6dc6bcbe0",
+      "size": 1237,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/MAL-2024-6726.json",
+      "sha256": "804c34bd92a9e0dff21a4499eafe37d612c5127e8e59417b553ca808dadb7ab1",
+      "size": 1207,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/MAL-2024-6793.json",
+      "sha256": "34e1bc88d5d0471ad355ef766b1dc805818fafec90ce54edbd015f9c6b54a7f0",
+      "size": 1217,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/MAL-2024-6860.json",
+      "sha256": "f1028643eb85f78924ed1bdd477a72dc2505f0495ef0f094dc2fbdb7fd1f8292",
+      "size": 1265,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/MAL-2024-6927.json",
+      "sha256": "daaf4e79e343a035d2def4888743aed5cdb15c7aa0d477771627578b1a8a83fc",
+      "size": 1241,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/MAL-2024-6994.json",
+      "sha256": "ee086a7ae92cf2b8a4ea41612b2ca758722c6eb22851577a4e1b0f96838c2219",
+      "size": 1233,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/MAL-2025-192901.json",
+      "sha256": "ddfb5dba9af34f1e23b376633e469a954b9e0603a1c48bd21f6c41e5d69e5e53",
+      "size": 906,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/MAL-2025-46927.json",
+      "sha256": "abc07e4c0ea0944c4d92d926ecc5bf9d9f60501d66d2c56f0ea4457871e5d11d",
+      "size": 1410,
+      "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/osv/rubygems/index.json",
+      "sha256": "03114f781e66bc1751f4740bf1761f6d671833dbd43777865b7d9578680b521d",
+      "size": 8607,
+      "action": "unchanged"
+    },
+    {
       "path": "vulnerabilities/supply-chain/dependency-confusion/patterns.json",
       "sha256": "2407aa64da2fe8c33fe6e9d0f1f878dcc51cbc44c4cac5a375b69c3747bde3a8",
       "size": 4696,
@@ -1934,8 +3242,8 @@
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/crates.json",
-      "sha256": "7c613406298b352c0529964071d83083f398bf512f3c9f5f6c0efb4396786373",
-      "size": 5390,
+      "sha256": "8998e0a466e733a5e18c18276ad94132febdb87920a10b53ddd02e13c2b6aa8f",
+      "size": 9264,
       "action": "unchanged"
     },
     {
@@ -1952,38 +3260,38 @@
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/go.json",
-      "sha256": "c0e0855c524e3f7e7ea81b03ecf1ecc4883b4a06d6eb66263f07d4c1cd8d2077",
-      "size": 6542,
+      "sha256": "d68d9f77e48c6e829c39118ef9d71b416b138f333d0be1b5655661148ebc6316",
+      "size": 16079,
       "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/maven.json",
-      "sha256": "e33289e1d8569775dea428ce5834931b786e19b045c8e51752058f56197ddd20",
-      "size": 6055,
+      "sha256": "369fc54f41ec040bbaede12eb675a2886239f1f845524cc2221dc54e756bba12",
+      "size": 7609,
       "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/npm.json",
-      "sha256": "7fb5bc27a9e202a8938622b22df883d94d6b4e563c27de4ec4126a3d8428acae",
-      "size": 21729,
+      "sha256": "52fbb1f25eccbb72974c827a3e67cab3e26cf517da66f044a7f8747c20d4f0aa",
+      "size": 284085,
       "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/nuget.json",
-      "sha256": "e8cc155223c62549fcb9118febaec7c745243767471b2c2640972960d23923d8",
-      "size": 5464,
+      "sha256": "305da733ed0707d818e9a6abfd660e3bc414f433825530230f5fb25539c657e3",
+      "size": 368216,
       "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/pypi.json",
-      "sha256": "9e97cf4d34bc865acda8756f52b76524202d96505f0bd35dc24699a75181ab0b",
-      "size": 18882,
+      "sha256": "c39b3d6154bd80d145d47f73cd55b064013b9fb088ca65df08cb04cff249b433",
+      "size": 154107,
       "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/rubygems.json",
-      "sha256": "c850aef348573cbb25a33cfca64810d20f24fb1ce0ce60e4390a4ff5c14eac80",
-      "size": 6084,
+      "sha256": "db2374d9b984dff9ff8417412738108ace431fe9eace586689e6653c18e23eaa",
+      "size": 159374,
       "action": "unchanged"
     },
     {
@@ -2024,8 +3332,8 @@
     },
     {
       "path": "vulnerabilities/supply-chain/typosquat-db/known_typosquats.json",
-      "sha256": "a02045115fa0d5d40fdd36c88d97a419710c167ed003935a221a6389033e61f5",
-      "size": 22290,
+      "sha256": "0302d49ced100132b49a0c010d558505daf6a6aa89a15f65b1b416637ed798c4",
+      "size": 109272,
       "action": "unchanged"
     }
   ]
