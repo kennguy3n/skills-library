@@ -58,18 +58,23 @@ func toolDefinitions() []map[string]interface{} {
 		},
 		{
 			"name":        "scan_secrets",
-			"description": "Scan text or a local file for secrets and DLP patterns using the Skills Library secret-detection rules. Pass `text` for inline content or `file_path` for an absolute path on the host running the MCP server. Returns structured matches with severity, location, and whether the match is a known false positive.",
+			"description": "Scan text or a local file for secrets and DLP patterns using the Skills Library secret-detection rules. Pass `text` for inline content or `file_path` for an absolute path on the host running the MCP server. When --allowed-roots is configured at startup, `file_path` must resolve to a location under one of those roots; sensitive system directories (~/.ssh, ~/.aws, ~/.gnupg, /etc/shadow, ...) are always denied. Pass `format`=\"sarif\" to receive a SARIF 2.1.0 log instead of the rich JSON shape. Returns structured matches with severity, location, score, entropy, and whether the match is a known false positive.",
 			"inputSchema": map[string]interface{}{
 				"type": "object",
 				"properties": map[string]interface{}{
 					"text":      map[string]string{"type": "string", "description": "Inline text to scan. Mutually exclusive with file_path."},
-					"file_path": map[string]string{"type": "string", "description": "Absolute path to a local file to scan. Files larger than 10 MiB are rejected."},
+					"file_path": map[string]string{"type": "string", "description": "Absolute path to a local file to scan. Files larger than 10 MiB are rejected. Subject to --allowed-roots and the sensitive-directory deny-list."},
+					"format": map[string]interface{}{
+						"type":        "string",
+						"description": "Output format. Empty (or \"json\") returns the native MCP shape; \"sarif\" returns a SARIF 2.1.0 log for CI consumption.",
+						"enum":        []string{"", "json", "sarif"},
+					},
 				},
 			},
 		},
 		{
 			"name":        "check_dependency",
-			"description": "Check a package name (and optional version) against the malicious-packages database for one ecosystem. Returns malicious matches, typosquat matches, and any CVE patterns that mention the package. Use this when an LLM is about to import or install a new dependency.",
+			"description": "Check a package name (and optional version) against the malicious-packages database for one ecosystem. Returns malicious matches, typosquat matches, and any CVE patterns that mention the package. Version matching is semver-aware: ranges like \"all\", \"*\", \"pre-X.Y.Z\", \">=X.Y.Z\", \"<X.Y.Z\", and inclusive \"X.Y.Z - A.B.C\" are evaluated against the supplied version. Pass `format`=\"sarif\" to receive a SARIF 2.1.0 log instead of the rich JSON shape. Use this when an LLM is about to import or install a new dependency.",
 			"inputSchema": map[string]interface{}{
 				"type": "object",
 				"properties": map[string]interface{}{
@@ -79,6 +84,11 @@ func toolDefinitions() []map[string]interface{} {
 						"type":        "string",
 						"description": "Package ecosystem.",
 						"enum":        []string{"npm", "pypi", "crates", "go", "rubygems", "maven", "nuget", "github-actions", "docker"},
+					},
+					"format": map[string]interface{}{
+						"type":        "string",
+						"description": "Output format. Empty (or \"json\") returns the native MCP shape; \"sarif\" returns a SARIF 2.1.0 log for CI consumption.",
+						"enum":        []string{"", "json", "sarif"},
 					},
 				},
 				"required": []string{"package", "ecosystem"},

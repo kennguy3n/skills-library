@@ -7,10 +7,12 @@ package tools
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -67,6 +69,14 @@ type Library struct {
 	vulnsMu    sync.Mutex
 	vulnCache  map[string]*vulnFile
 	typosquats *typosquatFile
+
+	// allowedRoots, when non-nil and non-empty, restricts ScanSecrets
+	// file_path inputs to paths under one of these absolute,
+	// symlink-resolved directories. A nil/empty slice preserves the
+	// pre-existing "any path on the host" behaviour for backwards
+	// compatibility. Sensitive system directories (~/.ssh, ~/.aws,
+	// ~/.gnupg, /etc/shadow, ...) are denied regardless.
+	allowedRoots []string
 }
 
 // NewLibrary returns a Library rooted at root. It does not eagerly load
@@ -89,6 +99,86 @@ func NewLibrary(root string) (*Library, error) {
 // Root returns the absolute path of the library checkout this Library
 // is reading from.
 func (l *Library) Root() string { return l.root }
+
+// SetAllowedRoots scopes ScanSecrets file_path inputs to the given
+// directories. Each entry is canonicalised in TWO forms — the
+// filepath.Abs form (unresolved) and the EvalSymlinks form (resolved)
+// — and both are appended to the allow-list. Empty entries are
+// skipped. A directory that does not exist is rejected so
+// misconfiguration fails loudly at startup rather than silently
+// allowing every path through.
+//
+// The two-form storage is load-bearing. validateScanPath requires
+// BOTH the raw abs path and its symlink-resolved counterpart to each
+// be under SOME stored root (an AND, not OR — see the comment there).
+// On platforms where the configured root itself goes through a
+// symlink — most notably macOS, where /tmp is a symlink to
+// /private/tmp — storing only the resolved form means the raw abs
+// can never match: a user who passes `--allowed-roots=/tmp/mydir`
+// would then have every legitimate scan of `/tmp/mydir/<file>`
+// rejected because `abs=/tmp/mydir/<file>` is not under
+// `/private/tmp/mydir`. Storing both forms preserves the AND
+// security property (a symlink inside an allowed root that redirects
+// outside still fails because the resolved target won't be under
+// either form) while keeping the configured directory usable.
+//
+// Passing an empty (or nil) slice removes the restriction. Calling
+// this method is optional; when never invoked, ScanSecrets retains
+// its prior behaviour of accepting any absolute path the caller can
+// stat.
+func (l *Library) SetAllowedRoots(roots []string) error {
+	if len(roots) == 0 {
+		l.allowedRoots = nil
+		return nil
+	}
+	resolved := make([]string, 0, len(roots)*2)
+	seen := make(map[string]struct{}, len(roots)*2)
+	add := func(p string) {
+		if _, dup := seen[p]; dup {
+			return
+		}
+		seen[p] = struct{}{}
+		resolved = append(resolved, p)
+	}
+	for _, r := range roots {
+		r = strings.TrimSpace(r)
+		if r == "" {
+			continue
+		}
+		abs, err := filepath.Abs(r)
+		if err != nil {
+			return fmt.Errorf("allowed root %q: %w", r, err)
+		}
+		eval, err := filepath.EvalSymlinks(abs)
+		if err != nil {
+			return fmt.Errorf("allowed root %q: %w", r, err)
+		}
+		add(abs)
+		if eval != abs {
+			add(eval)
+		}
+	}
+	// A non-empty input whose entries all trim to "" or all fail to
+	// resolve must NOT silently disable the policy — that would turn
+	// an obvious misconfiguration (e.g. --allowed-roots=" ") into an
+	// open-everything posture. Fail loudly instead.
+	if len(resolved) == 0 {
+		return fmt.Errorf("allowed roots: none of the supplied entries resolved to a valid directory (input=%q)", roots)
+	}
+	l.allowedRoots = resolved
+	return nil
+}
+
+// AllowedRoots returns the canonicalised allow-list configured via
+// SetAllowedRoots. It returns nil when no restriction is in effect.
+func (l *Library) AllowedRoots() []string {
+	if len(l.allowedRoots) == 0 {
+		return nil
+	}
+	out := make([]string, len(l.allowedRoots))
+	copy(out, l.allowedRoots)
+	return out
+}
 
 func (l *Library) loadSkills() ([]*skill.Skill, error) {
 	l.once.Do(func() {
@@ -170,7 +260,7 @@ func (l *Library) LookupVulnerability(pkg, ecosystem, version string) (*LookupVu
 				continue
 			}
 			if version != "" && len(ent.VersionsAffected) > 0 {
-				if !containsString(ent.VersionsAffected, version) {
+				if !versionInAnyRange(version, ent.VersionsAffected) {
 					continue
 				}
 			}
@@ -235,14 +325,25 @@ func (l *Library) loadTyposquats() (*typosquatFile, error) {
 	return &tf, nil
 }
 
-// Pattern is one secret-detection regex paired with metadata used at
-// match time.
+// Pattern is one secret-detection regex paired with the runtime
+// metadata declared in dlp_patterns.json.
+//
+// The pattern fields mirror the on-disk schema so CheckSecretPattern
+// can apply entropy gating, hotword proximity scoring, and denylist
+// filtering at match time rather than relying on the raw regex alone.
 type Pattern struct {
-	Name     string `json:"name"`
-	Regex    string `json:"regex"`
-	Prefix   string `json:"prefix,omitempty"`
-	Severity string `json:"severity"`
-	compiled *regexp.Regexp
+	Name               string   `json:"name"`
+	Regex              string   `json:"regex"`
+	Prefix             string   `json:"prefix,omitempty"`
+	Severity           string   `json:"severity"`
+	ScoreWeight        float64  `json:"score_weight,omitempty"`
+	DenylistSubstrings []string `json:"denylist_substrings,omitempty"`
+	Hotwords           []string `json:"hotwords,omitempty"`
+	HotwordWindow      int      `json:"hotword_window,omitempty"`
+	HotwordBoost       float64  `json:"hotword_boost,omitempty"`
+	RequireHotword     bool     `json:"require_hotword,omitempty"`
+	EntropyMin         float64  `json:"entropy_min,omitempty"`
+	compiled           *regexp.Regexp
 }
 
 // Exclusion is one entry from dlp_exclusions.json.
@@ -259,13 +360,23 @@ type secretRules struct {
 }
 
 // SecretMatch is one match returned by CheckSecretPattern.
+//
+// Score combines the pattern's base score_weight with any
+// hotword_boost applied when a contextual hotword was found within
+// hotword_window characters of the match. Entropy is the Shannon
+// entropy of Match itself (bits/byte), retained on the result so the
+// caller can apply its own threshold if it wants something stricter
+// than the pattern's entropy_min.
 type SecretMatch struct {
-	Name               string `json:"name"`
-	Severity           string `json:"severity"`
-	Match              string `json:"match"`
-	Start              int    `json:"start"`
-	End                int    `json:"end"`
-	KnownFalsePositive bool   `json:"known_false_positive"`
+	Name               string  `json:"name"`
+	Severity           string  `json:"severity"`
+	Match              string  `json:"match"`
+	Start              int     `json:"start"`
+	End                int     `json:"end"`
+	KnownFalsePositive bool    `json:"known_false_positive"`
+	Score              float64 `json:"score"`
+	Entropy            float64 `json:"entropy"`
+	HotwordHit         bool    `json:"hotword_hit"`
 }
 
 // CheckSecretPatternResult is what the MCP tool returns.
@@ -276,6 +387,25 @@ type CheckSecretPatternResult struct {
 // CheckSecretPattern scans text against the secret-detection regex rules
 // and returns the matches, flagging any match present in
 // dlp_exclusions.json as a known false positive.
+//
+// In addition to the regex match, each candidate is evaluated against
+// the pattern's runtime metadata before it is returned:
+//
+//   - denylist_substrings: a case-insensitive substring of the
+//     denylist drops the candidate (e.g. "EXAMPLE" inside a doc-style
+//     AWS key).
+//   - entropy_min: the Shannon entropy of the matched substring must
+//     meet the threshold. A pattern with no entropy_min skips this
+//     check.
+//   - hotwords / hotword_window / hotword_boost / require_hotword:
+//     when hotwords are defined, the surrounding [-window, +window]
+//     characters around the match are scanned for any hotword. If
+//     require_hotword is true and none are present, the candidate is
+//     dropped; otherwise the hotword_boost is added to the score.
+//
+// The returned SecretMatch carries the final Score (score_weight plus
+// any hotword boost) and the computed Entropy so callers can apply
+// their own gating on top.
 func (l *Library) CheckSecretPattern(text string) (*CheckSecretPatternResult, error) {
 	rules, err := l.loadSecretRules()
 	if err != nil {
@@ -291,6 +421,21 @@ func (l *Library) CheckSecretPattern(text string) (*CheckSecretPatternResult, er
 		}
 		for _, idx := range p.compiled.FindAllStringIndex(text, -1) {
 			m := text[idx[0]:idx[1]]
+			if containsAnyFold(m, p.DenylistSubstrings) {
+				continue
+			}
+			entropy := shannonEntropy(m)
+			if p.EntropyMin > 0 && entropy < p.EntropyMin {
+				continue
+			}
+			hotwordHit := hasHotwordNear(text, idx[0], idx[1], p.Hotwords, p.HotwordWindow)
+			if p.RequireHotword && len(p.Hotwords) > 0 && !hotwordHit {
+				continue
+			}
+			score := p.ScoreWeight
+			if hotwordHit {
+				score += p.HotwordBoost
+			}
 			out.Matches = append(out.Matches, SecretMatch{
 				Name:               p.Name,
 				Severity:           p.Severity,
@@ -298,10 +443,102 @@ func (l *Library) CheckSecretPattern(text string) (*CheckSecretPatternResult, er
 				Start:              idx[0],
 				End:                idx[1],
 				KnownFalsePositive: isKnownFalsePositive(rules.Exclusions, p.Name, m),
+				Score:              score,
+				Entropy:            entropy,
+				HotwordHit:         hotwordHit,
 			})
 		}
 	}
 	return out, nil
+}
+
+// shannonEntropy returns the byte-level Shannon entropy of s in bits.
+// An empty string scores 0. The result is bounded above by 8 because
+// the alphabet is one byte wide; secrets dominated by base64-style
+// charsets typically score in the 4–6 range, while English prose and
+// repeated characters sit below ~4. The entropy_min thresholds in
+// dlp_patterns.json are calibrated against this scale.
+func shannonEntropy(s string) float64 {
+	if s == "" {
+		return 0
+	}
+	var counts [256]int
+	for i := 0; i < len(s); i++ {
+		counts[s[i]]++
+	}
+	n := float64(len(s))
+	e := 0.0
+	for _, c := range counts {
+		if c == 0 {
+			continue
+		}
+		p := float64(c) / n
+		e -= p * math.Log2(p)
+	}
+	return e
+}
+
+// hasHotwordNear scans the text immediately surrounding a match for
+// any of the given hotwords. The window is applied on both sides of
+// the match. When window is non-positive the check degrades to
+// "hotword anywhere in the text" — useful when the caller has already
+// scoped the text to a small fragment. An empty hotwords slice
+// always returns false.
+//
+// The search slice is text[start-window : end+window], so it includes
+// the matched bytes themselves. This is intentional: many DLP patterns
+// (e.g. "Generic API Key") match assignment forms like `api_key=...`
+// where the hotword is embedded in the match. Stripping the match out
+// would force every such pattern to repeat the hotword as a separate
+// regex alternation, which is both error-prone and worse at scoring
+// the surrounding context. Tests pin this behaviour
+// (TestCheckSecretPatternHotwordScoring).
+func hasHotwordNear(text string, start, end int, hotwords []string, window int) bool {
+	if len(hotwords) == 0 || text == "" {
+		return false
+	}
+	lo, hi := 0, len(text)
+	if window > 0 {
+		lo = start - window
+		if lo < 0 {
+			lo = 0
+		}
+		hi = end + window
+		if hi > len(text) {
+			hi = len(text)
+		}
+	}
+	slice := strings.ToLower(text[lo:hi])
+	for _, h := range hotwords {
+		h = strings.ToLower(strings.TrimSpace(h))
+		if h == "" {
+			continue
+		}
+		if strings.Contains(slice, h) {
+			return true
+		}
+	}
+	return false
+}
+
+// containsAnyFold reports whether s contains any of the substrings in
+// list using a case-insensitive comparison. An empty list always
+// returns false so a pattern without a denylist accepts every match.
+func containsAnyFold(s string, list []string) bool {
+	if len(list) == 0 {
+		return false
+	}
+	lower := strings.ToLower(s)
+	for _, w := range list {
+		w = strings.TrimSpace(w)
+		if w == "" {
+			continue
+		}
+		if strings.Contains(lower, strings.ToLower(w)) {
+			return true
+		}
+	}
+	return false
 }
 
 func isKnownFalsePositive(exclusions []Exclusion, ruleName, match string) bool {
@@ -458,11 +695,164 @@ func (l *Library) SearchSkills(query string) (*SearchSkillsResult, error) {
 	return out, nil
 }
 
-func containsString(haystack []string, needle string) bool {
-	for _, s := range haystack {
-		if s == needle {
+// versionInAnyRange reports whether the concrete `version` is
+// affected by at least one of the declared ranges. See
+// versionMatches for the supported range syntax. The function never
+// errors: an unparseable range simply does not match.
+func versionInAnyRange(version string, affected []string) bool {
+	for _, a := range affected {
+		if versionMatches(a, version) {
 			return true
 		}
 	}
 	return false
+}
+
+// versionMatches reports whether `version` falls within the range
+// expressed by `affected`. The on-disk versions_affected schema is
+// loose, so we accept several practical forms:
+//
+//   - "all" / "*"            → wildcard, every concrete version matches
+//   - "pre-X.Y.Z" / "pre-X"  → matches any version strictly less than X.Y.Z
+//   - ">= X.Y.Z", "> X.Y.Z"  → standard semver lower bounds
+//   - "<= X.Y.Z", "< X.Y.Z"  → standard semver upper bounds
+//   - "X.Y.Z - A.B.C"        → inclusive range, low ≤ version ≤ high
+//   - exact "X.Y.Z"          → equality (case-insensitive fallback)
+//
+// Any input that does not match one of the structured forms falls
+// back to case-insensitive string equality, preserving the prior
+// exact-string-match behaviour for entries the parser does not
+// recognise.
+func versionMatches(affected, version string) bool {
+	a := strings.TrimSpace(affected)
+	v := strings.TrimSpace(version)
+	if a == "" || v == "" {
+		return strings.EqualFold(a, v)
+	}
+	switch strings.ToLower(a) {
+	case "all", "*", "any", "various", "multiple":
+		// All of these tokens appear in the on-disk malicious-packages
+		// data (mostly docker/maven/nuget incidents whose exact tags
+		// can't be enumerated, plus "any" on left-pad's catch-all
+		// entry) and are intended as wildcards. Treat them identically
+		// so a check_dependency call with a concrete version still
+		// surfaces the malicious-package hit instead of silently
+		// missing it.
+		return true
+	}
+	lower := strings.ToLower(a)
+	if strings.HasPrefix(lower, "pre-") {
+		c, ok := compareSemverOK(v, strings.TrimSpace(a[4:]))
+		return ok && c < 0
+	}
+	switch {
+	case strings.HasPrefix(a, ">="):
+		c, ok := compareSemverOK(v, strings.TrimSpace(a[2:]))
+		return ok && c >= 0
+	case strings.HasPrefix(a, "<="):
+		c, ok := compareSemverOK(v, strings.TrimSpace(a[2:]))
+		return ok && c <= 0
+	case strings.HasPrefix(a, ">"):
+		c, ok := compareSemverOK(v, strings.TrimSpace(a[1:]))
+		return ok && c > 0
+	case strings.HasPrefix(a, "<"):
+		c, ok := compareSemverOK(v, strings.TrimSpace(a[1:]))
+		return ok && c < 0
+	}
+	if i := strings.Index(a, " - "); i > 0 {
+		lo := strings.TrimSpace(a[:i])
+		hi := strings.TrimSpace(a[i+3:])
+		cLo, okLo := compareSemverOK(v, lo)
+		cHi, okHi := compareSemverOK(v, hi)
+		return okLo && okHi && cLo >= 0 && cHi <= 0
+	}
+	// No structured form matched. Try semver equality first so
+	// trivially-equivalent encodings like "v1.2.3" / "1.2.3" line up;
+	// otherwise fall back to case-insensitive string equality so the
+	// legacy exact-match contract still holds for non-semver tags.
+	if _, _, _, okA := parseSemver(a); okA {
+		if _, _, _, okV := parseSemver(v); okV {
+			return compareSemver(a, v) == 0
+		}
+	}
+	return strings.EqualFold(a, v)
+}
+
+// compareSemverOK is the safe form callers should prefer. It returns
+// (cmp, true) when both inputs parse as semver, and (0, false) when
+// either does not. This matters because the underlying compareSemver
+// silently treats unparseable inputs as (0, 0, 0); without the okA &&
+// okB guard, a range like ">=0.0.0" would incorrectly match a literal
+// string like "abc" (both compare equal under (0, 0, 0)).
+//
+// versionMatches uses this for every structured range form so an
+// unparseable side always means "does not match" rather than "matches
+// the zero version".
+func compareSemverOK(a, b string) (int, bool) {
+	_, _, _, okA := parseSemver(a)
+	_, _, _, okB := parseSemver(b)
+	if !okA || !okB {
+		return 0, false
+	}
+	return compareSemver(a, b), true
+}
+
+// compareSemver returns -1, 0, or +1 comparing a to b as semver-ish
+// versions. Inputs are tolerated liberally: optional leading "v",
+// up to three dotted numeric segments, and any pre-release / build
+// suffix stripped before comparison. Unparseable inputs sort as
+// equal so an exotic range simply doesn't match instead of crashing.
+// New code should prefer compareSemverOK so range checks can reject
+// unparseable input instead of treating it as "equal to 0.0.0".
+func compareSemver(a, b string) int {
+	am, an, ap, _ := parseSemver(a)
+	bm, bn, bp, _ := parseSemver(b)
+	switch {
+	case am != bm:
+		if am < bm {
+			return -1
+		}
+		return 1
+	case an != bn:
+		if an < bn {
+			return -1
+		}
+		return 1
+	case ap != bp:
+		if ap < bp {
+			return -1
+		}
+		return 1
+	}
+	return 0
+}
+
+// parseSemver parses a dotted version string into (major, minor,
+// patch). Missing trailing segments default to zero so "3" is
+// equivalent to "3.0.0". Pre-release (-rc.1) and build (+sha) metadata
+// are dropped before parsing. ok reports whether the leading numeric
+// part was usable; non-numeric inputs return (0, 0, 0, false).
+func parseSemver(v string) (major, minor, patch int, ok bool) {
+	v = strings.TrimSpace(v)
+	v = strings.TrimPrefix(v, "v")
+	v = strings.TrimPrefix(v, "V")
+	if i := strings.IndexAny(v, "+-"); i >= 0 {
+		v = v[:i]
+	}
+	if v == "" {
+		return 0, 0, 0, false
+	}
+	parts := strings.Split(v, ".")
+	if len(parts) > 3 {
+		return 0, 0, 0, false
+	}
+	var nums [3]int
+	for i, p := range parts {
+		n, err := strconv.Atoi(p)
+		if err != nil {
+			return 0, 0, 0, false
+		}
+		nums[i] = n
+	}
+	return nums[0], nums[1], nums[2], true
 }

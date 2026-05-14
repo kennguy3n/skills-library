@@ -111,17 +111,38 @@ func TestLoadTyposquatsCachesAcrossCalls(t *testing.T) {
 	}
 }
 
-func TestCheckSecretPatternFlagsAWSExampleKeyAsKnownFalsePositive(t *testing.T) {
+// TestCheckSecretPatternDropsDenylistedAWSDocsKey covers the
+// AWS-docs-canonical AKIAIOSFODNN7EXAMPLE: it no longer surfaces at
+// all because dlp_patterns.json puts "AKIAIOSFODNN7" on the AWS
+// Access Key denylist_substrings. The matching dlp_exclusions.json
+// entry is a strictly weaker mark-as-false-positive signal kept for
+// backwards compatibility; denylist wins.
+func TestCheckSecretPatternDropsDenylistedAWSDocsKey(t *testing.T) {
 	lib := newLibrary(t)
 	res, err := lib.CheckSecretPattern("AKIAIOSFODNN7EXAMPLE")
 	if err != nil {
 		t.Fatal(err)
 	}
+	if len(res.Matches) != 0 {
+		t.Errorf("AKIAIOSFODNN7EXAMPLE should be dropped by denylist_substrings; got %d matches: %v", len(res.Matches), res.Matches)
+	}
+}
+
+// TestCheckSecretPatternFlagsKnownFalsePositive exercises the path
+// where a match survives denylist + entropy + hotword gating but is
+// still flagged as KnownFalsePositive via dlp_exclusions.json (the
+// wildcard "your-" entry on type=dictionary).
+func TestCheckSecretPatternFlagsKnownFalsePositive(t *testing.T) {
+	lib := newLibrary(t)
+	res, err := lib.CheckSecretPattern("creds: api_key = your-secret-here_abc123xyz4567890")
+	if err != nil {
+		t.Fatal(err)
+	}
 	if len(res.Matches) == 0 {
-		t.Fatal("expected the canonical AWS docs example to match the AWS Access Key pattern")
+		t.Fatal("expected the api_key placeholder to match Generic API Key")
 	}
 	if !res.Matches[0].KnownFalsePositive {
-		t.Errorf("AKIAIOSFODNN7EXAMPLE should be flagged as a known false positive")
+		t.Errorf("placeholder containing 'your-' should be flagged as known false positive")
 	}
 }
 
@@ -136,6 +157,82 @@ func TestCheckSecretPatternFlagsRealLookingKey(t *testing.T) {
 	}
 	if res.Matches[0].KnownFalsePositive {
 		t.Errorf("real-looking AKIA key must not be flagged as known false positive")
+	}
+	if res.Matches[0].Entropy <= 0 {
+		t.Errorf("entropy should be computed and non-zero for a real-looking AKIA; got %v", res.Matches[0].Entropy)
+	}
+}
+
+// TestCheckSecretPatternEntropyGate verifies a low-entropy candidate
+// is dropped when the pattern declares entropy_min. The Generic API
+// Key pattern requires entropy_min=3.0 and a repeated character
+// string fails that gate.
+func TestCheckSecretPatternEntropyGate(t *testing.T) {
+	lib := newLibrary(t)
+	res, err := lib.CheckSecretPattern("creds: api_key = aaaaaaaaaaaaaaaaaaaaaa")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, m := range res.Matches {
+		if m.Name == "Generic API Key" {
+			t.Errorf("low-entropy api_key should be dropped by entropy_min; matched %+v", m)
+		}
+	}
+}
+
+// TestCheckSecretPatternHotwordScoring confirms hotword_boost is
+// applied and HotwordHit is reported when a hotword sits inside the
+// configured window. The Generic API Key pattern bakes the
+// 'api'/'key' hotwords into its own regex prefix, so any hit is
+// guaranteed to record HotwordHit=true.
+func TestCheckSecretPatternHotwordScoring(t *testing.T) {
+	lib := newLibrary(t)
+	res, err := lib.CheckSecretPattern("api_key = abcdef0123456789ABCDEFGH")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.Matches) == 0 {
+		t.Fatal("expected api_key match")
+	}
+	if !res.Matches[0].HotwordHit {
+		t.Errorf("hotword 'api' is inside the match itself; HotwordHit must be true, got %+v", res.Matches[0])
+	}
+	if res.Matches[0].Score <= 0 {
+		t.Errorf("score should reflect score_weight + hotword_boost; got %v", res.Matches[0].Score)
+	}
+}
+
+// TestVersionMatches pins down the affected-version range syntax the
+// MCP tools recognise so refactors of versionMatches don't silently
+// break upstream callers.
+func TestVersionMatches(t *testing.T) {
+	cases := []struct {
+		affected string
+		version  string
+		want     bool
+	}{
+		{"3.3.6", "3.3.6", true},
+		{"3.3.6", "3.3.7", false},
+		{"all", "99.0.0", true},
+		{"*", "0.0.1", true},
+		{"pre-3.1.0", "3.0.9", true},
+		{"pre-3.1.0", "3.1.0", false},
+		{"pre-3.1.0", "3.1.1", false},
+		{"pre-3", "2.9.0", true},
+		{"pre-3", "3.0.0", false},
+		{">=1.0.0", "1.0.0", true},
+		{">=1.0.0", "0.9.9", false},
+		{">1.0.0", "1.0.0", false},
+		{"<=1.0.0", "1.0.0", true},
+		{"<1.0.0", "0.9.9", true},
+		{"1.0.0 - 1.2.0", "1.1.5", true},
+		{"1.0.0 - 1.2.0", "1.3.0", false},
+		{"v1.2.3", "1.2.3", true},
+	}
+	for _, tc := range cases {
+		if got := versionMatches(tc.affected, tc.version); got != tc.want {
+			t.Errorf("versionMatches(%q, %q) = %v, want %v", tc.affected, tc.version, got, tc.want)
+		}
 	}
 }
 
