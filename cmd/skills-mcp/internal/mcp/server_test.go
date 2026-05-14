@@ -54,13 +54,56 @@ func TestInitializeReturnsServerInfo(t *testing.T) {
 		t.Fatalf("expected ok response, got %+v", resp)
 	}
 	result := resp.Result.(map[string]interface{})
-	info := result["serverInfo"].(map[string]string)
+	info := result["serverInfo"].(map[string]interface{})
 	if info["name"] != "skills-mcp" {
 		t.Errorf("serverInfo.name=%q", info["name"])
 	}
+	if got := result["protocolVersion"]; got != SupportedProtocolVersion {
+		t.Errorf("protocolVersion=%v, want %s", got, SupportedProtocolVersion)
+	}
+	if _, ok := result["instructions"]; !ok {
+		t.Errorf("initialize result missing instructions field")
+	}
 }
 
-func TestToolsListReturnsFourTools(t *testing.T) {
+// Per the MCP lifecycle spec, the server MUST echo back a protocol
+// version the client asked for if it supports it; otherwise return
+// its own latest. Cover both branches plus the empty-string fallback.
+func TestInitializeNegotiatesProtocolVersion(t *testing.T) {
+	srv := newServer(t)
+	cases := []struct {
+		name      string
+		requested string
+		want      string
+	}{
+		{"latest", "2025-11-25", "2025-11-25"},
+		{"older-supported", "2024-11-05", "2024-11-05"},
+		{"unknown", "9999-01-01", SupportedProtocolVersion},
+		{"empty", "", SupportedProtocolVersion},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			req := mustMarshal(t, map[string]interface{}{
+				"jsonrpc": "2.0",
+				"id":      1,
+				"method":  "initialize",
+				"params": map[string]interface{}{
+					"protocolVersion": tc.requested,
+				},
+			})
+			resp := srv.HandleLine(req)
+			if resp == nil || resp.Error != nil {
+				t.Fatalf("expected ok response, got %+v", resp)
+			}
+			result := resp.Result.(map[string]interface{})
+			if got := result["protocolVersion"]; got != tc.want {
+				t.Errorf("requested %q: got %v, want %s", tc.requested, got, tc.want)
+			}
+		})
+	}
+}
+
+func TestToolsListReturnsExpectedTools(t *testing.T) {
 	srv := newServer(t)
 	req := mustMarshal(t, map[string]interface{}{
 		"jsonrpc": "2.0",
@@ -73,14 +116,20 @@ func TestToolsListReturnsFourTools(t *testing.T) {
 	}
 	result := resp.Result.(map[string]interface{})
 	tools := result["tools"].([]map[string]interface{})
-	if len(tools) != 4 {
-		t.Fatalf("expected 4 tools, got %d", len(tools))
-	}
 	want := map[string]bool{
-		"lookup_vulnerability": false,
-		"check_secret_pattern": false,
-		"get_skill":            false,
-		"search_skills":        false,
+		"lookup_vulnerability":   false,
+		"check_secret_pattern":   false,
+		"get_skill":              false,
+		"search_skills":          false,
+		"scan_secrets":           false,
+		"check_dependency":       false,
+		"check_typosquat":        false,
+		"map_compliance_control": false,
+		"get_sigma_rule":         false,
+		"version_status":         false,
+	}
+	if len(tools) != len(want) {
+		t.Fatalf("expected %d tools, got %d", len(want), len(tools))
 	}
 	for _, tdef := range tools {
 		name := tdef["name"].(string)

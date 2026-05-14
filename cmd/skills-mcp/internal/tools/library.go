@@ -22,11 +22,34 @@ import (
 // caller can't escape the library root via path traversal (e.g.
 // `../../etc/passwd`) by smuggling traversal segments into the
 // `ecosystem` argument.
+//
+// The set mirrors the JSON files shipped under
+// `vulnerabilities/supply-chain/malicious-packages/<ecosystem>.json`.
 var knownEcosystems = map[string]bool{
-	"npm":    true,
-	"pypi":   true,
-	"crates": true,
-	"go":     true,
+	"npm":            true,
+	"pypi":           true,
+	"crates":         true,
+	"go":             true,
+	"rubygems":       true,
+	"maven":          true,
+	"nuget":          true,
+	"github-actions": true,
+	"docker":         true,
+}
+
+// allEcosystems is the deterministic ordered list of ecosystem IDs the
+// MCP tools iterate when the caller did not pin a specific ecosystem.
+// Keep it in sync with knownEcosystems.
+var allEcosystems = []string{
+	"npm",
+	"pypi",
+	"crates",
+	"go",
+	"rubygems",
+	"maven",
+	"nuget",
+	"github-actions",
+	"docker",
 }
 
 // Library is the live view of a skills-library checkout used to back the
@@ -127,11 +150,11 @@ func (l *Library) LookupVulnerability(pkg, ecosystem, version string) (*LookupVu
 	if strings.TrimSpace(pkg) == "" {
 		return nil, fmt.Errorf("package is required")
 	}
-	ecosystems := []string{"npm", "pypi", "crates", "go"}
+	ecosystems := allEcosystems
 	if ecosystem != "" {
 		eco := strings.ToLower(strings.TrimSpace(ecosystem))
 		if !knownEcosystems[eco] {
-			return nil, fmt.Errorf("unknown ecosystem %q (must be one of npm, pypi, crates, go)", ecosystem)
+			return nil, fmt.Errorf("unknown ecosystem %q (must be one of %s)", ecosystem, strings.Join(allEcosystems, ", "))
 		}
 		ecosystem = eco
 		ecosystems = []string{eco}

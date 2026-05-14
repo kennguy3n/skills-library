@@ -58,6 +58,41 @@ const (
 	codeInternalError  = -32603
 )
 
+// SupportedProtocolVersion is the MCP spec revision this server implements.
+// See https://modelcontextprotocol.io/specification/2025-11-25.
+//
+// Per the lifecycle spec, the server MUST respond to `initialize` with a
+// protocol version it supports. We respond with this constant unless the
+// client requested an older version we also recognise — in which case we
+// echo back the requested version (see negotiateProtocolVersion).
+const SupportedProtocolVersion = "2025-11-25"
+
+// supportedProtocolVersions is the descending list of MCP revisions this
+// server can speak. The first entry is the preferred version and matches
+// SupportedProtocolVersion.
+var supportedProtocolVersions = []string{
+	"2025-11-25",
+	"2025-06-18",
+	"2025-03-26",
+	"2024-11-05",
+}
+
+// negotiateProtocolVersion implements the MCP "Version Negotiation" rule:
+// if the client requested a version we support, return it verbatim;
+// otherwise return our latest supported version. An empty client version
+// also falls back to our latest.
+func negotiateProtocolVersion(requested string) string {
+	if requested == "" {
+		return SupportedProtocolVersion
+	}
+	for _, v := range supportedProtocolVersions {
+		if v == requested {
+			return v
+		}
+	}
+	return SupportedProtocolVersion
+}
+
 // Serve reads JSON-RPC messages from r, dispatches them, and writes
 // responses to w. One message per line. Notifications (no id) get no
 // response.
@@ -111,15 +146,27 @@ func (s *Server) HandleLine(line []byte) *response {
 func (s *Server) dispatch(req *request) *response {
 	switch req.Method {
 	case "initialize":
+		// Best-effort parse of the client-requested protocol version
+		// for version negotiation. The field is OPTIONAL per the
+		// MCP lifecycle spec; an empty/absent value falls back to
+		// our latest supported version.
+		var p struct {
+			ProtocolVersion string `json:"protocolVersion"`
+		}
+		if len(req.Params) > 0 {
+			_ = json.Unmarshal(req.Params, &p)
+		}
 		return successResponse(req.ID, map[string]interface{}{
-			"protocolVersion": "2024-11-05",
-			"serverInfo": map[string]string{
+			"protocolVersion": negotiateProtocolVersion(p.ProtocolVersion),
+			"serverInfo": map[string]interface{}{
 				"name":    "skills-mcp",
+				"title":   "secure-code skills MCP server",
 				"version": "0.1.0",
 			},
 			"capabilities": map[string]interface{}{
 				"tools": map[string]interface{}{},
 			},
+			"instructions": "Use the secure-code skills before generating or reviewing security-sensitive code. For dependencies call check_dependency / check_typosquat / lookup_vulnerability; for secrets call scan_secrets or check_secret_pattern; for detection logic call get_sigma_rule; to map findings to compliance call map_compliance_control; to fetch a curated skill call get_skill / search_skills. Use version_status to confirm the data version and signature state before relying on results.",
 		})
 	case "tools/list":
 		return successResponse(req.ID, map[string]interface{}{
@@ -181,6 +228,36 @@ func (s *Server) invokeTool(name string, args map[string]interface{}) (interface
 		)
 	case "search_skills":
 		return s.lib.SearchSkills(stringArg(args, "query"))
+	case "scan_secrets":
+		return s.lib.ScanSecrets(
+			stringArg(args, "text"),
+			stringArg(args, "file_path"),
+		)
+	case "check_dependency":
+		return s.lib.CheckDependency(
+			stringArg(args, "package"),
+			stringArg(args, "version"),
+			stringArg(args, "ecosystem"),
+		)
+	case "check_typosquat":
+		return s.lib.CheckTyposquat(
+			stringArg(args, "package"),
+			stringArg(args, "ecosystem"),
+		)
+	case "map_compliance_control":
+		return s.lib.MapComplianceControl(
+			stringArg(args, "skill_id"),
+			stringArg(args, "query"),
+			stringArg(args, "framework"),
+		)
+	case "get_sigma_rule":
+		return s.lib.GetSigmaRule(
+			stringArg(args, "rule_id"),
+			stringArg(args, "query"),
+			stringArg(args, "category"),
+		)
+	case "version_status":
+		return s.lib.VersionStatus()
 	}
 	return nil, fmt.Errorf("%w: %s", errToolNotFound, name)
 }
