@@ -56,11 +56,11 @@ keeps it (and every other file in the library) up to date.
 
 ### Deliverables
 
-- [x] Curated vulnerability data:
-  - `vulnerabilities/supply-chain/malicious-packages/{npm,pypi,crates,go}.json`
-  - `vulnerabilities/supply-chain/typosquat-db/known_typosquats.json`
+- [x] Curated vulnerability data (10-year coverage, 2015-2025):
+  - `vulnerabilities/supply-chain/malicious-packages/{npm,pypi,crates,go,rubygems,maven,nuget,github-actions,docker}.json`
+  - `vulnerabilities/supply-chain/typosquat-db/known_typosquats.json` (60+ entries)
   - `vulnerabilities/supply-chain/dependency-confusion/patterns.json`
-  - `vulnerabilities/cve/code-relevant/cve_patterns.json`
+  - `vulnerabilities/cve/code-relevant/cve_patterns.json` (~50 CVEs, 2015-2025)
 - [x] Manifest system:
   - Root `manifest.json` listing every distributable file with SHA-256 checksum
   - Ed25519 signing of every release manifest, embedded public key in CLI

@@ -1,11 +1,13 @@
 {
   "schema_version": "1.0",
   "ecosystem": "npm",
-  "last_updated": "2026-05-13T00:00:00Z",
+  "last_updated": "2026-05-13T18:00:00Z",
   "entries": [
     {
       "name": "event-stream",
-      "versions_affected": ["3.3.6"],
+      "versions_affected": [
+        "3.3.6"
+      ],
       "type": "malicious_code",
       "severity": "critical",
       "discovered": "2018-11-26",
@@ -14,13 +16,19 @@
         "https://blog.npmjs.org/post/180565383195/details-about-the-event-stream-incident",
         "https://github.com/dominictarr/event-stream/issues/116"
       ],
-      "indicators": ["flatmap-stream dependency"],
+      "indicators": [
+        "flatmap-stream dependency"
+      ],
       "cve": "CVE-2018-16492",
       "attack_type": "maintainer_compromise"
     },
     {
       "name": "ua-parser-js",
-      "versions_affected": ["0.7.29", "0.8.0", "1.0.0"],
+      "versions_affected": [
+        "0.7.29",
+        "0.8.0",
+        "1.0.0"
+      ],
       "type": "malicious_code",
       "severity": "critical",
       "discovered": "2021-10-22",
@@ -29,12 +37,18 @@
         "https://github.com/faisalman/ua-parser-js/issues/536",
         "https://www.cisa.gov/news-events/alerts/2021/10/22/malware-discovered-popular-npm-package-ua-parser-js"
       ],
-      "indicators": ["jsextension binary", "preinstall script"],
+      "indicators": [
+        "jsextension binary",
+        "preinstall script"
+      ],
       "attack_type": "maintainer_compromise"
     },
     {
       "name": "colors",
-      "versions_affected": ["1.4.1", "1.4.2"],
+      "versions_affected": [
+        "1.4.1",
+        "1.4.2"
+      ],
       "type": "protestware",
       "severity": "high",
       "discovered": "2022-01-08",
@@ -43,12 +57,17 @@
         "https://github.com/Marak/colors.js/issues/285",
         "https://snyk.io/blog/open-source-npm-packages-colors-faker/"
       ],
-      "indicators": ["LIBERTY LIBERTY LIBERTY", "infinite loop in colors.js"],
+      "indicators": [
+        "LIBERTY LIBERTY LIBERTY",
+        "infinite loop in colors.js"
+      ],
       "attack_type": "protestware"
     },
     {
       "name": "faker",
-      "versions_affected": ["6.6.6"],
+      "versions_affected": [
+        "6.6.6"
+      ],
       "type": "protestware",
       "severity": "high",
       "discovered": "2022-01-08",
@@ -56,12 +75,17 @@
       "references": [
         "https://snyk.io/blog/open-source-npm-packages-colors-faker/"
       ],
-      "indicators": ["empty package, README only"],
+      "indicators": [
+        "empty package, README only"
+      ],
       "attack_type": "protestware"
     },
     {
       "name": "node-ipc",
-      "versions_affected": ["10.1.1", "10.1.2"],
+      "versions_affected": [
+        "10.1.1",
+        "10.1.2"
+      ],
       "type": "malicious_code",
       "severity": "critical",
       "discovered": "2022-03-15",
@@ -69,13 +93,23 @@
       "references": [
         "https://snyk.io/blog/peacenotwar-malicious-npm-node-ipc-package-vulnerability/"
       ],
-      "indicators": ["peacenotwar", "ssl-geospec dependency"],
+      "indicators": [
+        "peacenotwar",
+        "ssl-geospec dependency"
+      ],
       "cve": "CVE-2022-23812",
       "attack_type": "protestware"
     },
     {
       "name": "coa",
-      "versions_affected": ["2.0.3", "2.0.4", "2.1.1", "2.1.3", "3.0.1", "3.1.3"],
+      "versions_affected": [
+        "2.0.3",
+        "2.0.4",
+        "2.1.1",
+        "2.1.3",
+        "3.0.1",
+        "3.1.3"
+      ],
       "type": "malicious_code",
       "severity": "critical",
       "discovered": "2021-11-04",
@@ -84,12 +118,19 @@
         "https://github.com/advisories/GHSA-73qr-pfmq-6rp8",
         "https://github.blog/2021-11-04-malicious-coa-rc-npm-packages-published/"
       ],
-      "indicators": ["compile.js running curl/wget", "DanaBot trojan installer"],
+      "indicators": [
+        "compile.js running curl/wget",
+        "DanaBot trojan installer"
+      ],
       "attack_type": "maintainer_compromise"
     },
     {
       "name": "rc",
-      "versions_affected": ["1.2.9", "1.3.9", "2.3.9"],
+      "versions_affected": [
+        "1.2.9",
+        "1.3.9",
+        "2.3.9"
+      ],
       "type": "malicious_code",
       "severity": "critical",
       "discovered": "2021-11-04",
@@ -98,12 +139,17 @@
         "https://github.com/advisories/GHSA-g2q5-5433-rhrf",
         "https://github.blog/2021-11-04-malicious-coa-rc-npm-packages-published/"
       ],
-      "indicators": ["compile.js postinstall", "DanaBot trojan installer"],
+      "indicators": [
+        "compile.js postinstall",
+        "DanaBot trojan installer"
+      ],
       "attack_type": "maintainer_compromise"
     },
     {
       "name": "eslint-scope",
-      "versions_affected": ["3.7.2"],
+      "versions_affected": [
+        "3.7.2"
+      ],
       "type": "malicious_code",
       "severity": "critical",
       "discovered": "2018-07-12",
@@ -112,12 +158,16 @@
         "https://eslint.org/blog/2018/07/postmortem-for-malicious-package-publishes/",
         "https://github.com/advisories/GHSA-mc8x-q6cp-xgcr"
       ],
-      "indicators": ["build/eslint-scope.js posts ~/.npmrc to pastebin"],
+      "indicators": [
+        "build/eslint-scope.js posts ~/.npmrc to pastebin"
+      ],
       "attack_type": "maintainer_compromise"
     },
     {
       "name": "@pnpm/exe",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "namespace_squat",
       "severity": "high",
       "discovered": "2024-08-20",
@@ -126,12 +176,17 @@
         "https://blog.phylum.io/typosquat-targeting-pnpm/",
         "https://socket.dev/blog/typosquatting-pnpm"
       ],
-      "indicators": ["@pnpm/exe lookalike namespace", "postinstall curl|bash loader"],
+      "indicators": [
+        "@pnpm/exe lookalike namespace",
+        "postinstall curl|bash loader"
+      ],
       "attack_type": "typosquat"
     },
     {
       "name": "polyfill.io",
-      "versions_affected": ["cdn.polyfill.io/*"],
+      "versions_affected": [
+        "cdn.polyfill.io/*"
+      ],
       "type": "cdn_supply_chain",
       "severity": "critical",
       "discovered": "2024-06-25",
@@ -141,8 +196,425 @@
         "https://github.com/advisories/GHSA-vrfq-pwm6-fmrh",
         "https://www.theregister.com/2024/06/25/polyfillio_china_owned_cdn/"
       ],
-      "indicators": ["<script src=\"https://cdn.polyfill.io\"", "redirects to googie-anaiytics[.]com"],
+      "indicators": [
+        "<script src=\"https://cdn.polyfill.io\"",
+        "redirects to googie-anaiytics[.]com"
+      ],
       "attack_type": "cdn_compromise"
+    },
+    {
+      "name": "left-pad",
+      "versions_affected": [
+        "1.0.0",
+        "any"
+      ],
+      "type": "ecosystem_disruption",
+      "severity": "high",
+      "discovered": "2016-03-22",
+      "description": "Maintainer Azer Koculu unpublished left-pad after a dispute with kik over the kik package name. Removal broke thousands of builds including Babel and React. npm subsequently restored the package and changed unpublish policy. This is the foundational npm supply-chain trust event.",
+      "references": [
+        "https://blog.npmjs.org/post/141577284765/kik-left-pad-and-npm",
+        "https://www.theregister.com/2016/03/23/npm_left_pad_chaos/"
+      ],
+      "indicators": [
+        "maintainer unpublish",
+        "npm trust event"
+      ],
+      "attack_type": "maintainer_action"
+    },
+    {
+      "name": "crossenv",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "critical",
+      "discovered": "2017-08-01",
+      "description": "Typosquat of cross-env that ran a postinstall script exfiltrating environment variables to npm.hofmannsven.com. Part of a 38-package typosquat wave by user `hacktask` that triggered the first wave of npm-side anti-typosquat tooling.",
+      "references": [
+        "https://blog.npmjs.org/post/163723642530/crossenv-malware-on-the-npm-registry",
+        "https://snyk.io/blog/typosquatting-attacks/"
+      ],
+      "indicators": [
+        "postinstall script",
+        "env var exfil",
+        "hacktask"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "babelcli",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2017-08-01",
+      "description": "Typosquat of babel-cli; part of the August 2017 `hacktask` typosquat wave that also published crossenv, mongose, d3.js, http-proxy.js etc., each carrying an env-variable exfiltration payload.",
+      "references": [
+        "https://blog.npmjs.org/post/163723642530/crossenv-malware-on-the-npm-registry"
+      ],
+      "indicators": [
+        "hacktask wave",
+        "postinstall exfil"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "http-proxy.js",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2017-08-01",
+      "description": "Typosquat of http-proxy that exfiltrated environment variables on install. Part of the August 2017 hacktask wave (38 packages).",
+      "references": [
+        "https://blog.npmjs.org/post/163723642530/crossenv-malware-on-the-npm-registry"
+      ],
+      "indicators": [
+        "hacktask wave"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "mongose",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2017-08-01",
+      "description": "Typosquat of mongoose ORM that ran the same env-exfil postinstall payload as crossenv. Part of the August 2017 hacktask wave.",
+      "references": [
+        "https://blog.npmjs.org/post/163723642530/crossenv-malware-on-the-npm-registry"
+      ],
+      "indicators": [
+        "hacktask wave"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "d3.js",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2017-08-01",
+      "description": "Typosquat of d3 that exfiltrated env via postinstall script. Part of August 2017 hacktask wave; one of the first widely-publicized npm typosquats.",
+      "references": [
+        "https://blog.npmjs.org/post/163723642530/crossenv-malware-on-the-npm-registry"
+      ],
+      "indicators": [
+        "hacktask wave"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "getcookies",
+      "versions_affected": [
+        "1.x"
+      ],
+      "type": "backdoor",
+      "severity": "critical",
+      "discovered": "2018-05-02",
+      "description": "Express middleware that added a hidden HTTP-header-activated reverse shell. Reached production via mailparser dependency chain. npm removed the package within 24 hours of report.",
+      "references": [
+        "https://blog.npmjs.org/post/173526807575/reported-malicious-module-getcookies",
+        "https://github.com/dominictarr/event-stream/issues/116"
+      ],
+      "indicators": [
+        "mailparser dependency",
+        "hidden HTTP header reverse shell"
+      ],
+      "attack_type": "backdoor"
+    },
+    {
+      "name": "flatmap-stream",
+      "versions_affected": [
+        "0.1.1"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2018-11-26",
+      "description": "The actual malicious payload injected into event-stream@3.3.6 \u2014 a flatmap utility whose minified-and-encrypted release block targeted the Copay bitcoin wallet's electron build, exfiltrating private keys.",
+      "references": [
+        "https://blog.npmjs.org/post/180565383195/details-about-the-event-stream-incident",
+        "https://github.com/dominictarr/event-stream/issues/116"
+      ],
+      "indicators": [
+        "copay wallet targeting",
+        "event-stream dependency"
+      ],
+      "attack_type": "malicious_code"
+    },
+    {
+      "name": "electron-native-notify",
+      "versions_affected": [
+        "1.1.6"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2019-06-25",
+      "description": "First major npm supply-chain attack targeting Electron apps. Compromised package injected into komodo-related wallet builds; exfiltrated wallet seeds to attacker C2.",
+      "references": [
+        "https://blog.npmjs.org/post/185397814280/plot-to-steal-cryptocurrency-detected-in-npm"
+      ],
+      "indicators": [
+        "Komodo wallet",
+        "Agama wallet"
+      ],
+      "attack_type": "malicious_code"
+    },
+    {
+      "name": "bb-builder",
+      "versions_affected": [
+        "1.x"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2019-06-25",
+      "description": "Part of the same Komodo Agama wallet supply-chain attack; bb-builder pulled electron-native-notify in as a dependency, indirectly delivering the wallet stealer to downstream wallet builds.",
+      "references": [
+        "https://blog.npmjs.org/post/185397814280/plot-to-steal-cryptocurrency-detected-in-npm"
+      ],
+      "indicators": [
+        "Komodo Agama"
+      ],
+      "attack_type": "malicious_code"
+    },
+    {
+      "name": "twilio-npm",
+      "versions_affected": [
+        "1.x"
+      ],
+      "type": "typosquat",
+      "severity": "critical",
+      "discovered": "2020-10-29",
+      "description": "Typosquat of twilio that delivered a Discord token stealer on install. Removed within 48h of disclosure.",
+      "references": [
+        "https://snyk.io/blog/malicious-npm-packages-discord-tokens/",
+        "https://blog.sonatype.com/twilio-discord-typosquat"
+      ],
+      "indicators": [
+        "Discord token theft"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "discord.js-user",
+      "versions_affected": [
+        "1.x"
+      ],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2020-10-22",
+      "description": "Discord token grabber targeting Discord.js community. Stole user tokens via Electron LocalStorage access and exfiltrated to a Discord webhook controlled by the attacker.",
+      "references": [
+        "https://snyk.io/blog/malicious-npm-packages-discord-tokens/"
+      ],
+      "indicators": [
+        "Discord token theft",
+        "Electron LocalStorage"
+      ],
+      "attack_type": "malicious_code"
+    },
+    {
+      "name": "fallguys",
+      "versions_affected": [
+        "1.x"
+      ],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2020-09-04",
+      "description": "Capitalized on Fall Guys game hype to publish a fake API client that ran a Discord token stealer + clipboard hijacker on install.",
+      "references": [
+        "https://blog.sonatype.com/fall-guys-themed-malware-discovered-on-npm"
+      ],
+      "indicators": [
+        "Fall Guys hype",
+        "Discord token theft"
+      ],
+      "attack_type": "malicious_code"
+    },
+    {
+      "name": "@ledgerhq/connect-kit",
+      "versions_affected": [
+        "1.1.5",
+        "1.1.6",
+        "1.1.7",
+        "1.1.8"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2023-12-14",
+      "description": "Maintainer phishing led to a compromised publish that swapped the real connect-kit module for a wallet drainer in dApps that loaded it via CDN. Affected Sushi, Lido, Zapper, RevokeCash and others; estimated $600k+ stolen before remediation.",
+      "references": [
+        "https://www.ledger.com/blog/a-letter-from-ledger-chairman-ceo-pascal-gauthier-regarding-ledger-connect-kit-exploit",
+        "https://blog.sonatype.com/ledger-connect-kit-supply-chain-attack"
+      ],
+      "indicators": [
+        "wallet drainer",
+        "phishing of maintainer",
+        "Web3 dApp injection"
+      ],
+      "attack_type": "maintainer_compromise"
+    },
+    {
+      "name": "lottie-player",
+      "versions_affected": [
+        "2.0.4",
+        "2.0.5",
+        "2.0.6",
+        "2.0.7"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2024-10-30",
+      "description": "@lottiefiles/lottie-player publish token stolen; malicious versions inserted a wallet-drainer popup on every site that loaded the player from CDN.",
+      "references": [
+        "https://blog.lottiefiles.com/security-incident-update/",
+        "https://socket.dev/blog/lottiefiles-supply-chain-attack"
+      ],
+      "indicators": [
+        "CDN drainer",
+        "publish token theft"
+      ],
+      "attack_type": "maintainer_compromise"
+    },
+    {
+      "name": "@solana/web3.js",
+      "versions_affected": [
+        "1.95.6",
+        "1.95.7"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2024-12-03",
+      "description": "Maintainer publish token compromised. Affected versions exfiltrated private keys from any Node.js process that initialized a Solana keypair, posting them to a hardcoded gateway.",
+      "references": [
+        "https://socket.dev/blog/supply-chain-attack-solana-web3-js",
+        "https://github.com/anza-xyz/solana-web3.js/security/advisories/GHSA-w3xh-9rgf-8h5r"
+      ],
+      "indicators": [
+        "private key exfil",
+        "publish token theft"
+      ],
+      "attack_type": "maintainer_compromise"
+    },
+    {
+      "name": "everything",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "ecosystem_abuse",
+      "severity": "medium",
+      "discovered": "2024-01-02",
+      "description": "Author published a package whose only purpose was to depend on every other npm package, exhausting registry / proxy caches and effectively griefing the ecosystem. npm has since tightened publish quotas.",
+      "references": [
+        "https://socket.dev/blog/when-everything-becomes-too-much",
+        "https://github.com/npm/cli/issues/7000"
+      ],
+      "indicators": [
+        "dependency explosion"
+      ],
+      "attack_type": "ecosystem_abuse"
+    },
+    {
+      "name": "rand-user-agent",
+      "versions_affected": [
+        "1.0.110",
+        "2.0.83",
+        "2.0.84"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2025-05-07",
+      "description": "Maintainer credentials phished. Malicious versions of @wdio/rand-user-agent shipped a Python-based RAT plus an XMR cryptominer that auto-launched on import in Node.js test runners.",
+      "references": [
+        "https://socket.dev/blog/rand-user-agent-supply-chain-attack",
+        "https://blog.checkpoint.com/research/npm-rand-user-agent-supply-chain-attack/"
+      ],
+      "indicators": [
+        "Python RAT",
+        "XMR miner"
+      ],
+      "attack_type": "maintainer_compromise"
+    },
+    {
+      "name": "es5-ext",
+      "versions_affected": [
+        "0.10.63"
+      ],
+      "type": "protestware",
+      "severity": "medium",
+      "discovered": "2024-03-14",
+      "description": "Maintainer added a postinstall war-protest banner that printed an anti-war message on systems with Russian locale. Triggered downstream alerts as a behavior change in a low-level utility used by ESLint and many others.",
+      "references": [
+        "https://github.com/medikoo/es5-ext/issues/201"
+      ],
+      "indicators": [
+        "protestware",
+        "Russian-locale targeting"
+      ],
+      "attack_type": "protestware"
+    },
+    {
+      "name": "pdf-to-office",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2025-04-17",
+      "description": "Newly-published package whose `prepare` script downloaded and ran a reverse shell binary from a public storage URL on install.",
+      "references": [
+        "https://socket.dev/blog/malicious-pdf-to-office-package",
+        "https://blog.phylum.io/malicious-npm-package-pdf-to-office"
+      ],
+      "indicators": [
+        "postinstall reverse shell"
+      ],
+      "attack_type": "malicious_code"
+    },
+    {
+      "name": "noblox.js-server",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2023-08-09",
+      "description": "Typosquat campaign against the Roblox-developer-focused noblox.js library. Multiple impostor packages (noblox.js-server, noblox.js-vps, noblox.js-vpn) installed Discord token stealers and RATs targeting Roblox developers.",
+      "references": [
+        "https://socket.dev/blog/noblox-js-typosquat-campaign",
+        "https://blog.phylum.io/noblox-typosquatting-campaign"
+      ],
+      "indicators": [
+        "Roblox developer targeting",
+        "Discord token theft"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "ethers-provider2",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "critical",
+      "discovered": "2025-03-27",
+      "description": "Typosquat of @ethersproject/providers / ethers; targeted Web3 developers with a wallet drainer that ran on `npm install` and on every subsequent `npm run` invocation through a postinstall hook.",
+      "references": [
+        "https://blog.phylum.io/ethers-provider2-malicious-npm-package",
+        "https://socket.dev/blog/ethers-provider2-typosquat"
+      ],
+      "indicators": [
+        "Web3 drainer",
+        "postinstall persistence"
+      ],
+      "attack_type": "typosquat"
     }
   ]
 }

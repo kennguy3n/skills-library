@@ -1,0 +1,171 @@
+{
+  "schema_version": "1.0",
+  "ecosystem": "rubygems",
+  "last_updated": "2026-05-13T00:00:00Z",
+  "description": "Documented malicious or compromised RubyGems packages. RubyGems supply-chain incidents 2019-2024 cover both maintainer-account compromise (rest-client, strong_password, bootstrap-sass) and namespace squatting / dependency confusion patterns.",
+  "entries": [
+    {
+      "name": "rest-client",
+      "versions_affected": [
+        "1.6.10",
+        "1.6.11",
+        "1.6.12",
+        "1.6.13"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2019-08-19",
+      "description": "Maintainer account compromise. Backdoored versions exfiltrated environment data to a pastebin URL and could eval remote code via a hidden Pastebin fetch on every load. The gem had ~113M downloads at the time.",
+      "references": [
+        "https://github.com/rest-client/rest-client/issues/713",
+        "https://blog.appsignal.com/2019/08/22/the-rest-client-vulnerability.html"
+      ],
+      "indicators": [
+        "pastebin C2",
+        "env exfil"
+      ],
+      "attack_type": "maintainer_compromise"
+    },
+    {
+      "name": "strong_password",
+      "versions_affected": [
+        "0.0.7"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2019-07-08",
+      "description": "Maintainer account compromise. v0.0.7 fetched a Pastebin URL and eval'd its content on load, providing a remote-code-execution backdoor for any Rails app that loaded the gem.",
+      "references": [
+        "https://withatwist.dev/strong-password-gem-hijacked.html",
+        "https://github.com/bdmac/strong_password/issues/13"
+      ],
+      "indicators": [
+        "pastebin C2",
+        "remote eval"
+      ],
+      "attack_type": "maintainer_compromise"
+    },
+    {
+      "name": "bootstrap-sass",
+      "versions_affected": [
+        "3.2.0.3"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2019-04-04",
+      "description": "Maintainer credentials compromised; a backdoored 3.2.0.3 release contained a hidden hook that executed arbitrary code at assets:precompile time, giving CI-time RCE for any Rails build that pulled the gem.",
+      "references": [
+        "https://github.com/twbs/bootstrap-sass/issues/1195",
+        "https://snyk.io/vuln/SNYK-RUBY-BOOTSTRAPSASS-174532"
+      ],
+      "indicators": [
+        "assets:precompile hook"
+      ],
+      "attack_type": "maintainer_compromise"
+    },
+    {
+      "name": "noice",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2020-06-15",
+      "description": "Typosquat of `voice` (and other short-name gems) that exfiltrated environment variables on require. Removed within days of disclosure.",
+      "references": [
+        "https://blog.reversinglabs.com/blog/mining-for-malicious-ruby-gems"
+      ],
+      "indicators": [
+        "env exfil"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "atlas_client",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "dependency_confusion",
+      "severity": "high",
+      "discovered": "2021-02-09",
+      "description": "Dependency confusion against a MongoDB-internal `atlas_client` gem. Published as a public RubyGem to capture internal Gemfile resolution. Part of the Alex Birsan dependency-confusion disclosure wave.",
+      "references": [
+        "https://medium.com/@alex.birsan/dependency-confusion-4a5d60fec610"
+      ],
+      "indicators": [
+        "Alex Birsan disclosure",
+        "MongoDB Atlas"
+      ],
+      "attack_type": "dependency_confusion"
+    },
+    {
+      "name": "rua",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "medium",
+      "discovered": "2023-06-04",
+      "description": "Typosquat of `rua` (Rust user agent utility) with a credential-harvesting payload that ran on require. Targeted developers porting Rust-side tooling to Ruby builds.",
+      "references": [
+        "https://blog.phylum.io/rubygems-malware-rua",
+        "https://socket.dev/blog/rua-typosquat"
+      ],
+      "indicators": [
+        "env exfil"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "google-protobuf",
+      "versions_affected": [
+        "3.21.13.rc1"
+      ],
+      "type": "namespace_confusion",
+      "severity": "medium",
+      "discovered": "2022-12-15",
+      "description": "Namespace-confusion artifact between `google-protobuf` (Google's official gem) and `protobuf` (community gem) led to attacker-uploaded pre-releases briefly resolving over the legitimate gem in mixed Gemfile.lock states.",
+      "references": [
+        "https://github.com/protocolbuffers/protobuf/issues/11254"
+      ],
+      "indicators": [
+        "pre-release squat"
+      ],
+      "attack_type": "namespace_confusion"
+    },
+    {
+      "name": "paypal-permissions",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2022-08-12",
+      "description": "Suspicious gem masquerading as a PayPal SDK helper; on require, exfiltrated environment variables to a remote endpoint. Removed within 24h of disclosure.",
+      "references": [
+        "https://blog.reversinglabs.com/blog/mining-for-malicious-ruby-gems"
+      ],
+      "indicators": [
+        "env exfil"
+      ],
+      "attack_type": "malicious_code"
+    },
+    {
+      "name": "railes",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2021-09-30",
+      "description": "Typosquat of `rails` with an info-stealer payload. Particularly dangerous because `bundle install` errors at the legitimate `rails` name would push developers to copy a wrong name into Gemfile.",
+      "references": [
+        "https://github.com/rubygems/rubygems.org/issues/3013"
+      ],
+      "indicators": [
+        "rails typosquat"
+      ],
+      "attack_type": "typosquat"
+    }
+  ]
+}

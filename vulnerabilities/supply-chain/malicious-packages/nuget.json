@@ -1,0 +1,153 @@
+{
+  "schema_version": "1.0",
+  "ecosystem": "nuget",
+  "last_updated": "2026-05-13T00:00:00Z",
+  "description": "Documented malicious or compromised NuGet packages. NuGet supply-chain incidents 2022-2024 cover SeroXen RAT delivery campaigns, cracked-commercial-component typosquats, and dependency-confusion attempts against Azure DevOps internal feeds.",
+  "entries": [
+    {
+      "name": "Guna.UI2.WinForms-typosquat",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "critical",
+      "discovered": "2023-03-21",
+      "description": "Typosquat of the commercial Guna UI library. Shipped a cracked DLL bundled with the SeroXen RAT; downloaded thousands of times before takedown.",
+      "references": [
+        "https://blog.phylum.io/malicious-nuget-package-impersonates-popular-ui-library",
+        "https://www.jfrog.com/blog/nuget-malicious-packages-impersonate-guna/"
+      ],
+      "indicators": [
+        "SeroXen RAT",
+        "cracked DLL"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "Moq",
+      "versions_affected": [
+        "4.20.0",
+        "4.20.1"
+      ],
+      "type": "unwanted_behavior",
+      "severity": "medium",
+      "discovered": "2023-08-08",
+      "description": "Maintainer added a closed-source SponsorLink DLL that scanned local git config for developer emails and hashed them client-side. Triggered widespread distrust and ecosystem backlash; was removed in 4.20.2.",
+      "references": [
+        "https://github.com/moq/moq/issues/1374",
+        "https://snyk.io/blog/moq-package-controversy-developer-emails/"
+      ],
+      "indicators": [
+        "SponsorLink",
+        "email scanning"
+      ],
+      "attack_type": "unwanted_behavior"
+    },
+    {
+      "name": "DiscordRichPresence-typosquat",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2023-09-12",
+      "description": "Cluster of typosquats targeting .NET Discord developers. Payloads delivered token grabbers and remote-access trojans tailored for Windows desktop builds.",
+      "references": [
+        "https://blog.phylum.io/phylum-discovers-dozens-more-malicious-nuget-packages/"
+      ],
+      "indicators": [
+        "Discord developer targeting"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "Coinbase.Core-typosquat",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "critical",
+      "discovered": "2024-02-08",
+      "description": "Typosquat of an unofficial Coinbase SDK with a wallet-key stealer payload. Triggered on first import via static constructor.",
+      "references": [
+        "https://blog.phylum.io/coinbase-nuget-typosquat",
+        "https://socket.dev/blog/coinbase-typosquat-nuget"
+      ],
+      "indicators": [
+        "wallet key theft"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "SeroXen-RAT-campaign",
+      "versions_affected": [
+        "various"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2023-10-15",
+      "description": "Phylum 2023 disclosure: several dozen NuGet packages used as SeroXen RAT delivery vectors over multiple weeks. Net targets included gaming, e-commerce, and cryptocurrency Windows apps.",
+      "references": [
+        "https://blog.phylum.io/phylum-discovers-dozens-more-malicious-nuget-packages/"
+      ],
+      "indicators": [
+        "SeroXen RAT family"
+      ],
+      "attack_type": "malicious_code"
+    },
+    {
+      "name": "Microsoft.VisualStudio.Threading-confusion",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "dependency_confusion",
+      "severity": "high",
+      "discovered": "2022-06-29",
+      "description": "Dependency-confusion attempt against Azure DevOps internal feeds. Published a higher version to nuget.org than the internal package, hoping nuget.config priority would resolve in attacker's favor.",
+      "references": [
+        "https://learn.microsoft.com/en-us/nuget/concepts/security-best-practices",
+        "https://medium.com/@alex.birsan/dependency-confusion-4a5d60fec610"
+      ],
+      "indicators": [
+        "Azure DevOps",
+        "Alex Birsan disclosure"
+      ],
+      "attack_type": "dependency_confusion"
+    },
+    {
+      "name": "System.Data.SqlClient-typosquat",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "typosquat",
+      "severity": "high",
+      "discovered": "2024-07-19",
+      "description": "Phylum 2024 disclosure: typosquatted Sql client package with a credential-harvesting payload targeting .NET data-access developers.",
+      "references": [
+        "https://blog.phylum.io/2024/sql-client-typosquat-nuget"
+      ],
+      "indicators": [
+        "SQL client typosquat"
+      ],
+      "attack_type": "typosquat"
+    },
+    {
+      "name": "Bloomzeg-NuGet-Loader",
+      "versions_affected": [
+        "all"
+      ],
+      "type": "malicious_code",
+      "severity": "critical",
+      "discovered": "2024-11-04",
+      "description": "Reverse-engineering loader stub disguised as a build dependency. Downloaded an obfuscated stage-2 payload during `dotnet restore`.",
+      "references": [
+        "https://socket.dev/blog/nuget-loader-malicious-package"
+      ],
+      "indicators": [
+        "dotnet restore",
+        "stage-2 download"
+      ],
+      "attack_type": "malicious_code"
+    }
+  ]
+}

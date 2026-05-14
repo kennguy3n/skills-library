@@ -32,50 +32,50 @@
     },
     {
       "path": "dist/.clinerules",
-      "sha256": "f972d4db44e6c79d8c02360fae1c021e41534b21e7d79f05745ff17babd321e0",
-      "size": 61158,
+      "sha256": "fd099f872678ad7495e91537b57cda426d57333f3715a683537e21bddde2715f",
+      "size": 90613,
       "action": "unchanged"
     },
     {
       "path": "dist/.cursorrules",
-      "sha256": "06d41a047d745149f5df5054796c054d7f5d1b45e797ca6950e3fbd2ad356b30",
-      "size": 62426,
+      "sha256": "36b818f21621e74edcf1132af2f1c0486d77656714b80adf00f07d4712d09626",
+      "size": 92284,
       "action": "unchanged"
     },
     {
       "path": "dist/.windsurfrules",
-      "sha256": "1773ce9ad67ab6af59e49920de8a453fbe3003bcfe2f82ed47a93b8d1e4596b2",
-      "size": 62065,
+      "sha256": "304e61dac294fc5eb034164c69d325355dbd8a8f7a536e712d77c47f5ce911e1",
+      "size": 91820,
       "action": "unchanged"
     },
     {
       "path": "dist/AGENTS.md",
-      "sha256": "dd6bbca93b8a9d6402dce63c41fcf386cf6118bd0c26aa42e2efa0d2fc7e053c",
-      "size": 65540,
+      "sha256": "90ac25ef147aa9f5580baa0e4f2392fa5fae7d78d4aec3ad51389cc5ea8a26bd",
+      "size": 96165,
       "action": "unchanged"
     },
     {
       "path": "dist/CLAUDE.md",
-      "sha256": "547d9265a0a47ccb827f53511d1e8f3cbd6dc1272a2ab8a4d00dd072baaf2b44",
-      "size": 71432,
+      "sha256": "7bec5b93c60f26ef5d07fc752c00fb67662d8ca1daca3623bd6ae9500b332ef3",
+      "size": 105333,
       "action": "unchanged"
     },
     {
       "path": "dist/SECURITY-SKILLS.md",
-      "sha256": "3a17ba7606595631d6c73c0aa984cf13bd6c87aa48f900fee3c981ee01c09560",
-      "size": 65668,
+      "sha256": "f2bb199831965be26733541376033d72fd6ef0152008491600ca1e1919a411e9",
+      "size": 96320,
       "action": "unchanged"
     },
     {
       "path": "dist/copilot-instructions.md",
-      "sha256": "05ce4f46deb8534d714c11c26066092721cb3e88b6235ab5bd19b1966664d418",
-      "size": 64608,
+      "sha256": "414b916c5bcb051eeee5396aa63a59da77b7a2a80eaddc2976ef591b6ccce13f",
+      "size": 94889,
       "action": "unchanged"
     },
     {
       "path": "dist/devin.md",
-      "sha256": "9a3fcc68dc73247ee1ba624c87d8b7816059e2989cee754672fa304ee2372476",
-      "size": 85283,
+      "sha256": "6f9f7302fd4e21973b0de3d456d22d67cd549b95155481696ed1d7240e1abd8c",
+      "size": 126471,
       "action": "unchanged"
     },
     {
@@ -115,6 +115,24 @@
       "action": "unchanged"
     },
     {
+      "path": "skills/cicd-security/SKILL.md",
+      "sha256": "5112444994d090959b0c767696adf325fc25414debfcd39c60cb3672b6221f11",
+      "size": 6372,
+      "action": "added"
+    },
+    {
+      "path": "skills/cicd-security/checklists/github_actions_hardening.yaml",
+      "sha256": "f946e5613fb9834d7b916702e8d693a4da9d973f8faca14256455d8ead573ef4",
+      "size": 5076,
+      "action": "added"
+    },
+    {
+      "path": "skills/cicd-security/checklists/gitlab_ci_hardening.yaml",
+      "sha256": "25fafed303575c8dd555a20ca4639ccb4f0293bee3225ae139dc6289ca387a83",
+      "size": 3391,
+      "action": "added"
+    },
+    {
       "path": "skills/compliance-awareness/SKILL.md",
       "sha256": "bcc22f2f07b5ef6a465cb84acb141e6de887ac040e9c230e263f7ecea830f61a",
       "size": 3047,
@@ -122,14 +140,14 @@
     },
     {
       "path": "skills/compliance-awareness/frameworks/cwe_mapping.yaml",
-      "sha256": "ebdd5f389c10aaedea83e0f6ca99db3eb54441bea3323a159909ce152acac861",
-      "size": 592,
+      "sha256": "d4cb9623a2d1a8e1b54b8591d97451de4782e06df4a8400e30c296387c7ed865",
+      "size": 1766,
       "action": "unchanged"
     },
     {
       "path": "skills/compliance-awareness/frameworks/owasp_mapping.yaml",
-      "sha256": "8024e278ae4e859eb6aca1186710974260144a14cb103216b8211069835eced9",
-      "size": 558,
+      "sha256": "55f5ecf7477e0032ba4e6d2fa15b88e21c428b14ec1e134764df696c8da4e6f9",
+      "size": 1703,
       "action": "unchanged"
     },
     {
@@ -206,9 +224,21 @@
     },
     {
       "path": "skills/dependency-audit/rules/known_malicious.json",
-      "sha256": "122c550501b5bb76467dfcfe63a4e7b43991c19db848a0e363e3b14b9336ba73",
-      "size": 354,
+      "sha256": "49a80cdabb07befdf4675e7d2ff1d40aaae58a423e382647b44d97d47a328189",
+      "size": 925,
       "action": "unchanged"
+    },
+    {
+      "path": "skills/deserialization-security/SKILL.md",
+      "sha256": "aff514629836413111841e6d6e6322199268727ede9d5b316327b357ac285064",
+      "size": 6223,
+      "action": "added"
+    },
+    {
+      "path": "skills/deserialization-security/rules/unsafe_deserializers.json",
+      "sha256": "0a6b0fc13970d80448f4772cb2a59d23d3e7faf21748d7070d98810ca4da9ad0",
+      "size": 5730,
+      "action": "added"
     },
     {
       "path": "skills/error-handling-security/SKILL.md",
@@ -229,6 +259,18 @@
       "action": "unchanged"
     },
     {
+      "path": "skills/file-upload-security/SKILL.md",
+      "sha256": "a3057a631183f78f37b6f21ef91eb047cc1e5badfbb674eb4817238d4f1bfbab",
+      "size": 6489,
+      "action": "added"
+    },
+    {
+      "path": "skills/file-upload-security/rules/upload_validation.json",
+      "sha256": "bb75bd9b7bc4c656e0ce938f2a41c84f382eda56fa626bf782b4717724bb2a1e",
+      "size": 4391,
+      "action": "added"
+    },
+    {
       "path": "skills/frontend-security/SKILL.md",
       "sha256": "8519836aa5c226605f9304c7c04f81d1b2e8203a2dc484623e0dfdc376302b38",
       "size": 4687,
@@ -245,6 +287,18 @@
       "sha256": "990b26a598e067ea831e2e9001ee364d19d996b2d3f1e16321113da95212e6db",
       "size": 3184,
       "action": "unchanged"
+    },
+    {
+      "path": "skills/graphql-security/SKILL.md",
+      "sha256": "f7524fd1462342bf92bddab2c1756b06065c1143af3aa684a12fdc49ed57c9d1",
+      "size": 5496,
+      "action": "added"
+    },
+    {
+      "path": "skills/graphql-security/rules/graphql_safe_config.json",
+      "sha256": "44b884e90133c62e8ba144cea1047e36c9fa8f1a9ccc4534c410d38820b32665",
+      "size": 2914,
+      "action": "added"
     },
     {
       "path": "skills/iac-security/SKILL.md",
@@ -268,19 +322,19 @@
       "path": "skills/iam-best-practices/SKILL.md",
       "sha256": "09bb06c745f39b078520ff17377275b69939464909961a1332df2eca09126d53",
       "size": 7173,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/iam-best-practices/rules/iam_policy_invariants.json",
       "sha256": "dedd97f2c3b2d1ae6110ca2541bb15d4df5b5b8013ab8c29dc1736d7b816f92e",
       "size": 3391,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/iam-best-practices/rules/key_rotation_policy.json",
       "sha256": "207dc8e9ec6f34868c31e4bfeb6c0c3f941e9a4872bf827a2bc49e37045d03df",
       "size": 2561,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/infrastructure-security/SKILL.md",
@@ -379,8 +433,104 @@
       "action": "unchanged"
     },
     {
+      "path": "skills/saas-security/SKILL.md",
+      "sha256": "8d0730d2e63b7aa4f123fea7392e8624fbfe948db9b445b6ecdfb83f5d69407f",
+      "size": 11242,
+      "action": "added"
+    },
+    {
+      "path": "skills/saas-security/rules/atlassian.json",
+      "sha256": "360531338be3e539e22a3a1579f82c7a543f127e69342580f3af5efeff229ff8",
+      "size": 6398,
+      "action": "added"
+    },
+    {
+      "path": "skills/saas-security/rules/bamboohr.json",
+      "sha256": "7c6f9c36bd5475c5ed10962759dd7ef853857cf61464370f3657cadb7c385ec3",
+      "size": 3772,
+      "action": "added"
+    },
+    {
+      "path": "skills/saas-security/rules/calendly.json",
+      "sha256": "b890a1529683645b50380b9642cdbb968bab2e144fdc8ee6f44bc6bc063c63fb",
+      "size": 4547,
+      "action": "added"
+    },
+    {
+      "path": "skills/saas-security/rules/google_chat.json",
+      "sha256": "ed32d7e135f9c0cea3f12482250fd055939e11326b20983d24e71ccd9815d892",
+      "size": 3146,
+      "action": "added"
+    },
+    {
+      "path": "skills/saas-security/rules/google_workspace.json",
+      "sha256": "19fdd385b333c85c6980a836763c7255536ff70f5c1bf6fc0190a877a156e736",
+      "size": 7226,
+      "action": "added"
+    },
+    {
+      "path": "skills/saas-security/rules/hubspot.json",
+      "sha256": "3ffd1effba232e2d8f424162fc690da703983463277d8b6f429b9ef7d23490fa",
+      "size": 4508,
+      "action": "added"
+    },
+    {
+      "path": "skills/saas-security/rules/larksuite.json",
+      "sha256": "37a2cb4db10c562698cd4b31d0dd5e20e4e84fea0eda1aab181b3748d5ed8339",
+      "size": 4904,
+      "action": "added"
+    },
+    {
+      "path": "skills/saas-security/rules/microsoft_teams.json",
+      "sha256": "49a6eb1f4e8b83463ce9712938478876d2bc292304def8b2d9b918fc3b4a20bc",
+      "size": 4907,
+      "action": "added"
+    },
+    {
+      "path": "skills/saas-security/rules/netsuite.json",
+      "sha256": "d5a5b4c40edb0598b727dc2bf19a257975f338b37d94513a3d0522a5e98795f2",
+      "size": 5974,
+      "action": "added"
+    },
+    {
+      "path": "skills/saas-security/rules/notion.json",
+      "sha256": "e7665775268d548748ff0594ee4e94bad4a5649b453aa8325f018d5d9e4b434e",
+      "size": 4180,
+      "action": "added"
+    },
+    {
+      "path": "skills/saas-security/rules/odoo.json",
+      "sha256": "0c2c39773e84fd888036b1a8ca5ff8779a5be5165a9d1a102dd45740b30c12a3",
+      "size": 4703,
+      "action": "added"
+    },
+    {
+      "path": "skills/saas-security/rules/salesforce.json",
+      "sha256": "fa76aebb4928e2a5830abf2ffae53f617c803e491ffb6fe3103105856a8c60e7",
+      "size": 6184,
+      "action": "added"
+    },
+    {
+      "path": "skills/saas-security/rules/slack.json",
+      "sha256": "3eb875b6c6a61e6654b6efe2cde4a85daf39226a0ef1e34d21d3eeedbb938f01",
+      "size": 6132,
+      "action": "added"
+    },
+    {
+      "path": "skills/saas-security/rules/workday.json",
+      "sha256": "e7043f92b7d0782d2e64cdc92efb6da86bfc1a6a825bfe11adb7f3870b24d34a",
+      "size": 5028,
+      "action": "added"
+    },
+    {
+      "path": "skills/saas-security/rules/zoom.json",
+      "sha256": "d2fc998938f5a3a7d8bbe2c8920322cb7f40a155a8ee31a71ed4dae7ae0941b1",
+      "size": 5414,
+      "action": "added"
+    },
+    {
       "path": "skills/secret-detection/SKILL.md",
-      "sha256": "42bee32f40523e1e91b1e409ef99902f2ffbe1be4ba9507c073098f1b734c15e",
+      "sha256": "1e24bc4714dbfad6154c8c0f561d5655018f775eb9b068cb3cdce91800a682af",
       "size": 5307,
       "action": "unchanged"
     },
@@ -392,8 +542,8 @@
     },
     {
       "path": "skills/secret-detection/rules/dlp_patterns.json",
-      "sha256": "d327244ef01ef2078a3af5896d3c3041067c72193afd14a04a2816f16fffdcc3",
-      "size": 9051,
+      "sha256": "9b4c407b9032d3f76c831f88e10913ec7d138aebc201f3271bd16ad065f251a6",
+      "size": 28711,
       "action": "unchanged"
     },
     {
@@ -439,6 +589,24 @@
       "action": "unchanged"
     },
     {
+      "path": "skills/ssrf-prevention/SKILL.md",
+      "sha256": "f0f24634f0b553e36c8996b62570dec19ceff673fbe2da9648108f7b43f2e914",
+      "size": 5769,
+      "action": "added"
+    },
+    {
+      "path": "skills/ssrf-prevention/rules/cloud_metadata_endpoints.json",
+      "sha256": "d7847cb3e5f2462e251471d4edb61d2a179762a931b5aeb12f390133f7fbd57e",
+      "size": 2342,
+      "action": "added"
+    },
+    {
+      "path": "skills/ssrf-prevention/rules/ssrf_sinks.json",
+      "sha256": "e151dfee6978e53b3d5fa3fb589676b1a4131947ea0f1eadc19375acb1c0761e",
+      "size": 4914,
+      "action": "added"
+    },
+    {
       "path": "skills/supply-chain-security/SKILL.md",
       "sha256": "6a236bc6d84911a3049565c28bca4c69f3c95ed2e7fa7c514bcf652d12b83b89",
       "size": 3779,
@@ -463,9 +631,21 @@
       "action": "unchanged"
     },
     {
+      "path": "skills/websocket-security/SKILL.md",
+      "sha256": "14069bf7cb6eaebbc4ca022e504ba3a0a3fcd3865a4b7e9a2e038ab727959389",
+      "size": 5974,
+      "action": "added"
+    },
+    {
+      "path": "skills/websocket-security/rules/websocket_hardening.json",
+      "sha256": "1870408d7f5352bffb40c06d806e3efac9392cd756d7b42b909cae66adca2392",
+      "size": 3098,
+      "action": "added"
+    },
+    {
       "path": "vulnerabilities/cve/code-relevant/cve_patterns.json",
-      "sha256": "31395a1d4ed2c0f6610cacf46fb7485fe9ee2b12dab0c461fe26862974765e05",
-      "size": 11861,
+      "sha256": "03aa80dcf83f375a3c1f41279472a43350aa9edcb5b830eb2908241fc1258272",
+      "size": 65758,
       "action": "unchanged"
     },
     {
@@ -487,27 +667,57 @@
       "action": "unchanged"
     },
     {
+      "path": "vulnerabilities/supply-chain/malicious-packages/docker.json",
+      "sha256": "7bcaa81d15cbbb3a49319b24e77443629d83b5c237f03c9c8f09bf196b09b6e2",
+      "size": 5901,
+      "action": "added"
+    },
+    {
+      "path": "vulnerabilities/supply-chain/malicious-packages/github-actions.json",
+      "sha256": "09a4963019228dcbb9cf74332c25f6c4d80ddb357efc61e501584d9d4055159e",
+      "size": 6710,
+      "action": "added"
+    },
+    {
       "path": "vulnerabilities/supply-chain/malicious-packages/go.json",
       "sha256": "c0e0855c524e3f7e7ea81b03ecf1ecc4883b4a06d6eb66263f07d4c1cd8d2077",
       "size": 6542,
       "action": "unchanged"
     },
     {
+      "path": "vulnerabilities/supply-chain/malicious-packages/maven.json",
+      "sha256": "e33289e1d8569775dea428ce5834931b786e19b045c8e51752058f56197ddd20",
+      "size": 6055,
+      "action": "added"
+    },
+    {
       "path": "vulnerabilities/supply-chain/malicious-packages/npm.json",
-      "sha256": "80a6f00610a48b21fe3bed402771ffd491a50576c1096e9bbffaad006918f836",
-      "size": 6510,
+      "sha256": "7fb5bc27a9e202a8938622b22df883d94d6b4e563c27de4ec4126a3d8428acae",
+      "size": 21729,
       "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/supply-chain/malicious-packages/nuget.json",
+      "sha256": "e8cc155223c62549fcb9118febaec7c745243767471b2c2640972960d23923d8",
+      "size": 5464,
+      "action": "added"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/pypi.json",
-      "sha256": "f8c9334dc7826536472d0b24f72f37e1d23a86798fe6ad6f56afe92e0135e682",
-      "size": 7699,
+      "sha256": "9e97cf4d34bc865acda8756f52b76524202d96505f0bd35dc24699a75181ab0b",
+      "size": 18882,
       "action": "unchanged"
     },
     {
+      "path": "vulnerabilities/supply-chain/malicious-packages/rubygems.json",
+      "sha256": "c850aef348573cbb25a33cfca64810d20f24fb1ce0ce60e4390a4ff5c14eac80",
+      "size": 6084,
+      "action": "added"
+    },
+    {
       "path": "vulnerabilities/supply-chain/typosquat-db/known_typosquats.json",
-      "sha256": "e21287a8bbb73ce8ba0b64496b0649bea8c7df7ca6ac6c28fed00395cbea015d",
-      "size": 5483,
+      "sha256": "a02045115fa0d5d40fdd36c88d97a419710c167ed003935a221a6389033e61f5",
+      "size": 22290,
       "action": "unchanged"
     }
   ]
