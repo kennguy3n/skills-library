@@ -411,3 +411,112 @@ func TestLookupVulnerabilitySemverRange(t *testing.T) {
 		t.Errorf("expected no hit for event-stream@3.3.5; got %+v", miss.Matches)
 	}
 }
+
+// TestSetAllowedRootsRejectsAllInvalidInput covers the regression
+// surfaced in PR #17 review: a non-empty --allowed-roots input whose
+// entries all trim to "" (e.g. " " or ",, ,") must fail loudly
+// instead of silently producing an empty allow-list (which would
+// then be interpreted by validateScanPath as "no restriction" and
+// open the door to every path the process can stat).
+func TestSetAllowedRootsRejectsAllInvalidInput(t *testing.T) {
+	lib := newLibrary(t)
+	cases := [][]string{
+		{" "},
+		{",", " ", "\t"},
+		{""},
+	}
+	for _, c := range cases {
+		if err := lib.SetAllowedRoots(c); err == nil {
+			t.Errorf("SetAllowedRoots(%q) must fail; got nil", c)
+		}
+	}
+	// Sanity: a real directory still works.
+	if err := lib.SetAllowedRoots([]string{t.TempDir()}); err != nil {
+		t.Errorf("SetAllowedRoots with a valid dir must succeed: %v", err)
+	}
+}
+
+// TestScanSecretsSymlinkBypassDenied covers the regression surfaced
+// in PR #17 review: a symlink planted inside an allowed root that
+// targets a file OUTSIDE every allowed root must be rejected by
+// validateScanPath. Before the fix this passed because the abs path
+// was under the allow-list, so the OR short-circuited and the
+// resolved (outside) target was never checked.
+func TestScanSecretsSymlinkBypassDenied(t *testing.T) {
+	lib := newLibrary(t)
+	allowed := t.TempDir()
+	outside := t.TempDir()
+	target := filepath.Join(outside, "secret.txt")
+	if err := os.WriteFile(target, []byte("AKIA1234567890ABCDEF\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	link := filepath.Join(allowed, "leak")
+	if err := os.Symlink(target, link); err != nil {
+		t.Skipf("symlink unsupported on this platform: %v", err)
+	}
+	if err := lib.SetAllowedRoots([]string{allowed}); err != nil {
+		t.Fatalf("SetAllowedRoots: %v", err)
+	}
+	if _, err := lib.ScanSecrets("", link); err == nil {
+		t.Fatal("scan_secrets must deny a symlink that escapes the allow-list")
+	} else if !strings.Contains(err.Error(), "allowed root") {
+		t.Errorf("expected allow-list error, got: %v", err)
+	}
+	// Sanity: a regular file inside the allowed root still works.
+	plain := filepath.Join(allowed, "ok.txt")
+	if err := os.WriteFile(plain, []byte("hello"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := lib.ScanSecrets("", plain); err != nil {
+		t.Errorf("regular file inside allow-list should be accepted: %v", err)
+	}
+}
+
+// TestLoadPopularPackagesDedupes covers the loader-side defence:
+// even if the source JSON contains a duplicate, the cached list
+// (and therefore CheckTyposquat's PotentialTyposquats output) must
+// contain each name at most once.
+func TestLoadPopularPackagesDedupes(t *testing.T) {
+	lib := newLibrary(t)
+	pkgs, err := lib.loadPopularPackages("npm")
+	if err != nil {
+		t.Fatalf("loadPopularPackages npm: %v", err)
+	}
+	seen := make(map[string]int)
+	for _, p := range pkgs {
+		seen[strings.ToLower(p)]++
+	}
+	for name, n := range seen {
+		if n > 1 {
+			t.Errorf("popular-package %q appears %d times after dedup", name, n)
+		}
+	}
+}
+
+// TestSARIFOmitemptyZeroValues guards the JSON-tag fix: ruleIndex
+// and byteOffset/byteLength are semantically distinct from "unset"
+// even at zero, so they must appear literally in the marshalled
+// SARIF document. Before the fix `omitempty` dropped them silently.
+func TestSARIFOmitemptyZeroValues(t *testing.T) {
+	res := &SARIFResult{
+		RuleID:    "skills-mcp.malicious-package",
+		RuleIndex: 0,
+		Message:   SARIFMultiformat{Text: "hi"},
+		Locations: []SARIFLocation{{
+			PhysicalLocation: SARIFPhysicalLocation{
+				ArtifactLocation: SARIFArtifactLocation{URI: "stdin://text"},
+				Region:           &SARIFRegion{ByteOffset: 0, ByteLength: 0},
+			},
+		}},
+	}
+	body, err := json.Marshal(res)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := string(body)
+	for _, k := range []string{`"ruleIndex":0`, `"byteOffset":0`, `"byteLength":0`} {
+		if !strings.Contains(s, k) {
+			t.Errorf("SARIF JSON missing %s; got %s", k, s)
+		}
+	}
+}

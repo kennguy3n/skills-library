@@ -84,9 +84,14 @@ type SARIFMultiformat struct {
 }
 
 // SARIFResult is one finding.
+//
+// RuleIndex deliberately omits `omitempty`: SARIF treats ruleIndex=0
+// as "the first rule in tool.driver.rules" (a valid, distinct value
+// from "unset"), and Go's `omitempty` on int would silently drop
+// every finding whose rule sorted first.
 type SARIFResult struct {
 	RuleID     string           `json:"ruleId"`
-	RuleIndex  int              `json:"ruleIndex,omitempty"`
+	RuleIndex  int              `json:"ruleIndex"`
 	Level      string           `json:"level,omitempty"`
 	Message    SARIFMultiformat `json:"message"`
 	Locations  []SARIFLocation  `json:"locations,omitempty"`
@@ -114,10 +119,16 @@ type SARIFArtifactLocation struct {
 // We populate ByteOffset / ByteLength because the secret-detection
 // matches are byte-indexed; downstream consumers that prefer
 // line/column can re-derive them from the URI's contents.
+//
+// ByteOffset / ByteLength deliberately omit `omitempty`: a match
+// starting at the first byte of a file has ByteOffset=0, which is
+// semantically distinct from "unspecified". StartLine keeps
+// `omitempty` because we don't compute it yet; emitting a literal 0
+// there would be wrong.
 type SARIFRegion struct {
 	StartLine  int `json:"startLine,omitempty"`
-	ByteOffset int `json:"byteOffset,omitempty"`
-	ByteLength int `json:"byteLength,omitempty"`
+	ByteOffset int `json:"byteOffset"`
+	ByteLength int `json:"byteLength"`
 }
 
 // ScanSecretsSARIF converts a ScanSecretsResult into a SARIF 2.1.0

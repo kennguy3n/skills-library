@@ -128,7 +128,6 @@
     "tar",
     "node-tar",
     "minizlib",
-    "got",
     "form-data",
     "qs",
     "tough-cookie",

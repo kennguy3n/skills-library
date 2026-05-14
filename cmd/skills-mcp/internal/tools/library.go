@@ -132,6 +132,13 @@ func (l *Library) SetAllowedRoots(roots []string) error {
 		}
 		resolved = append(resolved, eval)
 	}
+	// A non-empty input whose entries all trim to "" or all fail to
+	// resolve must NOT silently disable the policy — that would turn
+	// an obvious misconfiguration (e.g. --allowed-roots=" ") into an
+	// open-everything posture. Fail loudly instead.
+	if len(resolved) == 0 {
+		return fmt.Errorf("allowed roots: none of the supplied entries resolved to a valid directory (input=%q)", roots)
+	}
 	l.allowedRoots = resolved
 	return nil
 }

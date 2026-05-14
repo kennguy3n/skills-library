@@ -736,7 +736,25 @@ func (l *Library) loadPopularPackages(ecosystem string) ([]string, error) {
 		ec.popular[eco] = []string{}
 		return ec.popular[eco], fmt.Errorf("parse %s: %w", path, err)
 	}
-	ec.popular[eco] = f.Packages
+	// Defensive dedup: an accidental duplicate entry in the source
+	// data would otherwise cause CheckTyposquat to emit duplicate
+	// PotentialTyposquats hits with identical Target/Distance fields.
+	// Comparison is case-insensitive to match the rest of the lookup
+	// pipeline; ordering of the first occurrence is preserved.
+	seen := make(map[string]struct{}, len(f.Packages))
+	deduped := make([]string, 0, len(f.Packages))
+	for _, name := range f.Packages {
+		key := strings.ToLower(strings.TrimSpace(name))
+		if key == "" {
+			continue
+		}
+		if _, dup := seen[key]; dup {
+			continue
+		}
+		seen[key] = struct{}{}
+		deduped = append(deduped, name)
+	}
+	ec.popular[eco] = deduped
 	return ec.popular[eco], nil
 }
 
@@ -822,10 +840,28 @@ func (l *Library) validateScanPath(p string) error {
 	if len(l.allowedRoots) == 0 {
 		return nil
 	}
+	// AND, not OR: both the raw absolute path and the symlink-resolved
+	// path must each be under SOME allowed root. They do NOT need to
+	// be the same root. Using OR here would let a symlink planted
+	// inside an allowed root redirect the scan to anything outside
+	// the deny-list (e.g. ~/.config/<app>/credentials), defeating the
+	// whole point of --allowed-roots.
+	absAllowed := false
 	for _, root := range l.allowedRoots {
-		if pathUnder(abs, root) || pathUnder(resolved, root) {
-			return nil
+		if pathUnder(abs, root) {
+			absAllowed = true
+			break
 		}
+	}
+	resolvedAllowed := false
+	for _, root := range l.allowedRoots {
+		if pathUnder(resolved, root) {
+			resolvedAllowed = true
+			break
+		}
+	}
+	if absAllowed && resolvedAllowed {
+		return nil
 	}
 	return fmt.Errorf("scan_secrets: %s is not under any configured allowed root", p)
 }
