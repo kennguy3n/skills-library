@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
@@ -217,5 +218,196 @@ func TestLookupVulnerabilityAcceptsRubygems(t *testing.T) {
 	// not fail for a known ecosystem.
 	if _, err := lib.LookupVulnerability("rails", "rubygems", ""); err != nil {
 		t.Errorf("LookupVulnerability with rubygems should not error: %v", err)
+	}
+}
+
+// TestLevenshtein covers a handful of obvious cases and the
+// case-folded contract upstream callers rely on. The function itself
+// does not fold case; callers (CheckTyposquat) normalise to lowercase
+// before calling.
+func TestLevenshtein(t *testing.T) {
+	cases := []struct {
+		a, b string
+		want int
+	}{
+		{"", "", 0},
+		{"a", "", 1},
+		{"", "abc", 3},
+		{"lodash", "lodahs", 2},
+		{"requests", "requets", 1},
+		{"requests", "request", 1},
+		{"react", "react", 0},
+		{"abcdef", "abcxyz", 3},
+	}
+	for _, tc := range cases {
+		if got := levenshtein(tc.a, tc.b); got != tc.want {
+			t.Errorf("levenshtein(%q,%q) = %d, want %d", tc.a, tc.b, got, tc.want)
+		}
+	}
+}
+
+// TestCheckTyposquatPotentialFromPopularList exercises the new
+// runtime path: an off-by-one variant of `requests` (PyPI) is not in
+// the curated DB but is within Levenshtein distance 1 of the popular
+// name and must therefore surface as a potential typosquat.
+func TestCheckTyposquatPotentialFromPopularList(t *testing.T) {
+	lib := newLibrary(t)
+	res, err := lib.CheckTyposquat("requets", "pypi")
+	if err != nil {
+		t.Fatal(err)
+	}
+	found := false
+	for _, p := range res.PotentialTyposquats {
+		if p.Target == "requests" && p.Distance > 0 && p.Distance <= 2 {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Errorf("expected `requests` to surface as a potential typosquat for `requets`; got %+v", res.PotentialTyposquats)
+	}
+}
+
+// TestCheckTyposquatExactPopularDoesNotSurface confirms an exact
+// match against the popular-packages list is NOT flagged as a
+// potential typosquat (distance 0 is excluded).
+func TestCheckTyposquatExactPopularDoesNotSurface(t *testing.T) {
+	lib := newLibrary(t)
+	res, err := lib.CheckTyposquat("react", "npm")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, p := range res.PotentialTyposquats {
+		if strings.EqualFold(p.Target, "react") {
+			t.Errorf("exact match against popular list should not surface; got %+v", p)
+		}
+	}
+}
+
+// TestScanSecretsAllowedRootsRestriction confirms file_path is
+// rejected when it falls outside the configured allow-list.
+func TestScanSecretsAllowedRootsRestriction(t *testing.T) {
+	lib := newLibrary(t)
+	dir := t.TempDir()
+	inside := filepath.Join(dir, "leak.txt")
+	if err := os.WriteFile(inside, []byte("creds: AKIA1234567890ABCDEF\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	other := t.TempDir()
+	if err := lib.SetAllowedRoots([]string{dir}); err != nil {
+		t.Fatalf("SetAllowedRoots: %v", err)
+	}
+	// Path inside the allowed root: ok.
+	if _, err := lib.ScanSecrets("", inside); err != nil {
+		t.Errorf("path inside allowed root should be accepted: %v", err)
+	}
+	// Path outside the allowed root: denied.
+	outside := filepath.Join(other, "leak.txt")
+	if err := os.WriteFile(outside, []byte("x"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := lib.ScanSecrets("", outside); err == nil {
+		t.Errorf("path outside allowed root should be denied")
+	}
+}
+
+// TestScanSecretsSensitiveDirAlwaysDenied confirms ~/.ssh-like
+// directories are denied regardless of the allow-list state.
+func TestScanSecretsSensitiveDirAlwaysDenied(t *testing.T) {
+	lib := newLibrary(t)
+	home, err := os.UserHomeDir()
+	if err != nil {
+		t.Skip("no home directory available")
+	}
+	target := filepath.Join(home, ".ssh", "id_rsa")
+	if _, err := lib.ScanSecrets("", target); err == nil {
+		t.Errorf("scan_secrets must deny paths inside ~/.ssh even without an allow-list")
+	}
+}
+
+// TestScanSecretsTraversalRejected covers raw `..` segments. Even
+// without an allow-list these are rejected so a caller cannot use
+// path traversal to escape the directory their MCP client believed
+// it had restricted them to.
+func TestScanSecretsTraversalRejected(t *testing.T) {
+	lib := newLibrary(t)
+	if _, err := lib.ScanSecrets("", "/tmp/../etc/passwd"); err == nil {
+		t.Errorf("scan_secrets must reject paths containing '..' segments")
+	}
+}
+
+// TestScanSecretsSARIFRoundTrip verifies the SARIF wrapper carries
+// the expected metadata for an inline-text scan and survives JSON
+// marshalling without panicking.
+func TestScanSecretsSARIFRoundTrip(t *testing.T) {
+	lib := newLibrary(t)
+	res, err := lib.ScanSecrets("creds: AKIA1234567890ABCDEF", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	log := ScanSecretsSARIF(res)
+	if log.Version != SARIFVersion {
+		t.Errorf("sarif version = %q, want %q", log.Version, SARIFVersion)
+	}
+	if len(log.Runs) != 1 {
+		t.Fatalf("expected one SARIF run, got %d", len(log.Runs))
+	}
+	if log.Runs[0].Tool.Driver.Name != SARIFToolName {
+		t.Errorf("driver name = %q, want %q", log.Runs[0].Tool.Driver.Name, SARIFToolName)
+	}
+	if len(log.Runs[0].Results) == 0 {
+		t.Errorf("expected at least one SARIF result")
+	}
+	if _, err := json.Marshal(log); err != nil {
+		t.Errorf("marshalling SARIF log: %v", err)
+	}
+}
+
+// TestCheckDependencySARIFShape pins the SARIF driver / rule
+// identifiers for check_dependency so downstream filters do not
+// silently drift.
+func TestCheckDependencySARIFShape(t *testing.T) {
+	lib := newLibrary(t)
+	res, err := lib.CheckDependency("event-stream", "3.3.6", "npm")
+	if err != nil {
+		t.Fatal(err)
+	}
+	log := CheckDependencySARIF(res)
+	if log.Runs[0].Tool.Driver.Name != SARIFToolName {
+		t.Errorf("driver name = %q", log.Runs[0].Tool.Driver.Name)
+	}
+	wantIDs := map[string]bool{
+		"skills-mcp.malicious-package": true,
+		"skills-mcp.typosquat":         true,
+		"skills-mcp.cve-pattern":       true,
+	}
+	for _, r := range log.Runs[0].Tool.Driver.Rules {
+		if !wantIDs[r.ID] {
+			t.Errorf("unexpected SARIF rule id %q", r.ID)
+		}
+	}
+	if _, err := json.Marshal(log); err != nil {
+		t.Errorf("marshal: %v", err)
+	}
+}
+
+// TestLookupVulnerabilitySemverRange exercises the new semver-aware
+// version matcher end-to-end. event-stream@3.3.6 is the only
+// affected version, so 3.3.5 and 3.3.7 must NOT match.
+func TestLookupVulnerabilitySemverRange(t *testing.T) {
+	lib := newLibrary(t)
+	hit, err := lib.LookupVulnerability("event-stream", "npm", "3.3.6")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(hit.Matches) == 0 {
+		t.Fatalf("expected exact-version hit for event-stream@3.3.6")
+	}
+	miss, err := lib.LookupVulnerability("event-stream", "npm", "3.3.5")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(miss.Matches) != 0 {
+		t.Errorf("expected no hit for event-stream@3.3.5; got %+v", miss.Matches)
 	}
 }

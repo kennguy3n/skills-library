@@ -30,6 +30,14 @@ func NewServer(root string) (*Server, error) {
 	return &Server{lib: lib}, nil
 }
 
+// SetAllowedRoots restricts the scan_secrets file_path argument to
+// the supplied directories. Delegates to the underlying Library so
+// the policy lives on the same object that performs the check; see
+// tools.Library.SetAllowedRoots for the canonicalisation rules.
+func (s *Server) SetAllowedRoots(roots []string) error {
+	return s.lib.SetAllowedRoots(roots)
+}
+
 // JSON-RPC 2.0 wire types.
 type request struct {
 	JSONRPC string          `json:"jsonrpc"`
@@ -288,16 +296,30 @@ func (s *Server) invokeTool(name string, args map[string]interface{}) (interface
 	case "search_skills":
 		return s.lib.SearchSkills(stringArg(args, "query"))
 	case "scan_secrets":
-		return s.lib.ScanSecrets(
+		res, err := s.lib.ScanSecrets(
 			stringArg(args, "text"),
 			stringArg(args, "file_path"),
 		)
+		if err != nil {
+			return nil, err
+		}
+		if strings.EqualFold(stringArg(args, "format"), "sarif") {
+			return tools.ScanSecretsSARIF(res), nil
+		}
+		return res, nil
 	case "check_dependency":
-		return s.lib.CheckDependency(
+		res, err := s.lib.CheckDependency(
 			stringArg(args, "package"),
 			stringArg(args, "version"),
 			stringArg(args, "ecosystem"),
 		)
+		if err != nil {
+			return nil, err
+		}
+		if strings.EqualFold(stringArg(args, "format"), "sarif") {
+			return tools.CheckDependencySARIF(res), nil
+		}
+		return res, nil
 	case "check_typosquat":
 		return s.lib.CheckTyposquat(
 			stringArg(args, "package"),

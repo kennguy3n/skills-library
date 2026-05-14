@@ -1,0 +1,393 @@
+// SARIF 2.1.0 output for the scan_secrets and check_dependency tools.
+//
+// SARIF is the OASIS-standardised Static Analysis Results Interchange
+// Format; CI integrations (GitHub Advanced Security, Azure DevOps,
+// SonarQube, Splunk) all ingest it natively. Emitting SARIF alongside
+// the existing rich JSON lets the MCP server feed scanner output into
+// CI dashboards without an external converter.
+//
+// The shape implemented here is the subset of SARIF 2.1.0 that the
+// upstream consumers we care about actually look at: a single Run
+// with a Tool driver, an optional list of Rules, and per-finding
+// Results with locations and free-form properties. The schema is
+// stable and we encode it explicitly (rather than pulling a third-
+// party library) so the on-disk format is auditable line-by-line.
+//
+// Spec: https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html
+package tools
+
+import (
+	"fmt"
+	"sort"
+)
+
+// SARIFVersion / SARIFSchema pin the spec revision we emit.
+const (
+	SARIFVersion = "2.1.0"
+	SARIFSchema  = "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json"
+)
+
+// SARIFToolName is the SARIF run.tool.driver.name advertised by the
+// MCP server. Kept stable so downstream filters (e.g. GitHub Advanced
+// Security category filters) can pin against it.
+const SARIFToolName = "skills-mcp"
+
+// SARIFLog is the top-level SARIF document.
+type SARIFLog struct {
+	Schema  string     `json:"$schema"`
+	Version string     `json:"version"`
+	Runs    []SARIFRun `json:"runs"`
+}
+
+// SARIFRun is one analyzer invocation.
+type SARIFRun struct {
+	Tool    SARIFTool     `json:"tool"`
+	Results []SARIFResult `json:"results"`
+}
+
+// SARIFTool wraps the analyzer's identity.
+type SARIFTool struct {
+	Driver SARIFDriver `json:"driver"`
+}
+
+// SARIFDriver describes the analyzer that produced the run.
+type SARIFDriver struct {
+	Name           string      `json:"name"`
+	Version        string      `json:"version,omitempty"`
+	InformationURI string      `json:"informationUri,omitempty"`
+	Rules          []SARIFRule `json:"rules,omitempty"`
+}
+
+// SARIFRule documents one detection rule. We emit one rule per
+// secret-detection pattern (or per malicious-package entry) so a
+// downstream UI can hyperlink the finding back to its definition.
+type SARIFRule struct {
+	ID               string             `json:"id"`
+	Name             string             `json:"name,omitempty"`
+	ShortDescription *SARIFMultiformat  `json:"shortDescription,omitempty"`
+	FullDescription  *SARIFMultiformat  `json:"fullDescription,omitempty"`
+	HelpURI          string             `json:"helpUri,omitempty"`
+	Properties       map[string]any     `json:"properties,omitempty"`
+	DefaultConfig    *SARIFRuleConfig   `json:"defaultConfiguration,omitempty"`
+}
+
+// SARIFRuleConfig is the run-wide default for a rule (level, rank).
+type SARIFRuleConfig struct {
+	Level string `json:"level,omitempty"`
+}
+
+// SARIFMultiformat carries plain-text / Markdown variants of a
+// human-readable description.
+type SARIFMultiformat struct {
+	Text     string `json:"text,omitempty"`
+	Markdown string `json:"markdown,omitempty"`
+}
+
+// SARIFResult is one finding.
+type SARIFResult struct {
+	RuleID     string                 `json:"ruleId"`
+	RuleIndex  int                    `json:"ruleIndex,omitempty"`
+	Level      string                 `json:"level,omitempty"`
+	Message    SARIFMultiformat       `json:"message"`
+	Locations  []SARIFLocation        `json:"locations,omitempty"`
+	Properties map[string]any         `json:"properties,omitempty"`
+}
+
+// SARIFLocation pins a finding to a file (and optionally an offset
+// range within it).
+type SARIFLocation struct {
+	PhysicalLocation SARIFPhysicalLocation `json:"physicalLocation"`
+}
+
+// SARIFPhysicalLocation is the file / region pair.
+type SARIFPhysicalLocation struct {
+	ArtifactLocation SARIFArtifactLocation `json:"artifactLocation"`
+	Region           *SARIFRegion          `json:"region,omitempty"`
+}
+
+// SARIFArtifactLocation points at a file (URI form).
+type SARIFArtifactLocation struct {
+	URI string `json:"uri"`
+}
+
+// SARIFRegion is a byte / character offset region within an artifact.
+// We populate ByteOffset / ByteLength because the secret-detection
+// matches are byte-indexed; downstream consumers that prefer
+// line/column can re-derive them from the URI's contents.
+type SARIFRegion struct {
+	StartLine   int `json:"startLine,omitempty"`
+	ByteOffset  int `json:"byteOffset,omitempty"`
+	ByteLength  int `json:"byteLength,omitempty"`
+}
+
+// ScanSecretsSARIF converts a ScanSecretsResult into a SARIF 2.1.0
+// log. When res.FilePath is empty (i.e. the scan ran against inline
+// text) the artifact URI is "stdin://text" so the result is still
+// well-formed SARIF.
+func ScanSecretsSARIF(res *ScanSecretsResult) *SARIFLog {
+	if res == nil {
+		return emptyLog("scan_secrets")
+	}
+	uri := res.FilePath
+	if uri == "" {
+		uri = "stdin://text"
+	}
+	// Build one rule per distinct pattern name so the rules table
+	// stays deduplicated.
+	ruleIndex := map[string]int{}
+	var rules []SARIFRule
+	for _, m := range res.Matches {
+		if _, ok := ruleIndex[m.Name]; ok {
+			continue
+		}
+		ruleIndex[m.Name] = len(rules)
+		rules = append(rules, SARIFRule{
+			ID:   sarifIDForPattern(m.Name),
+			Name: m.Name,
+			ShortDescription: &SARIFMultiformat{
+				Text: fmt.Sprintf("Secret-detection rule %q (severity %s)", m.Name, m.Severity),
+			},
+			DefaultConfig: &SARIFRuleConfig{Level: sarifLevel(m.Severity)},
+			Properties: map[string]any{
+				"severity": m.Severity,
+				"source":   "skills/secret-detection/rules/dlp_patterns.json",
+			},
+		})
+	}
+	results := make([]SARIFResult, 0, len(res.Matches))
+	for _, m := range res.Matches {
+		results = append(results, SARIFResult{
+			RuleID:    sarifIDForPattern(m.Name),
+			RuleIndex: ruleIndex[m.Name],
+			Level:     sarifLevel(m.Severity),
+			Message: SARIFMultiformat{
+				Text: fmt.Sprintf("%s match (score=%.2f, entropy=%.2f, hotword_hit=%v, known_false_positive=%v)",
+					m.Name, m.Score, m.Entropy, m.HotwordHit, m.KnownFalsePositive),
+			},
+			Locations: []SARIFLocation{{
+				PhysicalLocation: SARIFPhysicalLocation{
+					ArtifactLocation: SARIFArtifactLocation{URI: uri},
+					Region: &SARIFRegion{
+						ByteOffset: m.Start,
+						ByteLength: m.End - m.Start,
+					},
+				},
+			}},
+			Properties: map[string]any{
+				"score":                m.Score,
+				"entropy":              m.Entropy,
+				"hotword_hit":          m.HotwordHit,
+				"known_false_positive": m.KnownFalsePositive,
+				"severity":             m.Severity,
+			},
+		})
+	}
+	sort.Slice(rules, func(i, j int) bool { return rules[i].ID < rules[j].ID })
+	// Re-anchor RuleIndex after sort.
+	idxAfterSort := map[string]int{}
+	for i, r := range rules {
+		idxAfterSort[r.ID] = i
+	}
+	for i := range results {
+		results[i].RuleIndex = idxAfterSort[results[i].RuleID]
+	}
+	return &SARIFLog{
+		Schema:  SARIFSchema,
+		Version: SARIFVersion,
+		Runs: []SARIFRun{{
+			Tool: SARIFTool{Driver: SARIFDriver{
+				Name:           SARIFToolName,
+				InformationURI: "https://github.com/kennguy3n/skills-library",
+				Rules:          rules,
+			}},
+			Results: results,
+		}},
+	}
+}
+
+// CheckDependencySARIF converts a CheckDependencyResult into a SARIF
+// 2.1.0 log so CI pipelines can ingest dependency findings the same
+// way they ingest other static-analysis output.
+func CheckDependencySARIF(res *CheckDependencyResult) *SARIFLog {
+	if res == nil {
+		return emptyLog("check_dependency")
+	}
+	uri := fmt.Sprintf("pkg://%s/%s", res.Ecosystem, res.Package)
+	if res.Version != "" {
+		uri += "@" + res.Version
+	}
+	// Three rule kinds: malicious package, typosquat alert, CVE
+	// pattern. Each gets a stable rule ID so downstream filters can
+	// pin on category.
+	rules := []SARIFRule{
+		{
+			ID:   "skills-mcp.malicious-package",
+			Name: "Malicious package",
+			ShortDescription: &SARIFMultiformat{
+				Text: "Package matched against the supply-chain malicious-packages database.",
+			},
+			DefaultConfig: &SARIFRuleConfig{Level: "error"},
+		},
+		{
+			ID:   "skills-mcp.typosquat",
+			Name: "Known typosquat",
+			ShortDescription: &SARIFMultiformat{
+				Text: "Package matched against the curated typosquat database.",
+			},
+			DefaultConfig: &SARIFRuleConfig{Level: "warning"},
+		},
+		{
+			ID:   "skills-mcp.cve-pattern",
+			Name: "CVE pattern hit",
+			ShortDescription: &SARIFMultiformat{
+				Text: "Package name or description matched a tracked CVE pattern.",
+			},
+			DefaultConfig: &SARIFRuleConfig{Level: "warning"},
+		},
+	}
+	ruleIndex := map[string]int{
+		"skills-mcp.malicious-package": 0,
+		"skills-mcp.typosquat":         1,
+		"skills-mcp.cve-pattern":       2,
+	}
+	var results []SARIFResult
+	for _, m := range res.Malicious {
+		results = append(results, SARIFResult{
+			RuleID:    "skills-mcp.malicious-package",
+			RuleIndex: ruleIndex["skills-mcp.malicious-package"],
+			Level:     sarifLevel(m.Severity),
+			Message: SARIFMultiformat{
+				Text: fmt.Sprintf("%s/%s flagged as %s: %s", res.Ecosystem, m.Name, m.Type, m.Description),
+			},
+			Locations: []SARIFLocation{{
+				PhysicalLocation: SARIFPhysicalLocation{
+					ArtifactLocation: SARIFArtifactLocation{URI: uri},
+				},
+			}},
+			Properties: map[string]any{
+				"ecosystem":         res.Ecosystem,
+				"versions_affected": m.VersionsAffected,
+				"cve":               m.CVE,
+				"attack_type":       m.AttackType,
+				"severity":          m.Severity,
+				"references":        m.References,
+			},
+		})
+	}
+	for _, t := range res.Typosquats {
+		results = append(results, SARIFResult{
+			RuleID:    "skills-mcp.typosquat",
+			RuleIndex: ruleIndex["skills-mcp.typosquat"],
+			Level:     "warning",
+			Message: SARIFMultiformat{
+				Text: fmt.Sprintf("%s/%s squats %s (Levenshtein distance %d)", t.Ecosystem, t.Typosquat, t.Target, t.LevenshteinDistance),
+			},
+			Locations: []SARIFLocation{{
+				PhysicalLocation: SARIFPhysicalLocation{
+					ArtifactLocation: SARIFArtifactLocation{URI: uri},
+				},
+			}},
+			Properties: map[string]any{
+				"target":               t.Target,
+				"typosquat":            t.Typosquat,
+				"levenshtein_distance": t.LevenshteinDistance,
+				"status":               t.Status,
+			},
+		})
+	}
+	for _, c := range res.CVEs {
+		results = append(results, SARIFResult{
+			RuleID:    "skills-mcp.cve-pattern",
+			RuleIndex: ruleIndex["skills-mcp.cve-pattern"],
+			Level:     sarifLevel(c.Severity),
+			Message: SARIFMultiformat{
+				Text: fmt.Sprintf("%s (%s): %s", c.CVE, c.Name, c.Description),
+			},
+			Locations: []SARIFLocation{{
+				PhysicalLocation: SARIFPhysicalLocation{
+					ArtifactLocation: SARIFArtifactLocation{URI: uri},
+				},
+			}},
+			Properties: map[string]any{
+				"cve":         c.CVE,
+				"severity":    c.Severity,
+				"attack_type": c.AttackType,
+				"references":  c.References,
+				"languages":   c.Languages,
+			},
+		})
+	}
+	return &SARIFLog{
+		Schema:  SARIFSchema,
+		Version: SARIFVersion,
+		Runs: []SARIFRun{{
+			Tool: SARIFTool{Driver: SARIFDriver{
+				Name:           SARIFToolName,
+				InformationURI: "https://github.com/kennguy3n/skills-library",
+				Rules:          rules,
+			}},
+			Results: results,
+		}},
+	}
+}
+
+// emptyLog returns a SARIF document with a single empty run so a
+// caller can still serialise nil results as well-formed SARIF.
+func emptyLog(tool string) *SARIFLog {
+	return &SARIFLog{
+		Schema:  SARIFSchema,
+		Version: SARIFVersion,
+		Runs: []SARIFRun{{
+			Tool: SARIFTool{Driver: SARIFDriver{
+				Name:           SARIFToolName,
+				InformationURI: "https://github.com/kennguy3n/skills-library",
+			}},
+			Results: []SARIFResult{},
+		}},
+	}
+}
+
+// sarifIDForPattern derives a stable SARIF rule ID from a pattern
+// name. The form `skills-mcp.dlp.<slug>` keeps every rule the MCP
+// server emits inside the `skills-mcp.` namespace so downstream
+// dashboards can filter all of them at once.
+func sarifIDForPattern(name string) string {
+	out := make([]rune, 0, len(name))
+	for _, r := range name {
+		switch {
+		case r >= 'A' && r <= 'Z':
+			out = append(out, r-'A'+'a')
+		case r >= 'a' && r <= 'z', r >= '0' && r <= '9':
+			out = append(out, r)
+		default:
+			if len(out) > 0 && out[len(out)-1] != '-' {
+				out = append(out, '-')
+			}
+		}
+	}
+	for len(out) > 0 && out[len(out)-1] == '-' {
+		out = out[:len(out)-1]
+	}
+	if len(out) == 0 {
+		return "skills-mcp.dlp.unknown"
+	}
+	return "skills-mcp.dlp." + string(out)
+}
+
+// sarifLevel maps the library's severity vocabulary to the SARIF
+// "level" enum (note / warning / error). The "none" level is omitted
+// so undecorated findings default to warning, which is what most CI
+// dashboards expect.
+func sarifLevel(severity string) string {
+	switch severity {
+	case "critical", "high":
+		return "error"
+	case "medium", "moderate":
+		return "warning"
+	case "low":
+		return "note"
+	case "":
+		return "warning"
+	}
+	return "warning"
+}

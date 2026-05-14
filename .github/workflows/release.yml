@@ -306,7 +306,11 @@ jobs:
             skills \
             vulnerabilities \
             dictionaries \
-            dist
+            dist \
+            rules \
+            compliance \
+            profiles \
+            locales
           if [ -d deltas ]; then
             tar -C deltas -czf release/deltas.tar.gz . || true
           fi

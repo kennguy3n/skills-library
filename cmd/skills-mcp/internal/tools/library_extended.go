@@ -62,6 +62,13 @@ type ScanSecretsResult struct {
 // ScanSecrets reads either inline text or a local file and runs the
 // secret-detection rules against the contents. Exactly one of text or
 // filePath must be non-empty.
+//
+// When a file_path is supplied it is validated against the Library's
+// allowed-roots policy (see SetAllowedRoots) and an unconditional
+// deny-list of sensitive system directories (~/.ssh, ~/.aws,
+// ~/.gnupg, ~/.kube, ~/.docker, /etc/shadow, /etc/ssh). Both the
+// supplied path and its symlink target must satisfy the policy so a
+// caller cannot smuggle access via a symlink inside an allowed root.
 func (l *Library) ScanSecrets(text, filePath string) (*ScanSecretsResult, error) {
 	switch {
 	case text != "" && filePath != "":
@@ -70,6 +77,9 @@ func (l *Library) ScanSecrets(text, filePath string) (*ScanSecretsResult, error)
 		return nil, fmt.Errorf("scan_secrets: one of text or file_path is required")
 	}
 	if filePath != "" {
+		if err := l.validateScanPath(filePath); err != nil {
+			return nil, err
+		}
 		st, err := os.Stat(filePath)
 		if err != nil {
 			return nil, fmt.Errorf("scan_secrets: stat %s: %w", filePath, err)
@@ -185,20 +195,52 @@ func (l *Library) CheckDependency(pkg, version, ecosystem string) (*CheckDepende
 }
 
 // CheckTyposquatResult is what the check_typosquat tool returns.
+//
+// Typosquats lists rows from the curated typosquat database that
+// already pin pkg as either the legitimate target or a known squat.
+// PotentialTyposquats lists additional candidates discovered at
+// runtime by computing the Levenshtein distance between pkg and a
+// per-ecosystem popular-packages list — i.e. names the curated DB
+// does not (yet) know about but that are within distance 2 of a
+// popular package and therefore suspicious.
 type CheckTyposquatResult struct {
-	Package    string           `json:"package"`
-	Ecosystem  string           `json:"ecosystem,omitempty"`
-	Typosquats []TyposquatEntry `json:"typosquats"`
+	Package             string                   `json:"package"`
+	Ecosystem           string                   `json:"ecosystem,omitempty"`
+	Typosquats          []TyposquatEntry         `json:"typosquats"`
+	PotentialTyposquats []PotentialTyposquatHit  `json:"potential_typosquats"`
+}
+
+// PotentialTyposquatHit is one runtime-discovered candidate: a
+// popular package the input is within Levenshtein distance 2 of, but
+// is not equal to. Distance 0 (exact match against a popular name) is
+// never returned because the caller is most likely already using the
+// real package.
+type PotentialTyposquatHit struct {
+	Target    string `json:"target"`
+	Ecosystem string `json:"ecosystem"`
+	Distance  int    `json:"levenshtein_distance"`
 }
 
 // CheckTyposquat returns every typosquat entry where pkg appears as
 // either the legitimate target or as a known typosquat. Optionally
 // filters by ecosystem.
+//
+// In addition to the curated typosquat DB, the function computes the
+// Levenshtein distance from pkg to every package on the configured
+// popular-packages list for the given ecosystem. Names within
+// distance 2 (but not equal to) a popular package are surfaced in
+// PotentialTyposquats so the caller can flag a freshly-published
+// `requets` / `lodahs` even when no human has added it to the
+// curated DB yet.
 func (l *Library) CheckTyposquat(pkg, ecosystem string) (*CheckTyposquatResult, error) {
 	if strings.TrimSpace(pkg) == "" {
 		return nil, fmt.Errorf("check_typosquat: package is required")
 	}
-	out := &CheckTyposquatResult{Package: pkg, Typosquats: []TyposquatEntry{}}
+	out := &CheckTyposquatResult{
+		Package:             pkg,
+		Typosquats:          []TyposquatEntry{},
+		PotentialTyposquats: []PotentialTyposquatHit{},
+	}
 	if ecosystem != "" {
 		eco := strings.ToLower(strings.TrimSpace(ecosystem))
 		if !knownEcosystems[eco] {
@@ -208,17 +250,49 @@ func (l *Library) CheckTyposquat(pkg, ecosystem string) (*CheckTyposquatResult, 
 		ecosystem = eco
 	}
 	tf, err := l.loadTyposquats()
-	if err != nil {
-		return out, nil
+	if err == nil {
+		for _, t := range tf.Entries {
+			if !strings.EqualFold(t.Target, pkg) && !strings.EqualFold(t.Typosquat, pkg) {
+				continue
+			}
+			if ecosystem != "" && !strings.EqualFold(t.Ecosystem, ecosystem) {
+				continue
+			}
+			out.Typosquats = append(out.Typosquats, t)
+		}
 	}
-	for _, t := range tf.Entries {
-		if !strings.EqualFold(t.Target, pkg) && !strings.EqualFold(t.Typosquat, pkg) {
-			continue
+	// Runtime Levenshtein scan against the popular-packages list.
+	// Scanning every ecosystem when none is pinned would produce noisy
+	// false positives across language boundaries (a npm package name
+	// that looks like a PyPI one), so the suggestion-style lookup
+	// requires an explicit ecosystem.
+	if ecosystem != "" {
+		popular, perr := l.loadPopularPackages(ecosystem)
+		if perr == nil {
+			needle := strings.ToLower(strings.TrimSpace(pkg))
+			for _, target := range popular {
+				targetLower := strings.ToLower(target)
+				if targetLower == needle {
+					// Exact match: the caller is using the popular
+					// package itself, not a squat.
+					continue
+				}
+				d := levenshtein(needle, targetLower)
+				if d > 0 && d <= 2 {
+					out.PotentialTyposquats = append(out.PotentialTyposquats, PotentialTyposquatHit{
+						Target:    target,
+						Ecosystem: ecosystem,
+						Distance:  d,
+					})
+				}
+			}
+			sort.Slice(out.PotentialTyposquats, func(i, j int) bool {
+				if out.PotentialTyposquats[i].Distance != out.PotentialTyposquats[j].Distance {
+					return out.PotentialTyposquats[i].Distance < out.PotentialTyposquats[j].Distance
+				}
+				return out.PotentialTyposquats[i].Target < out.PotentialTyposquats[j].Target
+			})
 		}
-		if ecosystem != "" && !strings.EqualFold(t.Ecosystem, ecosystem) {
-			continue
-		}
-		out.Typosquats = append(out.Typosquats, t)
 	}
 	return out, nil
 }
@@ -482,11 +556,13 @@ type extendedCache struct {
 	cveMu        sync.Mutex
 	complianceMu sync.Mutex
 	sigmaMu      sync.Mutex
+	popularMu    sync.Mutex
 
 	cve         *cvePatternsFile
 	compliance  map[string]*FrameworkMapping
 	sigmaRules  []SigmaRule
 	sigmaLoaded bool
+	popular     map[string][]string // ecosystem → popular package names
 }
 
 var extendedCaches sync.Map // *Library → *extendedCache
@@ -498,7 +574,10 @@ func (l *Library) extended() *extendedCache {
 	if v, ok := extendedCaches.Load(l); ok {
 		return v.(*extendedCache)
 	}
-	v, _ := extendedCaches.LoadOrStore(l, &extendedCache{compliance: map[string]*FrameworkMapping{}})
+	v, _ := extendedCaches.LoadOrStore(l, &extendedCache{
+		compliance: map[string]*FrameworkMapping{},
+		popular:    map[string][]string{},
+	})
 	return v.(*extendedCache)
 }
 
@@ -622,4 +701,182 @@ func (l *Library) loadSigmaRules() ([]SigmaRule, error) {
 	ec.sigmaRules = rules
 	ec.sigmaLoaded = true
 	return ec.sigmaRules, nil
+}
+
+// loadPopularPackages reads the per-ecosystem top-N package list used
+// for runtime Levenshtein typosquat detection. Missing or unparseable
+// files produce an empty list rather than an error so the rest of
+// CheckTyposquat (the curated DB lookup) keeps working in
+// minimally-provisioned environments. The returned slice is cached
+// per Library instance.
+func (l *Library) loadPopularPackages(ecosystem string) ([]string, error) {
+	eco := strings.ToLower(strings.TrimSpace(ecosystem))
+	if !knownEcosystems[eco] {
+		return nil, fmt.Errorf("unknown ecosystem %q", ecosystem)
+	}
+	ec := l.extended()
+	ec.popularMu.Lock()
+	defer ec.popularMu.Unlock()
+	if cached, ok := ec.popular[eco]; ok {
+		return cached, nil
+	}
+	path := filepath.Join(l.root, "vulnerabilities", "supply-chain", "popular-packages", eco+".json")
+	body, err := os.ReadFile(path)
+	if err != nil {
+		// Cache the empty list so we don't re-stat on every call when
+		// the optional data file is absent.
+		ec.popular[eco] = []string{}
+		return ec.popular[eco], nil
+	}
+	var f struct {
+		Ecosystem string   `json:"ecosystem"`
+		Packages  []string `json:"packages"`
+	}
+	if err := json.Unmarshal(body, &f); err != nil {
+		ec.popular[eco] = []string{}
+		return ec.popular[eco], fmt.Errorf("parse %s: %w", path, err)
+	}
+	ec.popular[eco] = f.Packages
+	return ec.popular[eco], nil
+}
+
+// levenshtein returns the edit distance between a and b under the
+// classic insert / delete / substitute model with unit costs. The
+// implementation uses two rolling rows for O(min(len(a), len(b)))
+// extra space; for the short package names this is invoked on, that
+// is well below the cost of comparing against a hundred popular
+// packages per call.
+func levenshtein(a, b string) int {
+	if a == b {
+		return 0
+	}
+	if len(a) == 0 {
+		return len(b)
+	}
+	if len(b) == 0 {
+		return len(a)
+	}
+	// Keep the shorter string as the inner loop to bound memory.
+	if len(a) > len(b) {
+		a, b = b, a
+	}
+	prev := make([]int, len(a)+1)
+	curr := make([]int, len(a)+1)
+	for i := range prev {
+		prev[i] = i
+	}
+	for j := 1; j <= len(b); j++ {
+		curr[0] = j
+		for i := 1; i <= len(a); i++ {
+			cost := 1
+			if a[i-1] == b[j-1] {
+				cost = 0
+			}
+			del := prev[i] + 1
+			ins := curr[i-1] + 1
+			sub := prev[i-1] + cost
+			m := del
+			if ins < m {
+				m = ins
+			}
+			if sub < m {
+				m = sub
+			}
+			curr[i] = m
+		}
+		prev, curr = curr, prev
+	}
+	return prev[len(a)]
+}
+
+// validateScanPath enforces the ScanSecrets access policy: no `..`
+// traversal segments in the raw input, no path inside a known
+// sensitive system directory, and (when an allow-list is configured
+// via SetAllowedRoots) the resolved path must live under one of those
+// roots. The check is run on both the supplied path and its
+// symlink-resolved counterpart so a symlink inside an allowed root
+// cannot redirect the scan to /etc/shadow.
+func (l *Library) validateScanPath(p string) error {
+	if strings.TrimSpace(p) == "" {
+		return fmt.Errorf("scan_secrets: file_path is empty")
+	}
+	if containsTraversal(p) {
+		return fmt.Errorf("scan_secrets: file_path may not contain '..' segments: %s", p)
+	}
+	abs, err := filepath.Abs(p)
+	if err != nil {
+		return fmt.Errorf("scan_secrets: resolve %s: %w", p, err)
+	}
+	resolved, err := filepath.EvalSymlinks(abs)
+	if err != nil {
+		// Preserve the prior error shape so callers get a useful
+		// message; if the file is missing the subsequent os.Stat will
+		// say so explicitly.
+		resolved = abs
+	}
+	for _, denied := range sensitiveDirs() {
+		if pathUnder(abs, denied) || pathUnder(resolved, denied) {
+			return fmt.Errorf("scan_secrets: %s is inside sensitive directory %s", p, denied)
+		}
+	}
+	if len(l.allowedRoots) == 0 {
+		return nil
+	}
+	for _, root := range l.allowedRoots {
+		if pathUnder(abs, root) || pathUnder(resolved, root) {
+			return nil
+		}
+	}
+	return fmt.Errorf("scan_secrets: %s is not under any configured allowed root", p)
+}
+
+// containsTraversal reports whether the raw input path contains a
+// literal `..` path segment. filepath.Abs would otherwise silently
+// normalise these away, masking caller intent.
+func containsTraversal(p string) bool {
+	for _, seg := range strings.Split(filepath.ToSlash(p), "/") {
+		if seg == ".." {
+			return true
+		}
+	}
+	return false
+}
+
+// pathUnder reports whether child is the same path as parent or one
+// of its descendants. Both inputs are expected to be cleaned absolute
+// paths.
+func pathUnder(child, parent string) bool {
+	if child == parent {
+		return true
+	}
+	parent = strings.TrimRight(parent, string(filepath.Separator))
+	return strings.HasPrefix(child, parent+string(filepath.Separator))
+}
+
+// sensitiveDirs returns the absolute directories that ScanSecrets
+// must never read from regardless of the allowed-roots configuration.
+// Includes the user's SSH / GPG / cloud-CLI credential stores plus a
+// handful of system-wide secret stores. The list is built lazily per
+// call so a missing home directory does not crash the server.
+func sensitiveDirs() []string {
+	out := []string{
+		"/etc/shadow",
+		"/etc/ssh",
+		"/etc/gshadow",
+		"/root/.ssh",
+		"/root/.aws",
+		"/root/.gnupg",
+	}
+	if home, err := os.UserHomeDir(); err == nil && home != "" {
+		out = append(out,
+			filepath.Join(home, ".ssh"),
+			filepath.Join(home, ".gnupg"),
+			filepath.Join(home, ".aws"),
+			filepath.Join(home, ".kube"),
+			filepath.Join(home, ".docker"),
+			filepath.Join(home, ".npmrc"),
+			filepath.Join(home, ".netrc"),
+		)
+	}
+	return out
 }

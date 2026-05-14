@@ -27,12 +27,14 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/kennguy3n/skills-library/cmd/skills-mcp/internal/mcp"
 )
 
 func main() {
 	libraryPath := flag.String("path", "", "path to the skills-library checkout (default: $SKILLS_LIBRARY_PATH or dir of the binary)")
+	allowedRoots := flag.String("allowed-roots", "", "comma-separated absolute directories that scan_secrets is permitted to read from. When unset, ScanSecrets accepts any path the process can stat (sensitive system directories such as ~/.ssh, ~/.aws, ~/.gnupg and /etc/shadow are always denied regardless).")
 	flag.Parse()
 
 	root, err := resolveLibraryRoot(*libraryPath)
@@ -44,6 +46,13 @@ func main() {
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "error:", err)
 		os.Exit(1)
+	}
+	if *allowedRoots != "" {
+		roots := strings.Split(*allowedRoots, ",")
+		if err := srv.SetAllowedRoots(roots); err != nil {
+			fmt.Fprintln(os.Stderr, "error:", err)
+			os.Exit(1)
+		}
 	}
 	if err := srv.Serve(bufio.NewReader(os.Stdin), os.Stdout); err != nil {
 		fmt.Fprintln(os.Stderr, "error:", err)
