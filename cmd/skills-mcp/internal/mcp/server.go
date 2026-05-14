@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"regexp"
 	"strings"
 
 	"github.com/kennguy3n/skills-library/cmd/skills-mcp/internal/tools"
@@ -85,6 +86,39 @@ var supportedProtocolVersions = []string{
 	"2025-06-18",
 	"2025-03-26",
 	"2024-11-05",
+}
+
+// protocolVersionPattern matches the YYYY-MM-DD shape that the MCP
+// spec uses for revision identifiers. The lexicographic `>=`
+// comparisons in dispatch() that gate `instructions` and
+// `serverInfo.title` are only correct as long as every value being
+// compared has this fixed-width zero-padded shape — and the values
+// being compared are exactly the entries of supportedProtocolVersions
+// plus the two protocolVersionWith* constants. If MCP ever ships a
+// non-date version identifier (e.g. `v3.0`), the comparison would
+// silently produce the wrong gating decision. assertProtocolVersionShape
+// turns that into a loud build-time failure instead.
+var protocolVersionPattern = regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`)
+
+func init() {
+	assertProtocolVersionShape("SupportedProtocolVersion", SupportedProtocolVersion)
+	assertProtocolVersionShape("protocolVersionWithInstructions", protocolVersionWithInstructions)
+	assertProtocolVersionShape("protocolVersionWithTitle", protocolVersionWithTitle)
+	for _, v := range supportedProtocolVersions {
+		assertProtocolVersionShape("supportedProtocolVersions", v)
+	}
+}
+
+func assertProtocolVersionShape(label, v string) {
+	if !protocolVersionPattern.MatchString(v) {
+		panic(fmt.Sprintf(
+			"mcp: %s=%q does not match YYYY-MM-DD; the protocol-version "+
+				"gating in dispatch() relies on lexicographic ordering of "+
+				"date strings. Update the gating logic before introducing "+
+				"a non-date version identifier.",
+			label, v,
+		))
+	}
 }
 
 // negotiateProtocolVersion implements the MCP "Version Negotiation" rule:

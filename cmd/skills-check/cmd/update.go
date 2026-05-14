@@ -31,6 +31,8 @@ func updateCmd() *cobra.Command {
 		publicKeyPath string
 		skipSignature bool
 		quiet         bool
+		fullInline    bool
+		legacy        bool
 	)
 	c := &cobra.Command{
 		Use:   "update",
@@ -95,7 +97,13 @@ func updateCmd() *cobra.Command {
 			}
 			fmt.Fprint(out, updater.FormatChanges(res.Changes))
 			if regenerate {
-				if err := regenerateAfterUpdate(root, out); err != nil {
+				// Propagate --full-inline / --legacy through so the
+				// caller can keep the legacy monolithic AGENTS.md
+				// output after an update. Without this, `update
+				// --regenerate` silently downgrades the consumer's
+				// AGENTS.md to the minimal pointer file (matches the
+				// flag-parity fix made to `init` in PR #15).
+				if err := regenerateAfterUpdate(root, out, fullInline || legacy); err != nil {
 					return err
 				}
 			}
@@ -110,6 +118,8 @@ func updateCmd() *cobra.Command {
 	c.Flags().StringVar(&publicKeyPath, "public-key", "", "Ed25519 public key file used to verify the manifest (default: embedded)")
 	c.Flags().BoolVar(&skipSignature, "skip-signature", false, "skip signature verification (testing / bootstrap only)")
 	c.Flags().BoolVar(&quiet, "quiet", false, "suppress non-essential output")
+	c.Flags().BoolVar(&fullInline, "full-inline", false, "with --regenerate, keep the legacy AGENTS.md output that inlines every skill body (default is the minimal pointer file)")
+	c.Flags().BoolVar(&legacy, "legacy", false, "alias for --full-inline")
 	return c
 }
 
@@ -117,9 +127,18 @@ func updateCmd() *cobra.Command {
 // dist/ stays in sync after an update brings in new skill content. We do not
 // share the cobra.Command instance here because both commands accept their
 // own --path flag; instead we drive the package APIs directly.
-func regenerateAfterUpdate(root string, out interface{ Write(p []byte) (int, error) }) error {
+//
+// fullInline mirrors `regenerate --full-inline` (alias --legacy): when true,
+// the agents formatter emits the pre-v2 monolithic AGENTS.md instead of the
+// minimal pointer file. Plumbed through so `update --regenerate` doesn't
+// silently downgrade a consumer that pinned the legacy shape.
+func regenerateAfterUpdate(root string, out interface{ Write(p []byte) (int, error) }, fullInline bool) error {
 	cmd := regenerateCmd()
-	cmd.SetArgs([]string{"--path", root})
+	args := []string{"--path", root}
+	if fullInline {
+		args = append(args, "--full-inline")
+	}
+	cmd.SetArgs(args)
 	cmd.SetOut(out)
 	return cmd.Execute()
 }
