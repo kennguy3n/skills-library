@@ -1,10 +1,16 @@
-# Skills Library — Architecture
+# secure-code — Architecture
+
+This document describes the runtime architecture of the **secure-code** project
+(Go module path [`github.com/kennguy3n/skills-library`](https://github.com/kennguy3n/skills-library);
+CLI binary `skills-check`). The Go module path and CLI binary names are stable
+technical identifiers and are intentionally not renamed when the project's brand
+changed from "Skills Library" to **secure-code**.
 
 ## System Overview
 
 ```mermaid
 graph TD
-    subgraph "Skills Library Repository"
+    subgraph "secure-code Repository"
         A["skills/<br/>SKILL.md manifests"] --> D["dist/ compiler"]
         B["vulnerabilities/<br/>Supply chain DB"] --> D
         C["rules/<br/>Sigma detection rules"] --> D
@@ -22,22 +28,22 @@ graph TD
         D --> M["dist/SECURITY-SKILLS.md"]
     end
 
-    subgraph "Update Channel"
+    subgraph "Update channel"
         N["GitHub Releases"] --> O["manifest.json<br/>+ checksums<br/>+ Ed25519 sig"]
         O --> P["skills-check CLI<br/>(Go binary)"]
         P --> Q["Delta download<br/>changed files only"]
         Q --> R["Verify signature<br/>+ checksums"]
-        R --> S["Update local<br/>skills-library/"]
+        R --> S["Update local<br/>secure-code/"]
         S --> D
     end
 
-    subgraph "Scheduled Updates"
+    subgraph "Scheduled updates"
         T["macOS: launchd plist"] --> P
         U["Linux: systemd timer"] --> P
         V["Windows: Task Scheduler"] --> P
     end
 
-    subgraph "Developer Workflow"
+    subgraph "Developer workflow"
         F --> W["AI Coding Tool<br/>reads config on<br/>session start"]
         W --> X["AI applies security<br/>rules during<br/>code generation"]
     end
@@ -51,9 +57,9 @@ through them:
   Markdown so PRs are reviewable.
 - **Distribution** — the `dist/` compiler reads every input source and produces one
   IDE-specific file per supported tool. Each output is pinned to a token budget tier.
-- **Update Channel** — signed releases on GitHub (or a self-hosted CDN) carry deltas
+- **Update channel** — signed releases on GitHub (or a self-hosted CDN) carry deltas
   forward to installed CLIs. The CLI verifies signatures before writing any file.
-- **Scheduled Updates** — each OS uses its native scheduling mechanism; no daemons.
+- **Scheduled updates** — each OS uses its native scheduling mechanism; no daemons.
 
 ## `SKILL.md` Schema (Detailed)
 
@@ -130,7 +136,7 @@ embedded public key.
   "previous_version": "2026.05.11.3",
   "released_at": "2026-05-12T10:30:00Z",
   "signature": "ed25519:<base64-encoded-signature>",
-  "public_key_id": "skills-library-release-2026",
+  "public_key_id": "secure-code-release-2026",
   "files": [
     {
       "path": "skills/secret-detection/SKILL.md",
@@ -252,7 +258,7 @@ can be built against different signing keys for staging versus production.
 
 ## MCP Server Architecture (`skills-mcp`)
 
-`skills-mcp` is a second Go binary that exposes the Skills Library to AI tools
+`skills-mcp` is a second Go binary that exposes secure-code to AI tools
 speaking the Model Context Protocol. It runs as a short-lived child process
 spawned by the AI client and talks to it over stdio.
 
@@ -411,7 +417,7 @@ Token counts are computed at compile time so authors get fast feedback.
 
 ## Security of the Library Itself
 
-Skills Library is itself a piece of security tooling. Its supply chain must be
+secure-code is itself a piece of security tooling. Its supply chain must be
 defended.
 
 - **All releases are Ed25519-signed.** The signing key is hardware-backed (YubiKey)
@@ -448,7 +454,7 @@ compliance/               # framework → control → skill mappings
 sdk/                      # programmatic access
 ├── go/                   # re-exports of internal/skill
 ├── python/               # skillslib (pyproject.toml, PyYAML)
-└── typescript/           # @skills-library/skillslib (js-yaml, ESM)
+└── typescript/           # skillslib npm package (js-yaml, ESM)
 
 locales/                  # informational translations
 ├── es/<skill>/SKILL.md

@@ -1,6 +1,6 @@
-# Install on macOS
+# Install secure-code on macOS
 
-`skills-check` runs natively on Intel and Apple Silicon. Pick whichever
+The `skills-check` CLI runs natively on Intel and Apple Silicon. Pick whichever
 install path matches how you manage other CLI tools.
 
 ## Homebrew (recommended)

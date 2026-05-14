@@ -1,7 +1,7 @@
-# skills-check — Linux Packaging
+# secure-code — Linux packaging
 
-Builds Debian (`.deb`) and RPM (`.rpm`) packages of `skills-check` using
-[nfpm](https://nfpm.goreleaser.com/).
+Builds Debian (`.deb`) and RPM (`.rpm`) packages of the `skills-check` CLI
+(part of **secure-code**) using [nfpm](https://nfpm.goreleaser.com/).
 
 ## Prerequisites
 

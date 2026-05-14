@@ -1,4 +1,4 @@
-# Skills Library — Phased Delivery Plan
+# secure-code — Phased delivery plan
 
 The library is delivered in five phases. Each phase is independently useful: any team can
 stop after Phase 1 and still have a working library, then opt into Phase 2+ as needs grow.
@@ -25,7 +25,7 @@ clone, generate IDE files from, and commit into their project today.
   - `compliance-awareness`
 - [x] `skills-check` Go CLI with the following commands:
   - `init` — generate IDE-specific config in target project
-  - `update` — scaffold for Phase 2 (remote update channel)
+  - `update` — fetch latest manifest, verify signature, download deltas (Phase 2)
   - `validate` — check `SKILL.md` schema, rule file syntax, token budgets
   - `list` — list available skills with token counts per tier
   - `regenerate` — rebuild `dist/` files from current skills
@@ -57,10 +57,10 @@ keeps it (and every other file in the library) up to date.
 ### Deliverables
 
 - [x] Curated vulnerability data (10-year coverage, 2015-2025):
-  - `vulnerabilities/supply-chain/malicious-packages/{npm,pypi,crates,go,rubygems,maven,nuget,github-actions,docker}.json`
-  - `vulnerabilities/supply-chain/typosquat-db/known_typosquats.json` (60+ entries)
+  - `vulnerabilities/supply-chain/malicious-packages/{npm,pypi,crates,go,rubygems,maven,nuget,github-actions,docker}.json` (9 ecosystems)
+  - `vulnerabilities/supply-chain/typosquat-db/known_typosquats.json` (71 entries)
   - `vulnerabilities/supply-chain/dependency-confusion/patterns.json`
-  - `vulnerabilities/cve/code-relevant/cve_patterns.json` (~50 CVEs, 2015-2025)
+  - `vulnerabilities/cve/code-relevant/cve_patterns.json` (58 CVEs, 2015-2025)
 - [x] Manifest system:
   - Root `manifest.json` listing every distributable file with SHA-256 checksum
   - Ed25519 signing of every release manifest, embedded public key in CLI
@@ -100,7 +100,8 @@ steps.
 
 ### Deliverables
 
-- [x] Scheduled update mechanism:
+- [x] Scheduled update mechanism (artifact identifiers preserved to stay
+  compatible with installed Go binaries):
   - macOS: LaunchAgent (`~/Library/LaunchAgents/com.skills-library.update.plist`)
   - Linux: systemd user timer (`~/.config/systemd/user/skills-check-update.timer`)
   - Windows: Task Scheduler task (`SkillsLibraryUpdate`)
@@ -154,7 +155,7 @@ detection rule corpus extracted from production ShieldNet detection rules.
   - Tool: `check_secret_pattern(text)`
   - Tool: `get_skill(skill_id, budget)`
   - Tool: `search_skills(query)`
-- [x] Additional skills toward the target of 20+ total:
+- [x] Additional skills toward the target of 20+ total (final count: 28):
   - [x] `iac-security` (Terraform, CloudFormation, Pulumi)
   - [x] `container-security` (Dockerfile, K8s manifests)
   - [x] `frontend-security` (XSS, CSP, CORS)
@@ -168,6 +169,10 @@ detection rule corpus extracted from production ShieldNet detection rules.
   - [x] `error-handling-security` (information disclosure)
   - [x] `logging-security` (sensitive data in logs)
   - [x] `cors-security`
+  - [x] `cicd-security`, `ssrf-prevention`, `deserialization-security`,
+    `graphql-security`, `file-upload-security`, `websocket-security` (Phase 4b
+    supply-chain expansion)
+  - [x] `iam-best-practices`, `saas-security` (Phase 4c)
 
 ### MCP integration model
 
@@ -215,7 +220,7 @@ governance and community contribution at scale.
     (`locales/de/`) for top 3 skills
   - [ ] Japanese, Mandarin
   - [ ] Translation review workflow with native security professionals
-- [ ] SBOM generation for Skills Library itself (eat our own dog food)
+- [ ] SBOM generation for secure-code itself (eat our own dog food)
 - [ ] Third-party security audit of:
   - The CLI binary's signature verification path
   - The update protocol against MITM and replay attacks

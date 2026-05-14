@@ -1,8 +1,12 @@
 # Air-gapped install
 
-Skills Library is designed to operate without any network access once the
+**secure-code** is designed to operate without any network access once the
 release tarball is on disk. This guide is the procedure for installing and
 keeping the library up to date on a machine that cannot reach the internet.
+
+> Asset names (`skills-check`, `skills-library-data.tar.gz`) and release URLs
+> reflect the stable Go module / binary identifiers and are not renamed when
+> the project's brand changed to **secure-code**.
 
 ## 1. Download on the internet-connected build host
 

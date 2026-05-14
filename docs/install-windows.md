@@ -1,6 +1,6 @@
-# Install on Windows
+# Install secure-code on Windows
 
-`skills-check` runs on Windows 10 and newer (x64). The CLI binary is
+The `skills-check` CLI runs on Windows 10 and newer (x64). The CLI binary is
 signed with Authenticode when the release secret is configured — see
 [`packaging/codesign/README.md`](../packaging/codesign/README.md).
 
