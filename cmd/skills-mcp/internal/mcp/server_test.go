@@ -152,6 +152,38 @@ func TestInitializeGatesNewerFieldsByNegotiatedVersion(t *testing.T) {
 	}
 }
 
+// TestAssertProtocolVersionShapePanicsOnNonDate locks in the defensive
+// check around the lexicographic protocol-version comparison. The
+// comparison `negotiated >= protocolVersionWithTitle` is only correct
+// while all participating values are fixed-width YYYY-MM-DD strings;
+// the init()-time assertion panics if a future contributor adds a
+// non-date identifier, so the silent-miscompare risk flagged in the
+// PR #15 review is converted to a loud build-time failure.
+func TestAssertProtocolVersionShapePanicsOnNonDate(t *testing.T) {
+	cases := []struct {
+		v          string
+		wantPanics bool
+	}{
+		{"2025-11-25", false},
+		{"2024-11-05", false},
+		{"v2.0", true},
+		{"2025-1-25", true},   // not zero-padded
+		{"2025-11-25T", true}, // trailing junk
+		{"", true},
+	}
+	for _, tc := range cases {
+		t.Run(tc.v, func(t *testing.T) {
+			defer func() {
+				r := recover()
+				if (r != nil) != tc.wantPanics {
+					t.Errorf("v=%q: panicked=%v, want %v (r=%v)", tc.v, r != nil, tc.wantPanics, r)
+				}
+			}()
+			assertProtocolVersionShape("test", tc.v)
+		})
+	}
+}
+
 func TestToolsListReturnsExpectedTools(t *testing.T) {
 	srv := newServer(t)
 	req := mustMarshal(t, map[string]interface{}{

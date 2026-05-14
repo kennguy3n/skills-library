@@ -403,7 +403,7 @@ go test ./...                                       # covers CLI + MCP server
 ./skills-check list                                 # enumerate skills with token counts
 ./skills-check regenerate                           # rebuild dist/ files
 ./skills-check manifest compute --path . --write    # recompute SHA-256 checksums
-./skills-check manifest verify  --path .            # verify committed checksums
+./skills-check manifest verify  --path . --checksums-only  # verify committed checksums (the repo manifest is unsigned in source; --checksums-only is required)
 ```
 
 The same commands run in CI on every PR. `skills-check validate` enforces the

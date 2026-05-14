@@ -221,6 +221,94 @@ func TestManifestVerifyUnsignedPolicy(t *testing.T) {
 	}
 }
 
+// TestRegenerateAfterUpdateRespectsFullInline locks in the PR #15
+// review-flag fix that `update --regenerate` was silently switching
+// AGENTS.md to the minimal pointer file with no way to opt back into
+// the legacy monolithic output. Asserts the boolean is plumbed through:
+//
+//  1. fullInline=false yields the minimal renderer's signature header
+//     (`AGENTS.md — secure-code skills (minimal)`).
+//  2. fullInline=true yields the legacy renderer's signature header
+//     (`Skills Library — AGENTS.md (Codex / OpenAI agents)`).
+//
+// We don't compare sizes because, with no fixtures on disk and a
+// single tiny skill, the legacy output is actually smaller than the
+// minimal pointer file's static boilerplate. Header-string identity
+// is what we care about: a regression that drops the flag would
+// silently fall back to the minimal renderer.
+func TestRegenerateAfterUpdateRespectsFullInline(t *testing.T) {
+	root := t.TempDir()
+	skillDir := filepath.Join(root, "skills", "demo")
+	if err := os.MkdirAll(skillDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	body := `---
+id: demo
+version: "1.0.0"
+title: "Demo Skill"
+description: "Single-purpose skill used only by update_test.go."
+category: prevention
+severity: low
+applies_to:
+  - "when writing test fixtures"
+languages: ["*"]
+token_budget:
+  minimal: 100
+  compact: 200
+  full: 400
+last_updated: "2026-05-14"
+sources:
+  - "internal test fixture"
+---
+
+# Demo Skill
+
+Tiny body sufficient to exercise the regenerate pipeline.
+`
+	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	var buf strings.Builder
+	w := writeFunc(func(p []byte) (int, error) { return buf.Write(p) })
+
+	// First run: minimal (default).
+	if err := regenerateAfterUpdate(root, w, false); err != nil {
+		t.Fatalf("regenerateAfterUpdate(false): %v\n%s", err, buf.String())
+	}
+	agentsPath := filepath.Join(root, "dist", "AGENTS.md")
+	minimal, err := os.ReadFile(agentsPath)
+	if err != nil {
+		t.Fatalf("read minimal AGENTS.md: %v", err)
+	}
+	if !strings.Contains(string(minimal), "AGENTS.md \u2014 secure-code skills (minimal)") {
+		t.Errorf("minimal output missing minimal-renderer header; got:\n%s", minimal)
+	}
+
+	// Second run: full-inline. Resulting AGENTS.md must come from
+	// renderAgentsFullInline, proving the flag was propagated through.
+	if err := regenerateAfterUpdate(root, w, true); err != nil {
+		t.Fatalf("regenerateAfterUpdate(true): %v\n%s", err, buf.String())
+	}
+	full, err := os.ReadFile(agentsPath)
+	if err != nil {
+		t.Fatalf("read full AGENTS.md: %v", err)
+	}
+	if !strings.Contains(string(full), "Skills Library \u2014 AGENTS.md (Codex / OpenAI agents)") {
+		t.Errorf("full-inline output missing legacy-renderer header; got:\n%s", full)
+	}
+	if strings.Contains(string(full), "AGENTS.md \u2014 secure-code skills (minimal)") {
+		t.Errorf("full-inline output should not carry the minimal-renderer header; got:\n%s", full)
+	}
+}
+
+// writeFunc adapts a plain func to the io.Writer-shaped interface
+// regenerateAfterUpdate expects. We can't import io here without
+// pulling in a wider dependency surface for this one test.
+type writeFunc func(p []byte) (int, error)
+
+func (f writeFunc) Write(p []byte) (int, error) { return f(p) }
+
 func TestSchedulerPreviewOutputs(t *testing.T) {
 	stdout, _, err := executeRoot(t, "scheduler", "preview", "--target", "darwin", "--binary", "/usr/local/bin/skills-check")
 	if err != nil {
