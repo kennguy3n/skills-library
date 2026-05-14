@@ -1,6 +1,6 @@
 schema_version: "1.0"
 framework: "OWASP Top 10 2021"
-last_updated: "2026-05-13T18:00:00Z"
+last_updated: "2026-05-14"
 mapping:
   - skill: "api-security"
     owasp_items: ["A01", "A02", "A07"]
@@ -54,3 +54,7 @@ mapping:
     owasp_items: ["A03", "A04"]
   - skill: "websocket-security"
     owasp_items: ["A01", "A05"]
+  - skill: "saas-security"
+    owasp_items: ["A02", "A07"]
+  - skill: "iam-best-practices"
+    owasp_items: ["A01", "A07"]

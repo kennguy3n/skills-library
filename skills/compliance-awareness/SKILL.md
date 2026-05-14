@@ -16,7 +16,7 @@ token_budget:
   full: 2000
 rules_path: "frameworks/"
 related_skills: ["secure-code-review", "api-security"]
-last_updated: "2026-05-12"
+last_updated: "2026-05-14"
 sources:
   - "OWASP Top 10 2021"
   - "CWE Top 25 2023"
