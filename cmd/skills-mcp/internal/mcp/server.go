@@ -16,10 +16,12 @@ import (
 )
 
 // Server is the JSON-RPC dispatcher. It owns one Library and exposes the
-// 10 Skills Library tools as MCP tools: lookup_vulnerability,
+// 15 Skills Library tools as MCP tools: lookup_vulnerability,
 // check_secret_pattern, get_skill, search_skills, scan_secrets,
 // check_dependency, check_typosquat, map_compliance_control,
-// get_sigma_rule, and version_status.
+// get_sigma_rule, version_status, scan_dependencies,
+// scan_github_actions, scan_dockerfile, explain_finding, and
+// policy_check.
 type Server struct {
 	lib *tools.Library
 }
@@ -342,6 +344,40 @@ func (s *Server) invokeTool(name string, args map[string]interface{}) (interface
 		)
 	case "version_status":
 		return s.lib.VersionStatus()
+	case "scan_dependencies":
+		res, err := s.lib.ScanDependencies(stringArg(args, "file_path"))
+		if err != nil {
+			return nil, err
+		}
+		if strings.EqualFold(stringArg(args, "format"), "sarif") {
+			return tools.ScanDependenciesSARIF(res), nil
+		}
+		return res, nil
+	case "scan_github_actions":
+		res, err := s.lib.ScanGitHubActions(stringArg(args, "file_path"))
+		if err != nil {
+			return nil, err
+		}
+		if strings.EqualFold(stringArg(args, "format"), "sarif") {
+			return tools.ScanGitHubActionsSARIF(res), nil
+		}
+		return res, nil
+	case "scan_dockerfile":
+		res, err := s.lib.ScanDockerfile(stringArg(args, "file_path"))
+		if err != nil {
+			return nil, err
+		}
+		if strings.EqualFold(stringArg(args, "format"), "sarif") {
+			return tools.ScanDockerfileSARIF(res), nil
+		}
+		return res, nil
+	case "explain_finding":
+		return s.lib.ExplainFinding(stringArg(args, "query"))
+	case "policy_check":
+		return s.lib.PolicyCheck(
+			stringArg(args, "file_path"),
+			stringArg(args, "severity_floor"),
+		)
 	}
 	return nil, fmt.Errorf("%w: %s", errToolNotFound, name)
 }

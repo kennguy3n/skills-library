@@ -150,5 +150,76 @@ func toolDefinitions() []map[string]interface{} {
 				"properties": map[string]interface{}{},
 			},
 		},
+		{
+			"name":        "scan_dependencies",
+			"description": "Parse a project lockfile or manifest at file_path and run every dependency against the malicious-packages database, the typosquat database, and the CVE-pattern list. Recognises package-lock.json, npm-shrinkwrap.json, yarn.lock, pnpm-lock.yaml, requirements.txt, Pipfile.lock, poetry.lock, go.sum, and Cargo.lock. Subject to --allowed-roots and the sensitive-directory deny-list. Pass `format`=\"sarif\" for SARIF 2.1.0 output suitable for GitHub Advanced Security ingest.",
+			"inputSchema": map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"file_path": map[string]string{"type": "string", "description": "Absolute path to a lockfile on the host running the MCP server."},
+					"format": map[string]interface{}{
+						"type":        "string",
+						"description": "Output format. Empty (or \"json\") returns the native MCP shape; \"sarif\" returns a SARIF 2.1.0 log.",
+						"enum":        []string{"", "json", "sarif"},
+					},
+				},
+				"required": []string{"file_path"},
+			},
+		},
+		{
+			"name":        "scan_github_actions",
+			"description": "Run the cicd-security hardening checklist against a `.github/workflows/*.yml` (or .yaml) file. Detects unpinned actions, missing `permissions:` defaults, `pull_request_target` checking out untrusted code, untrusted-input script injection, `curl | sh` patterns, and stored cloud credentials. Subject to --allowed-roots and the sensitive-directory deny-list. Pass `format`=\"sarif\" for SARIF 2.1.0 output.",
+			"inputSchema": map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"file_path": map[string]string{"type": "string", "description": "Absolute path to a GitHub Actions workflow YAML file."},
+					"format": map[string]interface{}{
+						"type":        "string",
+						"description": "Output format. Empty (or \"json\") returns the native MCP shape; \"sarif\" returns a SARIF 2.1.0 log.",
+						"enum":        []string{"", "json", "sarif"},
+					},
+				},
+				"required": []string{"file_path"},
+			},
+		},
+		{
+			"name":        "scan_dockerfile",
+			"description": "Run a hardening pass over a Dockerfile. Detects untagged or :latest base images, USER root, secrets baked into ENV/ARG, ADD from a remote URL, `curl | sh` install patterns, and apt-get install lines without version pins. Subject to --allowed-roots and the sensitive-directory deny-list. Pass `format`=\"sarif\" for SARIF 2.1.0 output.",
+			"inputSchema": map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"file_path": map[string]string{"type": "string", "description": "Absolute path to a Dockerfile."},
+					"format": map[string]interface{}{
+						"type":        "string",
+						"description": "Output format. Empty (or \"json\") returns the native MCP shape; \"sarif\" returns a SARIF 2.1.0 log.",
+						"enum":        []string{"", "json", "sarif"},
+					},
+				},
+				"required": []string{"file_path"},
+			},
+		},
+		{
+			"name":        "explain_finding",
+			"description": "Map a CWE ID, CVE ID, or free-text finding description to the relevant Skills Library skills and CVE-pattern entries. Returns the matching skills (with id, title, category, severity, and a short excerpt of the body) plus any CVE rows whose name or description mentions the query. Use this to attach remediation guidance to a SAST / SCA finding from another scanner.",
+			"inputSchema": map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"query": map[string]string{"type": "string", "description": "Free-text query — a CWE ID like \"CWE-77\", a CVE ID like \"CVE-2024-12345\", or a finding description."},
+				},
+				"required": []string{"query"},
+			},
+		},
+		{
+			"name":        "policy_check",
+			"description": "Pick the right scanner for file_path and report a CI-friendly pass/fail with a per-severity count. Dispatches to scan_dependencies for lockfiles, scan_github_actions for `.github/workflows/*.{yml,yaml}` files, and scan_dockerfile for Dockerfiles. Findings at or above `severity_floor` (default: high) fail the check; the response includes `pass` and `exit_code` (0 on pass, 1 on fail) so a CI wrapper can branch on it.",
+			"inputSchema": map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"file_path":      map[string]string{"type": "string", "description": "Absolute path to the artifact to scan."},
+					"severity_floor": map[string]interface{}{"type": "string", "description": "Findings at or above this severity fail the check. Default: high.", "enum": []string{"", "critical", "high", "medium", "low", "info"}},
+				},
+				"required": []string{"file_path"},
+			},
+		},
 	}
 }

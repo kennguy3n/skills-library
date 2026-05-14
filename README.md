@@ -379,7 +379,7 @@ go build -o skills-mcp ./cmd/skills-mcp
 skills-mcp --path /path/to/secure-code
 ```
 
-The server registers ten tools on `tools/list`:
+The server registers fifteen tools on `tools/list`:
 
 - `lookup_vulnerability(package, ecosystem?, version?)` — search the supply-chain
   malicious-packages database and the typosquat DB.
@@ -401,6 +401,28 @@ The server registers ten tools on `tools/list`:
   from `rules/` by ID, free-text query, or category.
 - `version_status()` — report data version, manifest signature state, and
   whether the loaded library is the canonical signed release.
+- `scan_dependencies(file_path, format?)` — parse a project lockfile
+  (`package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `requirements.txt`,
+  `Pipfile.lock`, `poetry.lock`, `go.sum`, `Cargo.lock`) and report every
+  dependency that matches the malicious-packages, typosquat, or CVE
+  databases. Supports the `sarif` output format.
+- `scan_github_actions(file_path, format?)` — run the
+  `skills/cicd-security/checklists/github_actions_hardening.yaml` rules
+  against a workflow file: unpinned actions, missing `permissions:` defaults,
+  `pull_request_target` checkout, untrusted-input script injection,
+  `curl | sh`, and stored cloud credentials. Supports the `sarif` format.
+- `scan_dockerfile(file_path, format?)` — hardening pass over a
+  Dockerfile: untagged / `:latest` base images, `USER root`, secrets in
+  `ENV`/`ARG`, `ADD https://…`, `curl | sh`, and `apt-get install`
+  without version pins. Supports the `sarif` format.
+- `explain_finding(query)` — map a CWE / CVE ID or free-text finding
+  description to the relevant skills and CVE-pattern entries, so a SAST/SCA
+  finding from another scanner can be paired with remediation guidance.
+- `policy_check(file_path, severity_floor?)` — dispatch the appropriate
+  scanner for `file_path` and return a CI-friendly `pass` flag plus
+  `exit_code` (0 on pass, 1 on fail). Findings at or above
+  `severity_floor` (default `high`) fail the check; counts are returned
+  per severity so a wrapper can produce a one-line summary.
 
 The library root is resolved from `--path`, then `$SKILLS_LIBRARY_PATH`, then the
 directory containing the binary.

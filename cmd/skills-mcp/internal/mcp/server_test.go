@@ -208,6 +208,11 @@ func TestToolsListReturnsExpectedTools(t *testing.T) {
 		"map_compliance_control": false,
 		"get_sigma_rule":         false,
 		"version_status":         false,
+		"scan_dependencies":      false,
+		"scan_github_actions":    false,
+		"scan_dockerfile":        false,
+		"explain_finding":        false,
+		"policy_check":           false,
 	}
 	if len(tools) != len(want) {
 		t.Fatalf("expected %d tools, got %d", len(want), len(tools))
