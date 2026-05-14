@@ -62,13 +62,13 @@ type SARIFDriver struct {
 // secret-detection pattern (or per malicious-package entry) so a
 // downstream UI can hyperlink the finding back to its definition.
 type SARIFRule struct {
-	ID               string             `json:"id"`
-	Name             string             `json:"name,omitempty"`
-	ShortDescription *SARIFMultiformat  `json:"shortDescription,omitempty"`
-	FullDescription  *SARIFMultiformat  `json:"fullDescription,omitempty"`
-	HelpURI          string             `json:"helpUri,omitempty"`
-	Properties       map[string]any     `json:"properties,omitempty"`
-	DefaultConfig    *SARIFRuleConfig   `json:"defaultConfiguration,omitempty"`
+	ID               string            `json:"id"`
+	Name             string            `json:"name,omitempty"`
+	ShortDescription *SARIFMultiformat `json:"shortDescription,omitempty"`
+	FullDescription  *SARIFMultiformat `json:"fullDescription,omitempty"`
+	HelpURI          string            `json:"helpUri,omitempty"`
+	Properties       map[string]any    `json:"properties,omitempty"`
+	DefaultConfig    *SARIFRuleConfig  `json:"defaultConfiguration,omitempty"`
 }
 
 // SARIFRuleConfig is the run-wide default for a rule (level, rank).
@@ -85,12 +85,12 @@ type SARIFMultiformat struct {
 
 // SARIFResult is one finding.
 type SARIFResult struct {
-	RuleID     string                 `json:"ruleId"`
-	RuleIndex  int                    `json:"ruleIndex,omitempty"`
-	Level      string                 `json:"level,omitempty"`
-	Message    SARIFMultiformat       `json:"message"`
-	Locations  []SARIFLocation        `json:"locations,omitempty"`
-	Properties map[string]any         `json:"properties,omitempty"`
+	RuleID     string           `json:"ruleId"`
+	RuleIndex  int              `json:"ruleIndex,omitempty"`
+	Level      string           `json:"level,omitempty"`
+	Message    SARIFMultiformat `json:"message"`
+	Locations  []SARIFLocation  `json:"locations,omitempty"`
+	Properties map[string]any   `json:"properties,omitempty"`
 }
 
 // SARIFLocation pins a finding to a file (and optionally an offset
@@ -115,9 +115,9 @@ type SARIFArtifactLocation struct {
 // matches are byte-indexed; downstream consumers that prefer
 // line/column can re-derive them from the URI's contents.
 type SARIFRegion struct {
-	StartLine   int `json:"startLine,omitempty"`
-	ByteOffset  int `json:"byteOffset,omitempty"`
-	ByteLength  int `json:"byteLength,omitempty"`
+	StartLine  int `json:"startLine,omitempty"`
+	ByteOffset int `json:"byteOffset,omitempty"`
+	ByteLength int `json:"byteLength,omitempty"`
 }
 
 // ScanSecretsSARIF converts a ScanSecretsResult into a SARIF 2.1.0

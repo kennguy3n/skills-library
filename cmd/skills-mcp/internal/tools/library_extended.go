@@ -204,10 +204,10 @@ func (l *Library) CheckDependency(pkg, version, ecosystem string) (*CheckDepende
 // does not (yet) know about but that are within distance 2 of a
 // popular package and therefore suspicious.
 type CheckTyposquatResult struct {
-	Package             string                   `json:"package"`
-	Ecosystem           string                   `json:"ecosystem,omitempty"`
-	Typosquats          []TyposquatEntry         `json:"typosquats"`
-	PotentialTyposquats []PotentialTyposquatHit  `json:"potential_typosquats"`
+	Package             string                  `json:"package"`
+	Ecosystem           string                  `json:"ecosystem,omitempty"`
+	Typosquats          []TyposquatEntry        `json:"typosquats"`
+	PotentialTyposquats []PotentialTyposquatHit `json:"potential_typosquats"`
 }
 
 // PotentialTyposquatHit is one runtime-discovered candidate: a

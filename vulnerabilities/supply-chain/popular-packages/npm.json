@@ -1,5 +1,6 @@
 {
   "schema_version": "1.0",
+  "last_updated": "2026-05-14T00:00:00Z",
   "ecosystem": "npm",
   "description": "Top ~100 npm packages by install volume / supply-chain visibility, used as the reference set for runtime Levenshtein typosquat detection.",
   "packages": [

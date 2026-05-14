@@ -1,5 +1,6 @@
 {
   "schema_version": "1.0",
+  "last_updated": "2026-05-14T00:00:00Z",
   "ecosystem": "go",
   "description": "Top ~70 Go modules by import volume / supply-chain visibility, used as the reference set for runtime Levenshtein typosquat detection. Distance matching is done on the final import-path segment plus the full module name; both should be canonical lower-case forms.",
   "packages": [
