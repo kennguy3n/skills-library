@@ -244,43 +244,43 @@
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tn-b64--sl8zq",
-      "text": "cache_token = '-sl8zqSMZK9x5he31h-3tda_jS7dMpIgf7hacz6SBYo'  # rotated nightly",
+      "id": "tn-b64-6oqgw3",
+      "text": "cache_token = '6OQGW3HpRKxAgU-xf-V2qatWZ5w7Phy19ejtMzFu5dw'  # rotated nightly",
       "expected": "ignore",
       "reason": "random base64 not adjacent to a known vendor prefix",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tn-b64-05ukqx",
-      "text": "cache_token = '05UkqxR7_w5EZkJ5Gb2_-A9Ynce_z6f71VJublaDCt4'  # rotated nightly",
+      "id": "tn-b64-cmci4e",
+      "text": "cache_token = 'CMci4Emb0RxDKlRIy8WKoV_AwacF3n3YTK7KSVSVZoc'  # rotated nightly",
       "expected": "ignore",
       "reason": "random base64 not adjacent to a known vendor prefix",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tn-b64-fhi_xr",
-      "text": "cache_token = 'fhi_xRvI4WuVZkr4ZxBH1_tDueF9hOzrLxV18m3eh24'  # rotated nightly",
+      "id": "tn-b64-enu8jg",
+      "text": "cache_token = 'eNu8JGch_8v9EpWXuDoGJxFAB7DLJu6n0TSoEkHQVws'  # rotated nightly",
       "expected": "ignore",
       "reason": "random base64 not adjacent to a known vendor prefix",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tn-b64-tcumiw",
-      "text": "cache_token = 'TCumiw8HfcvWAZ7sgryX7WHE3j-fWuK4MotNnNMqhps'  # rotated nightly",
+      "id": "tn-b64-pseouo",
+      "text": "cache_token = 'pseOUO94fwmTpiDb4xGxCnRYfyStACNS_TWjlNK37H4'  # rotated nightly",
       "expected": "ignore",
       "reason": "random base64 not adjacent to a known vendor prefix",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tn-b64-x1vcty",
-      "text": "cache_token = 'x1vcTy0wTti6bip0u-OMkdBn-qOyxK5CethB-zLlmHw'  # rotated nightly",
+      "id": "tn-b64-xrxaxw",
+      "text": "cache_token = 'XRXaxwS0jxRpsK4sO3rxtnC87wGTTKzjeLfwWxvXDfE'  # rotated nightly",
       "expected": "ignore",
       "reason": "random base64 not adjacent to a known vendor prefix",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tn-b64-xakn0f",
-      "text": "cache_token = 'XaKN0fjySa2O3MAV0MgbYSE_U8EdDKfFvYNxmD9zaj0'  # rotated nightly",
+      "id": "tn-b64-zno3_v",
+      "text": "cache_token = 'zNo3_VkS9Fpwld8QQJdtB6rgPD_NTjpOzzHSKqA7Ss4'  # rotated nightly",
       "expected": "ignore",
       "reason": "random base64 not adjacent to a known vendor prefix",
       "source": "derived-expand-corpus"
@@ -405,59 +405,73 @@
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tn-pem-cert-3db514",
+      "id": "tn-pem-cert-0e98c7",
       "text": "-----BEGIN CERTIFICATE-----\nCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCD\nDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDE\n-----END CERTIFICATE-----",
       "expected": "ignore",
       "reason": "PEM CERTIFICATE block is a public cert, not a private key",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tn-pem-cert-5deb52",
-      "text": "-----BEGIN CERTIFICATE-----\nyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz\nzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzA\n-----END CERTIFICATE-----",
-      "expected": "ignore",
-      "reason": "PEM CERTIFICATE block is a public cert, not a private key",
-      "source": "derived-expand-corpus"
-    },
-    {
-      "id": "tn-pem-cert-8f7c09",
-      "text": "-----BEGIN CERTIFICATE-----\nABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzAB\nBCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABC\n-----END CERTIFICATE-----",
-      "expected": "ignore",
-      "reason": "PEM CERTIFICATE block is a public cert, not a private key",
-      "source": "derived-expand-corpus"
-    },
-    {
-      "id": "tn-pem-cert-d3a828",
+      "id": "tn-pem-cert-5d84b2",
       "text": "-----BEGIN CERTIFICATE-----\nwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwx\nxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxy\n-----END CERTIFICATE-----",
       "expected": "ignore",
       "reason": "PEM CERTIFICATE block is a public cert, not a private key",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tn-placeholder-..stripp",
+      "id": "tn-pem-cert-a2402d",
+      "text": "-----BEGIN CERTIFICATE-----\nyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz\nzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzA\n-----END CERTIFICATE-----",
+      "expected": "ignore",
+      "reason": "PEM CERTIFICATE block is a public cert, not a private key",
+      "source": "derived-expand-corpus"
+    },
+    {
+      "id": "tn-pem-cert-ed1b70",
+      "text": "-----BEGIN CERTIFICATE-----\nABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzAB\nBCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABC\n-----END CERTIFICATE-----",
+      "expected": "ignore",
+      "reason": "PEM CERTIFICATE block is a public cert, not a private key",
+      "source": "derived-expand-corpus"
+    },
+    {
+      "id": "tn-placeholder-..stripped..",
       "text": "api_key = \"..stripped..\"",
       "expected": "ignore",
       "reason": "log redaction",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tn-placeholder-api_ke",
+      "id": "tn-placeholder-dobapi_keycb",
       "text": "api_key = \"${API_KEY}\"",
       "expected": "ignore",
       "reason": "shell variable interpolation",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tn-placeholder-api_ke",
-      "text": "api_key = \"{{api_key}}\"",
-      "expected": "ignore",
-      "reason": "templating placeholder",
-      "source": "derived-expand-corpus"
-    },
-    {
-      "id": "tn-placeholder-example_",
+      "id": "tn-placeholder-example_key",
       "text": "api_key = \"EXAMPLE_KEY\"",
       "expected": "ignore",
       "reason": "documentation marker",
+      "source": "derived-expand-corpus"
+    },
+    {
+      "id": "tn-placeholder-ltsecretgt",
+      "text": "api_key = \"<secret>\"",
+      "expected": "ignore",
+      "reason": "XML/markdown placeholder",
+      "source": "derived-expand-corpus"
+    },
+    {
+      "id": "tn-placeholder-ltyour-api-ke",
+      "text": "api_key = \"<your-api-key>\"",
+      "expected": "ignore",
+      "reason": "shell variable placeholder",
+      "source": "derived-expand-corpus"
+    },
+    {
+      "id": "tn-placeholder-obobapi_keycbcb",
+      "text": "api_key = \"{{api_key}}\"",
+      "expected": "ignore",
+      "reason": "templating placeholder",
       "source": "derived-expand-corpus"
     },
     {
@@ -468,35 +482,21 @@
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tn-placeholder-replace_",
+      "id": "tn-placeholder-replace_me",
       "text": "api_key = \"REPLACE_ME\"",
       "expected": "ignore",
       "reason": "common docs placeholder",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tn-placeholder-secret",
-      "text": "api_key = \"<secret>\"",
-      "expected": "ignore",
-      "reason": "XML/markdown placeholder",
-      "source": "derived-expand-corpus"
-    },
-    {
-      "id": "tn-placeholder-xxxxxxxx",
+      "id": "tn-placeholder-xxxxxxxxxxxx",
       "text": "api_key = \"XXXXXXXXXXXX\"",
       "expected": "ignore",
       "reason": "ASCII-art placeholder",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tn-placeholder-your-ap",
-      "text": "api_key = \"<your-api-key>\"",
-      "expected": "ignore",
-      "reason": "shell variable placeholder",
-      "source": "derived-expand-corpus"
-    },
-    {
-      "id": "tn-placeholder-your_api",
+      "id": "tn-placeholder-your_api_key",
       "text": "api_key = \"YOUR_API_KEY_HERE\"",
       "expected": "ignore",
       "reason": "common docs placeholder",
@@ -1042,57 +1042,57 @@
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tp-discord-0654",
-      "text": "DISCORD_WEBHOOK_URL=\u0068ttps://discord.com/api/webhooks/502084817380540654/stuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz",
+      "id": "tp-discord-1335",
+      "text": "DISCORD_WEBHOOK_URL=\u0068ttps://discord.com/api/webhooks/354769930735901335/tuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzA",
       "expected": "detect",
       "expected_pattern": "Discord Webhook URL",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tp-discord-4365",
-      "text": "DISCORD_WEBHOOK_URL=\u0068ttps://discord.com/api/webhooks/398583532333934365/tuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzA",
+      "id": "tp-discord-2891",
+      "text": "DISCORD_WEBHOOK_URL=\u0068ttps://discord.com/api/webhooks/164461956462752891/yzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEF",
       "expected": "detect",
       "expected_pattern": "Discord Webhook URL",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tp-discord-6118",
-      "text": "DISCORD_WEBHOOK_URL=\u0068ttps://discord.com/api/webhooks/634674685604546118/yzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEF",
+      "id": "tp-discord-2902",
+      "text": "DISCORD_WEBHOOK_URL=\u0068ttps://discord.com/api/webhooks/504896024775022902/uvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzAB",
       "expected": "detect",
       "expected_pattern": "Discord Webhook URL",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tp-discord-7474",
-      "text": "DISCORD_WEBHOOK_URL=\u0068ttps://discord.com/api/webhooks/995535752633447474/wxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCD",
+      "id": "tp-discord-5020",
+      "text": "DISCORD_WEBHOOK_URL=\u0068ttps://discord.com/api/webhooks/326019111022775020/xyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDE",
       "expected": "detect",
       "expected_pattern": "Discord Webhook URL",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tp-discord-8182",
-      "text": "DISCORD_WEBHOOK_URL=\u0068ttps://discord.com/api/webhooks/579349025945828182/xyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDE",
+      "id": "tp-discord-5812",
+      "text": "DISCORD_WEBHOOK_URL=\u0068ttps://discord.com/api/webhooks/177892437104685812/wxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCD",
       "expected": "detect",
       "expected_pattern": "Discord Webhook URL",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tp-discord-9105",
-      "text": "DISCORD_WEBHOOK_URL=\u0068ttps://discord.com/api/webhooks/991850224762609105/vwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABC",
+      "id": "tp-discord-6192",
+      "text": "DISCORD_WEBHOOK_URL=\u0068ttps://discord.com/api/webhooks/835969893617296192/stuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz",
       "expected": "detect",
       "expected_pattern": "Discord Webhook URL",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tp-discord-9523",
-      "text": "DISCORD_WEBHOOK_URL=\u0068ttps://discord.com/api/webhooks/210946980849279523/uvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzAB",
+      "id": "tp-discord-7241",
+      "text": "DISCORD_WEBHOOK_URL=\u0068ttps://discord.com/api/webhooks/630067168829607241/vwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABC",
       "expected": "detect",
       "expected_pattern": "Discord Webhook URL",
       "source": "derived-expand-corpus"
     },
     {
-      "id": "tp-discord-9671",
-      "text": "DISCORD_WEBHOOK_URL=\u0068ttps://discord.com/api/webhooks/826056288308909671/rstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxy",
+      "id": "tp-discord-7873",
+      "text": "DISCORD_WEBHOOK_URL=\u0068ttps://discord.com/api/webhooks/906682865320367873/rstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxy",
       "expected": "detect",
       "expected_pattern": "Discord Webhook URL",
       "source": "derived-expand-corpus"
@@ -1393,84 +1393,84 @@
     },
     {
       "id": "tp-slack-xoxa-uvwxyz",
-      "text": "slack_token = '\u0078oxa-215330365274-344961175139-CDEFGHIJKLMNOPQRSTUVWXYZ'",
+      "text": "slack_token = '\u0078oxa-895852763679-987153915423-CDEFGHIJKLMNOPQRSTUVWXYZ'",
       "expected": "detect",
       "expected_pattern": "Slack Token",
       "source": "derived-expand-corpus"
     },
     {
       "id": "tp-slack-xoxa-vwxyz0",
-      "text": "slack_token = '\u0078oxa-129965973847-956302874277-DEFGHIJKLMNOPQRSTUVWXYZ0'",
+      "text": "slack_token = '\u0078oxa-3027761118-695877517835-DEFGHIJKLMNOPQRSTUVWXYZ0'",
       "expected": "detect",
       "expected_pattern": "Slack Token",
       "source": "derived-expand-corpus"
     },
     {
       "id": "tp-slack-xoxa-wxyz01",
-      "text": "slack_token = '\u0078oxa-354009502227-619028521604-EFGHIJKLMNOPQRSTUVWXYZ01'",
+      "text": "slack_token = '\u0078oxa-654268789752-547417416378-EFGHIJKLMNOPQRSTUVWXYZ01'",
       "expected": "detect",
       "expected_pattern": "Slack Token",
       "source": "derived-expand-corpus"
     },
     {
       "id": "tp-slack-xoxb-rstuvw",
-      "text": "slack_token = '\u0078oxb-587662116512-968425411529-zABCDEFGHIJKLMNOPQRSTUVW'",
+      "text": "slack_token = '\u0078oxb-906149237235-741959187471-zABCDEFGHIJKLMNOPQRSTUVW'",
       "expected": "detect",
       "expected_pattern": "Slack Token",
       "source": "derived-expand-corpus"
     },
     {
       "id": "tp-slack-xoxb-stuvwx",
-      "text": "slack_token = '\u0078oxb-531689078514-319066430333-ABCDEFGHIJKLMNOPQRSTUVWX'",
+      "text": "slack_token = '\u0078oxb-861363539271-811786874369-ABCDEFGHIJKLMNOPQRSTUVWX'",
       "expected": "detect",
       "expected_pattern": "Slack Token",
       "source": "derived-expand-corpus"
     },
     {
       "id": "tp-slack-xoxb-tuvwxy",
-      "text": "slack_token = '\u0078oxb-529777417509-803033487724-BCDEFGHIJKLMNOPQRSTUVWXY'",
+      "text": "slack_token = '\u0078oxb-77683922013-786094840184-BCDEFGHIJKLMNOPQRSTUVWXY'",
       "expected": "detect",
       "expected_pattern": "Slack Token",
       "source": "derived-expand-corpus"
     },
     {
       "id": "tp-slack-xoxp-xyz012",
-      "text": "slack_token = '\u0078oxp-778735659207-948832447747-FGHIJKLMNOPQRSTUVWXYZ012'",
+      "text": "slack_token = '\u0078oxp-80214670878-306395338710-FGHIJKLMNOPQRSTUVWXYZ012'",
       "expected": "detect",
       "expected_pattern": "Slack Token",
       "source": "derived-expand-corpus"
     },
     {
       "id": "tp-slack-xoxp-yz0123",
-      "text": "slack_token = '\u0078oxp-578719173566-118103452585-GHIJKLMNOPQRSTUVWXYZ0123'",
+      "text": "slack_token = '\u0078oxp-470641995308-268664923591-GHIJKLMNOPQRSTUVWXYZ0123'",
       "expected": "detect",
       "expected_pattern": "Slack Token",
       "source": "derived-expand-corpus"
     },
     {
       "id": "tp-slack-xoxp-z01234",
-      "text": "slack_token = '\u0078oxp-410932292917-715955874532-HIJKLMNOPQRSTUVWXYZ01234'",
+      "text": "slack_token = '\u0078oxp-971921181918-304097477856-HIJKLMNOPQRSTUVWXYZ01234'",
       "expected": "detect",
       "expected_pattern": "Slack Token",
       "source": "derived-expand-corpus"
     },
     {
       "id": "tp-slack-xoxs-012345",
-      "text": "slack_token = '\u0078oxs-460792017481-635805884172-IJKLMNOPQRSTUVWXYZ012345'",
+      "text": "slack_token = '\u0078oxs-661490365575-225552337555-IJKLMNOPQRSTUVWXYZ012345'",
       "expected": "detect",
       "expected_pattern": "Slack Token",
       "source": "derived-expand-corpus"
     },
     {
       "id": "tp-slack-xoxs-123456",
-      "text": "slack_token = '\u0078oxs-718229682663-547422445970-JKLMNOPQRSTUVWXYZ0123456'",
+      "text": "slack_token = '\u0078oxs-872081571451-277960978808-JKLMNOPQRSTUVWXYZ0123456'",
       "expected": "detect",
       "expected_pattern": "Slack Token",
       "source": "derived-expand-corpus"
     },
     {
       "id": "tp-slack-xoxs-234567",
-      "text": "slack_token = '\u0078oxs-550633981744-838051263551-KLMNOPQRSTUVWXYZ01234567'",
+      "text": "slack_token = '\u0078oxs-346093035517-130752549358-KLMNOPQRSTUVWXYZ01234567'",
       "expected": "detect",
       "expected_pattern": "Slack Token",
       "source": "derived-expand-corpus"

@@ -418,7 +418,7 @@ def make_tn_fixtures() -> list[dict]:
     for val, reason in placeholders:
         out.append(
             {
-                "id": f"tn-placeholder-{val[:8].lower().replace(' ', '').replace('<', '').replace('>', '').replace('$', '').replace('{', '').replace('}', '')}",
+                "id": f"tn-placeholder-{val[:12].lower().replace(' ', '').replace('<', 'lt').replace('>', 'gt').replace('$', 'd').replace('{', 'ob').replace('}', 'cb')}",
                 "text": f"api_key = \"{val}\"",
                 "expected": "ignore",
                 "reason": reason,
