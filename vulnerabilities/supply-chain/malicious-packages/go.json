@@ -1,11 +1,13 @@
 {
   "schema_version": "1.0",
   "ecosystem": "go",
-  "last_updated": "2026-05-13T00:00:00Z",
+  "last_updated": "2026-05-14T16:01:45Z",
   "entries": [
     {
       "name": "github.com/jfrog/go-tools",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "typosquat",
       "severity": "high",
       "discovered": "2023-03-20",
@@ -22,7 +24,9 @@
     },
     {
       "name": "github.com/tsuru/tsuru-utils",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "typosquat",
       "severity": "high",
       "discovered": "2023-03-20",
@@ -39,7 +43,9 @@
     },
     {
       "name": "github.com/aws-utils/aws-go-sdk",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "malicious_code",
       "severity": "critical",
       "discovered": "2023-09-12",
@@ -57,7 +63,9 @@
     },
     {
       "name": "github.com/hashicorpp/terraform-provider-google",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "typosquat",
       "severity": "high",
       "discovered": "2024-01-08",
@@ -74,7 +82,9 @@
     },
     {
       "name": "github.com/golang-utils/golang-utils",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "malicious_code",
       "severity": "high",
       "discovered": "2024-02-22",
@@ -91,7 +101,9 @@
     },
     {
       "name": "github.com/kubernetes-utility/k8s-utils",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "typosquat",
       "severity": "medium",
       "discovered": "2024-04-04",
@@ -108,7 +120,9 @@
     },
     {
       "name": "github.com/AlexEisen/grpc-go",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "typosquat",
       "severity": "high",
       "discovered": "2024-05-16",
@@ -125,7 +139,9 @@
     },
     {
       "name": "github.com/boltdb-go/bolt",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "namespace_squat",
       "severity": "high",
       "discovered": "2023-11-03",
@@ -143,7 +159,9 @@
     },
     {
       "name": "github.com/grafanq/grafana",
-      "versions_affected": ["*"],
+      "versions_affected": [
+        "*"
+      ],
       "type": "typosquat",
       "severity": "high",
       "discovered": "2024-03-04",
@@ -156,6 +174,269 @@
         "init() pulls additional .so payload"
       ],
       "attack_type": "typosquat"
+    },
+    {
+      "name": "github.com/belatedplanet/hypert",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2025-03-19",
+      "description": "Malicious code in github.com/belatedplanet/hypert (Go)",
+      "references": [
+        "https://socket.dev/blog/typosquatted-go-packages-deliver-malware-loader"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2025-2544"
+    },
+    {
+      "name": "github.com/BufferZoneCorp/config-loader",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2026-05-13",
+      "description": "Malicious code in github.com/BufferZoneCorp/config-loader (Go)",
+      "references": [
+        "https://socket.dev/blog/malicious-ruby-gems-and-go-modules-steal-secrets-poison-ci"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2026-3620"
+    },
+    {
+      "name": "github.com/BufferZoneCorp/go-envconfig",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2026-05-13",
+      "description": "Malicious code in github.com/BufferZoneCorp/go-envconfig (Go)",
+      "references": [
+        "https://socket.dev/blog/malicious-ruby-gems-and-go-modules-steal-secrets-poison-ci"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2026-3621"
+    },
+    {
+      "name": "github.com/BufferZoneCorp/go-metrics-sdk",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2026-05-13",
+      "description": "Malicious code in github.com/BufferZoneCorp/go-metrics-sdk (Go)",
+      "references": [
+        "https://socket.dev/blog/malicious-ruby-gems-and-go-modules-steal-secrets-poison-ci"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2026-3622"
+    },
+    {
+      "name": "github.com/BufferZoneCorp/go-retryablehttp",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2026-05-13",
+      "description": "Malicious code in github.com/BufferZoneCorp/go-retryablehttp (Go)",
+      "references": [
+        "https://socket.dev/blog/malicious-ruby-gems-and-go-modules-steal-secrets-poison-ci"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2026-3623"
+    },
+    {
+      "name": "github.com/BufferZoneCorp/go-stdlib-ext",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2026-05-13",
+      "description": "Malicious code in github.com/BufferZoneCorp/go-stdlib-ext (Go)",
+      "references": [
+        "https://socket.dev/blog/malicious-ruby-gems-and-go-modules-steal-secrets-poison-ci"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2026-3624"
+    },
+    {
+      "name": "github.com/BufferZoneCorp/go-stdlog",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2026-05-13",
+      "description": "Malicious code in github.com/BufferZoneCorp/go-stdlog (Go)",
+      "references": [
+        "https://socket.dev/blog/malicious-ruby-gems-and-go-modules-steal-secrets-poison-ci"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2026-3625"
+    },
+    {
+      "name": "github.com/BufferZoneCorp/go-weather-sdk",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2026-05-13",
+      "description": "Malicious code in github.com/BufferZoneCorp/go-weather-sdk (Go)",
+      "references": [
+        "https://socket.dev/blog/malicious-ruby-gems-and-go-modules-steal-secrets-poison-ci"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2026-3626"
+    },
+    {
+      "name": "github.com/BufferZoneCorp/grpc-client",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2026-05-13",
+      "description": "Malicious code in github.com/BufferZoneCorp/grpc-client (Go)",
+      "references": [
+        "https://socket.dev/blog/malicious-ruby-gems-and-go-modules-steal-secrets-poison-ci"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2026-3627"
+    },
+    {
+      "name": "github.com/BufferZoneCorp/log-core",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2026-05-13",
+      "description": "Malicious code in github.com/BufferZoneCorp/log-core (Go)",
+      "references": [
+        "https://socket.dev/blog/malicious-ruby-gems-and-go-modules-steal-secrets-poison-ci"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2026-3628"
+    },
+    {
+      "name": "github.com/BufferZoneCorp/net-helper",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2026-05-13",
+      "description": "Malicious code in github.com/BufferZoneCorp/net-helper (Go)",
+      "references": [
+        "https://socket.dev/blog/malicious-ruby-gems-and-go-modules-steal-secrets-poison-ci"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2026-3629"
+    },
+    {
+      "name": "github.com/ornatedoctrin/layout",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2025-03-19",
+      "description": "Malicious code in github.com/ornatedoctrin/layout (Go)",
+      "references": [
+        "https://socket.dev/blog/typosquatted-go-packages-deliver-malware-loader"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2025-2546"
+    },
+    {
+      "name": "github.com/shadowybulk/hypert",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2025-03-19",
+      "description": "Malicious code in github.com/shadowybulk/hypert (Go)",
+      "references": [
+        "https://socket.dev/blog/typosquatted-go-packages-deliver-malware-loader"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2025-2547"
+    },
+    {
+      "name": "github.com/shallowmulti/hypert",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2025-03-19",
+      "description": "Malicious code in github.com/shallowmulti/hypert (Go)",
+      "references": [
+        "https://socket.dev/blog/typosquatted-go-packages-deliver-malware-loader"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2025-2548"
+    },
+    {
+      "name": "github.com/thankfulmai/hypert",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2025-03-19",
+      "description": "Malicious code in github.com/thankfulmai/hypert (Go)",
+      "references": [
+        "https://socket.dev/blog/typosquatted-go-packages-deliver-malware-loader"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2025-2549"
+    },
+    {
+      "name": "github.com/utilizedsun/layout",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2025-03-19",
+      "description": "Malicious code in github.com/utilizedsun/layout (Go)",
+      "references": [
+        "https://socket.dev/blog/typosquatted-go-packages-deliver-malware-loader"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2025-2550"
+    },
+    {
+      "name": "github.com/vainreboot/layout",
+      "versions_affected": [],
+      "type": "malicious_code",
+      "severity": "high",
+      "discovered": "2025-03-19",
+      "description": "Malicious code in github.com/vainreboot/layout (Go)",
+      "references": [
+        "https://socket.dev/blog/typosquatted-go-packages-deliver-malware-loader"
+      ],
+      "indicators": [],
+      "attack_type": "embedded_malicious_code",
+      "source": "ossf-malicious-packages",
+      "osv_id": "MAL-2025-2551"
     }
-  ]
+  ],
+  "sources": {
+    "ossf-malicious-packages": {
+      "url": "https://github.com/ossf/malicious-packages",
+      "commit": "aa66cb2d5ed2b95be1e33d08777b34264b5e0354",
+      "ingested_at": "2026-05-14T16:01:45Z",
+      "entries_from_source": 17
+    }
+  }
 }

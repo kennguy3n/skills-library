@@ -1,0 +1,544 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-05-14T16:13:02Z",
+  "by_package": {
+    "github.com/gardener/gardener-extension-provider-aws": [
+      {
+        "id": "GHSA-227x-7mh8-3cf6",
+        "file": "GHSA-227x-7mh8-3cf6.json",
+        "summary": "Gardener provider extensions vulnerable to code injection when Terraform is used for infrastructure provisioning",
+        "aliases": [
+          "CVE-2025-59823",
+          "GO-2025-3981"
+        ]
+      }
+    ],
+    "github.com/gardener/gardener-extension-provider-gcp": [
+      {
+        "id": "GHSA-227x-7mh8-3cf6",
+        "file": "GHSA-227x-7mh8-3cf6.json",
+        "summary": "Gardener provider extensions vulnerable to code injection when Terraform is used for infrastructure provisioning",
+        "aliases": [
+          "CVE-2025-59823",
+          "GO-2025-3981"
+        ]
+      }
+    ],
+    "github.com/gardener/gardener-extension-provider-azure": [
+      {
+        "id": "GHSA-227x-7mh8-3cf6",
+        "file": "GHSA-227x-7mh8-3cf6.json",
+        "summary": "Gardener provider extensions vulnerable to code injection when Terraform is used for infrastructure provisioning",
+        "aliases": [
+          "CVE-2025-59823",
+          "GO-2025-3981"
+        ]
+      }
+    ],
+    "github.com/gardener/gardener-extension-provider-openstack": [
+      {
+        "id": "GHSA-227x-7mh8-3cf6",
+        "file": "GHSA-227x-7mh8-3cf6.json",
+        "summary": "Gardener provider extensions vulnerable to code injection when Terraform is used for infrastructure provisioning",
+        "aliases": [
+          "CVE-2025-59823",
+          "GO-2025-3981"
+        ]
+      }
+    ],
+    "github.com/compose-spec/compose-go/v2": [
+      {
+        "id": "GHSA-36gq-35j3-p9r9",
+        "file": "GHSA-36gq-35j3-p9r9.json",
+        "summary": "Excessive Platform Resource Consumption within a Loop when unmarshalling Compose file having recursive loop",
+        "aliases": [
+          "CVE-2024-10846",
+          "GO-2025-3412"
+        ]
+      }
+    ],
+    "code.gitea.io/gitea": [
+      {
+        "id": "GHSA-4h4p-553m-46qh",
+        "file": "GHSA-4h4p-553m-46qh.json",
+        "summary": "Gitea Cross-site Scripting Vulnerability",
+        "aliases": [
+          "CVE-2024-6886",
+          "GO-2024-3056"
+        ]
+      }
+    ],
+    "gogs.io/gogs": [
+      {
+        "id": "GHSA-5r2v-6gm6-vpvh",
+        "file": "GHSA-5r2v-6gm6-vpvh.json",
+        "summary": "Insecure Permissions in Gogs",
+        "aliases": [
+          "CVE-2019-14544",
+          "GO-2022-0797"
+        ]
+      }
+    ],
+    "github.com/edgelesssys/constellation/v2": [
+      {
+        "id": "GHSA-6w5f-5wgr-qjg5",
+        "file": "GHSA-6w5f-5wgr-qjg5.json",
+        "summary": "Constellation allows Emergency shell access during initramfs boot phase",
+        "aliases": [
+          "GO-2023-1622"
+        ]
+      }
+    ],
+    "istio.io/istio": [
+      {
+        "id": "GHSA-856q-xv3c-7f2f",
+        "file": "GHSA-856q-xv3c-7f2f.json",
+        "summary": "Unauthenticated control plane denial of service attack in Istio",
+        "aliases": [
+          "CVE-2022-23635"
+        ]
+      },
+      {
+        "id": "GHSA-856q-xv3c-7f2f",
+        "file": "GHSA-856q-xv3c-7f2f.json",
+        "summary": "Unauthenticated control plane denial of service attack in Istio",
+        "aliases": [
+          "CVE-2022-23635"
+        ]
+      },
+      {
+        "id": "GHSA-856q-xv3c-7f2f",
+        "file": "GHSA-856q-xv3c-7f2f.json",
+        "summary": "Unauthenticated control plane denial of service attack in Istio",
+        "aliases": [
+          "CVE-2022-23635"
+        ]
+      }
+    ],
+    "github.com/nats-io/nats-server/v2": [
+      {
+        "id": "GHSA-9983-vrx2-fg9c",
+        "file": "GHSA-9983-vrx2-fg9c.json",
+        "summary": "NATS JetStream has an authorization bypass through its Management API",
+        "aliases": [
+          "BIT-nats-2026-33222",
+          "CVE-2026-33222",
+          "GO-2026-4832"
+        ]
+      },
+      {
+        "id": "GHSA-9983-vrx2-fg9c",
+        "file": "GHSA-9983-vrx2-fg9c.json",
+        "summary": "NATS JetStream has an authorization bypass through its Management API",
+        "aliases": [
+          "BIT-nats-2026-33222",
+          "CVE-2026-33222",
+          "GO-2026-4832"
+        ]
+      }
+    ],
+    "github.com/nats-io/nats-server": [
+      {
+        "id": "GHSA-9983-vrx2-fg9c",
+        "file": "GHSA-9983-vrx2-fg9c.json",
+        "summary": "NATS JetStream has an authorization bypass through its Management API",
+        "aliases": [
+          "BIT-nats-2026-33222",
+          "CVE-2026-33222",
+          "GO-2026-4832"
+        ]
+      }
+    ],
+    "github.com/expr-lang/expr": [
+      {
+        "id": "GHSA-cfpf-hrx2-8rv6",
+        "file": "GHSA-cfpf-hrx2-8rv6.json",
+        "summary": "Expr has Denial of Service via Unbounded Recursion in Builtin Functions",
+        "aliases": [
+          "CVE-2025-68156",
+          "GO-2025-4245"
+        ]
+      }
+    ],
+    "github.com/mattermost/mattermost-server": [
+      {
+        "id": "GHSA-fpcr-4rr5-hpcp",
+        "file": "GHSA-fpcr-4rr5-hpcp.json",
+        "summary": "Mattermost Server vulnerable to user account takeover when Single Sign-On OAuth2 is used",
+        "aliases": [
+          "CVE-2017-18906",
+          "GO-2026-4477"
+        ]
+      },
+      {
+        "id": "GHSA-fpcr-4rr5-hpcp",
+        "file": "GHSA-fpcr-4rr5-hpcp.json",
+        "summary": "Mattermost Server vulnerable to user account takeover when Single Sign-On OAuth2 is used",
+        "aliases": [
+          "CVE-2017-18906",
+          "GO-2026-4477"
+        ]
+      },
+      {
+        "id": "GO-2025-4190",
+        "file": "GO-2025-4190.json",
+        "summary": "Mattermost Server is vulnerable to XSS attacks against an OAuth 2.0 allow/deny page in github.com/mattermost/mattermost-server",
+        "aliases": [
+          "CVE-2017-18877",
+          "GHSA-9x8x-w6g5-hx4w"
+        ]
+      }
+    ],
+    "github.com/openshift/openshift-apiserver": [
+      {
+        "id": "GHSA-gxvv-45f6-3ch8",
+        "file": "GHSA-gxvv-45f6-3ch8.json",
+        "summary": "openshift-apiserver: SSRF via Missing IP/Network-Range Validation in User-Supplied Image References",
+        "aliases": [
+          "CVE-2025-14443",
+          "GO-2026-4578"
+        ]
+      },
+      {
+        "id": "GHSA-gxvv-45f6-3ch8",
+        "file": "GHSA-gxvv-45f6-3ch8.json",
+        "summary": "openshift-apiserver: SSRF via Missing IP/Network-Range Validation in User-Supplied Image References",
+        "aliases": [
+          "CVE-2025-14443",
+          "GO-2026-4578"
+        ]
+      }
+    ],
+    "github.com/ellanetworks/core": [
+      {
+        "id": "GHSA-j478-p7vq-3347",
+        "file": "GHSA-j478-p7vq-3347.json",
+        "summary": "Ella Core: AMF DoS via malformed PathSwitchRequest with empty NR security capability bitstrings",
+        "aliases": [
+          "CVE-2026-32320",
+          "GO-2026-4691"
+        ]
+      }
+    ],
+    "github.com/ethereum/go-ethereum": [
+      {
+        "id": "GHSA-m6j8-rg6r-7mv8",
+        "file": "GHSA-m6j8-rg6r-7mv8.json",
+        "summary": "Go Ethereum Improperly Validates the ECIES Public Key in RLPx Handshake",
+        "aliases": [
+          "CVE-2026-26315",
+          "GO-2026-4511"
+        ]
+      }
+    ],
+    "github.com/redhat-developer/gitops-operator": [
+      {
+        "id": "GHSA-pcqx-8qww-7f4v",
+        "file": "GHSA-pcqx-8qww-7f4v.json",
+        "summary": "OpenShift GitOps authenticated attackers can obtain cluster root access through forged ArgoCD custom resources",
+        "aliases": [
+          "CVE-2025-13888",
+          "GO-2025-4242"
+        ]
+      }
+    ],
+    "knative.dev/serving": [
+      {
+        "id": "GHSA-qmvj-4qr9-v547",
+        "file": "GHSA-qmvj-4qr9-v547.json",
+        "summary": "Knative Serving vulnerable to attacker-controlled pod causing denial of service of autoscaler",
+        "aliases": [
+          "CVE-2023-48713",
+          "GO-2023-2355"
+        ]
+      }
+    ],
+    "github.com/traefik/traefik/v3": [
+      {
+        "id": "GHSA-rvj4-q8q5-8grf",
+        "file": "GHSA-rvj4-q8q5-8grf.json",
+        "summary": "ACME DNS: Azure Identity Libraries Elevation of Privilege Vulnerability",
+        "aliases": [
+          "GO-2024-2941"
+        ]
+      }
+    ],
+    "github.com/traefik/traefik/v2": [
+      {
+        "id": "GHSA-rvj4-q8q5-8grf",
+        "file": "GHSA-rvj4-q8q5-8grf.json",
+        "summary": "ACME DNS: Azure Identity Libraries Elevation of Privilege Vulnerability",
+        "aliases": [
+          "GO-2024-2941"
+        ]
+      }
+    ],
+    "github.com/cosmos/cosmos-sdk": [
+      {
+        "id": "GHSA-w44m-8mv2-v78h",
+        "file": "GHSA-w44m-8mv2-v78h.json",
+        "summary": "Duplicate Advisory: Cosmos \"Barberry\" vulnerability in github.com/cosmos/cosmos-sdk",
+        "aliases": [
+          "GHSA-j2cr-jc39-wpx5",
+          "GO-2023-1861"
+        ]
+      },
+      {
+        "id": "GHSA-w44m-8mv2-v78h",
+        "file": "GHSA-w44m-8mv2-v78h.json",
+        "summary": "Duplicate Advisory: Cosmos \"Barberry\" vulnerability in github.com/cosmos/cosmos-sdk",
+        "aliases": [
+          "GHSA-j2cr-jc39-wpx5",
+          "GO-2023-1861"
+        ]
+      }
+    ],
+    "github.com/argoproj/argo-workflows/v4": [
+      {
+        "id": "GHSA-xchc-cqwg-g76q",
+        "file": "GHSA-xchc-cqwg-g76q.json",
+        "summary": "Argo has Missing Authorization in its Sync ConfigMap Provider",
+        "aliases": [
+          "BIT-argo-workflows-2026-42297",
+          "CVE-2026-42297"
+        ]
+      }
+    ],
+    "stdlib": [
+      {
+        "id": "GO-2021-0239",
+        "file": "GO-2021-0239.json",
+        "summary": "Improper sanitization when resolving values from DNS in net",
+        "aliases": [
+          "BIT-golang-2021-33195",
+          "CVE-2021-33195"
+        ]
+      }
+    ],
+    "github.com/biscuit-auth/biscuit-go": [
+      {
+        "id": "GO-2022-0564",
+        "file": "GO-2022-0564.json",
+        "summary": "Signature forgery in github.com/biscuit-auth/biscuit-go",
+        "aliases": [
+          "CVE-2022-31053",
+          "GHSA-75rw-34q6-72cr",
+          "HSEC-2023-0002"
+        ]
+      }
+    ],
+    "github.com/drakkan/sftpgo": [
+      {
+        "id": "GO-2022-1015",
+        "file": "GO-2022-1015.json",
+        "summary": "SFTPGo WebClient vulnerable to Cross-site Scripting in github.com/drakkan/sftpgo",
+        "aliases": [
+          "CVE-2022-39220",
+          "GHSA-cf7g-cm7q-rq7f"
+        ]
+      }
+    ],
+    "github.com/drakkan/sftpgo/v2": [
+      {
+        "id": "GO-2022-1015",
+        "file": "GO-2022-1015.json",
+        "summary": "SFTPGo WebClient vulnerable to Cross-site Scripting in github.com/drakkan/sftpgo",
+        "aliases": [
+          "CVE-2022-39220",
+          "GHSA-cf7g-cm7q-rq7f"
+        ]
+      }
+    ],
+    "github.com/opencontainers/runc": [
+      {
+        "id": "GO-2023-1682",
+        "file": "GO-2023-1682.json",
+        "summary": "Rootless: /sys/fs/cgroup is writable when cgroupns isn't unshared in github.com/opencontainers/runc",
+        "aliases": [
+          "CVE-2023-25809",
+          "GHSA-m8cg-xc2p-r3fc"
+        ]
+      }
+    ],
+    "github.com/authzed/spicedb": [
+      {
+        "id": "GO-2023-2166",
+        "file": "GO-2023-2166.json",
+        "summary": "SpiceDB leaks information in log files when URI cannot be parsed in github.com/authzed/spicedb",
+        "aliases": [
+          "CVE-2023-46255",
+          "GHSA-jg7w-cxjv-98c2"
+        ]
+      }
+    ],
+    "github.com/cosmos/ibc-go": [
+      {
+        "id": "GO-2024-2694",
+        "file": "GO-2024-2694.json",
+        "summary": "Potential Reentrancy using Timeout Callbacks in ibc-hooks in github.com/cosmos/ibc-go",
+        "aliases": [
+          "GHSA-j496-crgh-34mx"
+        ]
+      }
+    ],
+    "github.com/cosmos/ibc-go/v2": [
+      {
+        "id": "GO-2024-2694",
+        "file": "GO-2024-2694.json",
+        "summary": "Potential Reentrancy using Timeout Callbacks in ibc-hooks in github.com/cosmos/ibc-go",
+        "aliases": [
+          "GHSA-j496-crgh-34mx"
+        ]
+      }
+    ],
+    "github.com/cosmos/ibc-go/v3": [
+      {
+        "id": "GO-2024-2694",
+        "file": "GO-2024-2694.json",
+        "summary": "Potential Reentrancy using Timeout Callbacks in ibc-hooks in github.com/cosmos/ibc-go",
+        "aliases": [
+          "GHSA-j496-crgh-34mx"
+        ]
+      }
+    ],
+    "github.com/cosmos/ibc-go/v4": [
+      {
+        "id": "GO-2024-2694",
+        "file": "GO-2024-2694.json",
+        "summary": "Potential Reentrancy using Timeout Callbacks in ibc-hooks in github.com/cosmos/ibc-go",
+        "aliases": [
+          "GHSA-j496-crgh-34mx"
+        ]
+      }
+    ],
+    "github.com/cosmos/ibc-go/v5": [
+      {
+        "id": "GO-2024-2694",
+        "file": "GO-2024-2694.json",
+        "summary": "Potential Reentrancy using Timeout Callbacks in ibc-hooks in github.com/cosmos/ibc-go",
+        "aliases": [
+          "GHSA-j496-crgh-34mx"
+        ]
+      }
+    ],
+    "github.com/cosmos/ibc-go/v6": [
+      {
+        "id": "GO-2024-2694",
+        "file": "GO-2024-2694.json",
+        "summary": "Potential Reentrancy using Timeout Callbacks in ibc-hooks in github.com/cosmos/ibc-go",
+        "aliases": [
+          "GHSA-j496-crgh-34mx"
+        ]
+      }
+    ],
+    "github.com/cosmos/ibc-go/v7": [
+      {
+        "id": "GO-2024-2694",
+        "file": "GO-2024-2694.json",
+        "summary": "Potential Reentrancy using Timeout Callbacks in ibc-hooks in github.com/cosmos/ibc-go",
+        "aliases": [
+          "GHSA-j496-crgh-34mx"
+        ]
+      }
+    ],
+    "github.com/cosmos/ibc-go/v8": [
+      {
+        "id": "GO-2024-2694",
+        "file": "GO-2024-2694.json",
+        "summary": "Potential Reentrancy using Timeout Callbacks in ibc-hooks in github.com/cosmos/ibc-go",
+        "aliases": [
+          "GHSA-j496-crgh-34mx"
+        ]
+      }
+    ],
+    "github.com/casdoor/casdoor": [
+      {
+        "id": "GO-2024-3026",
+        "file": "GO-2024-3026.json",
+        "summary": "casdoor's use of`ssh.InsecureIgnoreHostKey()` disables host key verification in github.com/casdoor/casdoor",
+        "aliases": [
+          "CVE-2024-41264",
+          "GHSA-67fw-w8f2-88wp"
+        ]
+      }
+    ],
+    "github.com/siyuan-note/siyuan/kernel": [
+      {
+        "id": "GO-2024-3326",
+        "file": "GO-2024-3326.json",
+        "summary": "SiYuan has an arbitrary file write in the host via /api/asset/upload in github.com/siyuan-note/siyuan/kernel",
+        "aliases": [
+          "CVE-2024-55659",
+          "GHSA-fqj6-whhx-47p7"
+        ]
+      }
+    ],
+    "github.com/rancher/rancher": [
+      {
+        "id": "GO-2025-3647",
+        "file": "GO-2025-3647.json",
+        "summary": "Rancher users who can create Projects can gain access to arbitrary projects in github.com/rancher/rancher",
+        "aliases": [
+          "CVE-2024-22031",
+          "GHSA-8h6m-wv39-239m"
+        ]
+      }
+    ],
+    "github.com/coder/coder": [
+      {
+        "id": "GO-2025-3938",
+        "file": "GO-2025-3938.json",
+        "summary": "Coder vulnerable to privilege escalation could lead to a cross workspace compromise in github.com/coder/coder",
+        "aliases": [
+          "CVE-2025-58437",
+          "GHSA-j6xf-jwrj-v5qp"
+        ]
+      }
+    ],
+    "github.com/coder/coder/v2": [
+      {
+        "id": "GO-2025-3938",
+        "file": "GO-2025-3938.json",
+        "summary": "Coder vulnerable to privilege escalation could lead to a cross workspace compromise in github.com/coder/coder",
+        "aliases": [
+          "CVE-2025-58437",
+          "GHSA-j6xf-jwrj-v5qp"
+        ]
+      }
+    ],
+    "github.com/gophish/gophish": [
+      {
+        "id": "GO-2026-4455",
+        "file": "GO-2026-4455.json",
+        "summary": "Gophish is vulnerable to Incorrect Access Control in github.com/gophish/gophish",
+        "aliases": [
+          "CVE-2025-70963",
+          "GHSA-9f8m-9547-2gqm"
+        ]
+      }
+    ],
+    "github.com/filebrowser/filebrowser": [
+      {
+        "id": "GO-2026-4710",
+        "file": "GO-2026-4710.json",
+        "summary": "File Browser Signup Grants Admin When Default Permissions Include Admin in github.com/filebrowser/filebrowser",
+        "aliases": [
+          "CVE-2026-32760",
+          "GHSA-5gg9-5g7w-hm73"
+        ]
+      }
+    ],
+    "github.com/filebrowser/filebrowser/v2": [
+      {
+        "id": "GO-2026-4710",
+        "file": "GO-2026-4710.json",
+        "summary": "File Browser Signup Grants Admin When Default Permissions Include Admin in github.com/filebrowser/filebrowser",
+        "aliases": [
+          "CVE-2026-32760",
+          "GHSA-5gg9-5g7w-hm73"
+        ]
+      }
+    ]
+  },
+  "last_updated": "2026-05-14"
+}

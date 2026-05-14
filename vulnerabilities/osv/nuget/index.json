@@ -1,0 +1,2386 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-05-14T16:13:02Z",
+  "by_package": {
+    "snowflake.data": [
+      {
+        "id": "GHSA-223g-8w3x-98wr",
+        "file": "GHSA-223g-8w3x-98wr.json",
+        "summary": "Snowflake Connector .Net Command Injection",
+        "aliases": [
+          "CVE-2023-34230"
+        ]
+      }
+    ],
+    "btcpayserver.client": [
+      {
+        "id": "GHSA-33gv-rvgq-gpxp",
+        "file": "GHSA-33gv-rvgq-gpxp.json",
+        "summary": "Withdrawn Advisory: HTML injections in BTCPayServer",
+        "aliases": []
+      }
+    ],
+    "cefsharp.common": [
+      {
+        "id": "GHSA-4c29-gfrp-g6x9",
+        "file": "GHSA-4c29-gfrp-g6x9.json",
+        "summary": "CefSharp affected by libvpx's heap buffer overflow in vp8 encoding",
+        "aliases": []
+      }
+    ],
+    "cefsharp.common.netcore": [
+      {
+        "id": "GHSA-4c29-gfrp-g6x9",
+        "file": "GHSA-4c29-gfrp-g6x9.json",
+        "summary": "CefSharp affected by libvpx's heap buffer overflow in vp8 encoding",
+        "aliases": []
+      }
+    ],
+    "microsoft.chakracore": [
+      {
+        "id": "GHSA-5j48-826p-2w9r",
+        "file": "GHSA-5j48-826p-2w9r.json",
+        "summary": "ChakraCore RCE Vulnerability",
+        "aliases": [
+          "CVE-2018-0834"
+        ]
+      },
+      {
+        "id": "GHSA-6mw4-phmc-x477",
+        "file": "GHSA-6mw4-phmc-x477.json",
+        "summary": "ChakraCore RCE Vulnerability",
+        "aliases": [
+          "CVE-2017-11807"
+        ]
+      },
+      {
+        "id": "GHSA-hrf4-ww4w-6rv6",
+        "file": "GHSA-hrf4-ww4w-6rv6.json",
+        "summary": "ChakraCore RCE Vulnerability",
+        "aliases": [
+          "CVE-2017-11797"
+        ]
+      },
+      {
+        "id": "GHSA-qxmj-3c5h-546c",
+        "file": "GHSA-qxmj-3c5h-546c.json",
+        "summary": "ChakraCore Memory Corruption Vulnerability",
+        "aliases": [
+          "CVE-2019-0861"
+        ]
+      }
+    ],
+    "messagepack": [
+      {
+        "id": "GHSA-7q36-4xx7-xcxf",
+        "file": "GHSA-7q36-4xx7-xcxf.json",
+        "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
+        "aliases": [
+          "CVE-2020-5234"
+        ]
+      },
+      {
+        "id": "GHSA-7q36-4xx7-xcxf",
+        "file": "GHSA-7q36-4xx7-xcxf.json",
+        "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
+        "aliases": [
+          "CVE-2020-5234"
+        ]
+      }
+    ],
+    "messagepack.immutablecollection": [
+      {
+        "id": "GHSA-7q36-4xx7-xcxf",
+        "file": "GHSA-7q36-4xx7-xcxf.json",
+        "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
+        "aliases": [
+          "CVE-2020-5234"
+        ]
+      },
+      {
+        "id": "GHSA-7q36-4xx7-xcxf",
+        "file": "GHSA-7q36-4xx7-xcxf.json",
+        "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
+        "aliases": [
+          "CVE-2020-5234"
+        ]
+      }
+    ],
+    "messagepack.reactiveproperty": [
+      {
+        "id": "GHSA-7q36-4xx7-xcxf",
+        "file": "GHSA-7q36-4xx7-xcxf.json",
+        "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
+        "aliases": [
+          "CVE-2020-5234"
+        ]
+      },
+      {
+        "id": "GHSA-7q36-4xx7-xcxf",
+        "file": "GHSA-7q36-4xx7-xcxf.json",
+        "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
+        "aliases": [
+          "CVE-2020-5234"
+        ]
+      }
+    ],
+    "messagepack.unityshims": [
+      {
+        "id": "GHSA-7q36-4xx7-xcxf",
+        "file": "GHSA-7q36-4xx7-xcxf.json",
+        "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
+        "aliases": [
+          "CVE-2020-5234"
+        ]
+      },
+      {
+        "id": "GHSA-7q36-4xx7-xcxf",
+        "file": "GHSA-7q36-4xx7-xcxf.json",
+        "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
+        "aliases": [
+          "CVE-2020-5234"
+        ]
+      }
+    ],
+    "messagepack.unity": [
+      {
+        "id": "GHSA-7q36-4xx7-xcxf",
+        "file": "GHSA-7q36-4xx7-xcxf.json",
+        "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
+        "aliases": [
+          "CVE-2020-5234"
+        ]
+      },
+      {
+        "id": "GHSA-7q36-4xx7-xcxf",
+        "file": "GHSA-7q36-4xx7-xcxf.json",
+        "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
+        "aliases": [
+          "CVE-2020-5234"
+        ]
+      }
+    ],
+    "yarp.reverseproxy": [
+      {
+        "id": "GHSA-8xc6-g8xw-h2c4",
+        "file": "GHSA-8xc6-g8xw-h2c4.json",
+        "summary": "YARP Denial of Service Vulnerability",
+        "aliases": [
+          "CVE-2022-26924"
+        ]
+      },
+      {
+        "id": "GHSA-8xc6-g8xw-h2c4",
+        "file": "GHSA-8xc6-g8xw-h2c4.json",
+        "summary": "YARP Denial of Service Vulnerability",
+        "aliases": [
+          "CVE-2022-26924"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.linux-arm": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.linux-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.linux-musl-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.linux-musl-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.linux-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.osx-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.win-arm": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.win-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.win-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.win-x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.linux-musl-arm": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.linux-arm": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.linux-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.linux-musl-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.linux-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.llvm.aot.linux-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.llvm.aot.linux-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.llvm.aot.osx-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.llvm.linux-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.llvm.linux-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.llvm.osx-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.osx-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      },
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.linux-x64.cross.android-arm": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.linux-x64.cross.android-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.linux-x64.cross.android-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.linux-x64.cross.android-x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.linux-x64.cross.browser-wasm": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.osx-x64.cross.android-arm": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.osx-x64.cross.android-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.osx-x64.cross.android-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.osx-x64.cross.android-x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.osx-x64.cross.browser-wasm": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.osx-x64.cross.ios-arm": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.osx-x64.cross.ios-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.osx-x64.cross.iossimulator-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.osx-x64.cross.iossimulator-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.osx-x64.cross.iossimulator-x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.osx-x64.cross.maccatalyst-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.osx-x64.cross.maccatalyst-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.osx-x64.cross.tvos-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.osx-x64.cross.tvossimulator-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.osx-x64.cross.tvossimulator-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.win-x64.cross.android-arm": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.win-x64.cross.android-arm.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.win-x64.cross.android-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.win-x64.cross.android-arm64.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.win-x64.cross.android-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.win-x64.cross.android-x64.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.win-x64.cross.android-x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.win-x64.cross.android-x86.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.win-x64.cross.browser-wasm": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.aot.win-x64.cross.browser-wasm.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.android-arm": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.android-arm.msi.arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.android-arm.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.android-arm.msi.x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.android-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.android-arm64.msi.arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.android-arm64.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.android-arm64.msi.x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.android-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.android-x64.msi.arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.android-x64.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.android-x64.msi.x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.android-x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.android-x86.msi.arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.android-x86.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.android-x86.msi.x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.browser-wasm": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.browser-wasm.msi.arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.browser-wasm.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.browser-wasm.msi.x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.ios-arm": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.ios-arm.msi.arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.ios-arm.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.ios-arm.msi.x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.ios-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.ios-arm64.msi.arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.ios-arm64.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.ios-arm64.msi.x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.iossimulator-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.iossimulator-arm64.msi.arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.iossimulator-arm64.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.iossimulator-arm64.msi.x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.iossimulator-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.iossimulator-x64.msi.arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.iossimulator-x64.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.iossimulator-x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.iossimulator-x86.msi.arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.iossimulator-x86.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.iossimulator-x86.msi.x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.maccatalyst-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.maccatalyst-arm64.msi.arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.maccatalyst-arm64.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.maccatalyst-arm64.msi.x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.maccatalyst-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.maccatalyst-x64.msi.arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.maccatalyst-x64.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.maccatalyst-x64.msi.x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.osx-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.tvos-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.tvos-arm64.msi.arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.tvos-arm64.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.tvos-arm64.msi.x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.tvossimulator-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.tvossimulator-arm64.msi.arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.tvossimulator-arm64.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.tvossimulator-arm64.msi.x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.tvossimulator-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.tvossimulator-x64.msi.arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.tvossimulator-x64.msi.x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.tvossimulator-x64.msi.x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.win-x64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.mono.win-x86": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "microsoft.netcore.app.runtime.osx-arm64": [
+      {
+        "id": "GHSA-c6w8-7mp3-34j9",
+        "file": "GHSA-c6w8-7mp3-34j9.json",
+        "summary": ".NET Remote Code Execution Vulnerability",
+        "aliases": [
+          "BIT-dotnet-2022-24512",
+          "BIT-dotnet-sdk-2022-24512",
+          "BIT-powershell-2022-24512",
+          "CVE-2022-24512"
+        ]
+      }
+    ],
+    "discatsharp": [
+      {
+        "id": "GHSA-frxg-hf44-q765",
+        "file": "GHSA-frxg-hf44-q765.json",
+        "summary": "Exposure of Sensitive Information to an Unauthorized Actor in DisCatSharp",
+        "aliases": [
+          "CVE-2022-24849"
+        ]
+      }
+    ],
+    "magick.net-q16-anycpu": [
+      {
+        "id": "GHSA-gv85-xg33-553c",
+        "file": "GHSA-gv85-xg33-553c.json",
+        "summary": "Duplicate Advisory: ImageMagick: Specially crafted SVG leads to segmentation fault and generate trash files in \"/tmp\", possible to leverage DoS",
+        "aliases": []
+      },
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "autoqueryable": [
+      {
+        "id": "GHSA-m4mm-534h-5cp5",
+        "file": "GHSA-m4mm-534h-5cp5.json",
+        "summary": "AutoQueryable leaks sensitive information",
+        "aliases": [
+          "CVE-2024-57716"
+        ]
+      }
+    ],
+    "umbraco.cms": [
+      {
+        "id": "GHSA-pgvc-6h2p-q4f6",
+        "file": "GHSA-pgvc-6h2p-q4f6.json",
+        "summary": "Umbraco CMS disclosure of configured password requirements ",
+        "aliases": [
+          "CVE-2025-49147"
+        ]
+      },
+      {
+        "id": "GHSA-pgvc-6h2p-q4f6",
+        "file": "GHSA-pgvc-6h2p-q4f6.json",
+        "summary": "Umbraco CMS disclosure of configured password requirements ",
+        "aliases": [
+          "CVE-2025-49147"
+        ]
+      }
+    ],
+    "opentelemetry.autoinstrumentation": [
+      {
+        "id": "GHSA-vc29-vg52-6643",
+        "file": "GHSA-vc29-vg52-6643.json",
+        "summary": "DoS Vulnerability in TraceContextPropagator.Extract - OpenTelemetry.Api",
+        "aliases": []
+      }
+    ],
+    "magick.net-q16-hdri-anycpu": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q16-hdri-openmp-arm64": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q16-hdri-openmp-x64": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q16-hdri-arm64": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q16-hdri-x64": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q16-hdri-x86": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q16-openmp-arm64": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q16-openmp-x64": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q16-openmp-x86": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q16-arm64": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q16-x64": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q16-x86": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q8-anycpu": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q8-openmp-arm64": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q8-openmp-x64": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q8-arm64": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q8-x64": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "magick.net-q8-x86": [
+      {
+        "id": "GHSA-w8mw-frc6-r7m8",
+        "file": "GHSA-w8mw-frc6-r7m8.json",
+        "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
+        "aliases": [
+          "CVE-2026-26983"
+        ]
+      }
+    ],
+    "microsoft.identitymodel.clients.activedirectory": [
+      {
+        "id": "GHSA-xc6x-cq47-9chw",
+        "file": "GHSA-xc6x-cq47-9chw.json",
+        "summary": "Vulnerability in Azure Active Directory Authentication Library",
+        "aliases": [
+          "CVE-2019-1258"
+        ]
+      }
+    ],
+    "a\u0578otar.splat.fod\u0443": [
+      {
+        "id": "MAL-2024-4015",
+        "file": "MAL-2024-4015.json",
+        "summary": "Malicious code in A\u0578otar.Splat.Fod\u0443 (NuGet)",
+        "aliases": []
+      }
+    ],
+    "be.vlaanderen.basisreg\u0456sters.grar.contr\u0430cts": [
+      {
+        "id": "MAL-2024-4072",
+        "file": "MAL-2024-4072.json",
+        "summary": "Malicious code in Be.Vlaanderen.Basisreg\u0456sters.GrAr.Contr\u0430cts (NuGet)",
+        "aliases": []
+      }
+    ],
+    "be.vlaandere\u0578.basisreg\u0456sters.parcelregistry.ap\u0456.osl\u043e": [
+      {
+        "id": "MAL-2024-4129",
+        "file": "MAL-2024-4129.json",
+        "summary": "Malicious code in Be.Vlaandere\u0578.Basisreg\u0456sters.ParcelRegistry.Ap\u0456.Osl\u043e (NuGet)",
+        "aliases": []
+      }
+    ],
+    "be.vlaan\u0501eren.basisregisters.aspnetcore.mvc.modelbinding.guidh\u0435ader": [
+      {
+        "id": "MAL-2024-4186",
+        "file": "MAL-2024-4186.json",
+        "summary": "Malicious code in Be.Vlaan\u0501eren.Basisregisters.AspNetCore.Mvc.ModelBinding.GuidH\u0435ader (NuGet)",
+        "aliases": []
+      }
+    ],
+    "be.vlaa\u0578\u0501eren.bas\u0456sreg\u0456sters.grar.edit": [
+      {
+        "id": "MAL-2024-4243",
+        "file": "MAL-2024-4243.json",
+        "summary": "Malicious code in Be.Vlaa\u0578\u0501eren.Bas\u0456sreg\u0456sters.GrAr.Edit (NuGet)",
+        "aliases": []
+      }
+    ],
+    "be.vl\u0430an\u0501eren.basisregisters.addressregistry.ap\u0456.lega\u0441y": [
+      {
+        "id": "MAL-2024-4300",
+        "file": "MAL-2024-4300.json",
+        "summary": "Malicious code in Be.Vl\u0430an\u0501eren.Basisregisters.AddressRegistry.Ap\u0456.Lega\u0441y (NuGet)",
+        "aliases": []
+      }
+    ],
+    "blo\u0441k\u0441ore.n\u0435tw\u043erks.bcp": [
+      {
+        "id": "MAL-2024-4357",
+        "file": "MAL-2024-4357.json",
+        "summary": "Malicious code in Blo\u0441k\u0441ore.N\u0435tw\u043erks.BCP (NuGet)",
+        "aliases": []
+      }
+    ],
+    "b\u0435.vlaa\u0578deren.basisregisters.aws.distrib\u057dteds3cach\u0435": [
+      {
+        "id": "MAL-2024-4414",
+        "file": "MAL-2024-4414.json",
+        "summary": "Malicious code in B\u0435.Vlaa\u0578deren.Basisregisters.Aws.Distrib\u057dtedS3Cach\u0435 (NuGet)",
+        "aliases": []
+      }
+    ],
+    "distributedlocks.azurestorage.net": [
+      {
+        "id": "MAL-2024-4471",
+        "file": "MAL-2024-4471.json",
+        "summary": "Malicious code in DistributedLocks.AzureStorage.Net (NuGet)",
+        "aliases": []
+      }
+    ],
+    "ledgerwallet.net": [
+      {
+        "id": "MAL-2024-4528",
+        "file": "MAL-2024-4528.json",
+        "summary": "Malicious code in LedgerWallet.Net (NuGet)",
+        "aliases": []
+      }
+    ],
+    "oci.dotnetsdk.certificates.net": [
+      {
+        "id": "MAL-2024-4585",
+        "file": "MAL-2024-4585.json",
+        "summary": "Malicious code in OCI.DotNetSDK.Certificates.Net (NuGet)",
+        "aliases": []
+      }
+    ],
+    "simplify.windows.forms.net": [
+      {
+        "id": "MAL-2024-4642",
+        "file": "MAL-2024-4642.json",
+        "summary": "Malicious code in Simplify.Windows.Forms.Net (NuGet)",
+        "aliases": []
+      }
+    ],
+    "wpfanimatedgif.net": [
+      {
+        "id": "MAL-2024-4699",
+        "file": "MAL-2024-4699.json",
+        "summary": "Malicious code in WpfAnimatedGif.Net (NuGet)",
+        "aliases": []
+      }
+    ]
+  },
+  "last_updated": "2026-05-14"
+}

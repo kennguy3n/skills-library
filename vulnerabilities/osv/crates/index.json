@@ -1,0 +1,335 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-05-14T16:13:02Z",
+  "by_package": {
+    "rustc-serialize": [
+      {
+        "id": "GHSA-2226-4v3c-cff8",
+        "file": "GHSA-2226-4v3c-cff8.json",
+        "summary": "Stack overflow in rustc_serialize when parsing deeply nested JSON",
+        "aliases": [
+          "RUSTSEC-2022-0004"
+        ]
+      }
+    ],
+    "arenavec": [
+      {
+        "id": "GHSA-3632-54q8-m96x",
+        "file": "GHSA-3632-54q8-m96x.json",
+        "summary": "arenavec has multiple memory corruption vulnerabilities in safe APIs",
+        "aliases": [
+          "RUSTSEC-2025-0053"
+        ]
+      }
+    ],
+    "s2n-quic": [
+      {
+        "id": "GHSA-475v-pq2g-fp9g",
+        "file": "GHSA-475v-pq2g-fp9g.json",
+        "summary": "s2n-quic potential denial of service via crafted stream frames",
+        "aliases": []
+      }
+    ],
+    "coreutils": [
+      {
+        "id": "GHSA-5pv5-xh52-hvrp",
+        "file": "GHSA-5pv5-xh52-hvrp.json",
+        "summary": "uutils coreutils has an Incorrect Short Circuit Evaluation Issue",
+        "aliases": [
+          "CVE-2026-35378"
+        ]
+      }
+    ],
+    "surrealdb": [
+      {
+        "id": "GHSA-6wr5-jmpr-mjcx",
+        "file": "GHSA-6wr5-jmpr-mjcx.json",
+        "summary": "Uncaught Exception in Macro Expecting Native Function to Exist",
+        "aliases": []
+      }
+    ],
+    "wasmtime": [
+      {
+        "id": "GHSA-852m-cvvp-9p4w",
+        "file": "GHSA-852m-cvvp-9p4w.json",
+        "summary": "Wasmtime WASI implementations are vulnerable to guest-controlled resource exhaustion",
+        "aliases": [
+          "CVE-2026-27204",
+          "RUSTSEC-2026-0020"
+        ]
+      },
+      {
+        "id": "GHSA-852m-cvvp-9p4w",
+        "file": "GHSA-852m-cvvp-9p4w.json",
+        "summary": "Wasmtime WASI implementations are vulnerable to guest-controlled resource exhaustion",
+        "aliases": [
+          "CVE-2026-27204",
+          "RUSTSEC-2026-0020"
+        ]
+      },
+      {
+        "id": "GHSA-852m-cvvp-9p4w",
+        "file": "GHSA-852m-cvvp-9p4w.json",
+        "summary": "Wasmtime WASI implementations are vulnerable to guest-controlled resource exhaustion",
+        "aliases": [
+          "CVE-2026-27204",
+          "RUSTSEC-2026-0020"
+        ]
+      },
+      {
+        "id": "RUSTSEC-2022-0099",
+        "file": "RUSTSEC-2022-0099.json",
+        "summary": " Use after free with `externref`s and epoch interruption in Wasmtime",
+        "aliases": [
+          "CVE-2022-24791",
+          "GHSA-gwc9-348x-qwv2",
+          "RUSTSEC-2022-0016"
+        ]
+      }
+    ],
+    "shamir": [
+      {
+        "id": "GHSA-978j-88f3-p5j3",
+        "file": "GHSA-978j-88f3-p5j3.json",
+        "summary": "Threshold value is ignored (all shares are n=3)",
+        "aliases": [
+          "RUSTSEC-2020-0160"
+        ]
+      }
+    ],
+    "apollo-router": [
+      {
+        "id": "GHSA-cgqf-3cq5-wvcj",
+        "file": "GHSA-cgqf-3cq5-wvcj.json",
+        "summary": "Apollo Router's Compressed Payloads do not respect HTTP Payload Limits",
+        "aliases": [
+          "CVE-2024-28101"
+        ]
+      }
+    ],
+    "direct_ring_buffer": [
+      {
+        "id": "GHSA-fp5x-7m4q-449f",
+        "file": "GHSA-fp5x-7m4q-449f.json",
+        "summary": "Direct Ring Buffer has uninitialized memory exposure in create_ring_buffer",
+        "aliases": [
+          "RUSTSEC-2025-0105"
+        ]
+      }
+    ],
+    "mdbook": [
+      {
+        "id": "GHSA-gx5w-rrhp-f436",
+        "file": "GHSA-gx5w-rrhp-f436.json",
+        "summary": "XSS in mdBook",
+        "aliases": [
+          "CVE-2020-26297",
+          "RUSTSEC-2021-0001"
+        ]
+      }
+    ],
+    "rusty-paseto": [
+      {
+        "id": "GHSA-j57r-4qw6-58r3",
+        "file": "GHSA-j57r-4qw6-58r3.json",
+        "summary": "rusty_paseto vulnerable to private key extraction due to ed25519-dalek dependency",
+        "aliases": []
+      }
+    ],
+    "crayon": [
+      {
+        "id": "GHSA-m833-jv95-mfjh",
+        "file": "GHSA-m833-jv95-mfjh.json",
+        "summary": "Memory safety violation in crayon",
+        "aliases": [
+          "CVE-2020-35889",
+          "RUSTSEC-2020-0037"
+        ]
+      }
+    ],
+    "may_queue": [
+      {
+        "id": "GHSA-pphf-f93w-gc84",
+        "file": "GHSA-pphf-f93w-gc84.json",
+        "summary": "Data race in may_queue",
+        "aliases": [
+          "CVE-2020-36217",
+          "RUSTSEC-2020-0111"
+        ]
+      }
+    ],
+    "enumflags2": [
+      {
+        "id": "GHSA-qvc4-78gw-pv8p",
+        "file": "GHSA-qvc4-78gw-pv8p.json",
+        "summary": "Adverserial use of `make_bitflags!` macro can cause undefined behavior",
+        "aliases": [
+          "RUSTSEC-2023-0035"
+        ]
+      }
+    ],
+    "obfstr": [
+      {
+        "id": "GHSA-v2p5-q653-9j99",
+        "file": "GHSA-v2p5-q653-9j99.json",
+        "summary": "obfstr Type Confusion vulnerability",
+        "aliases": [
+          "CVE-2024-58253"
+        ]
+      }
+    ],
+    "threadalone": [
+      {
+        "id": "GHSA-w59h-378f-2frm",
+        "file": "GHSA-w59h-378f-2frm.json",
+        "summary": "Unsound sending of non-Send types across threads in threadalone",
+        "aliases": [
+          "RUSTSEC-2024-0005"
+        ]
+      }
+    ],
+    "sccache": [
+      {
+        "id": "GHSA-x7fr-pg8f-93f5",
+        "file": "GHSA-x7fr-pg8f-93f5.json",
+        "summary": "sccache vulnerable to privilege escalation if server is run as root",
+        "aliases": [
+          "CVE-2023-1521"
+        ]
+      }
+    ],
+    "rmpv": [
+      {
+        "id": "RUSTSEC-2017-0006",
+        "file": "RUSTSEC-2017-0006.json",
+        "summary": "Unchecked vector pre-allocation",
+        "aliases": [
+          "GHSA-mcrf-7hf9-f6q5"
+        ]
+      }
+    ],
+    "internment": [
+      {
+        "id": "RUSTSEC-2020-0017",
+        "file": "RUSTSEC-2020-0017.json",
+        "summary": "Use after free in ArcIntern::drop",
+        "aliases": [
+          "CVE-2020-35874",
+          "GHSA-96w3-p368-4h8c"
+        ]
+      }
+    ],
+    "rusb": [
+      {
+        "id": "RUSTSEC-2020-0098",
+        "file": "RUSTSEC-2020-0098.json",
+        "summary": "UsbContext trait did not require implementers to be Send and Sync.",
+        "aliases": [
+          "CVE-2020-36206",
+          "GHSA-9mxw-4856-9cm5"
+        ]
+      }
+    ],
+    "fil-ocl": [
+      {
+        "id": "RUSTSEC-2021-0011",
+        "file": "RUSTSEC-2021-0011.json",
+        "summary": "EventList's From<EventList> conversions can double drop on panic.",
+        "aliases": [
+          "CVE-2021-25908",
+          "GHSA-x3v2-fgr6-3wmm"
+        ]
+      }
+    ],
+    "messagepack-rs": [
+      {
+        "id": "RUSTSEC-2021-0092",
+        "file": "RUSTSEC-2021-0092.json",
+        "summary": "Deserialization functions pass uninitialized memory to user-provided Read",
+        "aliases": [
+          "CVE-2021-45690",
+          "CVE-2021-45691",
+          "CVE-2021-45692",
+          "CVE-2021-45693",
+          "GHSA-hr52-f9vp-582c",
+          "GHSA-jqjj-r4qp-x2gh",
+          "GHSA-jwfh-j623-m97h",
+          "GHSA-m325-rxjv-pwph",
+          "GHSA-vw5m-qw2r-m923"
+        ]
+      }
+    ],
+    "totp-rs": [
+      {
+        "id": "RUSTSEC-2022-0018",
+        "file": "RUSTSEC-2022-0018.json",
+        "summary": "Timing attack",
+        "aliases": [
+          "CVE-2022-29185",
+          "GHSA-8vxv-2g8p-2249"
+        ]
+      }
+    ],
+    "rosenpass": [
+      {
+        "id": "RUSTSEC-2023-0077",
+        "file": "RUSTSEC-2023-0077.json",
+        "summary": "Remotely exploitable DoS condition in Rosenpass <=0.2.0",
+        "aliases": [
+          "CVE-2023-53157",
+          "GHSA-6ggr-cwv4-g7qg"
+        ]
+      }
+    ],
+    "tls-listener": [
+      {
+        "id": "RUSTSEC-2024-0341",
+        "file": "RUSTSEC-2024-0341.json",
+        "summary": "Slow loris vulnerability with default configuration",
+        "aliases": [
+          "CVE-2024-28854",
+          "GHSA-2qph-qpvm-2qf7"
+        ]
+      }
+    ],
+    "gtk-layer-shell": [
+      {
+        "id": "RUSTSEC-2024-0422",
+        "file": "RUSTSEC-2024-0422.json",
+        "summary": "gtk-layer-shell GTK3 bindings - no longer maintained",
+        "aliases": []
+      }
+    ],
+    "tracing-subscriber": [
+      {
+        "id": "RUSTSEC-2025-0055",
+        "file": "RUSTSEC-2025-0055.json",
+        "summary": "Logging user input may result in poisoning logs with ANSI escape sequences",
+        "aliases": [
+          "CVE-2025-58160",
+          "GHSA-xwfj-jgwm-7wp5"
+        ]
+      }
+    ],
+    "sequoia-openpgp": [
+      {
+        "id": "RUSTSEC-2025-0136",
+        "file": "RUSTSEC-2025-0136.json",
+        "summary": "Underflow in aes_key_unwrap function",
+        "aliases": [
+          "CVE-2025-67897",
+          "GHSA-v6x3-9r38-r27q"
+        ]
+      }
+    ],
+    "tokio-codec": [
+      {
+        "id": "RUSTSEC-2026-0056",
+        "file": "RUSTSEC-2026-0056.json",
+        "summary": "`tokio-codec` is unmaintained",
+        "aliases": []
+      }
+    ]
+  },
+  "last_updated": "2026-05-14"
+}

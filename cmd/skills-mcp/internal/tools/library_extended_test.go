@@ -996,3 +996,125 @@ func TestScanSecretsSARIFFileURI(t *testing.T) {
 		t.Errorf("inline artifact URI = %q, want %q", gotInline, "stdin://text")
 	}
 }
+
+// TestVersionMatchesEcoNpmCaretRange pins the ecosystem-native semver
+// matcher wired in by P4d. The approximate matcher in library.go
+// silently treats a caret prefix as part of an unrecognised string,
+// so before this change versionInAnyRange("^1.2.0", "1.5.0") returned
+// false. The native matcher in cmd/skills-mcp/internal/tools/semver
+// returns true. This test catches any future regression in the
+// dispatch path.
+func TestVersionMatchesEcoNpmCaretRange(t *testing.T) {
+	if !versionInAnyRangeEco("npm", "1.5.0", []string{"^1.2.0"}) {
+		t.Errorf("npm: ^1.2.0 should match 1.5.0 via the native matcher")
+	}
+	if versionInAnyRangeEco("npm", "2.0.0", []string{"^1.2.0"}) {
+		t.Errorf("npm: ^1.2.0 should NOT match 2.0.0")
+	}
+}
+
+// TestVersionMatchesEcoPypiCompatible pins PEP 440 compatible-release
+// semantics through the dispatcher. ~=1.2.3 := >=1.2.3, <1.3.
+func TestVersionMatchesEcoPypiCompatible(t *testing.T) {
+	if !versionInAnyRangeEco("pypi", "1.2.9", []string{"~=1.2.3"}) {
+		t.Errorf("pypi: ~=1.2.3 should match 1.2.9")
+	}
+	if versionInAnyRangeEco("pypi", "1.3.0", []string{"~=1.2.3"}) {
+		t.Errorf("pypi: ~=1.2.3 should NOT match 1.3.0")
+	}
+}
+
+// TestVersionMatchesEcoGoPseudoVersion locks in pseudo-version
+// timestamp ordering: a later pseudo timestamp must compare greater
+// than an earlier one even when M.m.p are identical.
+func TestVersionMatchesEcoGoPseudoVersion(t *testing.T) {
+	earlier := "v0.0.0-20210101000000-000000000000"
+	later := "v0.0.0-20210101120000-aaaaaaaaaaaa"
+	if !versionInAnyRangeEco("go", later, []string{">=" + earlier}) {
+		t.Errorf("go: later pseudo must satisfy >= earlier pseudo")
+	}
+	if versionInAnyRangeEco("go", earlier, []string{">" + later}) {
+		t.Errorf("go: earlier pseudo must NOT satisfy > later pseudo")
+	}
+}
+
+// TestVersionMatchesEcoUnknownFallsBack ensures versionMatchesEco
+// for an ecosystem without a native matcher still uses the legacy
+// approximate matcher and returns the same answer it always did.
+func TestVersionMatchesEcoUnknownFallsBack(t *testing.T) {
+	// "rubygems" has no native matcher here (not in the dispatch
+	// list), so the approximate matcher in versionMatches is what
+	// runs. ">= 1.2.3" should match 1.5.0 just like before.
+	if !versionInAnyRangeEco("rubygems", "1.5.0", []string{">= 1.2.3"}) {
+		t.Errorf("rubygems fallback: >= 1.2.3 should match 1.5.0")
+	}
+}
+
+// TestLookupVulnerabilityIncludesOSVAdvisories wires the new
+// vulnerabilities/osv/<eco>/index.json into LookupVulnerability. We
+// expect every package present in the cache to be discoverable by
+// name (case-insensitive) and to come back with a stable osv.dev
+// reference URL. The cache for npm always contains at least 30 real
+// advisories drawn from osv.dev's bulk export (see
+// scripts/ingest-osv.py).
+func TestLookupVulnerabilityIncludesOSVAdvisories(t *testing.T) {
+	lib := newLibrary(t)
+	// Pick the first by_package key from the npm index so the test
+	// stays stable across cache refreshes.
+	idx := lib.loadOSVIndex("npm")
+	if idx == nil || len(idx.ByPackage) == 0 {
+		t.Skipf("vulnerabilities/osv/npm/index.json missing or empty; run scripts/ingest-osv.py")
+	}
+	var pkg string
+	for k := range idx.ByPackage {
+		pkg = k
+		break
+	}
+	res, err := lib.LookupVulnerability(pkg, "npm", "")
+	if err != nil {
+		t.Fatalf("LookupVulnerability(%q, npm, _): %v", pkg, err)
+	}
+	if len(res.OSVAdvisories) == 0 {
+		t.Fatalf("expected at least one OSV advisory for %q, got none", pkg)
+	}
+	got := res.OSVAdvisories[0]
+	if got.ID == "" {
+		t.Errorf("OSVAdvisory.ID must be populated")
+	}
+	if got.Reference != "https://osv.dev/vulnerability/"+got.ID {
+		t.Errorf("OSVAdvisory.Reference = %q, want osv.dev URL", got.Reference)
+	}
+	if got.Ecosystem != "npm" {
+		t.Errorf("OSVAdvisory.Ecosystem = %q, want npm", got.Ecosystem)
+	}
+}
+
+// TestLookupVulnerabilityMissingOSVIndexIsSafe ensures that an
+// ecosystem with no on-disk OSV cache does not break the tool. The
+// "rubygems" cache exists in this repo, so simulate a missing index
+// by pointing the library at a temp root with no vulnerabilities/osv
+// subdirectory.
+func TestLookupVulnerabilityMissingOSVIndexIsSafe(t *testing.T) {
+	tmp := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(tmp, "skills"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmp, "vulnerabilities", "supply-chain", "malicious-packages"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmp, "vulnerabilities", "supply-chain", "malicious-packages", "npm.json"),
+		[]byte(`{"ecosystem":"npm","entries":[]}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	lib, err := NewLibrary(tmp)
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := lib.LookupVulnerability("anything", "npm", "")
+	if err != nil {
+		t.Fatalf("LookupVulnerability must not fail when OSV cache is absent: %v", err)
+	}
+	if len(res.OSVAdvisories) != 0 {
+		t.Errorf("OSVAdvisories must be empty when cache missing; got %d", len(res.OSVAdvisories))
+	}
+}

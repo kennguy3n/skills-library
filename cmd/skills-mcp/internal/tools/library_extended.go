@@ -139,12 +139,13 @@ type CVEPatternMatch struct {
 
 // CheckDependencyResult is what the check_dependency tool returns.
 type CheckDependencyResult struct {
-	Package    string            `json:"package"`
-	Version    string            `json:"version,omitempty"`
-	Ecosystem  string            `json:"ecosystem"`
-	Malicious  []VulnEntry       `json:"malicious"`
-	Typosquats []TyposquatEntry  `json:"typosquats"`
-	CVEs       []CVEPatternMatch `json:"cves"`
+	Package       string            `json:"package"`
+	Version       string            `json:"version,omitempty"`
+	Ecosystem     string            `json:"ecosystem"`
+	Malicious     []VulnEntry       `json:"malicious"`
+	Typosquats    []TyposquatEntry  `json:"typosquats"`
+	CVEs          []CVEPatternMatch `json:"cves"`
+	OSVAdvisories []OSVAdvisory     `json:"osv_advisories"`
 }
 
 // CheckDependency unifies lookup_vulnerability with CVE-pattern matching
@@ -165,13 +166,18 @@ func (l *Library) CheckDependency(pkg, version, ecosystem string) (*CheckDepende
 	if err != nil {
 		return nil, err
 	}
+	osvHits := inner.OSVAdvisories
+	if osvHits == nil {
+		osvHits = []OSVAdvisory{}
+	}
 	out := &CheckDependencyResult{
-		Package:    pkg,
-		Version:    version,
-		Ecosystem:  eco,
-		Malicious:  inner.Matches,
-		Typosquats: inner.Typosquats,
-		CVEs:       []CVEPatternMatch{},
+		Package:       pkg,
+		Version:       version,
+		Ecosystem:     eco,
+		Malicious:     inner.Matches,
+		Typosquats:    inner.Typosquats,
+		CVEs:          []CVEPatternMatch{},
+		OSVAdvisories: osvHits,
 	}
 	cve, err := l.loadCVEPatterns()
 	if err == nil {

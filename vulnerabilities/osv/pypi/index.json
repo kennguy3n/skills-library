@@ -1,0 +1,433 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-05-14T16:13:01Z",
+  "by_package": {
+    "invokeai": [
+      {
+        "id": "GHSA-227r-w5j2-6243",
+        "file": "GHSA-227r-w5j2-6243.json",
+        "summary": "InvokeAI Arbitrary File Deletion vulnerability",
+        "aliases": [
+          "CVE-2024-11042"
+        ]
+      }
+    ],
+    "nnabla": [
+      {
+        "id": "GHSA-4q2w-rw7m-xqw6",
+        "file": "GHSA-4q2w-rw7m-xqw6.json",
+        "summary": "Sony Neural Network Libraries reliance on untrusted inputs prior to v1.0.10",
+        "aliases": [
+          "CVE-2019-10844",
+          "PYSEC-2019-107"
+        ]
+      }
+    ],
+    "ansible-runner": [
+      {
+        "id": "GHSA-772j-xvf9-qpf5",
+        "file": "GHSA-772j-xvf9-qpf5.json",
+        "summary": "ansible-runner vulnerable to Race Condition",
+        "aliases": [
+          "CVE-2021-3702",
+          "PYSEC-2022-43068"
+        ]
+      }
+    ],
+    "eventlet": [
+      {
+        "id": "GHSA-9p9m-jm8w-94p2",
+        "file": "GHSA-9p9m-jm8w-94p2.json",
+        "summary": "Improper Handling of Highly Compressed Data (Data Amplification) and Memory Allocation with Excessive Size Value in eventlet",
+        "aliases": [
+          "CVE-2021-21419",
+          "PYSEC-2021-12"
+        ]
+      }
+    ],
+    "contentful": [
+      {
+        "id": "GHSA-g5j6-r3x9-gf2m",
+        "file": "GHSA-g5j6-r3x9-gf2m.json",
+        "summary": "Cross-site scripting in Contentful",
+        "aliases": [
+          "CVE-2020-13258"
+        ]
+      }
+    ],
+    "trytond": [
+      {
+        "id": "GHSA-jpr7-8rxm-4vgx",
+        "file": "GHSA-jpr7-8rxm-4vgx.json",
+        "summary": "Tryton allow authenticated users with certain permissions to read arbitrary files via the name parameter",
+        "aliases": [
+          "CVE-2016-1242",
+          "PYSEC-2016-13",
+          "PYSEC-2016-41"
+        ]
+      },
+      {
+        "id": "GHSA-jpr7-8rxm-4vgx",
+        "file": "GHSA-jpr7-8rxm-4vgx.json",
+        "summary": "Tryton allow authenticated users with certain permissions to read arbitrary files via the name parameter",
+        "aliases": [
+          "CVE-2016-1242",
+          "PYSEC-2016-13",
+          "PYSEC-2016-41"
+        ]
+      },
+      {
+        "id": "GHSA-jpr7-8rxm-4vgx",
+        "file": "GHSA-jpr7-8rxm-4vgx.json",
+        "summary": "Tryton allow authenticated users with certain permissions to read arbitrary files via the name parameter",
+        "aliases": [
+          "CVE-2016-1242",
+          "PYSEC-2016-13",
+          "PYSEC-2016-41"
+        ]
+      },
+      {
+        "id": "GHSA-jpr7-8rxm-4vgx",
+        "file": "GHSA-jpr7-8rxm-4vgx.json",
+        "summary": "Tryton allow authenticated users with certain permissions to read arbitrary files via the name parameter",
+        "aliases": [
+          "CVE-2016-1242",
+          "PYSEC-2016-13",
+          "PYSEC-2016-41"
+        ]
+      },
+      {
+        "id": "GHSA-jpr7-8rxm-4vgx",
+        "file": "GHSA-jpr7-8rxm-4vgx.json",
+        "summary": "Tryton allow authenticated users with certain permissions to read arbitrary files via the name parameter",
+        "aliases": [
+          "CVE-2016-1242",
+          "PYSEC-2016-13",
+          "PYSEC-2016-41"
+        ]
+      }
+    ],
+    "praisonaiagents": [
+      {
+        "id": "GHSA-q9pw-vmhh-384g",
+        "file": "GHSA-q9pw-vmhh-384g.json",
+        "summary": "PraisonAI has an SSRF bypass",
+        "aliases": [
+          "CVE-2026-44335"
+        ]
+      }
+    ],
+    "tensorflow": [
+      {
+        "id": "GHSA-vwhq-49r4-gj9v",
+        "file": "GHSA-vwhq-49r4-gj9v.json",
+        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "aliases": [
+          "BIT-tensorflow-2021-41214",
+          "CVE-2021-41214",
+          "PYSEC-2021-406",
+          "PYSEC-2021-623",
+          "PYSEC-2021-821"
+        ]
+      },
+      {
+        "id": "GHSA-vwhq-49r4-gj9v",
+        "file": "GHSA-vwhq-49r4-gj9v.json",
+        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "aliases": [
+          "BIT-tensorflow-2021-41214",
+          "CVE-2021-41214",
+          "PYSEC-2021-406",
+          "PYSEC-2021-623",
+          "PYSEC-2021-821"
+        ]
+      },
+      {
+        "id": "GHSA-vwhq-49r4-gj9v",
+        "file": "GHSA-vwhq-49r4-gj9v.json",
+        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "aliases": [
+          "BIT-tensorflow-2021-41214",
+          "CVE-2021-41214",
+          "PYSEC-2021-406",
+          "PYSEC-2021-623",
+          "PYSEC-2021-821"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-188",
+        "file": "PYSEC-2021-188.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-29551",
+          "CVE-2021-29551",
+          "GHSA-vqw6-72r7-fgw7",
+          "PYSEC-2021-479",
+          "PYSEC-2021-677"
+        ]
+      }
+    ],
+    "tensorflow-cpu": [
+      {
+        "id": "GHSA-vwhq-49r4-gj9v",
+        "file": "GHSA-vwhq-49r4-gj9v.json",
+        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "aliases": [
+          "BIT-tensorflow-2021-41214",
+          "CVE-2021-41214",
+          "PYSEC-2021-406",
+          "PYSEC-2021-623",
+          "PYSEC-2021-821"
+        ]
+      },
+      {
+        "id": "GHSA-vwhq-49r4-gj9v",
+        "file": "GHSA-vwhq-49r4-gj9v.json",
+        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "aliases": [
+          "BIT-tensorflow-2021-41214",
+          "CVE-2021-41214",
+          "PYSEC-2021-406",
+          "PYSEC-2021-623",
+          "PYSEC-2021-821"
+        ]
+      },
+      {
+        "id": "GHSA-vwhq-49r4-gj9v",
+        "file": "GHSA-vwhq-49r4-gj9v.json",
+        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "aliases": [
+          "BIT-tensorflow-2021-41214",
+          "CVE-2021-41214",
+          "PYSEC-2021-406",
+          "PYSEC-2021-623",
+          "PYSEC-2021-821"
+        ]
+      },
+      {
+        "id": "PYSEC-2022-93",
+        "file": "PYSEC-2022-93.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2022-23584",
+          "CVE-2022-23584",
+          "GHSA-24x4-6qmh-88qg",
+          "PYSEC-2022-148"
+        ]
+      }
+    ],
+    "tensorflow-gpu": [
+      {
+        "id": "GHSA-vwhq-49r4-gj9v",
+        "file": "GHSA-vwhq-49r4-gj9v.json",
+        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "aliases": [
+          "BIT-tensorflow-2021-41214",
+          "CVE-2021-41214",
+          "PYSEC-2021-406",
+          "PYSEC-2021-623",
+          "PYSEC-2021-821"
+        ]
+      },
+      {
+        "id": "GHSA-vwhq-49r4-gj9v",
+        "file": "GHSA-vwhq-49r4-gj9v.json",
+        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "aliases": [
+          "BIT-tensorflow-2021-41214",
+          "CVE-2021-41214",
+          "PYSEC-2021-406",
+          "PYSEC-2021-623",
+          "PYSEC-2021-821"
+        ]
+      },
+      {
+        "id": "GHSA-vwhq-49r4-gj9v",
+        "file": "GHSA-vwhq-49r4-gj9v.json",
+        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "aliases": [
+          "BIT-tensorflow-2021-41214",
+          "CVE-2021-41214",
+          "PYSEC-2021-406",
+          "PYSEC-2021-623",
+          "PYSEC-2021-821"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-774",
+        "file": "PYSEC-2021-774.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-37663",
+          "CVE-2021-37663",
+          "GHSA-g25h-jr74-qp5j",
+          "PYSEC-2021-285",
+          "PYSEC-2021-576"
+        ]
+      }
+    ],
+    "beutifulsoup": [
+      {
+        "id": "MAL-2023-1647",
+        "file": "MAL-2023-1647.json",
+        "summary": "Malicious code in beutifulsoup (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tensofrlow": [
+      {
+        "id": "MAL-2023-2297",
+        "file": "MAL-2023-2297.json",
+        "summary": "Malicious code in tensofrlow (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqhttpgetmask": [
+      {
+        "id": "MAL-2023-2949",
+        "file": "MAL-2023-2949.json",
+        "summary": "Malicious code in esqhttpgetmask (PyPI)",
+        "aliases": []
+      }
+    ],
+    "gamestring": [
+      {
+        "id": "MAL-2023-3599",
+        "file": "MAL-2023-3599.json",
+        "summary": "Malicious code in gamestring (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libminevmre": [
+      {
+        "id": "MAL-2023-4249",
+        "file": "MAL-2023-4249.json",
+        "summary": "Malicious code in libminevmre (PyPI)",
+        "aliases": []
+      }
+    ],
+    "postcontrol": [
+      {
+        "id": "MAL-2023-4899",
+        "file": "MAL-2023-4899.json",
+        "summary": "Malicious code in postcontrol (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-ramhacked": [
+      {
+        "id": "MAL-2023-5549",
+        "file": "MAL-2023-5549.json",
+        "summary": "Malicious code in py-ramhacked (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfinfoint": [
+      {
+        "id": "MAL-2023-6199",
+        "file": "MAL-2023-6199.json",
+        "summary": "Malicious code in selfinfoint (PyPI)",
+        "aliases": []
+      }
+    ],
+    "superint": [
+      {
+        "id": "MAL-2023-6849",
+        "file": "MAL-2023-6849.json",
+        "summary": "Malicious code in superint (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tpramcced": [
+      {
+        "id": "MAL-2023-7499",
+        "file": "MAL-2023-7499.json",
+        "summary": "Malicious code in tpramcced (PyPI)",
+        "aliases": []
+      }
+    ],
+    "trustdecoderss": [
+      {
+        "id": "MAL-2024-10178",
+        "file": "MAL-2024-10178.json",
+        "summary": "Malicious code in trustdecoderss (PyPI)",
+        "aliases": [
+          "SNYK-PYTHON-TRUSTDECODERSS-8145477"
+        ]
+      }
+    ],
+    "18923aa": [
+      {
+        "id": "MAL-2024-4721",
+        "file": "MAL-2024-4721.json",
+        "summary": "Malicious code in 18923aa (PyPI)",
+        "aliases": []
+      }
+    ],
+    "mlp-data-product-producer": [
+      {
+        "id": "MAL-2024-5371",
+        "file": "MAL-2024-5371.json",
+        "summary": "Malicious code in mlp-data-product-producer (PyPI)",
+        "aliases": []
+      }
+    ],
+    "social-scrappers": [
+      {
+        "id": "MAL-2024-6021",
+        "file": "MAL-2024-6021.json",
+        "summary": "Malicious code in social-scrappers (PyPI)",
+        "aliases": [
+          "SNYK-PYTHON-SOCIALSCRAPPERS-5885054"
+        ]
+      }
+    ],
+    "time-check-server": [
+      {
+        "id": "MAL-2025-191900",
+        "file": "MAL-2025-191900.json",
+        "summary": "Malicious code in time-check-server (PyPI)",
+        "aliases": []
+      }
+    ],
+    "brotli-python": [
+      {
+        "id": "MAL-2025-47749",
+        "file": "MAL-2025-47749.json",
+        "summary": "Malicious code in brotli-python (PyPI)",
+        "aliases": []
+      }
+    ],
+    "databricks-clean-room-orchestrator": [
+      {
+        "id": "MAL-2026-2146",
+        "file": "MAL-2026-2146.json",
+        "summary": "Malicious code in databricks-clean-room-orchestrator (PyPI)",
+        "aliases": []
+      }
+    ],
+    "zodb3": [
+      {
+        "id": "PYSEC-2010-27",
+        "file": "PYSEC-2010-27.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2010-3495",
+          "GHSA-j6m4-frxh-p4x8"
+        ]
+      }
+    ],
+    "sqla-yaml-fixtures": [
+      {
+        "id": "PYSEC-2019-122",
+        "file": "PYSEC-2019-122.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2019-3575",
+          "GHSA-2x54-j4m3-r6wx"
+        ]
+      }
+    ]
+  },
+  "last_updated": "2026-05-14"
+}
