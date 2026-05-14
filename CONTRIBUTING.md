@@ -7,6 +7,13 @@ that keep the project's data and tooling trustworthy.
 secure-code is released under the [MIT license](./LICENSE) and maintained by
 [ShieldNet360](https://www.shieldnet360.com).
 
+> [!IMPORTANT]
+> **AI-assisted contributions:** this project does *not* accept pull
+> requests that are fully or predominantly AI-generated. AI tools may
+> be used solely in an assistive capacity, and all AI usage must be
+> disclosed in the PR description. Please read
+> [AGENTS.md](./AGENTS.md) before submitting any PR.
+
 ## Where to contribute
 
 | Kind of change | Where it lives | Notes |

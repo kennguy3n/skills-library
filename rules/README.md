@@ -1,8 +1,8 @@
 # Detection rules
 
 Sigma-format detection rules adapted from public sources (SigmaHQ,
-MITRE ATT&CK, AWS / GCP / Azure / O365 documentation). Each rule has an
-extra `schema_version: "1.0"` field so the CI validator can use the same
+MITRE ATT&CK, AWS / GCP / Azure / O365 / Google Workspace / Salesforce / Slack documentation).
+Each rule has an extra `schema_version: "1.0"` field so the CI validator can use the same
 schema check it applies to other rule files.
 
 ## Layout
@@ -17,6 +17,9 @@ schema check it applies to other rule files.
 | `endpoint/windows/` | Sysmon, Security event log |
 | `container/k8s/` | Kubernetes API audit logs |
 | `saas/o365/` | Microsoft 365 Unified Audit Log |
+| `saas/google_workspace/` | Google Workspace Admin Audit Log |
+| `saas/salesforce/` | Salesforce Event Monitoring / Setup Audit Trail |
+| `saas/slack/` | Slack Enterprise Audit Log API |
 
 ## Schema (per file)
 

@@ -535,7 +535,10 @@ world languages, the GCC region, Southeast Asia, and Germany is in
 ## Contributing
 
 We welcome contributions from the community. Please see
-[CONTRIBUTING.md](./CONTRIBUTING.md) for the full guide. In brief:
+[CONTRIBUTING.md](./CONTRIBUTING.md) for the full guide and
+[AGENTS.md](./AGENTS.md) for the project's AI-assisted-contribution
+policy (TL;DR: AI tools may be used to assist, but fully or
+predominantly AI-generated pull requests are not accepted). In brief:
 
 - **Skill contributions** — add a new directory under `skills/` with a `SKILL.md`
   and associated rules. Use [`skills/secret-detection/`](./skills/secret-detection)

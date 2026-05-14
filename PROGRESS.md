@@ -6,6 +6,10 @@
 
 ### Changelog
 
+- **2026-05-14 (SaaS Sigma rule expansion)** — Added Sigma detection rules for
+  Google Workspace (4 rules), Salesforce (3 rules), and Slack (3 rules) under
+  `rules/saas/`. Updated `rules/README.md`, `PHASES.md`, and `PROGRESS.md` to
+  reflect expanded SaaS log-source coverage.
 - **2026-05-14 (documentation refresh + brand)** — Project re-branded to **secure-code**
   (Go module path `github.com/kennguy3n/skills-library` and CLI binary `skills-check`
   remain stable). LICENSE updated to MIT with attribution to **ShieldNet360**
@@ -185,6 +189,9 @@ as they ship.
 - [x] `rules/endpoint/windows/`
 - [x] `rules/container/k8s/`
 - [x] `rules/saas/o365/`
+- [x] `rules/saas/google_workspace/`
+- [x] `rules/saas/salesforce/`
+- [x] `rules/saas/slack/`
 
 ### MCP server (`cmd/skills-mcp/`)
 - [x] Model Context Protocol stdio implementation

@@ -135,6 +135,9 @@ func TestSigmaRulesCoverAllRequiredDirectories(t *testing.T) {
 		"rules/endpoint/windows",
 		"rules/container/k8s",
 		"rules/saas/o365",
+		"rules/saas/google_workspace",
+		"rules/saas/salesforce",
+		"rules/saas/slack",
 	}
 	root := repoRoot(t)
 	for _, rel := range required {
