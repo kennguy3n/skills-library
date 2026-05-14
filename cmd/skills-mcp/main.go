@@ -5,15 +5,21 @@
 // Supported methods:
 //
 //	initialize          — protocol handshake
-//	tools/list          — enumerate the 4 tools below
+//	tools/list          — enumerate the 10 tools below
 //	tools/call          — invoke one of the tools
 //
 // Tools exposed:
 //
-//	lookup_vulnerability(package, ecosystem, version?)
+//	lookup_vulnerability(package, ecosystem?, version?)
 //	check_secret_pattern(text)
 //	get_skill(skill_id, budget?)
 //	search_skills(query)
+//	scan_secrets(text | file_path, format?)
+//	check_dependency(package, version, ecosystem, format?)
+//	check_typosquat(package, ecosystem?)
+//	map_compliance_control(skill_id | query, framework?)
+//	get_sigma_rule(rule_id | query, category?)
+//	version_status()
 //
 // The library root is determined by, in order:
 //   - --path <dir>
