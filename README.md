@@ -518,7 +518,7 @@ print(skillslib.extract(s, "compact"))
 ```
 
 ```ts
-import { loadSkill, extract } from "skillslib";
+import { loadSkill, extract } from "@skills-library/skillslib";
 const s = loadSkill("skills/secret-detection/SKILL.md");
 console.log(extract(s, "compact"));
 ```
