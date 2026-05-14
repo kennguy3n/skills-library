@@ -185,6 +185,42 @@ func TestManifestSubcommandsRoundTrip(t *testing.T) {
 	}
 }
 
+// TestManifestVerifyUnsignedPolicy locks in the post-PR-#11 contract
+// for the local verify CLI: an unsigned (or placeholder-signature)
+// manifest must be rejected unless the caller passes --checksums-only,
+// mirroring the updater's --skip-signature semantics. See review flag
+// "Manifest verify CLI uses different signature-skip logic than updater".
+func TestManifestVerifyUnsignedPolicy(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dir, "skills/a"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "skills/a/SKILL.md"), []byte("hello"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	m := &manifest.Manifest{SchemaVersion: "1.0", Version: "rt", ReleasedAt: "2026-05-12T00:00:00Z"}
+	if err := m.Save(filepath.Join(dir, "manifest.json")); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := executeRoot(t, "manifest", "compute", "--path", dir, "--write"); err != nil {
+		t.Fatalf("manifest compute: %v", err)
+	}
+
+	// No flag and no signature: must refuse.
+	if _, _, err := executeRoot(t, "manifest", "verify", "--path", dir); err == nil {
+		t.Fatalf("manifest verify on unsigned manifest without --checksums-only should error")
+	}
+
+	// --checksums-only acknowledges the bypass and succeeds.
+	stdout, _, err := executeRoot(t, "manifest", "verify", "--path", dir, "--checksums-only")
+	if err != nil {
+		t.Fatalf("manifest verify --checksums-only: %v\n%s", err, stdout)
+	}
+	if !strings.Contains(stdout, "signature: skipped") {
+		t.Errorf("expected 'signature: skipped' in output, got:\n%s", stdout)
+	}
+}
+
 func TestSchedulerPreviewOutputs(t *testing.T) {
 	stdout, _, err := executeRoot(t, "scheduler", "preview", "--target", "darwin", "--binary", "/usr/local/bin/skills-check")
 	if err != nil {

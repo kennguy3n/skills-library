@@ -81,7 +81,14 @@ func manifestVerifyCmd() *cobra.Command {
 				return err
 			}
 			out := c.OutOrStdout()
-			if !checksumsOnly && m.Signature != "" && m.Signature != manifest.PlaceholderSignature {
+			signed := m.Signature != "" && m.Signature != manifest.PlaceholderSignature
+			switch {
+			case checksumsOnly:
+				// Explicit opt-out from signature verification. This is the
+				// mirror of the updater's --skip-signature flag and is the
+				// only way to silently accept an unsigned local manifest.
+				fmt.Fprintln(out, "signature: skipped")
+			case signed:
 				switch {
 				case pubKeyPath != "":
 					pub, err := manifest.LoadPublicKey(pubKeyPath)
@@ -96,13 +103,15 @@ func manifestVerifyCmd() *cobra.Command {
 						return err
 					}
 				default:
-					return fmt.Errorf("manifest is signed but no public key was provided and none is embedded; pass --public-key")
+					return fmt.Errorf("manifest is signed but no public key was provided and none is embedded; pass --public-key or --checksums-only")
 				}
 				fmt.Fprintln(out, "signature: ok")
-			} else if checksumsOnly {
-				fmt.Fprintln(out, "signature: skipped")
-			} else {
-				fmt.Fprintln(out, "signature: unsigned (skipped)")
+			default:
+				// Unsigned (or placeholder-signature) local manifest with no
+				// explicit opt-out. Refuse to silently call this verified;
+				// require --checksums-only to acknowledge the bypass. Keeps
+				// the CLI consistent with updater.verifyRemoteSignature.
+				return fmt.Errorf("manifest is unsigned; pass --checksums-only to verify file hashes only, or sign the manifest with `skills-check manifest sign`")
 			}
 
 			mismatched := 0

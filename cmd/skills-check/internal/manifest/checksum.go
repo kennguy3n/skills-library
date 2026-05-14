@@ -114,9 +114,11 @@ func (m *Manifest) ComputeChecksumsForRoots(repoRoot string, roots []string) err
 		if existing := m.FileByPath(e.path); existing != nil {
 			existing.SHA256 = e.hash
 			existing.Size = e.size
-			if existing.Action == "added" && existing.SHA256 != "" {
-				// once a file has been hashed at least once we consider it
-				// "unchanged" relative to the just-computed checksum.
+			// e.hash is always non-empty here — HashFile returns an error
+			// path for unreadable files and entries with that error are
+			// not appended to `entries`. Promote any prior "added" marker
+			// to "unchanged" now that we have a recorded hash on disk.
+			if existing.Action == "added" {
 				existing.Action = "unchanged"
 			}
 			delete(seen, e.path)
