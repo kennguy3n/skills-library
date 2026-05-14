@@ -219,7 +219,7 @@ The vulnerability database is opinionated about what it covers and what it does 
 
 ### In scope (curated, supply-chain-focused)
 
-- **Known malicious packages** for npm, PyPI, crates.io, Go modules, Maven Central.
+- **Known malicious packages** for npm, PyPI, crates.io, Go modules, RubyGems, Maven Central, NuGet, GitHub Actions, and Docker Hub.
   Curated from npm advisories, PyPI advisories, Snyk / Socket.dev / Phylum reports, and
   high-confidence public incident write-ups.
 - **Typosquat database.** Levenshtein distance precomputed against the top-1000 packages

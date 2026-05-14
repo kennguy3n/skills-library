@@ -70,7 +70,7 @@ generation*, before the diff ever touches your repo.
 |------|------|-------------|
 | **Skills** | [`skills/`](./skills) | 28 self-contained `SKILL.md` manifests with rules, patterns, and checklists. Each skill is a security capability the AI tool consults at generation time. |
 | **Vulnerability database** | [`vulnerabilities/`](./vulnerabilities) | 10-year (2015-2025) curated supply-chain corpus: 9 ecosystems (npm, PyPI, crates, Go, RubyGems, Maven, NuGet, GitHub Actions, Docker Hub), 71 documented typosquats, 58 code-relevant CVE detection patterns, and dependency-confusion rules. Delta-updatable. |
-| **Detection rules** | [`rules/`](./rules) | Sigma-format detection rules for AWS, GCP, Azure, K8s, Linux, macOS, Windows, and O365 — designed to complement the prevention-time rules in `skills/`. |
+| **Detection rules** | [`rules/`](./rules) | Sigma-format detection rules for AWS, GCP, Azure, K8s, Linux, macOS, Windows, O365, Google Workspace, Salesforce, and Slack — designed to complement the prevention-time rules in `skills/`. |
 | **Compliance maps** | [`compliance/`](./compliance) | OWASP Top 10, CWE Top 25, SANS Top 25 framework mappings plus auditor-ready evidence templates (SOC 2, HIPAA, PCI-DSS, FedRAMP). |
 | **Dictionaries** | [`dictionaries/`](./dictionaries) | Security term definitions, CWE catalogue, MITRE ATT&CK technique references — context the AI needs to reason about security. |
 | **Pre-compiled IDE files** | [`dist/`](./dist) | Ready-to-drop-in `CLAUDE.md`, `.cursorrules`, `copilot-instructions.md`, `AGENTS.md`, `.windsurfrules`, `devin.md`, `.clinerules`, and a universal `SECURITY-SKILLS.md`. |
@@ -278,7 +278,7 @@ secure-code/
 │   ├── cloud/aws,gcp,azure/             #   CloudTrail / Cloud Audit Logs / Azure AD
 │   ├── endpoint/linux,macos,windows/    #   auditd / UnifiedLog / Sysmon
 │   ├── container/k8s/                   #   API audit / privileged pod / exec
-│   └── saas/o365/                       #   Mailbox forwarding / admin roles
+│   └── saas/o365,gws,salesforce,slack/  #   Mailbox forwarding / admin roles / GWS delegation / SF exports / Slack app scopes
 ├── dictionaries/                        # Reference data for AI context
 │   ├── security_terms.yaml
 │   ├── cwe_top25.yaml

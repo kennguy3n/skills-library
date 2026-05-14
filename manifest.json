@@ -3,8 +3,8 @@
   "version": "2026.05.12.1",
   "released_at": "2026-05-12T10:00:00Z",
   "signature": "TBD",
-  "public_key_id": "skills-library-release-2026",
-  "description": "Root manifest. Phase 2 will populate SHA-256 checksums and Ed25519 signature. Phase 1 ships an unsigned scaffold so the format is exercised end-to-end.",
+  "public_key_id": "secure-code-release-2026",
+  "description": "Root manifest with SHA-256 checksums for every distributable file. Ed25519 signature is applied out-of-band at release time (see SIGNING.md).",
   "files": [
     {
       "path": "compliance/hipaa_mapping.yaml",
@@ -977,6 +977,42 @@
       "sha256": "c850aef348573cbb25a33cfca64810d20f24fb1ce0ce60e4390a4ff5c14eac80",
       "size": 6084,
       "action": "unchanged"
+    },
+    {
+      "path": "vulnerabilities/supply-chain/popular-packages/README.md",
+      "sha256": "c27931acf81e187134ce4b0fab31e90eb2ae25ff346ccb894aa82fb10edc69ba",
+      "size": 974,
+      "action": "added"
+    },
+    {
+      "path": "vulnerabilities/supply-chain/popular-packages/crates.json",
+      "sha256": "47f677db66ed684701682bc09497dfe95efbe29bc8a974fd9fa02407ac28234e",
+      "size": 1545,
+      "action": "added"
+    },
+    {
+      "path": "vulnerabilities/supply-chain/popular-packages/go.json",
+      "sha256": "f8ae311a967a9ac24269d1bb8045d8537e3a15ddbcc577c623651684fc1a6234",
+      "size": 2654,
+      "action": "added"
+    },
+    {
+      "path": "vulnerabilities/supply-chain/popular-packages/npm.json",
+      "sha256": "f4981b2470276f1b429d4cfed5d2a3065b4346401f96f9ccdec6c8aec49c19e4",
+      "size": 2301,
+      "action": "added"
+    },
+    {
+      "path": "vulnerabilities/supply-chain/popular-packages/pypi.json",
+      "sha256": "687671c51c18422c3c3b2d749fab300794cfc3a0fa3a446e2d1790293aec7660",
+      "size": 2275,
+      "action": "added"
+    },
+    {
+      "path": "vulnerabilities/supply-chain/popular-packages/rubygems.json",
+      "sha256": "55ea7572f26d826d5309f6f01c9390fde3904af45d36f2cf5dc35373fef7c658",
+      "size": 1650,
+      "action": "added"
     },
     {
       "path": "vulnerabilities/supply-chain/typosquat-db/known_typosquats.json",
