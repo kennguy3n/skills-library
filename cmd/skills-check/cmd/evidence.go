@@ -78,12 +78,15 @@ func evidenceCmd() *cobra.Command {
 
 	c := &cobra.Command{
 		Use:   "evidence",
-		Short: "Emit a control-coverage audit report mapping installed skills to a compliance framework",
-		Long: `Compile an audit-grade evidence report that maps installed skills onto
+		Short: "Emit a compliance coverage report showing which installed skills map to framework controls",
+		Long: `Compile a compliance coverage report that maps installed skills onto
 the controls of a compliance framework (SOC2, HIPAA, PCI-DSS).
 
-The report is timestamped, lists which controls are covered by which skill
-versions, flags missing skills, and is suitable for handing to an auditor.
+The report is timestamped and lists which controls are covered by which skill
+versions, flagging missing skills — showing which installed skills map to
+framework controls. It is a developer-facing coverage map, not an audit
+artifact: a real audit also needs runtime evidence, change-management
+records, access reviews, and so on.
 `,
 		RunE: func(c *cobra.Command, args []string) error {
 			if framework == "" {

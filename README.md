@@ -71,7 +71,7 @@ generation*, before the diff ever touches your repo.
 | **Skills** | [`skills/`](./skills) | 28 self-contained `SKILL.md` manifests with rules, patterns, and checklists. Each skill is a security capability the AI tool consults at generation time. |
 | **Vulnerability database** | [`vulnerabilities/`](./vulnerabilities) | 10-year (2015-2025) curated supply-chain corpus: 9 ecosystems (npm, PyPI, crates, Go, RubyGems, Maven, NuGet, GitHub Actions, Docker Hub), 71 documented typosquats, 58 code-relevant CVE detection patterns, and dependency-confusion rules. Delta-updatable. |
 | **Detection rules** | [`rules/`](./rules) | Sigma-format detection rules for AWS, GCP, Azure, K8s, Linux, macOS, Windows, O365, Google Workspace, Salesforce, and Slack — designed to complement the prevention-time rules in `skills/`. |
-| **Compliance maps** | [`compliance/`](./compliance) | OWASP Top 10, CWE Top 25, SANS Top 25 framework mappings plus auditor-ready evidence templates (SOC 2, HIPAA, PCI-DSS, FedRAMP). |
+| **Compliance maps** | [`compliance/`](./compliance) | OWASP Top 10, CWE Top 25, SANS Top 25 framework mappings plus developer-facing compliance coverage maps (SOC 2, HIPAA, PCI-DSS, FedRAMP). |
 | **Dictionaries** | [`dictionaries/`](./dictionaries) | Security term definitions, CWE catalogue, MITRE ATT&CK technique references — context the AI needs to reason about security. |
 | **Pre-compiled IDE files** | [`dist/`](./dist) | Ready-to-drop-in `CLAUDE.md`, `.cursorrules`, `copilot-instructions.md`, `AGENTS.md`, `.windsurfrules`, `devin.md`, `.clinerules`, and a universal `SECURITY-SKILLS.md`. |
 | **CLI** | [`cmd/skills-check/`](./cmd/skills-check) | Single static Go binary for installing, updating, and validating skills across every supported IDE. |
@@ -379,7 +379,7 @@ go build -o skills-mcp ./cmd/skills-mcp
 skills-mcp --path /path/to/secure-code
 ```
 
-The server registers four tools on `tools/list`:
+The server registers ten tools on `tools/list`:
 
 - `lookup_vulnerability(package, ecosystem?, version?)` — search the supply-chain
   malicious-packages database and the typosquat DB.
@@ -389,6 +389,18 @@ The server registers four tools on `tools/list`:
 - `get_skill(skill_id, budget?)` — return the requested skill at the requested
   tier (`minimal` / `compact` / `full`).
 - `search_skills(query)` — substring match across skill metadata.
+- `scan_secrets(text | file_path, format?)` — DLP scan of inline text or a path
+  under the configured allowed roots; supports the `sarif` output format.
+- `check_dependency(package, version, ecosystem, format?)` — check a dependency
+  against the malicious-packages corpus with optional SARIF output.
+- `check_typosquat(package, ecosystem?)` — flag candidate typosquats from the
+  curated typosquat database.
+- `map_compliance_control(skill_id | query, framework?)` — map an installed
+  skill (or free-text query) to controls in SOC 2, HIPAA, or PCI-DSS.
+- `get_sigma_rule(rule_id | query, category?)` — fetch a Sigma detection rule
+  from `rules/` by ID, free-text query, or category.
+- `version_status()` — report data version, manifest signature state, and
+  whether the loaded library is the canonical signed release.
 
 The library root is resolved from `--path`, then `$SKILLS_LIBRARY_PATH`, then the
 directory containing the binary.
@@ -482,8 +494,10 @@ skills-check evidence --framework PCI-DSS --format markdown
 ```
 
 The command maps controls to installed skills using YAML files in
-[`compliance/`](./compliance) and emits a timestamped audit report suitable for
-handing to auditors.
+[`compliance/`](./compliance) and emits a timestamped compliance coverage report
+mapping installed skills to framework controls. The report is a developer-facing
+coverage map, not a substitute for a real audit — which still requires runtime
+evidence, change-management records, access reviews, and so on.
 
 ## Private repositories
 

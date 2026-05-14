@@ -16,7 +16,10 @@ import (
 )
 
 // Server is the JSON-RPC dispatcher. It owns one Library and exposes the
-// 4 Skills Library tools as MCP tools.
+// 10 Skills Library tools as MCP tools: lookup_vulnerability,
+// check_secret_pattern, get_skill, search_skills, scan_secrets,
+// check_dependency, check_typosquat, map_compliance_control,
+// get_sigma_rule, and version_status.
 type Server struct {
 	lib *tools.Library
 }
