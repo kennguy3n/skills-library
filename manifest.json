@@ -50,32 +50,32 @@
     },
     {
       "path": "dist/.clinerules",
-      "sha256": "fd099f872678ad7495e91537b57cda426d57333f3715a683537e21bddde2715f",
-      "size": 90613,
+      "sha256": "04808ce9e20362ae50ca0f24565b4794015376cfdf2eab41bc2a4afb524aac9b",
+      "size": 3887,
       "action": "unchanged"
     },
     {
       "path": "dist/.cursorrules",
-      "sha256": "36b818f21621e74edcf1132af2f1c0486d77656714b80adf00f07d4712d09626",
-      "size": 92284,
+      "sha256": "a1e343665e2d49f8ba89e1c39a9fb115082e0115e762c721b67b52b60bbd5790",
+      "size": 3878,
       "action": "unchanged"
     },
     {
       "path": "dist/.windsurfrules",
-      "sha256": "304e61dac294fc5eb034164c69d325355dbd8a8f7a536e712d77c47f5ce911e1",
-      "size": 91820,
+      "sha256": "a7a02b3ae2fbbb10bf786ee894b610174d1d7d6cf2442e31c852edfe9d9d90be",
+      "size": 3882,
       "action": "unchanged"
     },
     {
       "path": "dist/AGENTS.md",
-      "sha256": "37aff4c9eb1f2b31b9bd7417e621e660ffcfcfb9cce49ca6f127cfe06c2d4700",
-      "size": 3781,
+      "sha256": "5ac669a150457a73af256b6a9dc46343a31c67855c13d7311f4860120dcdcf91",
+      "size": 3819,
       "action": "unchanged"
     },
     {
       "path": "dist/CLAUDE.md",
-      "sha256": "7bec5b93c60f26ef5d07fc752c00fb67662d8ca1daca3623bd6ae9500b332ef3",
-      "size": 105333,
+      "sha256": "45d2ca695f015fa4fd5d873b10a81f2f63a5832ecdb9b41f636593731064b21d",
+      "size": 3809,
       "action": "unchanged"
     },
     {
@@ -85,15 +85,1023 @@
       "action": "unchanged"
     },
     {
+      "path": "dist/agent-skills/.agents/skills/api-security/SKILL.md",
+      "sha256": "64da71e092cc04f7213a1efb6e60e93a713ee243aeba8098f4d3dc27d9bf03e7",
+      "size": 2633,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/api-security/metadata.json",
+      "sha256": "16c0b59bce99513f8c7de8f6b1c9a0ecc4929cae4223fe57e6251cf3e74f984e",
+      "size": 827,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/auth-security/SKILL.md",
+      "sha256": "64ba7912589f0aac3982155f93d532ef81840a4136d6f1b9d981886a05c55e89",
+      "size": 3816,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/auth-security/metadata.json",
+      "sha256": "33d17b200f15945ba77fa617791c104b1daf898f50a9512b65b11ebb84433c10",
+      "size": 1043,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/cicd-security/SKILL.md",
+      "sha256": "fc8022770b993fac8ddfd57d3d8cce78139dc04f9cbd7175872194870ad26184",
+      "size": 4418,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/cicd-security/metadata.json",
+      "sha256": "0939ebc002f0bf6395be8057bbd20b2e8c788d24c3e71d6e4aea63c04256ae02",
+      "size": 1165,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/compliance-awareness/SKILL.md",
+      "sha256": "08470f80467680cc027ed6062c79e6589921353c7faec902d4a66b446f7216fc",
+      "size": 2285,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/compliance-awareness/metadata.json",
+      "sha256": "8a461f7859a21dca729e2ecd277df36667050111ec52758941b449283e6a4cef",
+      "size": 866,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/container-security/SKILL.md",
+      "sha256": "baed87276938758e7aeff9aa6b45a37d4f4700b09a4678e0b06e81773a9cf54a",
+      "size": 3498,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/container-security/metadata.json",
+      "sha256": "51415e961b1c1d1b9ee358d2ecdb9e74243f9e4801bd20f065feddc2b1184b0f",
+      "size": 924,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/cors-security/SKILL.md",
+      "sha256": "df577d6bc558c543328bb6ef277fe524e2aca43e47eb11f3765c8f583c9992c0",
+      "size": 3364,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/cors-security/metadata.json",
+      "sha256": "7468dcd908bb87d0859d2c93cbcfd08152db33d487d592471e5be6f53e226599",
+      "size": 908,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/crypto-misuse/SKILL.md",
+      "sha256": "873d36422483763fc693c217800c53c6fed6f0ed91436badeae2f3bdc70183f0",
+      "size": 3327,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/crypto-misuse/metadata.json",
+      "sha256": "d4c9b8b9e03b19e80998f2ecc5dd9ed8600d7e3dc09707092be07df8fa5b564f",
+      "size": 906,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/database-security/SKILL.md",
+      "sha256": "8bf55239d97cfa8b90507a7ad48251e69c38cdcf5005fdb5ae5579aea818ddb5",
+      "size": 3560,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/database-security/metadata.json",
+      "sha256": "f2725d79012b485ed2eea92a2757a28108c200b65b90098deab816e21ad11a94",
+      "size": 1092,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/dependency-audit/SKILL.md",
+      "sha256": "68f7073846e69c837f7b6e1b3b8ba9d6b1d8c31214975605fd46c06a3665e463",
+      "size": 2361,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/dependency-audit/metadata.json",
+      "sha256": "9d15e1cd1242856d838cfe90888764ca577936511c17044ebb9f5629a8aa0fef",
+      "size": 942,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/deserialization-security/SKILL.md",
+      "sha256": "2ee47b5cc9503255e9d97831af39fee237b15e3aa51d1c1af0765d23035dc4e1",
+      "size": 4563,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/deserialization-security/metadata.json",
+      "sha256": "494f396afd1ba8d85044db03e50a40f2877ad0f9e1f465a5c00ae527efa64ea4",
+      "size": 1162,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/error-handling-security/SKILL.md",
+      "sha256": "1efd839dee25ef5b72e37ed9d4d45535bc356cf4a875f96a2cd2840c29e41ad6",
+      "size": 3300,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/error-handling-security/metadata.json",
+      "sha256": "df5e140deb9f3f50b09a2728511f90bd9ed8046090062249cce10d4330751588",
+      "size": 927,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/file-upload-security/SKILL.md",
+      "sha256": "21900a04f2f4539a6a19b7765de586c7d8138f716ee499aaf4cfde63f9a12325",
+      "size": 4820,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/file-upload-security/metadata.json",
+      "sha256": "a52fd1dbd29749d5b78235c0a465a745df8a0d432c922b59af7cb3b1607fcb5d",
+      "size": 1071,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/frontend-security/SKILL.md",
+      "sha256": "71d78dd7a41f5f0f1d7f0353414b1ce2484e66c5ce947e01abe880930c455279",
+      "size": 3338,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/frontend-security/metadata.json",
+      "sha256": "6524b9d810cde5efd67f78ac7f3a756020937fb44ed39e9de52a0cada62d70f6",
+      "size": 1001,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/graphql-security/SKILL.md",
+      "sha256": "afe018451a7dceb4a433bd6319aacf2d9e616d6d889e4a42aabe1fdf495c1239",
+      "size": 4161,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/graphql-security/metadata.json",
+      "sha256": "0cdcfba41ac9ea6b7d579c2fadab8d4dd1d6353868668f77a4239512566b6e64",
+      "size": 1110,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/iac-security/SKILL.md",
+      "sha256": "ecbc73dc64fd345bcddd3325555127bd1eae22e3b8201680f9b3f4db56f243ef",
+      "size": 3320,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/iac-security/metadata.json",
+      "sha256": "5a1ebc001f3d2facca503acdd85c0aae11536d15fb385d0703886eaab316142f",
+      "size": 967,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/iam-best-practices/SKILL.md",
+      "sha256": "7b4b960c9640feb82141f4042292f763d5493dbea8834af6f8419e50d7a6aafa",
+      "size": 4915,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/iam-best-practices/metadata.json",
+      "sha256": "87f4c4219f3623dad0dd2924005e1e1a85d4976906a4d644b6da8207959ce572",
+      "size": 1308,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/infrastructure-security/SKILL.md",
+      "sha256": "e55c77c3fc037e82c72098cd16088d941c7ffc221fb815ff06a5f4d4f01963a5",
+      "size": 2879,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/infrastructure-security/metadata.json",
+      "sha256": "b277e7d207676be945887a2f71bebf05f8503f6b6a525d05106204980b16fbae",
+      "size": 911,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/logging-security/SKILL.md",
+      "sha256": "420500b813bccdff5f58da0db23b55afd241b65bcccdac09a616711ebc03c956",
+      "size": 3264,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/logging-security/metadata.json",
+      "sha256": "4cfbe3541edcc10107df250c6c7b2a71de8558023aca2d4ef116ad7471aa955c",
+      "size": 986,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/ml-security/SKILL.md",
+      "sha256": "16e272b807cc0e2b7f555431c654ba4fa1862fb9927933c3b0b5e3efce47a918",
+      "size": 3931,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/ml-security/metadata.json",
+      "sha256": "5335fdd00d67eb9caf13319a0cc8516b41bd0945786fe5f9bdcf98276ae75ead",
+      "size": 1063,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/mobile-security/SKILL.md",
+      "sha256": "bf7399b0890c72b67138dc11b89a58cb782249d6ba8f4715933e9f60c8ae1f78",
+      "size": 3929,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/mobile-security/metadata.json",
+      "sha256": "1c3430d65c031cb38f9486e535c52f19461ca98b8695260052c83a72204f7055",
+      "size": 1108,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/protocol-security/SKILL.md",
+      "sha256": "6644d85428b9b89bef85efd00591965568163f3db29bef30e8ee92dcf35aa571",
+      "size": 3536,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/protocol-security/metadata.json",
+      "sha256": "3baec1f532cd8b29e8210c9b7f21670deace959cc424376ba7fedb0b8f1180d9",
+      "size": 954,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/saas-security/SKILL.md",
+      "sha256": "585a2fbb4595860c35b26bb31e46e550e35e4b16fdb5c0b54dbbf5f1c256aa51",
+      "size": 7562,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/saas-security/metadata.json",
+      "sha256": "91da1bc8217fd412b01c040b0092a8d24fc980be40a0f8e09d462d99c5fc0f8f",
+      "size": 1743,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/secret-detection/SKILL.md",
+      "sha256": "4de3379f726c57aa1da28a8037f3a939f9a07be9100cfb3a6776b480c9231f79",
+      "size": 3070,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/secret-detection/metadata.json",
+      "sha256": "71221c0b5a9f3c0aec3cc8bb2af087795ec5e2329b929512439e2fb884822567",
+      "size": 905,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/secure-code-review/SKILL.md",
+      "sha256": "11d25fdd21e02c31101351fcf62a7ad14df920a14b4177ab8ebcb751fe0d9249",
+      "size": 3035,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/secure-code-review/metadata.json",
+      "sha256": "39f3fb3c6f83a1305ea1aa38895384244f472ff5bed25f0a5f1b488292ac9dd2",
+      "size": 833,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/serverless-security/SKILL.md",
+      "sha256": "b0ef48cba43410cc9c7dbc070b58a449467d416a314bc0275449dedae00992ab",
+      "size": 3355,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/serverless-security/metadata.json",
+      "sha256": "436ddb504db2dc78300eb5016155abb4f2f813cfc10a8bb9e1af4d51c7ff48f1",
+      "size": 1029,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/ssrf-prevention/SKILL.md",
+      "sha256": "0b373467cfa18995315bbda0bb9f214ca8d45d65e9b8e610b3bbbbd483d5c55d",
+      "size": 4145,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/ssrf-prevention/metadata.json",
+      "sha256": "6a96fcf6305cb39fc10d722f1a6ca53ae31f7f84527b93f9fc4b7021a0ee05a9",
+      "size": 1122,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/supply-chain-security/SKILL.md",
+      "sha256": "8773495ec27d3ad7573cc4a6a3d42fce7f09107756fedb40b50d2517e2b06db2",
+      "size": 2720,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/supply-chain-security/metadata.json",
+      "sha256": "80ca149913ef8a676e980ce71e473ce6dba0f99ea9a5fd1018c332f36fac06a3",
+      "size": 946,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/websocket-security/SKILL.md",
+      "sha256": "6e0ad58cdadf8574ee442c4dffcb3927f23025f486b8b83d731b1d39422c9909",
+      "size": 4345,
+      "action": "added"
+    },
+    {
+      "path": "dist/agent-skills/.agents/skills/websocket-security/metadata.json",
+      "sha256": "2fb8de6583ed8ac98200ae089bb80b60fed525b3defe60a44ffa4e556058e814",
+      "size": 1091,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/api-security/SKILL.md",
+      "sha256": "444a1e28a4749691efe74526f174e547f31eadc6d48fc48e53765fe83fe43767",
+      "size": 2608,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/api-security/metadata.json",
+      "sha256": "16c0b59bce99513f8c7de8f6b1c9a0ecc4929cae4223fe57e6251cf3e74f984e",
+      "size": 827,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/auth-security/SKILL.md",
+      "sha256": "2174a126de9465d2352db4a2f2a0e1cea6d184d328015c985103a8531bf1b13c",
+      "size": 3791,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/auth-security/metadata.json",
+      "sha256": "33d17b200f15945ba77fa617791c104b1daf898f50a9512b65b11ebb84433c10",
+      "size": 1043,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/cicd-security/SKILL.md",
+      "sha256": "a6531c15c1a2a183ae9f95d61bc303e35fd810fd1625727d87d68fef492c4d74",
+      "size": 4393,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/cicd-security/metadata.json",
+      "sha256": "0939ebc002f0bf6395be8057bbd20b2e8c788d24c3e71d6e4aea63c04256ae02",
+      "size": 1165,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/compliance-awareness/SKILL.md",
+      "sha256": "682b7e50b1236fdfd2d2e69dd61a5fcb2e4c830a24012b513ee640b208fb23ab",
+      "size": 2260,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/compliance-awareness/metadata.json",
+      "sha256": "8a461f7859a21dca729e2ecd277df36667050111ec52758941b449283e6a4cef",
+      "size": 866,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/container-security/SKILL.md",
+      "sha256": "a8cd34d7ed0e7b49ba7875cbc8cf81d0d858208fda9229e6c5fbe50e81848bf9",
+      "size": 3473,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/container-security/metadata.json",
+      "sha256": "51415e961b1c1d1b9ee358d2ecdb9e74243f9e4801bd20f065feddc2b1184b0f",
+      "size": 924,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/cors-security/SKILL.md",
+      "sha256": "f0ecfaee286dcd473c5b24a4a11fd86f4c89ee88dd72404165c531d1409ed567",
+      "size": 3339,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/cors-security/metadata.json",
+      "sha256": "7468dcd908bb87d0859d2c93cbcfd08152db33d487d592471e5be6f53e226599",
+      "size": 908,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/crypto-misuse/SKILL.md",
+      "sha256": "711a816d69be2d84cf8beee73e131c2abe27df6bb16904edf1e74eed5808d567",
+      "size": 3302,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/crypto-misuse/metadata.json",
+      "sha256": "d4c9b8b9e03b19e80998f2ecc5dd9ed8600d7e3dc09707092be07df8fa5b564f",
+      "size": 906,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/database-security/SKILL.md",
+      "sha256": "329cf7a61827d6d4a7b1b71be493d3796603836617a91c5a1670fb5abe828a89",
+      "size": 3535,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/database-security/metadata.json",
+      "sha256": "f2725d79012b485ed2eea92a2757a28108c200b65b90098deab816e21ad11a94",
+      "size": 1092,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/dependency-audit/SKILL.md",
+      "sha256": "9db8d9323a96858a6ca30fbf7288762df8f96e0fa6a6ff634f070c2f9d9ab9a7",
+      "size": 2336,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/dependency-audit/metadata.json",
+      "sha256": "9d15e1cd1242856d838cfe90888764ca577936511c17044ebb9f5629a8aa0fef",
+      "size": 942,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/deserialization-security/SKILL.md",
+      "sha256": "3130853c2a588730099e6d66d08077906622de919288e132010da0ea41020334",
+      "size": 4538,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/deserialization-security/metadata.json",
+      "sha256": "494f396afd1ba8d85044db03e50a40f2877ad0f9e1f465a5c00ae527efa64ea4",
+      "size": 1162,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/error-handling-security/SKILL.md",
+      "sha256": "bf2a0671c50135b887e6ad4c7665042f1897ac207fa29f896c4959672790ca59",
+      "size": 3275,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/error-handling-security/metadata.json",
+      "sha256": "df5e140deb9f3f50b09a2728511f90bd9ed8046090062249cce10d4330751588",
+      "size": 927,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/file-upload-security/SKILL.md",
+      "sha256": "4c51130274a03503f30ec14bbe348665cccf07584712bd64eda655a368252505",
+      "size": 4795,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/file-upload-security/metadata.json",
+      "sha256": "a52fd1dbd29749d5b78235c0a465a745df8a0d432c922b59af7cb3b1607fcb5d",
+      "size": 1071,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/frontend-security/SKILL.md",
+      "sha256": "ca9b353f8a3fb5347109a786fa272623efaf2da91d9c5181c78d7fa12a006e64",
+      "size": 3313,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/frontend-security/metadata.json",
+      "sha256": "6524b9d810cde5efd67f78ac7f3a756020937fb44ed39e9de52a0cada62d70f6",
+      "size": 1001,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/graphql-security/SKILL.md",
+      "sha256": "0586914a697174a8f1a51879780368352897a1184028121e73a35c6424eaf411",
+      "size": 4136,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/graphql-security/metadata.json",
+      "sha256": "0cdcfba41ac9ea6b7d579c2fadab8d4dd1d6353868668f77a4239512566b6e64",
+      "size": 1110,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/iac-security/SKILL.md",
+      "sha256": "c035f027155718af7ae46452e517d9d65cfec0e447a2fab3fcd152e571c593d2",
+      "size": 3295,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/iac-security/metadata.json",
+      "sha256": "5a1ebc001f3d2facca503acdd85c0aae11536d15fb385d0703886eaab316142f",
+      "size": 967,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/iam-best-practices/SKILL.md",
+      "sha256": "e8b4464d2667afb111cb265fdb12b248d99ddd27d64b24ac0603815aa4f1150b",
+      "size": 4890,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/iam-best-practices/metadata.json",
+      "sha256": "87f4c4219f3623dad0dd2924005e1e1a85d4976906a4d644b6da8207959ce572",
+      "size": 1308,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/infrastructure-security/SKILL.md",
+      "sha256": "428f3b06a1a377bfb16efa9072c389bf5d4651b1a8ef73b88f0f9d3cd7b2c75c",
+      "size": 2854,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/infrastructure-security/metadata.json",
+      "sha256": "b277e7d207676be945887a2f71bebf05f8503f6b6a525d05106204980b16fbae",
+      "size": 911,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/logging-security/SKILL.md",
+      "sha256": "ab863b78ed29294a3da514a5b0e15675b55c943a47ae699fc7fd2b100a6538e7",
+      "size": 3239,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/logging-security/metadata.json",
+      "sha256": "4cfbe3541edcc10107df250c6c7b2a71de8558023aca2d4ef116ad7471aa955c",
+      "size": 986,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/ml-security/SKILL.md",
+      "sha256": "731fd67c8bba076ee976e86f92627be9252e08b86d06da8d4250504b3046384c",
+      "size": 3906,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/ml-security/metadata.json",
+      "sha256": "5335fdd00d67eb9caf13319a0cc8516b41bd0945786fe5f9bdcf98276ae75ead",
+      "size": 1063,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/mobile-security/SKILL.md",
+      "sha256": "3156a9d6195aac4f3450d4d15bf1dfff0c7025adc9834e93ad1689a3b6ceba9f",
+      "size": 3904,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/mobile-security/metadata.json",
+      "sha256": "1c3430d65c031cb38f9486e535c52f19461ca98b8695260052c83a72204f7055",
+      "size": 1108,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/protocol-security/SKILL.md",
+      "sha256": "9be7525b00da197751c27a9d8e422ed1d9939751082298f2a4e6000da4b47b39",
+      "size": 3511,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/protocol-security/metadata.json",
+      "sha256": "3baec1f532cd8b29e8210c9b7f21670deace959cc424376ba7fedb0b8f1180d9",
+      "size": 954,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/saas-security/SKILL.md",
+      "sha256": "1a1709f6b2f596e864bd154d9cc72c4ae0b8f795e997f56d5e9e9db685c1ef9b",
+      "size": 7537,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/saas-security/metadata.json",
+      "sha256": "91da1bc8217fd412b01c040b0092a8d24fc980be40a0f8e09d462d99c5fc0f8f",
+      "size": 1743,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/secret-detection/SKILL.md",
+      "sha256": "80fff0d0130f5ebe5777b2408236154224fe08b512cbfe39b78f2206553b9856",
+      "size": 3045,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/secret-detection/metadata.json",
+      "sha256": "71221c0b5a9f3c0aec3cc8bb2af087795ec5e2329b929512439e2fb884822567",
+      "size": 905,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/secure-code-review/SKILL.md",
+      "sha256": "73cc261bc7720f9d897c3b91f700940be5fa7771178c7ef5d92d5a87fc212e27",
+      "size": 3010,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/secure-code-review/metadata.json",
+      "sha256": "39f3fb3c6f83a1305ea1aa38895384244f472ff5bed25f0a5f1b488292ac9dd2",
+      "size": 833,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/serverless-security/SKILL.md",
+      "sha256": "dd540974aaaa4804cba658d8644820795ab7886e3dba5de8213be330c57df641",
+      "size": 3330,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/serverless-security/metadata.json",
+      "sha256": "436ddb504db2dc78300eb5016155abb4f2f813cfc10a8bb9e1af4d51c7ff48f1",
+      "size": 1029,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/ssrf-prevention/SKILL.md",
+      "sha256": "ee0c6c757194724e695ee40ee8dbef79c4cc6bb988e520705faf4abf4071bfb9",
+      "size": 4120,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/ssrf-prevention/metadata.json",
+      "sha256": "6a96fcf6305cb39fc10d722f1a6ca53ae31f7f84527b93f9fc4b7021a0ee05a9",
+      "size": 1122,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/supply-chain-security/SKILL.md",
+      "sha256": "e84f9f582b0d896ce9a5fa7099e5f0a355a9b51af706cfff020c23562502a784",
+      "size": 2695,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/supply-chain-security/metadata.json",
+      "sha256": "80ca149913ef8a676e980ce71e473ce6dba0f99ea9a5fd1018c332f36fac06a3",
+      "size": 946,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/websocket-security/SKILL.md",
+      "sha256": "679f42489b850c38ec2292dcd4acd98f5222724bfbd4676356bb35a48c33068a",
+      "size": 4320,
+      "action": "added"
+    },
+    {
+      "path": "dist/claude-skills/.claude/skills/websocket-security/metadata.json",
+      "sha256": "2fb8de6583ed8ac98200ae089bb80b60fed525b3defe60a44ffa4e556058e814",
+      "size": 1091,
+      "action": "added"
+    },
+    {
       "path": "dist/copilot-instructions.md",
-      "sha256": "414b916c5bcb051eeee5396aa63a59da77b7a2a80eaddc2976ef591b6ccce13f",
-      "size": 94889,
+      "sha256": "45ca67379b79e3eec528d8a2b9008bd1e4738e19215a899a883b55722ad94c76",
+      "size": 3826,
       "action": "unchanged"
     },
     {
+      "path": "dist/copilot-skills/.github/skills/api-security/SKILL.md",
+      "sha256": "4c7a4d8a4935a5b1ac983ae82cfbde5fbc2c6eb4e8932799a0024760de970097",
+      "size": 2611,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/api-security/metadata.json",
+      "sha256": "16c0b59bce99513f8c7de8f6b1c9a0ecc4929cae4223fe57e6251cf3e74f984e",
+      "size": 827,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/auth-security/SKILL.md",
+      "sha256": "b19d69a1dc428bdd487fb278d15ce13b58b2100aded857b85da0c917cccb3fbe",
+      "size": 3794,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/auth-security/metadata.json",
+      "sha256": "33d17b200f15945ba77fa617791c104b1daf898f50a9512b65b11ebb84433c10",
+      "size": 1043,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/cicd-security/SKILL.md",
+      "sha256": "e9e7a48017969f8ebe666cb1c2e59c07e70933fa9c9f1c741508dcb2885627f6",
+      "size": 4396,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/cicd-security/metadata.json",
+      "sha256": "0939ebc002f0bf6395be8057bbd20b2e8c788d24c3e71d6e4aea63c04256ae02",
+      "size": 1165,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/compliance-awareness/SKILL.md",
+      "sha256": "8eb07656ae35b53484bdf10c22d11cd653ddbdcab60c20b5f17d651d7872785e",
+      "size": 2263,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/compliance-awareness/metadata.json",
+      "sha256": "8a461f7859a21dca729e2ecd277df36667050111ec52758941b449283e6a4cef",
+      "size": 866,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/container-security/SKILL.md",
+      "sha256": "8a293d57367cdd6676f3157f6677a356f6842109845b2eab7360052d0fb3e05f",
+      "size": 3476,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/container-security/metadata.json",
+      "sha256": "51415e961b1c1d1b9ee358d2ecdb9e74243f9e4801bd20f065feddc2b1184b0f",
+      "size": 924,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/cors-security/SKILL.md",
+      "sha256": "85145eb8459571224c4792ff2439232620ca0f78a127542b680ee7efbc695fae",
+      "size": 3342,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/cors-security/metadata.json",
+      "sha256": "7468dcd908bb87d0859d2c93cbcfd08152db33d487d592471e5be6f53e226599",
+      "size": 908,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/crypto-misuse/SKILL.md",
+      "sha256": "bd0edfff18328ca1e9a734dc74e6cd7f6accc76e312c65aec557bb58fee2ddac",
+      "size": 3305,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/crypto-misuse/metadata.json",
+      "sha256": "d4c9b8b9e03b19e80998f2ecc5dd9ed8600d7e3dc09707092be07df8fa5b564f",
+      "size": 906,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/database-security/SKILL.md",
+      "sha256": "0a416e783c5e0320e7156cfbab4d8c6a46766bcba7421ec97ba080fcaddf59dc",
+      "size": 3538,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/database-security/metadata.json",
+      "sha256": "f2725d79012b485ed2eea92a2757a28108c200b65b90098deab816e21ad11a94",
+      "size": 1092,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/dependency-audit/SKILL.md",
+      "sha256": "b1e86e8d9d0abb2d8201695edc46a35ae8a1c6929c467524e5e86cf7cf86e159",
+      "size": 2339,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/dependency-audit/metadata.json",
+      "sha256": "9d15e1cd1242856d838cfe90888764ca577936511c17044ebb9f5629a8aa0fef",
+      "size": 942,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/deserialization-security/SKILL.md",
+      "sha256": "e682f4725aa8261b08bfc84a77404cc38e346542e0fff5a0d8212fc9be1cae85",
+      "size": 4541,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/deserialization-security/metadata.json",
+      "sha256": "494f396afd1ba8d85044db03e50a40f2877ad0f9e1f465a5c00ae527efa64ea4",
+      "size": 1162,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/error-handling-security/SKILL.md",
+      "sha256": "0022bd81345bbc1001beb5cf7f21f4286b1a27a5d039605cae5ca04da5fb30c2",
+      "size": 3278,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/error-handling-security/metadata.json",
+      "sha256": "df5e140deb9f3f50b09a2728511f90bd9ed8046090062249cce10d4330751588",
+      "size": 927,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/file-upload-security/SKILL.md",
+      "sha256": "e3e58ec868e6c2a32e43cdced3d4dd422ff083fad8f4608e332909ec142c7465",
+      "size": 4798,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/file-upload-security/metadata.json",
+      "sha256": "a52fd1dbd29749d5b78235c0a465a745df8a0d432c922b59af7cb3b1607fcb5d",
+      "size": 1071,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/frontend-security/SKILL.md",
+      "sha256": "adf4f6ad66547a3c7355e6a2f6dc5463746f61f5bd830d2e1f7a4442f81f4552",
+      "size": 3316,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/frontend-security/metadata.json",
+      "sha256": "6524b9d810cde5efd67f78ac7f3a756020937fb44ed39e9de52a0cada62d70f6",
+      "size": 1001,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/graphql-security/SKILL.md",
+      "sha256": "b7bb6183271406388ee6e47af0ef315b5cc3fe853e602f58c51c01e36eb4faf3",
+      "size": 4139,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/graphql-security/metadata.json",
+      "sha256": "0cdcfba41ac9ea6b7d579c2fadab8d4dd1d6353868668f77a4239512566b6e64",
+      "size": 1110,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/iac-security/SKILL.md",
+      "sha256": "f699f1bb216f1778a9948c1cac4513cccceaadd4817e2c1b36347cd9c69028a9",
+      "size": 3298,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/iac-security/metadata.json",
+      "sha256": "5a1ebc001f3d2facca503acdd85c0aae11536d15fb385d0703886eaab316142f",
+      "size": 967,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/iam-best-practices/SKILL.md",
+      "sha256": "081aac075f1f55a2e5189991224de19cb265c10eb7d749a3d2ef57d6afa76ad2",
+      "size": 4893,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/iam-best-practices/metadata.json",
+      "sha256": "87f4c4219f3623dad0dd2924005e1e1a85d4976906a4d644b6da8207959ce572",
+      "size": 1308,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/infrastructure-security/SKILL.md",
+      "sha256": "d9eb8578f819ff508ad7925996cb8a7b0f738a3e4a70ead644ac1c4b500a4faa",
+      "size": 2857,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/infrastructure-security/metadata.json",
+      "sha256": "b277e7d207676be945887a2f71bebf05f8503f6b6a525d05106204980b16fbae",
+      "size": 911,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/logging-security/SKILL.md",
+      "sha256": "8752b43cf319c7174a0faff7fffc587f87477de5708a3c4b3d4673378f9ee35c",
+      "size": 3242,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/logging-security/metadata.json",
+      "sha256": "4cfbe3541edcc10107df250c6c7b2a71de8558023aca2d4ef116ad7471aa955c",
+      "size": 986,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/ml-security/SKILL.md",
+      "sha256": "b58995696b1986ffc42e1c14f8f773c8e7fcd808f30cc1502430761e126db52b",
+      "size": 3909,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/ml-security/metadata.json",
+      "sha256": "5335fdd00d67eb9caf13319a0cc8516b41bd0945786fe5f9bdcf98276ae75ead",
+      "size": 1063,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/mobile-security/SKILL.md",
+      "sha256": "6f4f740185e20955cd401c5a257b95290cb5c260cb30aa9e1e12af7c2a6fcc78",
+      "size": 3907,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/mobile-security/metadata.json",
+      "sha256": "1c3430d65c031cb38f9486e535c52f19461ca98b8695260052c83a72204f7055",
+      "size": 1108,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/protocol-security/SKILL.md",
+      "sha256": "ce8a0ff982aeabd819420d9c1273b68692d6b3e265a637ebf7de22991cf2bc31",
+      "size": 3514,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/protocol-security/metadata.json",
+      "sha256": "3baec1f532cd8b29e8210c9b7f21670deace959cc424376ba7fedb0b8f1180d9",
+      "size": 954,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/saas-security/SKILL.md",
+      "sha256": "c0b31a3af4db220665ac9244d3a57c2b761b79cac629f35102086b6dec216955",
+      "size": 7540,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/saas-security/metadata.json",
+      "sha256": "91da1bc8217fd412b01c040b0092a8d24fc980be40a0f8e09d462d99c5fc0f8f",
+      "size": 1743,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/secret-detection/SKILL.md",
+      "sha256": "2d0d0da00e3cd4c8e187ddbe6085f4a0d7dfe95be0d74d1cbe9d342fa699c73b",
+      "size": 3048,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/secret-detection/metadata.json",
+      "sha256": "71221c0b5a9f3c0aec3cc8bb2af087795ec5e2329b929512439e2fb884822567",
+      "size": 905,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/secure-code-review/SKILL.md",
+      "sha256": "151f97e22d41e6452aae47e870e2cc64b1b56ce2d48f7f0e3a3fa6b35bbf9f95",
+      "size": 3013,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/secure-code-review/metadata.json",
+      "sha256": "39f3fb3c6f83a1305ea1aa38895384244f472ff5bed25f0a5f1b488292ac9dd2",
+      "size": 833,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/serverless-security/SKILL.md",
+      "sha256": "4086c4b337adf87c64be99201f6cc09bf1c9b77e0b8273832885acda0244d974",
+      "size": 3333,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/serverless-security/metadata.json",
+      "sha256": "436ddb504db2dc78300eb5016155abb4f2f813cfc10a8bb9e1af4d51c7ff48f1",
+      "size": 1029,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/ssrf-prevention/SKILL.md",
+      "sha256": "c3e306dc75fe049b06db9a97e7bf26dec3dc9b887bdcc33c1d954325439fbbc8",
+      "size": 4123,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/ssrf-prevention/metadata.json",
+      "sha256": "6a96fcf6305cb39fc10d722f1a6ca53ae31f7f84527b93f9fc4b7021a0ee05a9",
+      "size": 1122,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/supply-chain-security/SKILL.md",
+      "sha256": "7c4b0d1396791d208f7916779cd6010c652e9fd7d3216e50c3f09049c23bfc91",
+      "size": 2698,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/supply-chain-security/metadata.json",
+      "sha256": "80ca149913ef8a676e980ce71e473ce6dba0f99ea9a5fd1018c332f36fac06a3",
+      "size": 946,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/websocket-security/SKILL.md",
+      "sha256": "c388697d644b295b7d76ca4563799197bfd8e8ee51d61a6230ed828ea0681485",
+      "size": 4323,
+      "action": "added"
+    },
+    {
+      "path": "dist/copilot-skills/.github/skills/websocket-security/metadata.json",
+      "sha256": "2fb8de6583ed8ac98200ae089bb80b60fed525b3defe60a44ffa4e556058e814",
+      "size": 1091,
+      "action": "added"
+    },
+    {
       "path": "dist/devin.md",
-      "sha256": "6f9f7302fd4e21973b0de3d456d22d67cd549b95155481696ed1d7240e1abd8c",
-      "size": 126471,
+      "sha256": "af91ad2a6b0c19109c1f18a644c831b22e7e0c99864d395a28faa4c92a9d0028",
+      "size": 3802,
       "action": "unchanged"
     },
     {
@@ -982,37 +1990,37 @@
       "path": "vulnerabilities/supply-chain/popular-packages/README.md",
       "sha256": "c27931acf81e187134ce4b0fab31e90eb2ae25ff346ccb894aa82fb10edc69ba",
       "size": 974,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/popular-packages/crates.json",
       "sha256": "47f677db66ed684701682bc09497dfe95efbe29bc8a974fd9fa02407ac28234e",
       "size": 1545,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/popular-packages/go.json",
       "sha256": "f8ae311a967a9ac24269d1bb8045d8537e3a15ddbcc577c623651684fc1a6234",
       "size": 2654,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/popular-packages/npm.json",
       "sha256": "f4981b2470276f1b429d4cfed5d2a3065b4346401f96f9ccdec6c8aec49c19e4",
       "size": 2301,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/popular-packages/pypi.json",
       "sha256": "687671c51c18422c3c3b2d749fab300794cfc3a0fa3a446e2d1790293aec7660",
       "size": 2275,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/popular-packages/rubygems.json",
       "sha256": "55ea7572f26d826d5309f6f01c9390fde3904af45d36f2cf5dc35373fef7c658",
       "size": 1650,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/typosquat-db/known_typosquats.json",

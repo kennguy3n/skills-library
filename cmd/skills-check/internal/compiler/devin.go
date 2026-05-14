@@ -13,7 +13,26 @@ func (devinFormatter) Name() string            { return "devin" }
 func (devinFormatter) OutputName() string      { return "devin.md" }
 func (devinFormatter) DefaultTier() skill.Tier { return skill.TierFull }
 
+// Format renders dist/devin.md. Since v3 the default output is a
+// minimal pointer file (<4 KiB) matching dist/AGENTS.md. The legacy
+// monolithic output that inlines every skill body remains available
+// via `skills-check regenerate --full-inline` (alias --legacy).
+//
+// The Devin formatter still defaults to TierFull so that callers
+// who opt into --full-inline get the richest variant (with the
+// per-skill Context blocks); the pointer body itself is
+// tier-invariant.
 func (devinFormatter) Format(skills []*skill.Skill, tier skill.Tier, ctx Context) string {
+	if ctx.fullInline() {
+		return renderDevinFullInline(skills, tier, ctx)
+	}
+	return RenderPointer(PointerSpec{
+		OutputFile: "devin.md",
+		Audience:   "this Devin session",
+	}, skills)
+}
+
+func renderDevinFullInline(skills []*skill.Skill, tier skill.Tier, ctx Context) string {
 	var b strings.Builder
 	b.WriteString(Header("Devin", tier, len(skills)))
 	b.WriteString("You are working with a larger context window than most assistants. Treat the\n")
