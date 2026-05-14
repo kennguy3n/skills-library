@@ -15,7 +15,7 @@
 //	get_skill(skill_id, budget?)
 //	search_skills(query)
 //	scan_secrets(text | file_path, format?)
-//	check_dependency(package, version, ecosystem, format?)
+//	check_dependency(package, version?, ecosystem, format?)
 //	check_typosquat(package, ecosystem?)
 //	map_compliance_control(skill_id | query, framework?)
 //	get_sigma_rule(rule_id | query, category?)
