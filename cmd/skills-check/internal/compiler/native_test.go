@@ -110,6 +110,58 @@ func TestNativeMetadataJSONPreservesFullFrontmatter(t *testing.T) {
 	}
 }
 
+// TestWriteNativeBundlesPurgesStaleSkillDirs locks in the cleanup
+// pass at the top of writeBundle: a previously-emitted skill that no
+// longer exists in skills/ must be removed when regenerating, so IDE
+// auto-discovery never surfaces a stub for a renamed/deleted skill.
+// Foreign directories (no SKILL.md inside) are intentionally left
+// untouched.
+func TestWriteNativeBundlesPurgesStaleSkillDirs(t *testing.T) {
+	skills := loadAllSkills(t)
+	if len(skills) == 0 {
+		t.Skip("no skills available")
+	}
+	outDir := t.TempDir()
+
+	// Seed a stale skill directory under each native bundle root.
+	const staleID = "old-renamed-skill"
+	const foreignDir = "operator-readme"
+	for _, bundle := range DefaultNativeBundles {
+		root := filepath.Join(outDir, bundle.Subdir, bundle.InstallPath)
+		if err := os.MkdirAll(filepath.Join(root, staleID), 0o755); err != nil {
+			t.Fatalf("seed stale %s: %v", root, err)
+		}
+		if err := os.WriteFile(filepath.Join(root, staleID, "SKILL.md"), []byte("---\nname: old-renamed-skill\ndescription: x\n---\n"), 0o644); err != nil {
+			t.Fatalf("seed stale SKILL.md: %v", err)
+		}
+		if err := os.MkdirAll(filepath.Join(root, foreignDir), 0o755); err != nil {
+			t.Fatalf("seed foreign dir: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(root, foreignDir, "NOTES.md"), []byte("operator notes\n"), 0o644); err != nil {
+			t.Fatalf("seed foreign file: %v", err)
+		}
+	}
+
+	if err := WriteNativeBundles(skills, outDir); err != nil {
+		t.Fatalf("WriteNativeBundles: %v", err)
+	}
+
+	for _, bundle := range DefaultNativeBundles {
+		root := filepath.Join(outDir, bundle.Subdir, bundle.InstallPath)
+		if _, err := os.Stat(filepath.Join(root, staleID)); !os.IsNotExist(err) {
+			t.Errorf("%s: stale skill dir %s should have been removed, stat err=%v", root, staleID, err)
+		}
+		if _, err := os.Stat(filepath.Join(root, foreignDir, "NOTES.md")); err != nil {
+			t.Errorf("%s: foreign dir without SKILL.md should be preserved, got err=%v", root, err)
+		}
+		for _, s := range skills {
+			if _, err := os.Stat(filepath.Join(root, s.Frontmatter.ID, "SKILL.md")); err != nil {
+				t.Errorf("%s: expected current skill %s to be present, got err=%v", root, s.Frontmatter.ID, err)
+			}
+		}
+	}
+}
+
 // TestNativeSkillMDFrontmatterIsValidYAML parses the YAML frontmatter
 // of every generated native SKILL.md and asserts both that the parse
 // succeeds and that `description` round-trips to the same Go string

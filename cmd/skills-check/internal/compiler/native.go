@@ -71,10 +71,44 @@ func WriteNativeBundles(skills []*skill.Skill, outDir string) error {
 }
 
 // writeBundle emits one NativeBundle tree under outDir/<bundle.Subdir>.
+//
+// Stale skills (renamed or deleted in skills/) would otherwise leak into
+// the regenerated bundle because the previous regeneration's per-skill
+// directories still exist. IDE auto-discovery would then surface a
+// skill that no longer has a source-of-truth SKILL.md. So we purge any
+// previously-emitted skill directories that are not in the current
+// skill set before writing the new ones, deliberately leaving the
+// containing `<bundle.Subdir>/<bundle.InstallPath>` directory itself
+// alone (it may legitimately host hand-authored files in some
+// installs, e.g. a top-level README).
 func writeBundle(bundle NativeBundle, skills []*skill.Skill, outDir string) error {
 	root := filepath.Join(outDir, bundle.Subdir, bundle.InstallPath)
 	if err := os.MkdirAll(root, 0o755); err != nil {
 		return err
+	}
+	keep := make(map[string]bool, len(skills))
+	for _, s := range skills {
+		keep[s.Frontmatter.ID] = true
+	}
+	entries, err := os.ReadDir(root)
+	if err != nil {
+		return err
+	}
+	for _, entry := range entries {
+		if !entry.IsDir() || keep[entry.Name()] {
+			continue
+		}
+		// Only remove directories that look like a previous native
+		// skill bundle (i.e. they contain SKILL.md), to keep this
+		// safe in case an operator drops other directories under
+		// the install root.
+		skillMD := filepath.Join(root, entry.Name(), "SKILL.md")
+		if _, statErr := os.Stat(skillMD); statErr != nil {
+			continue
+		}
+		if err := os.RemoveAll(filepath.Join(root, entry.Name())); err != nil {
+			return err
+		}
 	}
 	for _, s := range skills {
 		dir := filepath.Join(root, s.Frontmatter.ID)

@@ -20,17 +20,16 @@ scanning, or CI policy checks.
    - `search_skills(query)` to find a relevant skill ID.
    - `get_skill(skill_id, budget)` to fetch the body at
      `minimal`, `compact`, or `full` token budget.
-   - `check_dependency(package, ecosystem, version?)` and
-     `check_typosquat(package, ecosystem?)` before adding a new
-     dependency.
-   - `scan_secrets(text | file_path)` or `check_secret_pattern(text)`
-     before committing any string that might be a credential.
-   - `map_compliance_control(skill_id | query, framework?)` to
-     cite the matching SOC 2 / HIPAA / PCI DSS control.
-   - `get_sigma_rule(rule_id | query, category?)` for detection
-     logic from `rules/`.
-   - `version_status()` to confirm data version and signature
-     state before relying on results.
+   - `check_dependency(package, version?, ecosystem, format?)`,
+     `check_typosquat(package, ecosystem?)`, or
+     `scan_dependencies(file_path, format?)` before adding deps.
+   - `scan_secrets(text | file_path)` / `check_secret_pattern(text)`
+     before committing potential credentials.
+   - `scan_github_actions(file_path)` / `scan_dockerfile(file_path)`
+     / `policy_check(file_path, severity_floor?)` /
+     `explain_finding(query)` for CI / image / finding triage.
+   - `map_compliance_control`, `get_sigma_rule`, `version_status()`
+     for controls / Sigma rules / data version respectively.
 2. If the MCP server is not reachable, read the skill source
    directly under `skills/<skill-id>/SKILL.md` and the matching
    rule under `rules/<category>/`.
