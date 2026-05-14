@@ -148,7 +148,7 @@ detection rule corpus extracted from production ShieldNet detection rules.
 - [x] Sigma rule extraction & adaptation (initial corpus from public sources —
   SigmaHQ, MITRE ATT&CK, AWS/GCP/Azure/GWS/M365/Jira/Confluence docs):
   - Rules live in `rules/cloud/`, `rules/endpoint/`, `rules/container/`, `rules/saas/`
-  - Coverage: AWS, GCP, Azure, Linux, macOS, Windows, K8s, O365
+  - Coverage: AWS, GCP, Azure, Linux, macOS, Windows, K8s, O365, Google Workspace, Salesforce, Slack
 - [x] MCP server (`cmd/skills-mcp/`):
   - JSON-RPC 2.0 over stdio (`initialize`, `tools/list`, `tools/call`)
   - Tool: `lookup_vulnerability(package, ecosystem, version)`
