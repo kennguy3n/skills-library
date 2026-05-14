@@ -1,6 +1,6 @@
 schema_version: "1.0"
 framework: "CWE Top 25 2023"
-last_updated: "2026-05-13T18:00:00Z"
+last_updated: "2026-05-14"
 mapping:
   - skill: "secure-code-review"
     cwes: [787, 79, 89, 416, 78, 20, 125, 22, 352, 434, 862, 476, 287, 190, 502, 77, 119, 798, 918, 306, 362, 269, 94, 863, 276]
@@ -52,3 +52,7 @@ mapping:
     cwes: [22, 73, 400, 434]
   - skill: "websocket-security"
     cwes: [346, 1385, 942]
+  - skill: "saas-security"
+    cwes: [798, 284, 1392]
+  - skill: "iam-best-practices"
+    cwes: [269, 250, 284]

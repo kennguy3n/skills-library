@@ -118,36 +118,36 @@
       "path": "skills/cicd-security/SKILL.md",
       "sha256": "5112444994d090959b0c767696adf325fc25414debfcd39c60cb3672b6221f11",
       "size": 6372,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/cicd-security/checklists/github_actions_hardening.yaml",
       "sha256": "f946e5613fb9834d7b916702e8d693a4da9d973f8faca14256455d8ead573ef4",
       "size": 5076,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/cicd-security/checklists/gitlab_ci_hardening.yaml",
       "sha256": "25fafed303575c8dd555a20ca4639ccb4f0293bee3225ae139dc6289ca387a83",
       "size": 3391,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/compliance-awareness/SKILL.md",
-      "sha256": "bcc22f2f07b5ef6a465cb84acb141e6de887ac040e9c230e263f7ecea830f61a",
+      "sha256": "d5d1a42d87435fc7f5c9a0f2562450cbdb6c210f94dd42d7057e7f3948efb802",
       "size": 3047,
       "action": "unchanged"
     },
     {
       "path": "skills/compliance-awareness/frameworks/cwe_mapping.yaml",
-      "sha256": "d4cb9623a2d1a8e1b54b8591d97451de4782e06df4a8400e30c296387c7ed865",
-      "size": 1766,
+      "sha256": "cb0c45787f8ac837a16bbbca04e39bb58b117bedd95d0208f3938968a0a5f1dc",
+      "size": 1868,
       "action": "unchanged"
     },
     {
       "path": "skills/compliance-awareness/frameworks/owasp_mapping.yaml",
-      "sha256": "55f5ecf7477e0032ba4e6d2fa15b88e21c428b14ec1e134764df696c8da4e6f9",
-      "size": 1703,
+      "sha256": "4af5d5a20bf65ea408cbdecd8a440536f994caa7121de8a8bbf16142c1414064",
+      "size": 1816,
       "action": "unchanged"
     },
     {
@@ -232,13 +232,13 @@
       "path": "skills/deserialization-security/SKILL.md",
       "sha256": "aff514629836413111841e6d6e6322199268727ede9d5b316327b357ac285064",
       "size": 6223,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/deserialization-security/rules/unsafe_deserializers.json",
       "sha256": "0a6b0fc13970d80448f4772cb2a59d23d3e7faf21748d7070d98810ca4da9ad0",
       "size": 5730,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/error-handling-security/SKILL.md",
@@ -262,13 +262,13 @@
       "path": "skills/file-upload-security/SKILL.md",
       "sha256": "a3057a631183f78f37b6f21ef91eb047cc1e5badfbb674eb4817238d4f1bfbab",
       "size": 6489,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/file-upload-security/rules/upload_validation.json",
       "sha256": "bb75bd9b7bc4c656e0ce938f2a41c84f382eda56fa626bf782b4717724bb2a1e",
       "size": 4391,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/frontend-security/SKILL.md",
@@ -292,13 +292,13 @@
       "path": "skills/graphql-security/SKILL.md",
       "sha256": "f7524fd1462342bf92bddab2c1756b06065c1143af3aa684a12fdc49ed57c9d1",
       "size": 5496,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/graphql-security/rules/graphql_safe_config.json",
       "sha256": "44b884e90133c62e8ba144cea1047e36c9fa8f1a9ccc4534c410d38820b32665",
       "size": 2914,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/iac-security/SKILL.md",
@@ -436,97 +436,97 @@
       "path": "skills/saas-security/SKILL.md",
       "sha256": "8d0730d2e63b7aa4f123fea7392e8624fbfe948db9b445b6ecdfb83f5d69407f",
       "size": 11242,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/saas-security/rules/atlassian.json",
       "sha256": "360531338be3e539e22a3a1579f82c7a543f127e69342580f3af5efeff229ff8",
       "size": 6398,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/saas-security/rules/bamboohr.json",
       "sha256": "7c6f9c36bd5475c5ed10962759dd7ef853857cf61464370f3657cadb7c385ec3",
       "size": 3772,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/saas-security/rules/calendly.json",
       "sha256": "b890a1529683645b50380b9642cdbb968bab2e144fdc8ee6f44bc6bc063c63fb",
       "size": 4547,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/saas-security/rules/google_chat.json",
       "sha256": "ed32d7e135f9c0cea3f12482250fd055939e11326b20983d24e71ccd9815d892",
       "size": 3146,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/saas-security/rules/google_workspace.json",
       "sha256": "19fdd385b333c85c6980a836763c7255536ff70f5c1bf6fc0190a877a156e736",
       "size": 7226,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/saas-security/rules/hubspot.json",
       "sha256": "3ffd1effba232e2d8f424162fc690da703983463277d8b6f429b9ef7d23490fa",
       "size": 4508,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/saas-security/rules/larksuite.json",
       "sha256": "37a2cb4db10c562698cd4b31d0dd5e20e4e84fea0eda1aab181b3748d5ed8339",
       "size": 4904,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/saas-security/rules/microsoft_teams.json",
       "sha256": "49a6eb1f4e8b83463ce9712938478876d2bc292304def8b2d9b918fc3b4a20bc",
       "size": 4907,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/saas-security/rules/netsuite.json",
       "sha256": "d5a5b4c40edb0598b727dc2bf19a257975f338b37d94513a3d0522a5e98795f2",
       "size": 5974,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/saas-security/rules/notion.json",
       "sha256": "e7665775268d548748ff0594ee4e94bad4a5649b453aa8325f018d5d9e4b434e",
       "size": 4180,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/saas-security/rules/odoo.json",
       "sha256": "0c2c39773e84fd888036b1a8ca5ff8779a5be5165a9d1a102dd45740b30c12a3",
       "size": 4703,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/saas-security/rules/salesforce.json",
       "sha256": "fa76aebb4928e2a5830abf2ffae53f617c803e491ffb6fe3103105856a8c60e7",
       "size": 6184,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/saas-security/rules/slack.json",
       "sha256": "3eb875b6c6a61e6654b6efe2cde4a85daf39226a0ef1e34d21d3eeedbb938f01",
       "size": 6132,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/saas-security/rules/workday.json",
       "sha256": "e7043f92b7d0782d2e64cdc92efb6da86bfc1a6a825bfe11adb7f3870b24d34a",
       "size": 5028,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/saas-security/rules/zoom.json",
       "sha256": "d2fc998938f5a3a7d8bbe2c8920322cb7f40a155a8ee31a71ed4dae7ae0941b1",
       "size": 5414,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/secret-detection/SKILL.md",
@@ -592,19 +592,19 @@
       "path": "skills/ssrf-prevention/SKILL.md",
       "sha256": "f0f24634f0b553e36c8996b62570dec19ceff673fbe2da9648108f7b43f2e914",
       "size": 5769,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/ssrf-prevention/rules/cloud_metadata_endpoints.json",
       "sha256": "d7847cb3e5f2462e251471d4edb61d2a179762a931b5aeb12f390133f7fbd57e",
       "size": 2342,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/ssrf-prevention/rules/ssrf_sinks.json",
       "sha256": "e151dfee6978e53b3d5fa3fb589676b1a4131947ea0f1eadc19375acb1c0761e",
       "size": 4914,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/supply-chain-security/SKILL.md",
@@ -634,13 +634,13 @@
       "path": "skills/websocket-security/SKILL.md",
       "sha256": "14069bf7cb6eaebbc4ca022e504ba3a0a3fcd3865a4b7e9a2e038ab727959389",
       "size": 5974,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "skills/websocket-security/rules/websocket_hardening.json",
       "sha256": "1870408d7f5352bffb40c06d806e3efac9392cd756d7b42b909cae66adca2392",
       "size": 3098,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/cve/code-relevant/cve_patterns.json",
@@ -670,13 +670,13 @@
       "path": "vulnerabilities/supply-chain/malicious-packages/docker.json",
       "sha256": "7bcaa81d15cbbb3a49319b24e77443629d83b5c237f03c9c8f09bf196b09b6e2",
       "size": 5901,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/github-actions.json",
       "sha256": "09a4963019228dcbb9cf74332c25f6c4d80ddb357efc61e501584d9d4055159e",
       "size": 6710,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/go.json",
@@ -688,7 +688,7 @@
       "path": "vulnerabilities/supply-chain/malicious-packages/maven.json",
       "sha256": "e33289e1d8569775dea428ce5834931b786e19b045c8e51752058f56197ddd20",
       "size": 6055,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/npm.json",
@@ -700,7 +700,7 @@
       "path": "vulnerabilities/supply-chain/malicious-packages/nuget.json",
       "sha256": "e8cc155223c62549fcb9118febaec7c745243767471b2c2640972960d23923d8",
       "size": 5464,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/malicious-packages/pypi.json",
@@ -712,7 +712,7 @@
       "path": "vulnerabilities/supply-chain/malicious-packages/rubygems.json",
       "sha256": "c850aef348573cbb25a33cfca64810d20f24fb1ce0ce60e4390a4ff5c14eac80",
       "size": 6084,
-      "action": "added"
+      "action": "unchanged"
     },
     {
       "path": "vulnerabilities/supply-chain/typosquat-db/known_typosquats.json",
