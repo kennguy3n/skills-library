@@ -13,6 +13,7 @@ import (
 
 func regenerateCmd() *cobra.Command {
 	var path, tool, budget, profileName string
+	var fullInline, legacy bool
 	c := &cobra.Command{
 		Use:   "regenerate",
 		Short: "Rebuild dist/ files from the current skills/",
@@ -38,6 +39,12 @@ func regenerateCmd() *cobra.Command {
 			ctx, err := compiler.LoadContext(abs)
 			if err != nil {
 				return err
+			}
+			// --full-inline (alias --legacy) restores the pre-v2
+			// monolithic AGENTS.md output. The default since v2 is
+			// the minimal pointer file documented in agents.go.
+			if fullInline || legacy {
+				ctx.AgentsFullInline = true
 			}
 			outDir := filepath.Join(abs, "dist")
 
@@ -81,5 +88,7 @@ func regenerateCmd() *cobra.Command {
 	c.Flags().StringVar(&tool, "tool", "", "single tool to regenerate (default all)")
 	c.Flags().StringVar(&budget, "budget", "", "override tier (minimal|compact|full)")
 	c.Flags().StringVar(&profileName, "profile", "", "enterprise profile (e.g., financial-services|healthcare|government)")
+	c.Flags().BoolVar(&fullInline, "full-inline", false, "render the legacy AGENTS.md output that inlines every skill body (default is the minimal pointer file)")
+	c.Flags().BoolVar(&legacy, "legacy", false, "alias for --full-inline")
 	return c
 }

@@ -29,6 +29,13 @@ type Context struct {
 	VulnerabilitySummary string
 	GlossaryEntries      []string
 	AttackTechniques     []string
+	// AgentsFullInline opts the AGENTS.md / codex formatter back into
+	// the pre-v2 behaviour of inlining every skill. The default — when
+	// this field is false — emits a minimal <4 KiB pointer file that
+	// refers consumers to the MCP server and the on-disk skills/
+	// directory. The CLI exposes this as `regenerate --full-inline`
+	// (alias `--legacy`).
+	AgentsFullInline bool
 }
 
 // Report is the per-skill + total token accounting for a compiled output.
