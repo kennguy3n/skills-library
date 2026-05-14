@@ -711,3 +711,53 @@ func TestCheckDependencySARIFEmptyResultsArray(t *testing.T) {
 		t.Errorf("SARIF JSON must not contain \"results\":null; got: %s", string(body))
 	}
 }
+
+// TestVersionMatchesWildcardTokens pins fix for the on-disk-data
+// regression: the malicious-packages JSONs use "any", "various", and
+// "multiple" alongside "all" and "*" as wildcard markers in
+// versions_affected (docker, maven, nuget, github-actions, plus
+// left-pad on npm). versionMatches must treat all five as matching
+// any concrete version, or check_dependency silently misses the
+// malicious-package hit.
+func TestVersionMatchesWildcardTokens(t *testing.T) {
+	tokens := []string{"all", "*", "any", "various", "multiple",
+		"ALL", "Any", "VARIOUS", "Multiple"} // case-insensitive
+	for _, tok := range tokens {
+		if !versionMatches(tok, "1.2.3") {
+			t.Errorf("versionMatches(%q, %q) = false, want true", tok, "1.2.3")
+		}
+		if !versionMatches(tok, "999.0.0-rc.7+build.42") {
+			t.Errorf("versionMatches(%q, %q) = false, want true", tok, "999.0.0-rc.7+build.42")
+		}
+	}
+}
+
+// TestLookupVulnerabilityWildcardMatchesRealEntries reads the actual
+// on-disk malicious-packages data and confirms that every entry with
+// a wildcard token surfaces when LookupVulnerability is called with
+// an arbitrary concrete version. Specifically pins:
+//   - left-pad (npm) — versions_affected=["1.0.0","any"]
+//   - actions/checkout@untrusted-ref (github-actions) — ["any"]
+//   - xmrig-cryptominer-cluster (docker) — ["multiple"]
+//
+// Before the fix these all silently returned no match.
+func TestLookupVulnerabilityWildcardMatchesRealEntries(t *testing.T) {
+	lib := newLibrary(t)
+	cases := []struct {
+		pkg, ecosystem, version string
+	}{
+		{"left-pad", "npm", "9.9.9"},
+		{"actions/checkout@untrusted-ref", "github-actions", "v4"},
+		{"xmrig-cryptominer-cluster", "docker", "1.0.0"},
+	}
+	for _, c := range cases {
+		hit, err := lib.LookupVulnerability(c.pkg, c.ecosystem, c.version)
+		if err != nil {
+			t.Errorf("LookupVulnerability(%q, %q, %q): %v", c.pkg, c.ecosystem, c.version, err)
+			continue
+		}
+		if len(hit.Matches) == 0 {
+			t.Errorf("expected wildcard match for %s@%s (%s); got none", c.pkg, c.version, c.ecosystem)
+		}
+	}
+}

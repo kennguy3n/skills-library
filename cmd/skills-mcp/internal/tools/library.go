@@ -738,7 +738,14 @@ func versionMatches(affected, version string) bool {
 		return strings.EqualFold(a, v)
 	}
 	switch strings.ToLower(a) {
-	case "all", "*":
+	case "all", "*", "any", "various", "multiple":
+		// All of these tokens appear in the on-disk malicious-packages
+		// data (mostly docker/maven/nuget incidents whose exact tags
+		// can't be enumerated, plus "any" on left-pad's catch-all
+		// entry) and are intended as wildcards. Treat them identically
+		// so a check_dependency call with a concrete version still
+		// surfaces the malicious-package hit instead of silently
+		// missing it.
 		return true
 	}
 	lower := strings.ToLower(a)
