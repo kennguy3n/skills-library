@@ -101,11 +101,26 @@ func NewLibrary(root string) (*Library, error) {
 func (l *Library) Root() string { return l.root }
 
 // SetAllowedRoots scopes ScanSecrets file_path inputs to the given
-// directories. Each entry is canonicalised (filepath.Abs +
-// EvalSymlinks) so callers can pass relative or symlinked paths.
-// Empty entries are skipped. A directory that does not exist is
-// rejected so misconfiguration fails loudly at startup rather than
-// silently allowing every path through.
+// directories. Each entry is canonicalised in TWO forms — the
+// filepath.Abs form (unresolved) and the EvalSymlinks form (resolved)
+// — and both are appended to the allow-list. Empty entries are
+// skipped. A directory that does not exist is rejected so
+// misconfiguration fails loudly at startup rather than silently
+// allowing every path through.
+//
+// The two-form storage is load-bearing. validateScanPath requires
+// BOTH the raw abs path and its symlink-resolved counterpart to each
+// be under SOME stored root (an AND, not OR — see the comment there).
+// On platforms where the configured root itself goes through a
+// symlink — most notably macOS, where /tmp is a symlink to
+// /private/tmp — storing only the resolved form means the raw abs
+// can never match: a user who passes `--allowed-roots=/tmp/mydir`
+// would then have every legitimate scan of `/tmp/mydir/<file>`
+// rejected because `abs=/tmp/mydir/<file>` is not under
+// `/private/tmp/mydir`. Storing both forms preserves the AND
+// security property (a symlink inside an allowed root that redirects
+// outside still fails because the resolved target won't be under
+// either form) while keeping the configured directory usable.
 //
 // Passing an empty (or nil) slice removes the restriction. Calling
 // this method is optional; when never invoked, ScanSecrets retains
@@ -116,7 +131,15 @@ func (l *Library) SetAllowedRoots(roots []string) error {
 		l.allowedRoots = nil
 		return nil
 	}
-	resolved := make([]string, 0, len(roots))
+	resolved := make([]string, 0, len(roots)*2)
+	seen := make(map[string]struct{}, len(roots)*2)
+	add := func(p string) {
+		if _, dup := seen[p]; dup {
+			return
+		}
+		seen[p] = struct{}{}
+		resolved = append(resolved, p)
+	}
 	for _, r := range roots {
 		r = strings.TrimSpace(r)
 		if r == "" {
@@ -130,7 +153,10 @@ func (l *Library) SetAllowedRoots(roots []string) error {
 		if err != nil {
 			return fmt.Errorf("allowed root %q: %w", r, err)
 		}
-		resolved = append(resolved, eval)
+		add(abs)
+		if eval != abs {
+			add(eval)
+		}
 	}
 	// A non-empty input whose entries all trim to "" or all fail to
 	// resolve must NOT silently disable the policy — that would turn

@@ -622,3 +622,58 @@ func TestVersionMatchesRejectsUnparseable(t *testing.T) {
 		}
 	}
 }
+
+// TestSetAllowedRootsSymlinkedRootAcceptsScan reproduces the macOS-
+// style regression where the configured allow-list root itself goes
+// through a symlink (e.g. /tmp -> /private/tmp). The simulated layout:
+//
+//	<realRoot>/data            # real directory containing scannable files
+//	<linkRoot> -> <realRoot>   # symlink to <realRoot> (stands in for /tmp)
+//
+// Calling SetAllowedRoots([<linkRoot>/data]) used to store only the
+// fully-resolved <realRoot>/data, so validateScanPath's AND check
+// against the unresolved abs <linkRoot>/data/leak.txt would fail.
+// After the fix, SetAllowedRoots stores BOTH forms so the abs form
+// has a matching root.
+func TestSetAllowedRootsSymlinkedRootAcceptsScan(t *testing.T) {
+	lib := newLibrary(t)
+	realRoot := t.TempDir()
+	data := filepath.Join(realRoot, "data")
+	if err := os.MkdirAll(data, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	leak := filepath.Join(data, "leak.txt")
+	if err := os.WriteFile(leak, []byte("AKIA1234567890ABCDEF\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	// Build a sibling temp dir and replace it with a symlink to
+	// realRoot so the *configured* path goes through a symlink.
+	parent := t.TempDir()
+	linkRoot := filepath.Join(parent, "linked")
+	if err := os.Symlink(realRoot, linkRoot); err != nil {
+		t.Skipf("symlink unsupported on this platform: %v", err)
+	}
+	allowed := filepath.Join(linkRoot, "data") // configured via symlinked path
+	if err := lib.SetAllowedRoots([]string{allowed}); err != nil {
+		t.Fatalf("SetAllowedRoots: %v", err)
+	}
+	scanPath := filepath.Join(allowed, "leak.txt") // also goes through the symlink
+	if _, err := lib.ScanSecrets("", scanPath); err != nil {
+		t.Fatalf("scanning a file inside a symlinked allowed root must succeed: %v", err)
+	}
+	// Defense-in-depth invariant: a symlink inside the allow-list that
+	// redirects to a file OUTSIDE every allowed root (and outside
+	// sensitivePaths()) must still be denied.
+	outside := t.TempDir()
+	target := filepath.Join(outside, "outside.txt")
+	if err := os.WriteFile(target, []byte("x"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	bypass := filepath.Join(data, "bypass")
+	if err := os.Symlink(target, bypass); err != nil {
+		t.Skipf("nested symlink unsupported: %v", err)
+	}
+	if _, err := lib.ScanSecrets("", bypass); err == nil {
+		t.Errorf("symlink redirecting outside the allow-list must be denied even when the root itself is symlinked")
+	}
+}
