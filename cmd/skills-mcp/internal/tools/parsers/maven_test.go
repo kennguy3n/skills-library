@@ -61,6 +61,49 @@ func TestParsePomXMLEmitsRuntimeDeps(t *testing.T) {
 	}
 }
 
+func TestParsePomXMLExclusionsDoNotOverwriteParentDep(t *testing.T) {
+	// Regression: an <exclusions><exclusion> block inside a
+	// <dependency> must not overwrite the parent dependency's
+	// groupId / artifactId. The XML CharData handler used to
+	// match purely on the leaf element name (groupId / artifactId)
+	// while `insideDepSet` was still true throughout the entire
+	// <dependency> scope, so the exclusion's coordinates would
+	// silently replace the actual dependency's coordinates and
+	// the scanner would chase the exclusion rather than the
+	// dependency in the malicious-packages / typosquat database.
+	body := []byte(`<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>6.1.4</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+</project>
+`)
+	got, err := Parse("pom.xml", body)
+	if err != nil {
+		t.Fatalf("Parse: %v", err)
+	}
+	assertContains(t, got, "org.springframework:spring-core@6.1.4/maven")
+	for _, d := range got {
+		if d.Name == "commons-logging:commons-logging" {
+			t.Fatalf("exclusion coordinates leaked as a dependency: %+v", d)
+		}
+		if d.Name == "org.springframework:spring-core" && d.Version != "6.1.4" {
+			t.Fatalf("parent dep version overwritten by exclusion: got %q want 6.1.4", d.Version)
+		}
+	}
+}
+
 func TestParsePomXMLAcceptsDependencyManagement(t *testing.T) {
 	body := []byte(`<?xml version="1.0" encoding="UTF-8"?>
 <project>
