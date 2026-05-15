@@ -258,3 +258,83 @@ func TestIsValidTier(t *testing.T) {
 		}
 	}
 }
+
+const localizedSkill = `---
+id: example-skill
+language: ar
+source_revision: "abc1234567"
+dir: rtl
+version: "1.0.0"
+title: "مهارة مثال"
+description: "A skill used to exercise the locale fields"
+category: prevention
+severity: high
+applies_to:
+  - "before every commit"
+languages: ["*"]
+token_budget:
+  minimal: 100
+  compact: 400
+  full: 1200
+rules_path: "rules/"
+last_updated: "2026-05-15"
+sources:
+  - "Test source"
+---
+
+# مهارة مثال
+
+## Rules (for AI agents)
+
+### ALWAYS
+- always-one.
+
+### NEVER
+- never-one.
+`
+
+func TestParseLocaleFields(t *testing.T) {
+	s, err := ParseBytes("locales/ar/example-skill/SKILL.md", []byte(localizedSkill))
+	if err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+	if s.Frontmatter.Language != "ar" {
+		t.Errorf("language = %q, want ar", s.Frontmatter.Language)
+	}
+	if s.Frontmatter.SourceRevision != "abc1234567" {
+		t.Errorf("source_revision = %q, want abc1234567", s.Frontmatter.SourceRevision)
+	}
+	if s.Frontmatter.Dir != "rtl" {
+		t.Errorf("dir = %q, want rtl", s.Frontmatter.Dir)
+	}
+}
+
+func TestParseInvalidDir(t *testing.T) {
+	bad := strings.Replace(localizedSkill, "dir: rtl", "dir: sideways", 1)
+	_, err := ParseBytes("bad.md", []byte(bad))
+	if err == nil {
+		t.Fatalf("expected error for invalid dir")
+	}
+	if !strings.Contains(err.Error(), "invalid dir") {
+		t.Errorf("error should mention invalid dir, got %v", err)
+	}
+}
+
+func TestParseDefaultsToNoLocaleFields(t *testing.T) {
+	// English source skill has none of language / source_revision /
+	// dir set — these must be empty strings (zero values), not
+	// missing fields, so they round-trip cleanly through json/yaml.
+	s, err := ParseBytes("skills/example/SKILL.md", []byte(validSkill))
+	if err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+	if s.Frontmatter.Language != "" {
+		t.Errorf("language should be empty for English source, got %q", s.Frontmatter.Language)
+	}
+	if s.Frontmatter.SourceRevision != "" {
+		t.Errorf("source_revision should be empty for English source, got %q", s.Frontmatter.SourceRevision)
+	}
+	if s.Frontmatter.Dir != "" {
+		t.Errorf("dir should be empty for English source, got %q", s.Frontmatter.Dir)
+	}
+}

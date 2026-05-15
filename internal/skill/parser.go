@@ -50,6 +50,21 @@ type Frontmatter struct {
 	RelatedSkills []string    `yaml:"related_skills,omitempty"`
 	LastUpdated   string      `yaml:"last_updated"`
 	Sources       []string    `yaml:"sources"`
+	// Language is the BCP-47 locale tag of this SKILL.md (e.g. "es",
+	// "zh-Hans"). Only set on files under locales/<bcp47>/<skill-id>/.
+	// Empty / unset for the canonical English source under skills/.
+	Language string `yaml:"language,omitempty"`
+	// SourceRevision pins the English commit a translation was based
+	// on (a short or full git SHA). Used by the locale-freshness CI
+	// check to warn when the English original drifts.
+	SourceRevision string `yaml:"source_revision,omitempty"`
+	// Dir overrides the text direction for rendering. Defaults to
+	// "ltr". Valid values: "ltr", "rtl". Stub generators set this to
+	// "rtl" for right-to-left scripts (Arabic, Hebrew). Downstream
+	// compilers MAY use this field when an output format supports a
+	// direction hint (e.g. wrapping code blocks in `<div dir="ltr">`
+	// inside an RTL doc so identifiers stay legible).
+	Dir string `yaml:"dir,omitempty"`
 }
 
 // Body contains the parsed markdown body subsections.
@@ -141,6 +156,9 @@ func ParseBytes(path string, data []byte) (*Skill, error) {
 	}
 	if fm.TokenBudget.Minimal <= 0 || fm.TokenBudget.Compact <= 0 || fm.TokenBudget.Full <= 0 {
 		return nil, fmt.Errorf("%s: token_budget must declare positive minimal, compact, and full counts", path)
+	}
+	if fm.Dir != "" && fm.Dir != "ltr" && fm.Dir != "rtl" {
+		return nil, fmt.Errorf("%s: invalid dir %q (allowed: ltr, rtl)", path, fm.Dir)
 	}
 
 	body := data[len(match[0]):]
