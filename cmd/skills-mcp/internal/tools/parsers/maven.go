@@ -76,7 +76,19 @@ func parsePomXML(body []byte) ([]Dependency, error) {
 				stack = stack[:len(stack)-1]
 			}
 		case xml.CharData:
-			if !insideDepSet || current == nil || len(stack) == 0 {
+			if !insideDepSet || current == nil || len(stack) < 2 {
+				continue
+			}
+			// Only consume <groupId>/<artifactId>/<version>
+			// elements that are direct children of the
+			// <dependency> being parsed. Without this guard, an
+			// <exclusions><exclusion><groupId>commons-logging</groupId>...
+			// block nested inside a <dependency> would overwrite
+			// the parent dependency's groupId / artifactId
+			// (`insideDepSet` would still be true at that depth),
+			// so the scanner would emit the exclusion's
+			// coordinates instead of the dependency's.
+			if stack[len(stack)-2] != "dependency" {
 				continue
 			}
 			leaf := stack[len(stack)-1]
