@@ -22,10 +22,18 @@ must *also* possess the physical signing device.
 
 ## Workflow
 
-1. **CI builds and publishes.** The `release.yml` workflow produces binaries,
-   computes the manifest checksums, and uploads them as GitHub Release assets.
-   The manifest is published **without** a signature at this stage; the
-   `signature` field is set to `"TBD"`.
+The release pipeline is a four-stage **draft → sign → verify → publish**
+flow. Releases never become public (i.e. consumable by `skills-check
+update`) until CI has independently re-verified that the offline-signed
+manifest is intact end-to-end.
+
+1. **CI builds a DRAFT release.** Pushing a `v*` tag (or invoking
+   `release.yml` via `workflow_dispatch`) cross-compiles every binary,
+   computes the manifest checksums, bundles the data tarball, and
+   uploads everything as a **draft** GitHub Release. The bundled
+   `manifest.json` still has `"signature": "TBD"` at this point — the
+   draft is not consumable by `skills-check update`, which follows the
+   "latest" pointer.
 
 2. **Release manager downloads the unsigned manifest.**
 
@@ -49,21 +57,42 @@ must *also* possess the physical signing device.
 
    The command reads the private key, computes the canonical JSON (stripping
    the `signature` field), signs it with Ed25519, and writes the result back
-   to `manifest.json` as `"ed25519:<base64>"`.
-
-4. **Upload the signed manifest.**
-
-   ```bash
-   gh release upload v2026.05.12 /tmp/release-staging/manifest.json --clobber
-   ```
-
-5. **Verify the upload.**
+   to `manifest.json` as `"ed25519:<base64>"`. Sanity-check locally:
 
    ```bash
    go run ./cmd/skills-check manifest verify \
      --path /tmp/release-staging \
      --public-key keys/secure-code-release-2026.pub
    ```
+
+4. **Re-upload the signed manifest to the same draft.**
+
+   ```bash
+   gh release upload v2026.05.12 /tmp/release-staging/manifest.json --clobber
+   ```
+
+5. **Run the publish-verification workflow.** From the GitHub Actions UI,
+   trigger **Sign & publish** (`.github/workflows/sign-and-publish.yml`)
+   with the release tag (e.g. `v2026.05.12`). The workflow:
+
+   - Asserts the release for the supplied tag exists and is still a draft.
+   - Downloads every asset attached to the draft.
+   - Rejects the publish if `manifest.json.signature == "TBD"` (i.e. the
+     offline-signing step was skipped or the wrong file was uploaded).
+   - Extracts `skills-library-data.tar.gz` and re-runs
+     `skills-check manifest verify --path .` against the extracted
+     payload + the re-uploaded signed manifest. This re-checks both
+     the Ed25519 signature (against the public key embedded in a
+     freshly-built `skills-check` binary) **and** every per-file
+     SHA-256 inside the tarball.
+   - Cross-checks the tarball SHA-256 against the line in
+     `SHA256SUMS.txt`.
+   - Only if every step passes does it call
+     `gh release edit <tag> --draft=false`, flipping the release public.
+
+   At this point the release is consumable by `skills-check update`
+   and the signature can be re-verified by anyone via
+   `skills-check manifest verify --path .`.
 
 ## Key Rotation
 

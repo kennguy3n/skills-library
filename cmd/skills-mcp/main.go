@@ -45,7 +45,8 @@ import (
 
 func main() {
 	libraryPath := flag.String("path", "", "path to the skills-library checkout (default: $SKILLS_LIBRARY_PATH or dir of the binary)")
-	allowedRoots := flag.String("allowed-roots", "", "comma-separated absolute directories that scan_secrets is permitted to read from. When unset, ScanSecrets accepts any path the process can stat (sensitive system directories such as ~/.ssh, ~/.aws, ~/.gnupg and /etc/shadow are always denied regardless).")
+	allowedRoots := flag.String("allowed-roots", "", "comma-separated absolute directories that file-reading tools (scan_secrets, scan_dependencies, scan_github_actions, scan_dockerfile, policy_check) are permitted to read from. When unset, the server defaults to the current working directory as the only allowed root. Pass --allow-any-path to opt out of the default and accept any path the process can stat (sensitive system directories such as ~/.ssh, ~/.aws, ~/.gnupg and /etc/shadow are always denied regardless).")
+	allowAnyPath := flag.Bool("allow-any-path", false, "disable the default-to-cwd allow-list and accept any absolute path the process can stat. Intended for local debugging only; production callers should pass an explicit --allowed-roots list. The sensitive-directory deny-list still applies.")
 	flag.Parse()
 
 	root, err := resolveLibraryRoot(*libraryPath)
@@ -58,10 +59,36 @@ func main() {
 		fmt.Fprintln(os.Stderr, "error:", err)
 		os.Exit(1)
 	}
-	if *allowedRoots != "" {
+	// Allow-list resolution, in order of precedence:
+	//   1. --allowed-roots <dirs>   -> use exactly those.
+	//   2. --allow-any-path         -> no restriction (legacy behaviour).
+	//   3. (neither)                -> restrict to the current working directory.
+	// The CWD default keeps the server fail-safe: a caller who simply
+	// invokes `skills-mcp` from a project root cannot ask the server
+	// to read /etc/<anything>, files under another user's home, or
+	// arbitrary paths on the host. The --allow-any-path escape hatch
+	// is preserved so existing local-debug invocations keep working.
+	switch {
+	case *allowedRoots != "":
+		if *allowAnyPath {
+			fmt.Fprintln(os.Stderr, "error: --allowed-roots and --allow-any-path are mutually exclusive")
+			os.Exit(1)
+		}
 		roots := strings.Split(*allowedRoots, ",")
 		if err := srv.SetAllowedRoots(roots); err != nil {
 			fmt.Fprintln(os.Stderr, "error:", err)
+			os.Exit(1)
+		}
+	case *allowAnyPath:
+		// Leave the allow-list empty (no restriction).
+	default:
+		cwd, err := os.Getwd()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "error: resolve cwd for default allow-list:", err)
+			os.Exit(1)
+		}
+		if err := srv.SetAllowedRoots([]string{cwd}); err != nil {
+			fmt.Fprintln(os.Stderr, "error: default allow-list:", err)
 			os.Exit(1)
 		}
 	}

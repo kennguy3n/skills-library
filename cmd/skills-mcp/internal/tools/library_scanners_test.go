@@ -72,7 +72,10 @@ func TestScanDependenciesFlagsMaliciousNPM(t *testing.T) {
 
 func TestScanDependenciesRejectsUnknownLockfile(t *testing.T) {
 	lib := newLibrary(t)
-	path := writeTempFile(t, "Gemfile.lock", "anything")
+	// composer.lock is a real PHP lockfile that no parser
+	// currently handles, so it is the sentinel for the
+	// "unrecognised format" branch.
+	path := writeTempFile(t, "composer.lock", "anything")
 	if _, err := lib.ScanDependencies(path); err == nil {
 		t.Fatalf("expected error for unknown lockfile, got nil")
 	}
@@ -233,6 +236,71 @@ USER 10001
 `)
 	if _, err := lib.PolicyCheck(df, "nope"); err == nil {
 		t.Fatalf("expected unknown-severity error, got nil")
+	}
+}
+
+// TestPolicyCheckDispatchesNewEcosystems exercises the policy_check
+// dispatcher for the Maven / NuGet / Ruby lockfile shapes added
+// alongside this test. It does NOT assert findings (these fixtures
+// are deliberately benign); it only confirms the new file types
+// are routed to scan_dependencies instead of returning the
+// "no scanner is configured" error.
+func TestPolicyCheckDispatchesNewEcosystems(t *testing.T) {
+	lib := newLibrary(t)
+	cases := []struct {
+		name string
+		body string
+	}{
+		{
+			name: "pom.xml",
+			body: `<?xml version="1.0"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <dependencies>
+    <dependency>
+      <groupId>org.example</groupId>
+      <artifactId>benign</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+  </dependencies>
+</project>
+`,
+		},
+		{
+			name: "gradle.lockfile",
+			body: "org.example:benign:1.0.0=runtimeClasspath\n",
+		},
+		{
+			name: "packages.lock.json",
+			body: `{"version":1,"dependencies":{"net8.0":{"Benign":{"type":"Direct","resolved":"1.0.0"}}}}`,
+		},
+		{
+			name: "App.csproj",
+			body: `<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><PackageReference Include="Benign" Version="1.0.0" /></ItemGroup></Project>`,
+		},
+		{
+			name: "Gemfile.lock",
+			body: `GEM
+  remote: https://rubygems.org/
+  specs:
+    benign (1.0.0)
+
+DEPENDENCIES
+  benign
+`,
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			p := writeTempFile(t, tc.name, tc.body)
+			res, err := lib.PolicyCheck(p, "high")
+			if err != nil {
+				t.Fatalf("PolicyCheck(%s): %v", tc.name, err)
+			}
+			if res.Scan != "scan_dependencies" {
+				t.Errorf("expected scan=scan_dependencies for %s, got %q", tc.name, res.Scan)
+			}
+		})
 	}
 }
 

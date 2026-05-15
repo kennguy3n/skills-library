@@ -409,9 +409,15 @@ The server registers fifteen tools on `tools/list`:
   whether the loaded library is the canonical signed release.
 - `scan_dependencies(file_path, format?)` — parse a project lockfile
   (`package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `requirements.txt`,
-  `Pipfile.lock`, `poetry.lock`, `go.sum`, `Cargo.lock`) and report every
-  dependency that matches the malicious-packages, typosquat, or CVE
-  databases. Supports the `sarif` output format.
+  `Pipfile.lock`, `poetry.lock`, `go.sum`, `Cargo.lock`, `pom.xml`,
+  `gradle.lockfile` / `build.gradle.lockfile`, `packages.lock.json`,
+  `*.csproj` / `*.fsproj` / `*.vbproj`, and `Gemfile.lock`) and report
+  every dependency that matches the malicious-packages, typosquat, or
+  CVE databases. Parsers exist for all nine vulnerability-database
+  ecosystems (npm, PyPI, crates, Go, RubyGems, Maven, NuGet — plus
+  GitHub Actions and Docker, which are surfaced via
+  `scan_github_actions` and `scan_dockerfile` respectively). Supports
+  the `sarif` output format.
 - `scan_github_actions(file_path, format?)` — run the
   `skills/cicd-security/checklists/github_actions_hardening.yaml` rules
   against a workflow file: unpinned actions, missing `permissions:` defaults,

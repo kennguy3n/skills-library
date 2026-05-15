@@ -54,6 +54,11 @@ var ErrUnknownLockfile = errors.New("parsers: unrecognised lockfile format")
 //   - poetry.lock                                -> pypi
 //   - go.sum                                     -> go
 //   - Cargo.lock                                 -> crates
+//   - pom.xml                                    -> maven
+//   - gradle.lockfile, build.gradle.lockfile     -> maven
+//   - packages.lock.json                         -> nuget
+//   - *.csproj, *.fsproj, *.vbproj               -> nuget
+//   - Gemfile.lock                               -> rubygems
 //
 // Any other base name returns ErrUnknownLockfile.
 func Parse(path string, body []byte) ([]Dependency, error) {
@@ -73,6 +78,20 @@ func Parse(path string, body []byte) ([]Dependency, error) {
 		return parseGoSum(body)
 	case base == "Cargo.lock":
 		return parseCargoLock(body)
+	case base == "pom.xml":
+		return parsePomXML(body)
+	case base == "gradle.lockfile", base == "build.gradle.lockfile":
+		return parseGradleLockfile(body)
+	case base == "packages.lock.json":
+		return parseNuGetPackagesLock(body)
+	case base == "Gemfile.lock":
+		return parseGemfileLock(body)
+	}
+	lower := strings.ToLower(base)
+	if strings.HasSuffix(lower, ".csproj") ||
+		strings.HasSuffix(lower, ".fsproj") ||
+		strings.HasSuffix(lower, ".vbproj") {
+		return parseCSProj(body)
 	}
 	if strings.HasSuffix(base, ".txt") && (base == "requirements.txt" || strings.HasPrefix(base, "requirements")) {
 		return parseRequirementsTxt(body)

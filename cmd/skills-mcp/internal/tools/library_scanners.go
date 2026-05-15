@@ -662,6 +662,10 @@ type PolicyCheckFinding struct {
 //	package-lock.json / yarn.lock / pnpm-lock.yaml -> scan_dependencies
 //	Pipfile.lock / poetry.lock / requirements*.txt -> scan_dependencies
 //	go.sum / Cargo.lock                            -> scan_dependencies
+//	pom.xml / *.gradle.lockfile                    -> scan_dependencies
+//	packages.lock.json / *.csproj / *.fsproj /
+//	  *.vbproj                                     -> scan_dependencies
+//	Gemfile.lock                                   -> scan_dependencies
 //	*.yml / *.yaml under .github/workflows/        -> scan_github_actions
 //	Dockerfile / *.dockerfile                      -> scan_dockerfile
 //
@@ -760,7 +764,9 @@ func pickScan(filePath string) (string, error) {
 	base := filepath.Base(filePath)
 	switch base {
 	case "package-lock.json", "npm-shrinkwrap.json", "yarn.lock", "pnpm-lock.yaml",
-		"Pipfile.lock", "poetry.lock", "go.sum", "Cargo.lock":
+		"Pipfile.lock", "poetry.lock", "go.sum", "Cargo.lock",
+		"pom.xml", "gradle.lockfile", "build.gradle.lockfile",
+		"packages.lock.json", "Gemfile.lock":
 		return "scan_dependencies", nil
 	case "Dockerfile":
 		return "scan_dockerfile", nil
@@ -770,6 +776,11 @@ func pickScan(filePath string) (string, error) {
 		return "scan_dockerfile", nil
 	}
 	if strings.HasPrefix(lower, "requirements") && strings.HasSuffix(lower, ".txt") {
+		return "scan_dependencies", nil
+	}
+	if strings.HasSuffix(lower, ".csproj") ||
+		strings.HasSuffix(lower, ".fsproj") ||
+		strings.HasSuffix(lower, ".vbproj") {
 		return "scan_dependencies", nil
 	}
 	if strings.HasSuffix(lower, ".yml") || strings.HasSuffix(lower, ".yaml") {

@@ -36,7 +36,11 @@ func assertContains(t *testing.T, deps []Dependency, want ...string) {
 }
 
 func TestParseRejectsUnknownLockfile(t *testing.T) {
-	_, err := Parse("Gemfile.lock", []byte("anything"))
+	// Pick a base name that no parser claims; "composer.lock" is
+	// a real PHP lockfile but the library does not (yet) ship a
+	// parser for it, so it is a good sentinel for the "no
+	// dispatcher" branch.
+	_, err := Parse("composer.lock", []byte("anything"))
 	if !errors.Is(err, ErrUnknownLockfile) {
 		t.Fatalf("expected ErrUnknownLockfile, got %v", err)
 	}

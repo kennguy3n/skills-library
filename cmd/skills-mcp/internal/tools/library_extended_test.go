@@ -438,6 +438,53 @@ func TestSetAllowedRootsRejectsAllInvalidInput(t *testing.T) {
 	}
 }
 
+// TestScanSecretsDefaultsToProjectRoot covers the skills-mcp main
+// binary's default-to-cwd allow-list behaviour at the library
+// level: when the caller has explicitly scoped the allow-list to a
+// single directory (mirroring what `skills-mcp` does at startup
+// when neither --allowed-roots nor --allow-any-path is supplied),
+// a path outside that directory must be rejected even when no
+// explicit allow-list was ever provided by the end-user.
+//
+// This is a regression guard for the security posture promised in
+// `cmd/skills-mcp/main.go`: by default the server can only read
+// files under the project the operator launched it from. Without
+// this test, a future refactor of validateScanPath that
+// accidentally collapses the "default cwd root" case into the "no
+// restriction" branch would silently re-open the door to /etc/<x>
+// and ~/<y> reads.
+func TestScanSecretsDefaultsToProjectRoot(t *testing.T) {
+	lib := newLibrary(t)
+	// Simulate `skills-mcp` started from `project`: the binary
+	// installs the cwd as the only allow-list entry.
+	project := t.TempDir()
+	if err := lib.SetAllowedRoots([]string{project}); err != nil {
+		t.Fatalf("SetAllowedRoots(project): %v", err)
+	}
+	inside := filepath.Join(project, "code.txt")
+	if err := os.WriteFile(inside, []byte("AKIA1234567890ABCDEF\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := lib.ScanSecrets("", inside); err != nil {
+		t.Errorf("path inside the default project root should be accepted: %v", err)
+	}
+	// A path under a DIFFERENT temp dir (the operator's "other"
+	// scratch area, or anything the launching user happens to
+	// have read access to) must be denied.
+	other := t.TempDir()
+	outside := filepath.Join(other, "leak.txt")
+	if err := os.WriteFile(outside, []byte("AKIA1234567890ABCDEF\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	_, err := lib.ScanSecrets("", outside)
+	if err == nil {
+		t.Fatalf("path outside the default project root should be denied")
+	}
+	if !strings.Contains(err.Error(), "allowed root") {
+		t.Errorf("expected allow-list rejection error, got: %v", err)
+	}
+}
+
 // TestScanSecretsSymlinkBypassDenied covers the regression surfaced
 // in PR #17 review: a symlink planted inside an allowed root that
 // targets a file OUTSIDE every allowed root must be rejected by
