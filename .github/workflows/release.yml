@@ -37,10 +37,10 @@ jobs:
             goarch: amd64
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: "1.22"
           cache: true
@@ -75,7 +75,7 @@ jobs:
             ./cmd/skills-check
 
       - name: Upload unsigned binary
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: raw-${{ matrix.goos }}-${{ matrix.goarch }}
           path: dist-build/
@@ -93,7 +93,7 @@ jobs:
         goarch: [amd64, arm64]
     steps:
       - name: Download unsigned binary
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: raw-linux-${{ matrix.goarch }}
           path: dist-build/
@@ -107,7 +107,7 @@ jobs:
             > checksums-linux-${{ matrix.goarch }}.txt
 
       - name: Upload final binary artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: skills-check-linux-${{ matrix.goarch }}
           path: dist-build/
@@ -129,7 +129,7 @@ jobs:
         goarch: [amd64, arm64]
     steps:
       - name: Download unsigned binary
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: raw-darwin-${{ matrix.goarch }}
           path: dist-build/
@@ -174,7 +174,7 @@ jobs:
             > checksums-darwin-${{ matrix.goarch }}.txt
 
       - name: Upload final binary artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: skills-check-darwin-${{ matrix.goarch }}
           path: dist-build/
@@ -191,7 +191,7 @@ jobs:
       WINDOWS_CERT_PFX: ${{ secrets.WINDOWS_CERT_PFX }}
     steps:
       - name: Download unsigned binary
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: raw-windows-amd64
           path: dist-build/
@@ -233,7 +233,7 @@ jobs:
           [System.IO.File]::WriteAllText("checksums-windows-amd64.txt", $line, (New-Object System.Text.UTF8Encoding $false))
 
       - name: Upload final binary artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: skills-check-windows-amd64
           path: dist-build/
@@ -244,10 +244,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: "1.22"
           cache: true
@@ -277,7 +277,7 @@ jobs:
           fi
 
       - name: Download every binary artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: artifacts/
           # Only pull the signed/finalized artifacts; the `raw-*`

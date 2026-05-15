@@ -2114,8 +2114,8 @@
     },
     {
       "path": "vulnerabilities/osv/crates/index.json",
-      "sha256": "dd2eec699aa5e50007f043fd24c7580c44ca531c3914b0c41840eb3603b4750b",
-      "size": 8952,
+      "sha256": "ad3a758574778e525756c00baa789555fc1ce6d4ce91bc157d247ceb1568ede6",
+      "size": 9666,
       "action": "unchanged"
     },
     {
@@ -2300,8 +2300,8 @@
     },
     {
       "path": "vulnerabilities/osv/go/index.json",
-      "sha256": "5142781eca0bc3851208be7f0800ef9adf8295dd80adb21977b3bccd6bd29b46",
-      "size": 16615,
+      "sha256": "b8e233897a03b10fbe3dd383c7f78a81066ce1d0e79abc44e3123555030ecc7f",
+      "size": 17449,
       "action": "unchanged"
     },
     {
@@ -2486,8 +2486,8 @@
     },
     {
       "path": "vulnerabilities/osv/maven/index.json",
-      "sha256": "b49847a13de85abb34af09b2698a04d416bb841b71598329211adf70d887757e",
-      "size": 17031,
+      "sha256": "4b23fbe3d2d6c373cbe02067a068493d3ebaaa56ea13a830469b7c2dea427c7b",
+      "size": 18878,
       "action": "unchanged"
     },
     {
@@ -2672,8 +2672,8 @@
     },
     {
       "path": "vulnerabilities/osv/npm/index.json",
-      "sha256": "aeea147c0d562c6d96e267b3d8ca66d78fb8d3137ed80f1c7848d1f157c11e28",
-      "size": 6627,
+      "sha256": "eb13d7e74ca90ccc3da3f4061c47c08ddd52fde9e5936fc118464db88155b8d4",
+      "size": 6657,
       "action": "unchanged"
     },
     {
@@ -2858,8 +2858,8 @@
     },
     {
       "path": "vulnerabilities/osv/nuget/index.json",
-      "sha256": "11808ab5d2dc89174294dc457b013b16c20d0ce7234fdfa9d5822d3ced8fedaa",
-      "size": 72859,
+      "sha256": "f201aee1c3f35f90952c4aff923c054d9c4ee5b82042c7f553f1b1cfcb53bdb3",
+      "size": 78625,
       "action": "unchanged"
     },
     {
@@ -3044,8 +3044,8 @@
     },
     {
       "path": "vulnerabilities/osv/pypi/index.json",
-      "sha256": "85cc29625567f9a94abb5fc31a5eec2144c114874ecf016e45db88d0b4d142df",
-      "size": 11586,
+      "sha256": "d484bdac163d24a4bbc08cb79dc8ef8112c5ad8e3322679f46991c91f060cc9f",
+      "size": 12170,
       "action": "unchanged"
     },
     {
@@ -3230,8 +3230,8 @@
     },
     {
       "path": "vulnerabilities/osv/rubygems/index.json",
-      "sha256": "5a009d0aa222660cd437340222db57f744a689111235b4d42d97252650c525c9",
-      "size": 8639,
+      "sha256": "06903fa42611b322ae6dc686709997bc37e59eaefdeac4595519698f20259c8b",
+      "size": 9308,
       "action": "unchanged"
     },
     {

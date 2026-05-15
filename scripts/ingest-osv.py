@@ -122,11 +122,129 @@ def extract_subset(zip_path: Path, dest_dir: Path, target: int, verbose: bool) -
         return written
 
 
+# CVSS_V3_QUALITATIVE maps the GitHub-style severity band (in the
+# OSV record's `database_specific.severity`) onto the four-bucket
+# scale the Go-side scanner uses. GitHub publishes "MODERATE" for
+# medium, but some adjacent feeds (incl. our own writers) emit
+# "MEDIUM"; accept both.
+_SEVERITY_BANDS = {
+    "CRITICAL": "critical",
+    "HIGH": "high",
+    "MODERATE": "medium",
+    "MEDIUM": "medium",
+    "LOW": "low",
+}
+
+# CVSS v3 base-score qualitative ranges (NVD CVSS v3.1 spec).
+_CVSS_V3_THRESHOLDS = (
+    (9.0, "critical"),
+    (7.0, "high"),
+    (4.0, "medium"),
+    (0.1, "low"),
+)
+
+
+def _bucket_for_score(score: float) -> str:
+    for floor, label in _CVSS_V3_THRESHOLDS:
+        if score >= floor:
+            return label
+    return ""
+
+
+def _score_from_cvss_v3(vector: str) -> float:
+    """Compute the CVSS v3.0/3.1 base score for the supplied vector.
+
+    Mirrors the Go implementation in cmd/skills-mcp/internal/tools/
+    osv_severity.go; kept in Python so the index emitted by
+    ingest-osv.py already carries the bucketed severity and the
+    Go-side fallback is the rare case.
+    """
+    metrics = {}
+    for seg in vector.split("/"):
+        seg = seg.strip()
+        if not seg or ":" not in seg:
+            continue
+        k, v = seg.split(":", 1)
+        k = k.strip().upper()
+        if k == "CVSS":
+            continue
+        metrics[k] = v.strip().upper()
+    av = {"N": 0.85, "A": 0.62, "L": 0.55, "P": 0.2}.get(metrics.get("AV", ""))
+    ac = {"L": 0.77, "H": 0.44}.get(metrics.get("AC", ""))
+    ui = {"N": 0.85, "R": 0.62}.get(metrics.get("UI", ""))
+    scope = metrics.get("S")
+    if av is None or ac is None or ui is None or scope not in ("U", "C"):
+        return 0.0
+    pr_table = (
+        {"N": 0.85, "L": 0.62, "H": 0.27}
+        if scope == "U"
+        else {"N": 0.85, "L": 0.68, "H": 0.50}
+    )
+    pr = pr_table.get(metrics.get("PR", ""))
+    impacts = {
+        c: {"N": 0.0, "L": 0.22, "H": 0.56}.get(metrics.get(c, ""))
+        for c in ("C", "I", "A")
+    }
+    if pr is None or any(v is None for v in impacts.values()):
+        return 0.0
+    iss = 1 - (1 - impacts["C"]) * (1 - impacts["I"]) * (1 - impacts["A"])
+    if scope == "U":
+        impact = 6.42 * iss
+    else:
+        impact = 7.52 * (iss - 0.029) - 3.25 * (iss - 0.02) ** 15
+    if impact <= 0:
+        return 0.0
+    exploit = 8.22 * av * ac * pr * ui
+    if scope == "U":
+        base = min(impact + exploit, 10.0)
+    else:
+        base = min(1.08 * (impact + exploit), 10.0)
+    # CVSS v3 roundup: ceil to one decimal place.
+    import math
+
+    return math.ceil(base * 10) / 10
+
+
+def _severity_for_record(data: dict) -> str:
+    """Return the four-bucket severity for one OSV record, or "".
+
+    Mirrors resolveOSVSeverity in osv_severity.go: prefer the
+    GitHub-style database_specific.severity band, otherwise compute
+    the maximum CVSS v3.x base score across the structured severity
+    array. CVSS v2 / v4 vectors are left to the Go fallback (their
+    formulas are kept in one place there).
+    """
+    band = ((data.get("database_specific") or {}).get("severity") or "").strip().upper()
+    if band in _SEVERITY_BANDS:
+        return _SEVERITY_BANDS[band]
+    best = 0.0
+    for entry in data.get("severity") or []:
+        typ = (entry.get("type") or "").upper()
+        score = (entry.get("score") or "").strip()
+        if not score:
+            continue
+        # The score field may be a plain decimal (e.g. "7.5") or a
+        # CVSS vector string. Try a numeric parse first.
+        try:
+            numeric = float(score)
+        except ValueError:
+            numeric = 0.0
+            if typ.startswith("CVSS_V3"):
+                numeric = _score_from_cvss_v3(score)
+        if numeric > best:
+            best = numeric
+    return _bucket_for_score(best)
+
+
 def write_index(dest_dir: Path) -> None:
     """Build an index.json listing every cached advisory.
 
     The MCP-side loader uses this so it can map a package name to its
-    advisories in O(1) instead of scanning every file.
+    advisories in O(1) instead of scanning every file. We also embed
+    a pre-computed `severity` field per index entry so the Go scanner
+    can surface CVSS-derived severity without re-parsing each record
+    on every lookup; the Go side still falls back to lazy on-disk
+    parsing when an older index pre-dates this field.
     """
     now = dt.datetime.now(dt.timezone.utc)
     index: dict = {
@@ -142,6 +260,7 @@ def write_index(dest_dir: Path) -> None:
             data = json.loads(path.read_text())
         except Exception:
             continue
+        severity = _severity_for_record(data)
         affected = data.get("affected") or []
         for aff in affected:
             pkg = aff.get("package") or {}
@@ -154,6 +273,8 @@ def write_index(dest_dir: Path) -> None:
                 "summary": data.get("summary", ""),
                 "aliases": data.get("aliases", []),
             }
+            if severity:
+                entry["severity"] = severity
             index["by_package"].setdefault(name.lower(), []).append(entry)
     (dest_dir / "index.json").write_text(json.dumps(index, indent=2) + "\n")
 

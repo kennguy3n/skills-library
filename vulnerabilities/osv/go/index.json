@@ -1,6 +1,7 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-05-14T16:13:02Z",
+  "last_updated": "2026-05-15",
+  "generated_at": "2026-05-15T04:37:05Z",
   "by_package": {
     "github.com/gardener/gardener-extension-provider-aws": [
       {
@@ -10,7 +11,8 @@
         "aliases": [
           "CVE-2025-59823",
           "GO-2025-3981"
-        ]
+        ],
+        "severity": "critical"
       }
     ],
     "github.com/gardener/gardener-extension-provider-gcp": [
@@ -21,7 +23,8 @@
         "aliases": [
           "CVE-2025-59823",
           "GO-2025-3981"
-        ]
+        ],
+        "severity": "critical"
       }
     ],
     "github.com/gardener/gardener-extension-provider-azure": [
@@ -32,7 +35,8 @@
         "aliases": [
           "CVE-2025-59823",
           "GO-2025-3981"
-        ]
+        ],
+        "severity": "critical"
       }
     ],
     "github.com/gardener/gardener-extension-provider-openstack": [
@@ -43,7 +47,8 @@
         "aliases": [
           "CVE-2025-59823",
           "GO-2025-3981"
-        ]
+        ],
+        "severity": "critical"
       }
     ],
     "github.com/compose-spec/compose-go/v2": [
@@ -54,7 +59,8 @@
         "aliases": [
           "CVE-2024-10846",
           "GO-2025-3412"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "code.gitea.io/gitea": [
@@ -65,7 +71,8 @@
         "aliases": [
           "CVE-2024-6886",
           "GO-2024-3056"
-        ]
+        ],
+        "severity": "critical"
       }
     ],
     "gogs.io/gogs": [
@@ -76,7 +83,8 @@
         "aliases": [
           "CVE-2019-14544",
           "GO-2022-0797"
-        ]
+        ],
+        "severity": "critical"
       }
     ],
     "github.com/edgelesssys/constellation/v2": [
@@ -86,7 +94,8 @@
         "summary": "Constellation allows Emergency shell access during initramfs boot phase",
         "aliases": [
           "GO-2023-1622"
-        ]
+        ],
+        "severity": "high"
       }
     ],
     "istio.io/istio": [
@@ -96,7 +105,8 @@
         "summary": "Unauthenticated control plane denial of service attack in Istio",
         "aliases": [
           "CVE-2022-23635"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "GHSA-856q-xv3c-7f2f",
@@ -104,7 +114,8 @@
         "summary": "Unauthenticated control plane denial of service attack in Istio",
         "aliases": [
           "CVE-2022-23635"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "GHSA-856q-xv3c-7f2f",
@@ -112,7 +123,8 @@
         "summary": "Unauthenticated control plane denial of service attack in Istio",
         "aliases": [
           "CVE-2022-23635"
-        ]
+        ],
+        "severity": "high"
       }
     ],
     "github.com/nats-io/nats-server/v2": [
@@ -124,7 +136,8 @@
           "BIT-nats-2026-33222",
           "CVE-2026-33222",
           "GO-2026-4832"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-9983-vrx2-fg9c",
@@ -134,7 +147,8 @@
           "BIT-nats-2026-33222",
           "CVE-2026-33222",
           "GO-2026-4832"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "github.com/nats-io/nats-server": [
@@ -146,7 +160,8 @@
           "BIT-nats-2026-33222",
           "CVE-2026-33222",
           "GO-2026-4832"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "github.com/expr-lang/expr": [
@@ -157,7 +172,8 @@
         "aliases": [
           "CVE-2025-68156",
           "GO-2025-4245"
-        ]
+        ],
+        "severity": "high"
       }
     ],
     "github.com/mattermost/mattermost-server": [
@@ -168,7 +184,8 @@
         "aliases": [
           "CVE-2017-18906",
           "GO-2026-4477"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "GHSA-fpcr-4rr5-hpcp",
@@ -177,7 +194,8 @@
         "aliases": [
           "CVE-2017-18906",
           "GO-2026-4477"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "GO-2025-4190",
@@ -197,7 +215,8 @@
         "aliases": [
           "CVE-2025-14443",
           "GO-2026-4578"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "GHSA-gxvv-45f6-3ch8",
@@ -206,7 +225,8 @@
         "aliases": [
           "CVE-2025-14443",
           "GO-2026-4578"
-        ]
+        ],
+        "severity": "high"
       }
     ],
     "github.com/ellanetworks/core": [
@@ -217,7 +237,8 @@
         "aliases": [
           "CVE-2026-32320",
           "GO-2026-4691"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "github.com/ethereum/go-ethereum": [
@@ -228,7 +249,8 @@
         "aliases": [
           "CVE-2026-26315",
           "GO-2026-4511"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "github.com/redhat-developer/gitops-operator": [
@@ -239,7 +261,8 @@
         "aliases": [
           "CVE-2025-13888",
           "GO-2025-4242"
-        ]
+        ],
+        "severity": "critical"
       }
     ],
     "knative.dev/serving": [
@@ -250,7 +273,8 @@
         "aliases": [
           "CVE-2023-48713",
           "GO-2023-2355"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "github.com/traefik/traefik/v3": [
@@ -260,7 +284,8 @@
         "summary": "ACME DNS: Azure Identity Libraries Elevation of Privilege Vulnerability",
         "aliases": [
           "GO-2024-2941"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "github.com/traefik/traefik/v2": [
@@ -270,7 +295,8 @@
         "summary": "ACME DNS: Azure Identity Libraries Elevation of Privilege Vulnerability",
         "aliases": [
           "GO-2024-2941"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "github.com/cosmos/cosmos-sdk": [
@@ -281,7 +307,8 @@
         "aliases": [
           "GHSA-j2cr-jc39-wpx5",
           "GO-2023-1861"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-w44m-8mv2-v78h",
@@ -290,7 +317,8 @@
         "aliases": [
           "GHSA-j2cr-jc39-wpx5",
           "GO-2023-1861"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "github.com/argoproj/argo-workflows/v4": [
@@ -301,7 +329,8 @@
         "aliases": [
           "BIT-argo-workflows-2026-42297",
           "CVE-2026-42297"
-        ]
+        ],
+        "severity": "high"
       }
     ],
     "stdlib": [
@@ -539,6 +568,5 @@
         ]
       }
     ]
-  },
-  "last_updated": "2026-05-14"
+  }
 }

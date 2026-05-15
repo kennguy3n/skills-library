@@ -1,6 +1,7 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-05-14T16:13:02Z",
+  "last_updated": "2026-05-15",
+  "generated_at": "2026-05-15T04:37:05Z",
   "by_package": {
     "snowflake.data": [
       {
@@ -9,7 +10,8 @@
         "summary": "Snowflake Connector .Net Command Injection",
         "aliases": [
           "CVE-2023-34230"
-        ]
+        ],
+        "severity": "high"
       }
     ],
     "btcpayserver.client": [
@@ -17,7 +19,8 @@
         "id": "GHSA-33gv-rvgq-gpxp",
         "file": "GHSA-33gv-rvgq-gpxp.json",
         "summary": "Withdrawn Advisory: HTML injections in BTCPayServer",
-        "aliases": []
+        "aliases": [],
+        "severity": "high"
       }
     ],
     "cefsharp.common": [
@@ -25,7 +28,8 @@
         "id": "GHSA-4c29-gfrp-g6x9",
         "file": "GHSA-4c29-gfrp-g6x9.json",
         "summary": "CefSharp affected by libvpx's heap buffer overflow in vp8 encoding",
-        "aliases": []
+        "aliases": [],
+        "severity": "high"
       }
     ],
     "cefsharp.common.netcore": [
@@ -33,7 +37,8 @@
         "id": "GHSA-4c29-gfrp-g6x9",
         "file": "GHSA-4c29-gfrp-g6x9.json",
         "summary": "CefSharp affected by libvpx's heap buffer overflow in vp8 encoding",
-        "aliases": []
+        "aliases": [],
+        "severity": "high"
       }
     ],
     "microsoft.chakracore": [
@@ -43,7 +48,8 @@
         "summary": "ChakraCore RCE Vulnerability",
         "aliases": [
           "CVE-2018-0834"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "GHSA-6mw4-phmc-x477",
@@ -51,7 +57,8 @@
         "summary": "ChakraCore RCE Vulnerability",
         "aliases": [
           "CVE-2017-11807"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "GHSA-hrf4-ww4w-6rv6",
@@ -59,7 +66,8 @@
         "summary": "ChakraCore RCE Vulnerability",
         "aliases": [
           "CVE-2017-11797"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "GHSA-qxmj-3c5h-546c",
@@ -67,7 +75,8 @@
         "summary": "ChakraCore Memory Corruption Vulnerability",
         "aliases": [
           "CVE-2019-0861"
-        ]
+        ],
+        "severity": "high"
       }
     ],
     "messagepack": [
@@ -77,7 +86,8 @@
         "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
         "aliases": [
           "CVE-2020-5234"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-7q36-4xx7-xcxf",
@@ -85,7 +95,8 @@
         "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
         "aliases": [
           "CVE-2020-5234"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "messagepack.immutablecollection": [
@@ -95,7 +106,8 @@
         "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
         "aliases": [
           "CVE-2020-5234"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-7q36-4xx7-xcxf",
@@ -103,7 +115,8 @@
         "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
         "aliases": [
           "CVE-2020-5234"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "messagepack.reactiveproperty": [
@@ -113,7 +126,8 @@
         "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
         "aliases": [
           "CVE-2020-5234"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-7q36-4xx7-xcxf",
@@ -121,7 +135,8 @@
         "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
         "aliases": [
           "CVE-2020-5234"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "messagepack.unityshims": [
@@ -131,7 +146,8 @@
         "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
         "aliases": [
           "CVE-2020-5234"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-7q36-4xx7-xcxf",
@@ -139,7 +155,8 @@
         "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
         "aliases": [
           "CVE-2020-5234"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "messagepack.unity": [
@@ -149,7 +166,8 @@
         "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
         "aliases": [
           "CVE-2020-5234"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-7q36-4xx7-xcxf",
@@ -157,7 +175,8 @@
         "summary": "Untrusted data can lead to DoS attack due to hash collisions and stack overflow in MessagePack",
         "aliases": [
           "CVE-2020-5234"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "yarp.reverseproxy": [
@@ -167,7 +186,8 @@
         "summary": "YARP Denial of Service Vulnerability",
         "aliases": [
           "CVE-2022-26924"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "GHSA-8xc6-g8xw-h2c4",
@@ -175,7 +195,8 @@
         "summary": "YARP Denial of Service Vulnerability",
         "aliases": [
           "CVE-2022-26924"
-        ]
+        ],
+        "severity": "high"
       }
     ],
     "microsoft.netcore.app.runtime.linux-arm": [
@@ -188,7 +209,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -199,7 +221,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -210,7 +233,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.linux-arm64": [
@@ -223,7 +247,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -234,7 +259,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -245,7 +271,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.linux-musl-arm64": [
@@ -258,7 +285,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -269,7 +297,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -280,7 +309,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.linux-musl-x64": [
@@ -293,7 +323,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -304,7 +335,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -315,7 +347,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.linux-x64": [
@@ -328,7 +361,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -339,7 +373,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -350,7 +385,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.osx-x64": [
@@ -363,7 +399,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -374,7 +411,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -385,7 +423,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.win-arm": [
@@ -398,7 +437,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -409,7 +449,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -420,7 +461,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.win-arm64": [
@@ -433,7 +475,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -444,7 +487,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -455,7 +499,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.win-x64": [
@@ -468,7 +513,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -479,7 +525,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -490,7 +537,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.win-x86": [
@@ -503,7 +551,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -514,7 +563,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -525,7 +575,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.linux-musl-arm": [
@@ -538,7 +589,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -549,7 +601,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.linux-arm": [
@@ -562,7 +615,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -573,7 +627,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.linux-arm64": [
@@ -586,7 +641,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -597,7 +653,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.linux-musl-x64": [
@@ -610,7 +667,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -621,7 +679,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.linux-x64": [
@@ -634,7 +693,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -645,7 +705,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.llvm.aot.linux-arm64": [
@@ -658,7 +719,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -669,7 +731,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.llvm.aot.linux-x64": [
@@ -682,7 +745,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -693,7 +757,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.llvm.aot.osx-x64": [
@@ -706,7 +771,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -717,7 +783,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.llvm.linux-arm64": [
@@ -730,7 +797,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -741,7 +809,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.llvm.linux-x64": [
@@ -754,7 +823,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -765,7 +835,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.llvm.osx-x64": [
@@ -778,7 +849,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -789,7 +861,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.osx-x64": [
@@ -802,7 +875,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-c6w8-7mp3-34j9",
@@ -813,7 +887,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.linux-x64.cross.android-arm": [
@@ -826,7 +901,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.linux-x64.cross.android-arm64": [
@@ -839,7 +915,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.linux-x64.cross.android-x64": [
@@ -852,7 +929,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.linux-x64.cross.android-x86": [
@@ -865,7 +943,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.linux-x64.cross.browser-wasm": [
@@ -878,7 +957,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.osx-x64.cross.android-arm": [
@@ -891,7 +971,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.osx-x64.cross.android-arm64": [
@@ -904,7 +985,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.osx-x64.cross.android-x64": [
@@ -917,7 +999,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.osx-x64.cross.android-x86": [
@@ -930,7 +1013,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.osx-x64.cross.browser-wasm": [
@@ -943,7 +1027,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.osx-x64.cross.ios-arm": [
@@ -956,7 +1041,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.osx-x64.cross.ios-arm64": [
@@ -969,7 +1055,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.osx-x64.cross.iossimulator-arm64": [
@@ -982,7 +1069,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.osx-x64.cross.iossimulator-x64": [
@@ -995,7 +1083,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.osx-x64.cross.iossimulator-x86": [
@@ -1008,7 +1097,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.osx-x64.cross.maccatalyst-arm64": [
@@ -1021,7 +1111,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.osx-x64.cross.maccatalyst-x64": [
@@ -1034,7 +1125,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.osx-x64.cross.tvos-arm64": [
@@ -1047,7 +1139,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.osx-x64.cross.tvossimulator-arm64": [
@@ -1060,7 +1153,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.osx-x64.cross.tvossimulator-x64": [
@@ -1073,7 +1167,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.win-x64.cross.android-arm": [
@@ -1086,7 +1181,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.win-x64.cross.android-arm.msi.x64": [
@@ -1099,7 +1195,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.win-x64.cross.android-arm64": [
@@ -1112,7 +1209,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.win-x64.cross.android-arm64.msi.x64": [
@@ -1125,7 +1223,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.win-x64.cross.android-x64": [
@@ -1138,7 +1237,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.win-x64.cross.android-x64.msi.x64": [
@@ -1151,7 +1251,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.win-x64.cross.android-x86": [
@@ -1164,7 +1265,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.win-x64.cross.android-x86.msi.x64": [
@@ -1177,7 +1279,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.win-x64.cross.browser-wasm": [
@@ -1190,7 +1293,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.aot.win-x64.cross.browser-wasm.msi.x64": [
@@ -1203,7 +1307,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.android-arm": [
@@ -1216,7 +1321,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.android-arm.msi.arm64": [
@@ -1229,7 +1335,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.android-arm.msi.x64": [
@@ -1242,7 +1349,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.android-arm.msi.x86": [
@@ -1255,7 +1363,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.android-arm64": [
@@ -1268,7 +1377,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.android-arm64.msi.arm64": [
@@ -1281,7 +1391,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.android-arm64.msi.x64": [
@@ -1294,7 +1405,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.android-arm64.msi.x86": [
@@ -1307,7 +1419,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.android-x64": [
@@ -1320,7 +1433,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.android-x64.msi.arm64": [
@@ -1333,7 +1447,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.android-x64.msi.x64": [
@@ -1346,7 +1461,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.android-x64.msi.x86": [
@@ -1359,7 +1475,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.android-x86": [
@@ -1372,7 +1489,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.android-x86.msi.arm64": [
@@ -1385,7 +1503,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.android-x86.msi.x64": [
@@ -1398,7 +1517,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.android-x86.msi.x86": [
@@ -1411,7 +1531,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.browser-wasm": [
@@ -1424,7 +1545,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.browser-wasm.msi.arm64": [
@@ -1437,7 +1559,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.browser-wasm.msi.x64": [
@@ -1450,7 +1573,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.browser-wasm.msi.x86": [
@@ -1463,7 +1587,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.ios-arm": [
@@ -1476,7 +1601,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.ios-arm.msi.arm64": [
@@ -1489,7 +1615,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.ios-arm.msi.x64": [
@@ -1502,7 +1629,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.ios-arm.msi.x86": [
@@ -1515,7 +1643,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.ios-arm64": [
@@ -1528,7 +1657,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.ios-arm64.msi.arm64": [
@@ -1541,7 +1671,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.ios-arm64.msi.x64": [
@@ -1554,7 +1685,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.ios-arm64.msi.x86": [
@@ -1567,7 +1699,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.iossimulator-arm64": [
@@ -1580,7 +1713,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.iossimulator-arm64.msi.arm64": [
@@ -1593,7 +1727,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.iossimulator-arm64.msi.x64": [
@@ -1606,7 +1741,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.iossimulator-arm64.msi.x86": [
@@ -1619,7 +1755,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.iossimulator-x64": [
@@ -1632,7 +1769,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.iossimulator-x64.msi.arm64": [
@@ -1645,7 +1783,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.iossimulator-x64.msi.x64": [
@@ -1658,7 +1797,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.iossimulator-x86": [
@@ -1671,7 +1811,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.iossimulator-x86.msi.arm64": [
@@ -1684,7 +1825,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.iossimulator-x86.msi.x64": [
@@ -1697,7 +1839,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.iossimulator-x86.msi.x86": [
@@ -1710,7 +1853,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.maccatalyst-arm64": [
@@ -1723,7 +1867,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.maccatalyst-arm64.msi.arm64": [
@@ -1736,7 +1881,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.maccatalyst-arm64.msi.x64": [
@@ -1749,7 +1895,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.maccatalyst-arm64.msi.x86": [
@@ -1762,7 +1909,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.maccatalyst-x64": [
@@ -1775,7 +1923,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.maccatalyst-x64.msi.arm64": [
@@ -1788,7 +1937,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.maccatalyst-x64.msi.x64": [
@@ -1801,7 +1951,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.maccatalyst-x64.msi.x86": [
@@ -1814,7 +1965,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.osx-arm64": [
@@ -1827,7 +1979,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.tvos-arm64": [
@@ -1840,7 +1993,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.tvos-arm64.msi.arm64": [
@@ -1853,7 +2007,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.tvos-arm64.msi.x64": [
@@ -1866,7 +2021,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.tvos-arm64.msi.x86": [
@@ -1879,7 +2035,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.tvossimulator-arm64": [
@@ -1892,7 +2049,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.tvossimulator-arm64.msi.arm64": [
@@ -1905,7 +2063,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.tvossimulator-arm64.msi.x64": [
@@ -1918,7 +2077,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.tvossimulator-arm64.msi.x86": [
@@ -1931,7 +2091,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.tvossimulator-x64": [
@@ -1944,7 +2105,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.tvossimulator-x64.msi.arm64": [
@@ -1957,7 +2119,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.tvossimulator-x64.msi.x64": [
@@ -1970,7 +2133,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.tvossimulator-x64.msi.x86": [
@@ -1983,7 +2147,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.win-x64": [
@@ -1996,7 +2161,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.mono.win-x86": [
@@ -2009,7 +2175,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.netcore.app.runtime.osx-arm64": [
@@ -2022,7 +2189,8 @@
           "BIT-dotnet-sdk-2022-24512",
           "BIT-powershell-2022-24512",
           "CVE-2022-24512"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "discatsharp": [
@@ -2032,7 +2200,8 @@
         "summary": "Exposure of Sensitive Information to an Unauthorized Actor in DisCatSharp",
         "aliases": [
           "CVE-2022-24849"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q16-anycpu": [
@@ -2040,7 +2209,8 @@
         "id": "GHSA-gv85-xg33-553c",
         "file": "GHSA-gv85-xg33-553c.json",
         "summary": "Duplicate Advisory: ImageMagick: Specially crafted SVG leads to segmentation fault and generate trash files in \"/tmp\", possible to leverage DoS",
-        "aliases": []
+        "aliases": [],
+        "severity": "medium"
       },
       {
         "id": "GHSA-w8mw-frc6-r7m8",
@@ -2048,7 +2218,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "autoqueryable": [
@@ -2058,7 +2229,8 @@
         "summary": "AutoQueryable leaks sensitive information",
         "aliases": [
           "CVE-2024-57716"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "umbraco.cms": [
@@ -2068,7 +2240,8 @@
         "summary": "Umbraco CMS disclosure of configured password requirements ",
         "aliases": [
           "CVE-2025-49147"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-pgvc-6h2p-q4f6",
@@ -2076,7 +2249,8 @@
         "summary": "Umbraco CMS disclosure of configured password requirements ",
         "aliases": [
           "CVE-2025-49147"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "opentelemetry.autoinstrumentation": [
@@ -2084,7 +2258,8 @@
         "id": "GHSA-vc29-vg52-6643",
         "file": "GHSA-vc29-vg52-6643.json",
         "summary": "DoS Vulnerability in TraceContextPropagator.Extract - OpenTelemetry.Api",
-        "aliases": []
+        "aliases": [],
+        "severity": "high"
       }
     ],
     "magick.net-q16-hdri-anycpu": [
@@ -2094,7 +2269,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q16-hdri-openmp-arm64": [
@@ -2104,7 +2280,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q16-hdri-openmp-x64": [
@@ -2114,7 +2291,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q16-hdri-arm64": [
@@ -2124,7 +2302,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q16-hdri-x64": [
@@ -2134,7 +2313,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q16-hdri-x86": [
@@ -2144,7 +2324,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q16-openmp-arm64": [
@@ -2154,7 +2335,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q16-openmp-x64": [
@@ -2164,7 +2346,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q16-openmp-x86": [
@@ -2174,7 +2357,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q16-arm64": [
@@ -2184,7 +2368,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q16-x64": [
@@ -2194,7 +2379,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q16-x86": [
@@ -2204,7 +2390,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q8-anycpu": [
@@ -2214,7 +2401,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q8-openmp-arm64": [
@@ -2224,7 +2412,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q8-openmp-x64": [
@@ -2234,7 +2423,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q8-arm64": [
@@ -2244,7 +2434,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q8-x64": [
@@ -2254,7 +2445,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "magick.net-q8-x86": [
@@ -2264,7 +2456,8 @@
         "summary": "ImageMagick: Invalid MSL <map> can result in a use after free",
         "aliases": [
           "CVE-2026-26983"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "microsoft.identitymodel.clients.activedirectory": [
@@ -2274,7 +2467,8 @@
         "summary": "Vulnerability in Azure Active Directory Authentication Library",
         "aliases": [
           "CVE-2019-1258"
-        ]
+        ],
+        "severity": "high"
       }
     ],
     "a\u0578otar.splat.fod\u0443": [
@@ -2381,6 +2575,5 @@
         "aliases": []
       }
     ]
-  },
-  "last_updated": "2026-05-14"
+  }
 }
