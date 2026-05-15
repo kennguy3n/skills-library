@@ -123,8 +123,8 @@ func TestSigmaRulesParseAndCarryRequiredFields(t *testing.T) {
 	}
 }
 
-// TestSigmaRulesCoverAllRequiredDirectories asserts every directory
-// PHASES.md / PROGRESS.md commits to Phase 4 has at least 2 rules.
+// TestSigmaRulesCoverAllRequiredDirectories asserts every Sigma rule
+// directory the library commits to ships at least 2 rules.
 func TestSigmaRulesCoverAllRequiredDirectories(t *testing.T) {
 	required := []string{
 		"rules/cloud/aws",

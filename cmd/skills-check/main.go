@@ -1,6 +1,6 @@
 // skills-check is the Skills Library command-line tool. It validates skills,
-// generates IDE-specific configuration files, and (in Phase 2) will pull
-// signed updates from a remote source.
+// generates IDE-specific configuration files, and pulls signed updates from a
+// remote source.
 package main
 
 import (

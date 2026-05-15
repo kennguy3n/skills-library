@@ -11,7 +11,7 @@
 .DS_Store
 Thumbs.db
 
-# Local config (Phase 5 private-repo)
+# Local config (private-repo)
 .skills-check.yaml
 
 # Editor scratch
