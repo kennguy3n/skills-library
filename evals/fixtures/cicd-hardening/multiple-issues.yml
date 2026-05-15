@@ -12,7 +12,7 @@
 #        lookahead is unsupported by Go's RE2 engine, so the rule
 #        does not currently compile / fire — see expected.json)
 #   3. remote-script execution step (downloaded installer piped to a shell)
-#       -> the "pipe-installer" rule
+#       -> gha-no-curl-pipe-bash
 #   4. attacker-controllable issue-comment body interpolated into
 #      a shell command
 #       -> gha-no-untrusted-script-injection (regex) +

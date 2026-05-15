@@ -60,9 +60,17 @@ def _split_frontmatter(text: str) -> tuple[dict[str, str], str] | None:
 
 
 def _git_object_exists(sha: str) -> bool:
+    """Whether `sha` resolves to a commit reachable in the local repo.
+
+    Earlier versions only ran `git cat-file -e <sha>`, which accepts any
+    git object — a blob or tree SHA that happens to match a typoed
+    `source_revision` would pass the existence check but then fail the
+    drift / diff lookups silently. Resolve `<sha>^{commit}` instead so
+    only real commit objects qualify.
+    """
     try:
         subprocess.run(
-            ["git", "cat-file", "-e", sha],
+            ["git", "rev-parse", "--verify", "--quiet", f"{sha}^{{commit}}"],
             cwd=REPO_ROOT,
             check=True,
             capture_output=True,
