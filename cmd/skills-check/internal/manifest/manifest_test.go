@@ -434,10 +434,10 @@ func TestComputeChecksumsPopulatesLocaleLanguage(t *testing.T) {
 	}
 
 	wanted := map[string]string{
-		"skills/a/SKILL.md":            "",
-		"locales/es/a/SKILL.md":        "es",
-		"locales/zh-Hans/a/SKILL.md":   "zh-Hans",
-		"locales/README.md":            "",
+		"skills/a/SKILL.md":          "",
+		"locales/es/a/SKILL.md":      "es",
+		"locales/zh-Hans/a/SKILL.md": "zh-Hans",
+		"locales/README.md":          "",
 	}
 	for path, want := range wanted {
 		entry := m.FileByPath(path)
