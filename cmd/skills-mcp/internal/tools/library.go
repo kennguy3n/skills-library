@@ -823,9 +823,13 @@ func (l *Library) loadSecretRules() (*secretRules, error) {
 	}
 	if body, err := os.ReadFile(localesPath); err == nil {
 		var lf dlpLocaleFile
-		if json.Unmarshal(body, &lf) == nil {
+		if uerr := json.Unmarshal(body, &lf); uerr == nil {
 			mergeLocaleHotwords(p.Patterns, lf.HotwordTranslations)
+		} else {
+			fmt.Fprintf(os.Stderr, "warn: dlp_patterns.locales.json present but did not parse (%v); continuing with English hotwords only\n", uerr)
 		}
+	} else if !os.IsNotExist(err) {
+		fmt.Fprintf(os.Stderr, "warn: dlp_patterns.locales.json present but unreadable (%v); continuing with English hotwords only\n", err)
 	}
 	for _, pat := range p.Patterns {
 		re, err := regexp.Compile(pat.Regex)

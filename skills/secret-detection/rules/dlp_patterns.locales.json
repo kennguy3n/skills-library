@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "last_updated": "2026-05-15",
-  "_ai_authored_disclosure": "Every translation below was drafted by an AI assistant (Devin / Cognition) under direct prompt from @kennguy3n. AGENTS.md prohibits AI-authored DLP-pattern content; this file is shipped under an explicit override from the project owner. EACH ROW MUST BE REVIEWED BY A NATIVE SPEAKER BEFORE PRODUCTION USE. Concretely: every translation is a single dictionary-grade choice — there is no native-speaker register check, no code-corpus check that confirms developers in that locale actually use that exact token in variable / config / secret names, and no false-positive sweep for collisions with common non-secret words in that locale. A wrong translation here directly affects scanner precision/recall on non-English code.",
+  "_ai_authored_disclosure": "Every translation below was drafted by an AI assistant (Devin / Cognition) under direct prompt from @kennguy3n. AGENTS.md prohibits AI-authored DLP-pattern content; this file is shipped under an explicit override from the project owner. EACH ROW MUST BE REVIEWED BY A NATIVE SPEAKER BEFORE PRODUCTION USE. Concretely: every translation is a single dictionary-grade choice — there is no native-speaker register check, no code-corpus check that confirms developers in that locale actually use that exact token in variable / config / secret names, and no false-positive sweep for collisions with common non-secret words in that locale. A wrong translation here directly affects scanner precision/recall on non-English code. Post-review correction: `secret` was originally translated as `密钥` for zh-Hans, which collides with `key` (cryptographic key). The `secret` row was changed to `秘密` on review feedback so `secret` and `key` no longer share a translation in zh-Hans.",
   "description": "Sidecar for skills/secret-detection/rules/dlp_patterns.json. The loader merges every translation listed in `hotword_translations` into the matching pattern's `hotwords` array at compile time so the secret-detection scoring works on non-English codebases (e.g. a Spanish developer writing `clave_acceso = \"AKIA...\"`). Scope decision: only the subset of English hotwords that are meaningful generic concepts is translated here. Brand names (aws, slack, stripe, ...), technology abbreviations (jwt, oauth, iam, ...), and identifier prefixes (ya29, xoxe, hvs, ...) are listed under `skipped_hotwords` with a `preserve` rationale — those tokens stay English in every locale because real-world code keeps them unchanged.",
   "locales": ["es", "fr", "de", "ar", "zh-Hans", "pt-BR"],
   "hotword_translations": {
@@ -26,7 +26,7 @@
       "fr": "secret",
       "de": "geheimnis",
       "ar": "سر",
-      "zh-Hans": "密钥",
+      "zh-Hans": "秘密",
       "pt-BR": "segredo"
     },
     "key": {
