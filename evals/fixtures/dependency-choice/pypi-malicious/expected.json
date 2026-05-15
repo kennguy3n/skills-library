@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "last_updated": "2026-05-14",
-  "description": "Expected finding for the pypi-malicious fixture. 'ctx==0.2.2' is the version range the malicious 2022 release fell into; see vulnerabilities/supply-chain/malicious-packages/pypi.json for the upstream advisory.",
+  "last_updated": "2026-05-15",
+  "description": "Expected findings for the pypi-malicious fixture. 'ctx==0.2.2' is the version range the malicious 2022 release fell into; see vulnerabilities/supply-chain/malicious-packages/pypi.json for the upstream advisory. requests==2.31.0 is also pinned vulnerable to GHSA-j8r2-6x86-q33q (CVE-2023-32681, Proxy-Authorization header leak) per the local OSV cache. Known residual FP: requests is also surfaced as a typosquat because the typosquat-db contains 'request' (Levenshtein 1 from 'requests'); the typosquat detector does not exclude the canonical target, so the legitimate 'requests' install gets flagged. Tracked but not expected.",
   "expected_findings": [
     {
       "ecosystem": "pypi",
@@ -9,7 +9,14 @@
       "version": "0.2.2",
       "kind": "malicious",
       "source": "vulnerabilities/supply-chain/malicious-packages/pypi.json"
+    },
+    {
+      "ecosystem": "pypi",
+      "package": "requests",
+      "version": "2.31.0",
+      "kind": "osv",
+      "source": "vulnerabilities/osv/pypi/GHSA-j8r2-6x86-q33q.json"
     }
   ],
-  "expected_clean": ["requests"]
+  "expected_clean": []
 }
