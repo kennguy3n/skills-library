@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "last_updated": "2026-05-15",
-  "generated_at": "2026-05-15T04:37:05Z",
+  "generated_at": "2026-05-15T14:53:42Z",
   "by_package": {
     "invokeai": [
       {
@@ -14,439 +14,6354 @@
         "severity": "critical"
       }
     ],
-    "nnabla": [
+    "certifi": [
       {
-        "id": "GHSA-4q2w-rw7m-xqw6",
-        "file": "GHSA-4q2w-rw7m-xqw6.json",
-        "summary": "Sony Neural Network Libraries reliance on untrusted inputs prior to v1.0.10",
+        "id": "GHSA-248v-346w-9cwc",
+        "file": "GHSA-248v-346w-9cwc.json",
+        "summary": "Certifi removes GLOBALTRUST root certificate",
         "aliases": [
-          "CVE-2019-10844",
-          "PYSEC-2019-107"
+          "CVE-2024-39689",
+          "PYSEC-2024-230"
         ],
-        "severity": "critical"
+        "severity": "low"
       }
     ],
-    "ansible-runner": [
+    "apache-airflow": [
       {
-        "id": "GHSA-772j-xvf9-qpf5",
-        "file": "GHSA-772j-xvf9-qpf5.json",
-        "summary": "ansible-runner vulnerable to Race Condition",
+        "id": "GHSA-273c-4g26-4jpm",
+        "file": "GHSA-273c-4g26-4jpm.json",
+        "summary": "Apache Airflow `/api/v2/dagReports` executes DAG Python in API",
         "aliases": [
-          "CVE-2021-3702",
-          "PYSEC-2022-43068"
-        ],
-        "severity": "medium"
-      }
-    ],
-    "eventlet": [
-      {
-        "id": "GHSA-9p9m-jm8w-94p2",
-        "file": "GHSA-9p9m-jm8w-94p2.json",
-        "summary": "Improper Handling of Highly Compressed Data (Data Amplification) and Memory Allocation with Excessive Size Value in eventlet",
-        "aliases": [
-          "CVE-2021-21419",
-          "PYSEC-2021-12"
-        ],
-        "severity": "medium"
-      }
-    ],
-    "contentful": [
-      {
-        "id": "GHSA-g5j6-r3x9-gf2m",
-        "file": "GHSA-g5j6-r3x9-gf2m.json",
-        "summary": "Cross-site scripting in Contentful",
-        "aliases": [
-          "CVE-2020-13258"
-        ],
-        "severity": "medium"
-      }
-    ],
-    "trytond": [
-      {
-        "id": "GHSA-jpr7-8rxm-4vgx",
-        "file": "GHSA-jpr7-8rxm-4vgx.json",
-        "summary": "Tryton allow authenticated users with certain permissions to read arbitrary files via the name parameter",
-        "aliases": [
-          "CVE-2016-1242",
-          "PYSEC-2016-13",
-          "PYSEC-2016-41"
+          "BIT-airflow-2025-62402",
+          "CVE-2025-62402"
         ],
         "severity": "medium"
       },
       {
-        "id": "GHSA-jpr7-8rxm-4vgx",
-        "file": "GHSA-jpr7-8rxm-4vgx.json",
-        "summary": "Tryton allow authenticated users with certain permissions to read arbitrary files via the name parameter",
+        "id": "GHSA-68wv-rjrm-576p",
+        "file": "GHSA-68wv-rjrm-576p.json",
+        "summary": "Cross-Site Request Forgery (CSRF) in Apache Airflow",
         "aliases": [
-          "CVE-2016-1242",
-          "PYSEC-2016-13",
-          "PYSEC-2016-41"
+          "CVE-2017-17835",
+          "PYSEC-2019-148"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-h63r-9xxf-f2c7",
+        "file": "GHSA-h63r-9xxf-f2c7.json",
+        "summary": "Apache Airflow Cross-site Scripting vulnerability",
+        "aliases": [
+          "BIT-airflow-2022-43982",
+          "CVE-2022-43982",
+          "PYSEC-2022-42970"
         ],
         "severity": "medium"
       },
       {
-        "id": "GHSA-jpr7-8rxm-4vgx",
-        "file": "GHSA-jpr7-8rxm-4vgx.json",
-        "summary": "Tryton allow authenticated users with certain permissions to read arbitrary files via the name parameter",
+        "id": "PYSEC-2021-122",
+        "file": "PYSEC-2021-122.json",
+        "summary": "",
         "aliases": [
-          "CVE-2016-1242",
-          "PYSEC-2016-13",
-          "PYSEC-2016-41"
-        ],
-        "severity": "medium"
-      },
+          "BIT-airflow-2021-35936",
+          "CVE-2021-35936",
+          "GHSA-m6h2-jx9v-58w6"
+        ]
+      }
+    ],
+    "keras": [
       {
-        "id": "GHSA-jpr7-8rxm-4vgx",
-        "file": "GHSA-jpr7-8rxm-4vgx.json",
-        "summary": "Tryton allow authenticated users with certain permissions to read arbitrary files via the name parameter",
-        "aliases": [
-          "CVE-2016-1242",
-          "PYSEC-2016-13",
-          "PYSEC-2016-41"
-        ],
-        "severity": "medium"
-      },
+        "id": "GHSA-28jp-44vh-q42h",
+        "file": "GHSA-28jp-44vh-q42h.json",
+        "summary": "Duplicate Advisory: Keras keras.utils.get_file API is vulnerable to a path traversal attack",
+        "aliases": [],
+        "severity": "high"
+      }
+    ],
+    "feedparser": [
       {
-        "id": "GHSA-jpr7-8rxm-4vgx",
-        "file": "GHSA-jpr7-8rxm-4vgx.json",
-        "summary": "Tryton allow authenticated users with certain permissions to read arbitrary files via the name parameter",
+        "id": "GHSA-2p78-8hh6-96xc",
+        "file": "GHSA-2p78-8hh6-96xc.json",
+        "summary": "feedparser Cross-site Scripting vulnerability",
         "aliases": [
-          "CVE-2016-1242",
-          "PYSEC-2016-13",
-          "PYSEC-2016-41"
+          "CVE-2011-1157",
+          "PYSEC-2011-20"
         ],
         "severity": "medium"
       }
     ],
-    "praisonaiagents": [
+    "plone-app-users": [
       {
-        "id": "GHSA-q9pw-vmhh-384g",
-        "file": "GHSA-q9pw-vmhh-384g.json",
-        "summary": "PraisonAI has an SSRF bypass",
+        "id": "GHSA-2qx8-589j-gcpx",
+        "file": "GHSA-2qx8-589j-gcpx.json",
+        "summary": "Plone and plone.app.users allow remote authenticated users to modify the properties of arbitrary accounts",
         "aliases": [
-          "CVE-2026-44335"
+          "CVE-2011-1950",
+          "PYSEC-2011-16"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-2qx8-589j-gcpx",
+        "file": "GHSA-2qx8-589j-gcpx.json",
+        "summary": "Plone and plone.app.users allow remote authenticated users to modify the properties of arbitrary accounts",
+        "aliases": [
+          "CVE-2011-1950",
+          "PYSEC-2011-16"
+        ],
+        "severity": "high"
+      }
+    ],
+    "plone": [
+      {
+        "id": "GHSA-2qx8-589j-gcpx",
+        "file": "GHSA-2qx8-589j-gcpx.json",
+        "summary": "Plone and plone.app.users allow remote authenticated users to modify the properties of arbitrary accounts",
+        "aliases": [
+          "CVE-2011-1950",
+          "PYSEC-2011-16"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-2qx8-589j-gcpx",
+        "file": "GHSA-2qx8-589j-gcpx.json",
+        "summary": "Plone and plone.app.users allow remote authenticated users to modify the properties of arbitrary accounts",
+        "aliases": [
+          "CVE-2011-1950",
+          "PYSEC-2011-16"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-6w93-4c4p-xv2x",
+        "file": "GHSA-6w93-4c4p-xv2x.json",
+        "summary": "Plone Metadata Disclosure",
+        "aliases": [
+          "CVE-2012-5492",
+          "PYSEC-2014-34"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-6w93-4c4p-xv2x",
+        "file": "GHSA-6w93-4c4p-xv2x.json",
+        "summary": "Plone Metadata Disclosure",
+        "aliases": [
+          "CVE-2012-5492",
+          "PYSEC-2014-34"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "PYSEC-2014-50",
+        "file": "PYSEC-2014-50.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2012-5508",
+          "GHSA-wprr-mc54-c62q"
+        ]
+      },
+      {
+        "id": "PYSEC-2017-61",
+        "file": "PYSEC-2017-61.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2016-7138",
+          "GHSA-v3hp-f8qr-cf3p"
+        ]
+      },
+      {
+        "id": "PYSEC-2020-88",
+        "file": "PYSEC-2020-88.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2020-7939",
+          "GHSA-hhmf-7rgg-gcw5"
+        ]
+      }
+    ],
+    "aim": [
+      {
+        "id": "GHSA-36h2-g4c8-9xcm",
+        "file": "GHSA-36h2-g4c8-9xcm.json",
+        "summary": "Aim denial of service vulnerability",
+        "aliases": [
+          "CVE-2024-6227"
         ],
         "severity": "high"
       }
     ],
     "tensorflow": [
       {
-        "id": "GHSA-vwhq-49r4-gj9v",
-        "file": "GHSA-vwhq-49r4-gj9v.json",
-        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "id": "GHSA-374m-jm66-3vj8",
+        "file": "GHSA-374m-jm66-3vj8.json",
+        "summary": "Heap OOB in `SparseBinCount`",
         "aliases": [
-          "BIT-tensorflow-2021-41214",
-          "CVE-2021-41214",
-          "PYSEC-2021-406",
-          "PYSEC-2021-623",
-          "PYSEC-2021-821"
+          "BIT-tensorflow-2021-41226",
+          "CVE-2021-41226",
+          "PYSEC-2021-418",
+          "PYSEC-2021-635",
+          "PYSEC-2021-833"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-374m-jm66-3vj8",
+        "file": "GHSA-374m-jm66-3vj8.json",
+        "summary": "Heap OOB in `SparseBinCount`",
+        "aliases": [
+          "BIT-tensorflow-2021-41226",
+          "CVE-2021-41226",
+          "PYSEC-2021-418",
+          "PYSEC-2021-635",
+          "PYSEC-2021-833"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-374m-jm66-3vj8",
+        "file": "GHSA-374m-jm66-3vj8.json",
+        "summary": "Heap OOB in `SparseBinCount`",
+        "aliases": [
+          "BIT-tensorflow-2021-41226",
+          "CVE-2021-41226",
+          "PYSEC-2021-418",
+          "PYSEC-2021-635",
+          "PYSEC-2021-833"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-49rx-x2rw-pc6f",
+        "file": "GHSA-49rx-x2rw-pc6f.json",
+        "summary": "Heap OOB read in all `tf.raw_ops.QuantizeAndDequantizeV*` ops",
+        "aliases": [
+          "BIT-tensorflow-2021-41205",
+          "CVE-2021-41205",
+          "PYSEC-2021-398",
+          "PYSEC-2021-615",
+          "PYSEC-2021-813"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-49rx-x2rw-pc6f",
+        "file": "GHSA-49rx-x2rw-pc6f.json",
+        "summary": "Heap OOB read in all `tf.raw_ops.QuantizeAndDequantizeV*` ops",
+        "aliases": [
+          "BIT-tensorflow-2021-41205",
+          "CVE-2021-41205",
+          "PYSEC-2021-398",
+          "PYSEC-2021-615",
+          "PYSEC-2021-813"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-49rx-x2rw-pc6f",
+        "file": "GHSA-49rx-x2rw-pc6f.json",
+        "summary": "Heap OOB read in all `tf.raw_ops.QuantizeAndDequantizeV*` ops",
+        "aliases": [
+          "BIT-tensorflow-2021-41205",
+          "CVE-2021-41205",
+          "PYSEC-2021-398",
+          "PYSEC-2021-615",
+          "PYSEC-2021-813"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-7fvx-3jfc-2cpc",
+        "file": "GHSA-7fvx-3jfc-2cpc.json",
+        "summary": "Heap OOB in `ResourceScatterUpdate`",
+        "aliases": [
+          "BIT-tensorflow-2021-37655",
+          "CVE-2021-37655",
+          "PYSEC-2021-277",
+          "PYSEC-2021-568",
+          "PYSEC-2021-766"
         ],
         "severity": "high"
       },
       {
-        "id": "GHSA-vwhq-49r4-gj9v",
-        "file": "GHSA-vwhq-49r4-gj9v.json",
-        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "id": "GHSA-7fvx-3jfc-2cpc",
+        "file": "GHSA-7fvx-3jfc-2cpc.json",
+        "summary": "Heap OOB in `ResourceScatterUpdate`",
         "aliases": [
-          "BIT-tensorflow-2021-41214",
-          "CVE-2021-41214",
-          "PYSEC-2021-406",
-          "PYSEC-2021-623",
-          "PYSEC-2021-821"
+          "BIT-tensorflow-2021-37655",
+          "CVE-2021-37655",
+          "PYSEC-2021-277",
+          "PYSEC-2021-568",
+          "PYSEC-2021-766"
         ],
         "severity": "high"
       },
       {
-        "id": "GHSA-vwhq-49r4-gj9v",
-        "file": "GHSA-vwhq-49r4-gj9v.json",
-        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "id": "GHSA-7fvx-3jfc-2cpc",
+        "file": "GHSA-7fvx-3jfc-2cpc.json",
+        "summary": "Heap OOB in `ResourceScatterUpdate`",
         "aliases": [
-          "BIT-tensorflow-2021-41214",
-          "CVE-2021-41214",
-          "PYSEC-2021-406",
-          "PYSEC-2021-623",
-          "PYSEC-2021-821"
+          "BIT-tensorflow-2021-37655",
+          "CVE-2021-37655",
+          "PYSEC-2021-277",
+          "PYSEC-2021-568",
+          "PYSEC-2021-766"
         ],
         "severity": "high"
       },
       {
-        "id": "PYSEC-2021-188",
-        "file": "PYSEC-2021-188.json",
+        "id": "GHSA-8fxw-76px-3rxv",
+        "file": "GHSA-8fxw-76px-3rxv.json",
+        "summary": "Memory leak in Tensorflow",
+        "aliases": [
+          "BIT-tensorflow-2020-15192",
+          "CVE-2020-15192",
+          "PYSEC-2020-115",
+          "PYSEC-2020-272",
+          "PYSEC-2020-307"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-8fxw-76px-3rxv",
+        "file": "GHSA-8fxw-76px-3rxv.json",
+        "summary": "Memory leak in Tensorflow",
+        "aliases": [
+          "BIT-tensorflow-2020-15192",
+          "CVE-2020-15192",
+          "PYSEC-2020-115",
+          "PYSEC-2020-272",
+          "PYSEC-2020-307"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-943p-xc6m-c6gr",
+        "file": "GHSA-943p-xc6m-c6gr.json",
+        "summary": "Rejected CVE ID",
+        "aliases": [],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-9697-98pf-4rw7",
+        "file": "GHSA-9697-98pf-4rw7.json",
+        "summary": "Heap OOB in `UpperBound` and `LowerBound`",
+        "aliases": [
+          "BIT-tensorflow-2021-37670",
+          "CVE-2021-37670",
+          "PYSEC-2021-292",
+          "PYSEC-2021-583",
+          "PYSEC-2021-781"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9697-98pf-4rw7",
+        "file": "GHSA-9697-98pf-4rw7.json",
+        "summary": "Heap OOB in `UpperBound` and `LowerBound`",
+        "aliases": [
+          "BIT-tensorflow-2021-37670",
+          "CVE-2021-37670",
+          "PYSEC-2021-292",
+          "PYSEC-2021-583",
+          "PYSEC-2021-781"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9697-98pf-4rw7",
+        "file": "GHSA-9697-98pf-4rw7.json",
+        "summary": "Heap OOB in `UpperBound` and `LowerBound`",
+        "aliases": [
+          "BIT-tensorflow-2021-37670",
+          "CVE-2021-37670",
+          "PYSEC-2021-292",
+          "PYSEC-2021-583",
+          "PYSEC-2021-781"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9vqj-64pv-w55c",
+        "file": "GHSA-9vqj-64pv-w55c.json",
+        "summary": "TensorFlow vulnerable to `CHECK` fail in `tf.linalg.matrix_rank`",
+        "aliases": [
+          "BIT-tensorflow-2022-35988",
+          "CVE-2022-35988"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9vqj-64pv-w55c",
+        "file": "GHSA-9vqj-64pv-w55c.json",
+        "summary": "TensorFlow vulnerable to `CHECK` fail in `tf.linalg.matrix_rank`",
+        "aliases": [
+          "BIT-tensorflow-2022-35988",
+          "CVE-2022-35988"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9vqj-64pv-w55c",
+        "file": "GHSA-9vqj-64pv-w55c.json",
+        "summary": "TensorFlow vulnerable to `CHECK` fail in `tf.linalg.matrix_rank`",
+        "aliases": [
+          "BIT-tensorflow-2022-35988",
+          "CVE-2022-35988"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-c9f3-9wfr-wgh7",
+        "file": "GHSA-c9f3-9wfr-wgh7.json",
+        "summary": "Lack of validation in data format attributes in TensorFlow",
+        "aliases": [
+          "BIT-tensorflow-2020-26267",
+          "CVE-2020-26267",
+          "PYSEC-2020-140",
+          "PYSEC-2020-298",
+          "PYSEC-2020-333"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-c9f3-9wfr-wgh7",
+        "file": "GHSA-c9f3-9wfr-wgh7.json",
+        "summary": "Lack of validation in data format attributes in TensorFlow",
+        "aliases": [
+          "BIT-tensorflow-2020-26267",
+          "CVE-2020-26267",
+          "PYSEC-2020-140",
+          "PYSEC-2020-298",
+          "PYSEC-2020-333"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-c9f3-9wfr-wgh7",
+        "file": "GHSA-c9f3-9wfr-wgh7.json",
+        "summary": "Lack of validation in data format attributes in TensorFlow",
+        "aliases": [
+          "BIT-tensorflow-2020-26267",
+          "CVE-2020-26267",
+          "PYSEC-2020-140",
+          "PYSEC-2020-298",
+          "PYSEC-2020-333"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-c9f3-9wfr-wgh7",
+        "file": "GHSA-c9f3-9wfr-wgh7.json",
+        "summary": "Lack of validation in data format attributes in TensorFlow",
+        "aliases": [
+          "BIT-tensorflow-2020-26267",
+          "CVE-2020-26267",
+          "PYSEC-2020-140",
+          "PYSEC-2020-298",
+          "PYSEC-2020-333"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-c9f3-9wfr-wgh7",
+        "file": "GHSA-c9f3-9wfr-wgh7.json",
+        "summary": "Lack of validation in data format attributes in TensorFlow",
+        "aliases": [
+          "BIT-tensorflow-2020-26267",
+          "CVE-2020-26267",
+          "PYSEC-2020-140",
+          "PYSEC-2020-298",
+          "PYSEC-2020-333"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-gv26-jpj9-c8gq",
+        "file": "GHSA-gv26-jpj9-c8gq.json",
+        "summary": "Incomplete validation in `SparseSparseMinimum`",
+        "aliases": [
+          "BIT-tensorflow-2021-29607",
+          "CVE-2021-29607",
+          "PYSEC-2021-244",
+          "PYSEC-2021-535",
+          "PYSEC-2021-733"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-gv26-jpj9-c8gq",
+        "file": "GHSA-gv26-jpj9-c8gq.json",
+        "summary": "Incomplete validation in `SparseSparseMinimum`",
+        "aliases": [
+          "BIT-tensorflow-2021-29607",
+          "CVE-2021-29607",
+          "PYSEC-2021-244",
+          "PYSEC-2021-535",
+          "PYSEC-2021-733"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-gv26-jpj9-c8gq",
+        "file": "GHSA-gv26-jpj9-c8gq.json",
+        "summary": "Incomplete validation in `SparseSparseMinimum`",
+        "aliases": [
+          "BIT-tensorflow-2021-29607",
+          "CVE-2021-29607",
+          "PYSEC-2021-244",
+          "PYSEC-2021-535",
+          "PYSEC-2021-733"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-gv26-jpj9-c8gq",
+        "file": "GHSA-gv26-jpj9-c8gq.json",
+        "summary": "Incomplete validation in `SparseSparseMinimum`",
+        "aliases": [
+          "BIT-tensorflow-2021-29607",
+          "CVE-2021-29607",
+          "PYSEC-2021-244",
+          "PYSEC-2021-535",
+          "PYSEC-2021-733"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-hx2x-85gr-wrpq",
+        "file": "GHSA-hx2x-85gr-wrpq.json",
+        "summary": "Out of bounds access in tensorflow-lite",
+        "aliases": [
+          "BIT-tensorflow-2020-15212",
+          "CVE-2020-15212",
+          "PYSEC-2020-135",
+          "PYSEC-2020-292",
+          "PYSEC-2020-327"
+        ],
+        "severity": "critical"
+      },
+      {
+        "id": "GHSA-hx2x-85gr-wrpq",
+        "file": "GHSA-hx2x-85gr-wrpq.json",
+        "summary": "Out of bounds access in tensorflow-lite",
+        "aliases": [
+          "BIT-tensorflow-2020-15212",
+          "CVE-2020-15212",
+          "PYSEC-2020-135",
+          "PYSEC-2020-292",
+          "PYSEC-2020-327"
+        ],
+        "severity": "critical"
+      },
+      {
+        "id": "GHSA-j8qh-3xrq-c825",
+        "file": "GHSA-j8qh-3xrq-c825.json",
+        "summary": "Division by zero in TFLite's implementation of `OneHot`",
+        "aliases": [
+          "BIT-tensorflow-2021-29600",
+          "CVE-2021-29600",
+          "PYSEC-2021-237",
+          "PYSEC-2021-528",
+          "PYSEC-2021-726"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-j8qh-3xrq-c825",
+        "file": "GHSA-j8qh-3xrq-c825.json",
+        "summary": "Division by zero in TFLite's implementation of `OneHot`",
+        "aliases": [
+          "BIT-tensorflow-2021-29600",
+          "CVE-2021-29600",
+          "PYSEC-2021-237",
+          "PYSEC-2021-528",
+          "PYSEC-2021-726"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-j8qh-3xrq-c825",
+        "file": "GHSA-j8qh-3xrq-c825.json",
+        "summary": "Division by zero in TFLite's implementation of `OneHot`",
+        "aliases": [
+          "BIT-tensorflow-2021-29600",
+          "CVE-2021-29600",
+          "PYSEC-2021-237",
+          "PYSEC-2021-528",
+          "PYSEC-2021-726"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-j8qh-3xrq-c825",
+        "file": "GHSA-j8qh-3xrq-c825.json",
+        "summary": "Division by zero in TFLite's implementation of `OneHot`",
+        "aliases": [
+          "BIT-tensorflow-2021-29600",
+          "CVE-2021-29600",
+          "PYSEC-2021-237",
+          "PYSEC-2021-528",
+          "PYSEC-2021-726"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-rmg2-f698-wq35",
+        "file": "GHSA-rmg2-f698-wq35.json",
+        "summary": "`tf.raw_ops.Mfcc` crashes",
+        "aliases": [
+          "BIT-tensorflow-2022-41896",
+          "CVE-2022-41896"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-rmg2-f698-wq35",
+        "file": "GHSA-rmg2-f698-wq35.json",
+        "summary": "`tf.raw_ops.Mfcc` crashes",
+        "aliases": [
+          "BIT-tensorflow-2022-41896",
+          "CVE-2022-41896"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-rmg2-f698-wq35",
+        "file": "GHSA-rmg2-f698-wq35.json",
+        "summary": "`tf.raw_ops.Mfcc` crashes",
+        "aliases": [
+          "BIT-tensorflow-2022-41896",
+          "CVE-2022-41896"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-xvjm-fvxx-q3hv",
+        "file": "GHSA-xvjm-fvxx-q3hv.json",
+        "summary": "CHECK-fail due to integer overflow",
+        "aliases": [
+          "BIT-tensorflow-2021-29584",
+          "CVE-2021-29584",
+          "PYSEC-2021-221",
+          "PYSEC-2021-512",
+          "PYSEC-2021-710"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-xvjm-fvxx-q3hv",
+        "file": "GHSA-xvjm-fvxx-q3hv.json",
+        "summary": "CHECK-fail due to integer overflow",
+        "aliases": [
+          "BIT-tensorflow-2021-29584",
+          "CVE-2021-29584",
+          "PYSEC-2021-221",
+          "PYSEC-2021-512",
+          "PYSEC-2021-710"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-xvjm-fvxx-q3hv",
+        "file": "GHSA-xvjm-fvxx-q3hv.json",
+        "summary": "CHECK-fail due to integer overflow",
+        "aliases": [
+          "BIT-tensorflow-2021-29584",
+          "CVE-2021-29584",
+          "PYSEC-2021-221",
+          "PYSEC-2021-512",
+          "PYSEC-2021-710"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-xvjm-fvxx-q3hv",
+        "file": "GHSA-xvjm-fvxx-q3hv.json",
+        "summary": "CHECK-fail due to integer overflow",
+        "aliases": [
+          "BIT-tensorflow-2021-29584",
+          "CVE-2021-29584",
+          "PYSEC-2021-221",
+          "PYSEC-2021-512",
+          "PYSEC-2021-710"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "PYSEC-2019-205",
+        "file": "PYSEC-2019-205.json",
         "summary": "",
         "aliases": [
-          "BIT-tensorflow-2021-29551",
-          "CVE-2021-29551",
-          "GHSA-vqw6-72r7-fgw7",
-          "PYSEC-2021-479",
-          "PYSEC-2021-677"
+          "CVE-2018-7575",
+          "GHSA-mw6v-crh8-8533",
+          "PYSEC-2019-223",
+          "PYSEC-2019-230"
+        ]
+      },
+      {
+        "id": "PYSEC-2020-131",
+        "file": "PYSEC-2020-131.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2020-15208",
+          "CVE-2020-15208",
+          "GHSA-mxjj-953w-2c2v",
+          "PYSEC-2020-288",
+          "PYSEC-2020-323"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-159",
+        "file": "PYSEC-2021-159.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-29522",
+          "CVE-2021-29522",
+          "GHSA-c968-pq7h-7fxv",
+          "PYSEC-2021-450",
+          "PYSEC-2021-648"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-194",
+        "file": "PYSEC-2021-194.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-29557",
+          "CVE-2021-29557",
+          "GHSA-xw93-v57j-fcgh",
+          "PYSEC-2021-485",
+          "PYSEC-2021-683"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-229",
+        "file": "PYSEC-2021-229.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-29592",
+          "CVE-2021-29592",
+          "GHSA-jjr8-m8g8-p6wv",
+          "PYSEC-2021-520",
+          "PYSEC-2021-718"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-264",
+        "file": "PYSEC-2021-264.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-37642",
+          "CVE-2021-37642",
+          "GHSA-ch4f-829c-v5pw",
+          "PYSEC-2021-555",
+          "PYSEC-2021-753"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-405",
+        "file": "PYSEC-2021-405.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-41213",
+          "CVE-2021-41213",
+          "GHSA-h67m-xg8f-fxcf",
+          "PYSEC-2021-622",
+          "PYSEC-2021-820"
         ]
       }
     ],
     "tensorflow-cpu": [
       {
-        "id": "GHSA-vwhq-49r4-gj9v",
-        "file": "GHSA-vwhq-49r4-gj9v.json",
-        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "id": "GHSA-374m-jm66-3vj8",
+        "file": "GHSA-374m-jm66-3vj8.json",
+        "summary": "Heap OOB in `SparseBinCount`",
         "aliases": [
-          "BIT-tensorflow-2021-41214",
-          "CVE-2021-41214",
-          "PYSEC-2021-406",
-          "PYSEC-2021-623",
-          "PYSEC-2021-821"
+          "BIT-tensorflow-2021-41226",
+          "CVE-2021-41226",
+          "PYSEC-2021-418",
+          "PYSEC-2021-635",
+          "PYSEC-2021-833"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-374m-jm66-3vj8",
+        "file": "GHSA-374m-jm66-3vj8.json",
+        "summary": "Heap OOB in `SparseBinCount`",
+        "aliases": [
+          "BIT-tensorflow-2021-41226",
+          "CVE-2021-41226",
+          "PYSEC-2021-418",
+          "PYSEC-2021-635",
+          "PYSEC-2021-833"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-374m-jm66-3vj8",
+        "file": "GHSA-374m-jm66-3vj8.json",
+        "summary": "Heap OOB in `SparseBinCount`",
+        "aliases": [
+          "BIT-tensorflow-2021-41226",
+          "CVE-2021-41226",
+          "PYSEC-2021-418",
+          "PYSEC-2021-635",
+          "PYSEC-2021-833"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-49rx-x2rw-pc6f",
+        "file": "GHSA-49rx-x2rw-pc6f.json",
+        "summary": "Heap OOB read in all `tf.raw_ops.QuantizeAndDequantizeV*` ops",
+        "aliases": [
+          "BIT-tensorflow-2021-41205",
+          "CVE-2021-41205",
+          "PYSEC-2021-398",
+          "PYSEC-2021-615",
+          "PYSEC-2021-813"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-49rx-x2rw-pc6f",
+        "file": "GHSA-49rx-x2rw-pc6f.json",
+        "summary": "Heap OOB read in all `tf.raw_ops.QuantizeAndDequantizeV*` ops",
+        "aliases": [
+          "BIT-tensorflow-2021-41205",
+          "CVE-2021-41205",
+          "PYSEC-2021-398",
+          "PYSEC-2021-615",
+          "PYSEC-2021-813"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-49rx-x2rw-pc6f",
+        "file": "GHSA-49rx-x2rw-pc6f.json",
+        "summary": "Heap OOB read in all `tf.raw_ops.QuantizeAndDequantizeV*` ops",
+        "aliases": [
+          "BIT-tensorflow-2021-41205",
+          "CVE-2021-41205",
+          "PYSEC-2021-398",
+          "PYSEC-2021-615",
+          "PYSEC-2021-813"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-7fvx-3jfc-2cpc",
+        "file": "GHSA-7fvx-3jfc-2cpc.json",
+        "summary": "Heap OOB in `ResourceScatterUpdate`",
+        "aliases": [
+          "BIT-tensorflow-2021-37655",
+          "CVE-2021-37655",
+          "PYSEC-2021-277",
+          "PYSEC-2021-568",
+          "PYSEC-2021-766"
         ],
         "severity": "high"
       },
       {
-        "id": "GHSA-vwhq-49r4-gj9v",
-        "file": "GHSA-vwhq-49r4-gj9v.json",
-        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "id": "GHSA-7fvx-3jfc-2cpc",
+        "file": "GHSA-7fvx-3jfc-2cpc.json",
+        "summary": "Heap OOB in `ResourceScatterUpdate`",
         "aliases": [
-          "BIT-tensorflow-2021-41214",
-          "CVE-2021-41214",
-          "PYSEC-2021-406",
-          "PYSEC-2021-623",
-          "PYSEC-2021-821"
+          "BIT-tensorflow-2021-37655",
+          "CVE-2021-37655",
+          "PYSEC-2021-277",
+          "PYSEC-2021-568",
+          "PYSEC-2021-766"
         ],
         "severity": "high"
       },
       {
-        "id": "GHSA-vwhq-49r4-gj9v",
-        "file": "GHSA-vwhq-49r4-gj9v.json",
-        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "id": "GHSA-7fvx-3jfc-2cpc",
+        "file": "GHSA-7fvx-3jfc-2cpc.json",
+        "summary": "Heap OOB in `ResourceScatterUpdate`",
         "aliases": [
-          "BIT-tensorflow-2021-41214",
-          "CVE-2021-41214",
-          "PYSEC-2021-406",
-          "PYSEC-2021-623",
-          "PYSEC-2021-821"
+          "BIT-tensorflow-2021-37655",
+          "CVE-2021-37655",
+          "PYSEC-2021-277",
+          "PYSEC-2021-568",
+          "PYSEC-2021-766"
         ],
         "severity": "high"
       },
       {
-        "id": "PYSEC-2022-93",
-        "file": "PYSEC-2022-93.json",
+        "id": "GHSA-8fxw-76px-3rxv",
+        "file": "GHSA-8fxw-76px-3rxv.json",
+        "summary": "Memory leak in Tensorflow",
+        "aliases": [
+          "BIT-tensorflow-2020-15192",
+          "CVE-2020-15192",
+          "PYSEC-2020-115",
+          "PYSEC-2020-272",
+          "PYSEC-2020-307"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-8fxw-76px-3rxv",
+        "file": "GHSA-8fxw-76px-3rxv.json",
+        "summary": "Memory leak in Tensorflow",
+        "aliases": [
+          "BIT-tensorflow-2020-15192",
+          "CVE-2020-15192",
+          "PYSEC-2020-115",
+          "PYSEC-2020-272",
+          "PYSEC-2020-307"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9697-98pf-4rw7",
+        "file": "GHSA-9697-98pf-4rw7.json",
+        "summary": "Heap OOB in `UpperBound` and `LowerBound`",
+        "aliases": [
+          "BIT-tensorflow-2021-37670",
+          "CVE-2021-37670",
+          "PYSEC-2021-292",
+          "PYSEC-2021-583",
+          "PYSEC-2021-781"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9697-98pf-4rw7",
+        "file": "GHSA-9697-98pf-4rw7.json",
+        "summary": "Heap OOB in `UpperBound` and `LowerBound`",
+        "aliases": [
+          "BIT-tensorflow-2021-37670",
+          "CVE-2021-37670",
+          "PYSEC-2021-292",
+          "PYSEC-2021-583",
+          "PYSEC-2021-781"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9697-98pf-4rw7",
+        "file": "GHSA-9697-98pf-4rw7.json",
+        "summary": "Heap OOB in `UpperBound` and `LowerBound`",
+        "aliases": [
+          "BIT-tensorflow-2021-37670",
+          "CVE-2021-37670",
+          "PYSEC-2021-292",
+          "PYSEC-2021-583",
+          "PYSEC-2021-781"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9vqj-64pv-w55c",
+        "file": "GHSA-9vqj-64pv-w55c.json",
+        "summary": "TensorFlow vulnerable to `CHECK` fail in `tf.linalg.matrix_rank`",
+        "aliases": [
+          "BIT-tensorflow-2022-35988",
+          "CVE-2022-35988"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9vqj-64pv-w55c",
+        "file": "GHSA-9vqj-64pv-w55c.json",
+        "summary": "TensorFlow vulnerable to `CHECK` fail in `tf.linalg.matrix_rank`",
+        "aliases": [
+          "BIT-tensorflow-2022-35988",
+          "CVE-2022-35988"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9vqj-64pv-w55c",
+        "file": "GHSA-9vqj-64pv-w55c.json",
+        "summary": "TensorFlow vulnerable to `CHECK` fail in `tf.linalg.matrix_rank`",
+        "aliases": [
+          "BIT-tensorflow-2022-35988",
+          "CVE-2022-35988"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-c9f3-9wfr-wgh7",
+        "file": "GHSA-c9f3-9wfr-wgh7.json",
+        "summary": "Lack of validation in data format attributes in TensorFlow",
+        "aliases": [
+          "BIT-tensorflow-2020-26267",
+          "CVE-2020-26267",
+          "PYSEC-2020-140",
+          "PYSEC-2020-298",
+          "PYSEC-2020-333"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-c9f3-9wfr-wgh7",
+        "file": "GHSA-c9f3-9wfr-wgh7.json",
+        "summary": "Lack of validation in data format attributes in TensorFlow",
+        "aliases": [
+          "BIT-tensorflow-2020-26267",
+          "CVE-2020-26267",
+          "PYSEC-2020-140",
+          "PYSEC-2020-298",
+          "PYSEC-2020-333"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-c9f3-9wfr-wgh7",
+        "file": "GHSA-c9f3-9wfr-wgh7.json",
+        "summary": "Lack of validation in data format attributes in TensorFlow",
+        "aliases": [
+          "BIT-tensorflow-2020-26267",
+          "CVE-2020-26267",
+          "PYSEC-2020-140",
+          "PYSEC-2020-298",
+          "PYSEC-2020-333"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-c9f3-9wfr-wgh7",
+        "file": "GHSA-c9f3-9wfr-wgh7.json",
+        "summary": "Lack of validation in data format attributes in TensorFlow",
+        "aliases": [
+          "BIT-tensorflow-2020-26267",
+          "CVE-2020-26267",
+          "PYSEC-2020-140",
+          "PYSEC-2020-298",
+          "PYSEC-2020-333"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-c9f3-9wfr-wgh7",
+        "file": "GHSA-c9f3-9wfr-wgh7.json",
+        "summary": "Lack of validation in data format attributes in TensorFlow",
+        "aliases": [
+          "BIT-tensorflow-2020-26267",
+          "CVE-2020-26267",
+          "PYSEC-2020-140",
+          "PYSEC-2020-298",
+          "PYSEC-2020-333"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-gv26-jpj9-c8gq",
+        "file": "GHSA-gv26-jpj9-c8gq.json",
+        "summary": "Incomplete validation in `SparseSparseMinimum`",
+        "aliases": [
+          "BIT-tensorflow-2021-29607",
+          "CVE-2021-29607",
+          "PYSEC-2021-244",
+          "PYSEC-2021-535",
+          "PYSEC-2021-733"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-gv26-jpj9-c8gq",
+        "file": "GHSA-gv26-jpj9-c8gq.json",
+        "summary": "Incomplete validation in `SparseSparseMinimum`",
+        "aliases": [
+          "BIT-tensorflow-2021-29607",
+          "CVE-2021-29607",
+          "PYSEC-2021-244",
+          "PYSEC-2021-535",
+          "PYSEC-2021-733"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-gv26-jpj9-c8gq",
+        "file": "GHSA-gv26-jpj9-c8gq.json",
+        "summary": "Incomplete validation in `SparseSparseMinimum`",
+        "aliases": [
+          "BIT-tensorflow-2021-29607",
+          "CVE-2021-29607",
+          "PYSEC-2021-244",
+          "PYSEC-2021-535",
+          "PYSEC-2021-733"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-gv26-jpj9-c8gq",
+        "file": "GHSA-gv26-jpj9-c8gq.json",
+        "summary": "Incomplete validation in `SparseSparseMinimum`",
+        "aliases": [
+          "BIT-tensorflow-2021-29607",
+          "CVE-2021-29607",
+          "PYSEC-2021-244",
+          "PYSEC-2021-535",
+          "PYSEC-2021-733"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-hx2x-85gr-wrpq",
+        "file": "GHSA-hx2x-85gr-wrpq.json",
+        "summary": "Out of bounds access in tensorflow-lite",
+        "aliases": [
+          "BIT-tensorflow-2020-15212",
+          "CVE-2020-15212",
+          "PYSEC-2020-135",
+          "PYSEC-2020-292",
+          "PYSEC-2020-327"
+        ],
+        "severity": "critical"
+      },
+      {
+        "id": "GHSA-hx2x-85gr-wrpq",
+        "file": "GHSA-hx2x-85gr-wrpq.json",
+        "summary": "Out of bounds access in tensorflow-lite",
+        "aliases": [
+          "BIT-tensorflow-2020-15212",
+          "CVE-2020-15212",
+          "PYSEC-2020-135",
+          "PYSEC-2020-292",
+          "PYSEC-2020-327"
+        ],
+        "severity": "critical"
+      },
+      {
+        "id": "GHSA-j8qh-3xrq-c825",
+        "file": "GHSA-j8qh-3xrq-c825.json",
+        "summary": "Division by zero in TFLite's implementation of `OneHot`",
+        "aliases": [
+          "BIT-tensorflow-2021-29600",
+          "CVE-2021-29600",
+          "PYSEC-2021-237",
+          "PYSEC-2021-528",
+          "PYSEC-2021-726"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-j8qh-3xrq-c825",
+        "file": "GHSA-j8qh-3xrq-c825.json",
+        "summary": "Division by zero in TFLite's implementation of `OneHot`",
+        "aliases": [
+          "BIT-tensorflow-2021-29600",
+          "CVE-2021-29600",
+          "PYSEC-2021-237",
+          "PYSEC-2021-528",
+          "PYSEC-2021-726"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-j8qh-3xrq-c825",
+        "file": "GHSA-j8qh-3xrq-c825.json",
+        "summary": "Division by zero in TFLite's implementation of `OneHot`",
+        "aliases": [
+          "BIT-tensorflow-2021-29600",
+          "CVE-2021-29600",
+          "PYSEC-2021-237",
+          "PYSEC-2021-528",
+          "PYSEC-2021-726"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-j8qh-3xrq-c825",
+        "file": "GHSA-j8qh-3xrq-c825.json",
+        "summary": "Division by zero in TFLite's implementation of `OneHot`",
+        "aliases": [
+          "BIT-tensorflow-2021-29600",
+          "CVE-2021-29600",
+          "PYSEC-2021-237",
+          "PYSEC-2021-528",
+          "PYSEC-2021-726"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-rmg2-f698-wq35",
+        "file": "GHSA-rmg2-f698-wq35.json",
+        "summary": "`tf.raw_ops.Mfcc` crashes",
+        "aliases": [
+          "BIT-tensorflow-2022-41896",
+          "CVE-2022-41896"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-rmg2-f698-wq35",
+        "file": "GHSA-rmg2-f698-wq35.json",
+        "summary": "`tf.raw_ops.Mfcc` crashes",
+        "aliases": [
+          "BIT-tensorflow-2022-41896",
+          "CVE-2022-41896"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-rmg2-f698-wq35",
+        "file": "GHSA-rmg2-f698-wq35.json",
+        "summary": "`tf.raw_ops.Mfcc` crashes",
+        "aliases": [
+          "BIT-tensorflow-2022-41896",
+          "CVE-2022-41896"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-xvjm-fvxx-q3hv",
+        "file": "GHSA-xvjm-fvxx-q3hv.json",
+        "summary": "CHECK-fail due to integer overflow",
+        "aliases": [
+          "BIT-tensorflow-2021-29584",
+          "CVE-2021-29584",
+          "PYSEC-2021-221",
+          "PYSEC-2021-512",
+          "PYSEC-2021-710"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-xvjm-fvxx-q3hv",
+        "file": "GHSA-xvjm-fvxx-q3hv.json",
+        "summary": "CHECK-fail due to integer overflow",
+        "aliases": [
+          "BIT-tensorflow-2021-29584",
+          "CVE-2021-29584",
+          "PYSEC-2021-221",
+          "PYSEC-2021-512",
+          "PYSEC-2021-710"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-xvjm-fvxx-q3hv",
+        "file": "GHSA-xvjm-fvxx-q3hv.json",
+        "summary": "CHECK-fail due to integer overflow",
+        "aliases": [
+          "BIT-tensorflow-2021-29584",
+          "CVE-2021-29584",
+          "PYSEC-2021-221",
+          "PYSEC-2021-512",
+          "PYSEC-2021-710"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-xvjm-fvxx-q3hv",
+        "file": "GHSA-xvjm-fvxx-q3hv.json",
+        "summary": "CHECK-fail due to integer overflow",
+        "aliases": [
+          "BIT-tensorflow-2021-29584",
+          "CVE-2021-29584",
+          "PYSEC-2021-221",
+          "PYSEC-2021-512",
+          "PYSEC-2021-710"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "PYSEC-2020-287",
+        "file": "PYSEC-2020-287.json",
         "summary": "",
         "aliases": [
-          "BIT-tensorflow-2022-23584",
-          "CVE-2022-23584",
-          "GHSA-24x4-6qmh-88qg",
-          "PYSEC-2022-148"
+          "BIT-tensorflow-2020-15207",
+          "CVE-2020-15207",
+          "GHSA-q4qf-3fc6-8x34",
+          "PYSEC-2020-130",
+          "PYSEC-2020-322"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-440",
+        "file": "PYSEC-2021-440.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-29512",
+          "CVE-2021-29512",
+          "GHSA-4278-2v5v-65r4",
+          "PYSEC-2021-149",
+          "PYSEC-2021-638"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-476",
+        "file": "PYSEC-2021-476.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-29548",
+          "CVE-2021-29548",
+          "GHSA-p45v-v4pw-77jr",
+          "PYSEC-2021-185",
+          "PYSEC-2021-674"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-510",
+        "file": "PYSEC-2021-510.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-29582",
+          "CVE-2021-29582",
+          "GHSA-c45w-2wxr-pp53",
+          "PYSEC-2021-219",
+          "PYSEC-2021-708"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-546",
+        "file": "PYSEC-2021-546.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-29618",
+          "CVE-2021-29618",
+          "GHSA-xqfj-cr6q-pc8w",
+          "PYSEC-2021-255",
+          "PYSEC-2021-744"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-581",
+        "file": "PYSEC-2021-581.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-37668",
+          "CVE-2021-37668",
+          "GHSA-2wmv-37vq-52g5",
+          "PYSEC-2021-290",
+          "PYSEC-2021-779"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-616",
+        "file": "PYSEC-2021-616.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-41207",
+          "CVE-2021-41207",
+          "GHSA-7v94-64hj-m82h",
+          "PYSEC-2021-399",
+          "PYSEC-2021-814"
+        ]
+      },
+      {
+        "id": "PYSEC-2022-76",
+        "file": "PYSEC-2022-76.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2022-23567",
+          "CVE-2022-23567",
+          "GHSA-rrx2-r989-2c43",
+          "PYSEC-2022-131"
         ]
       }
     ],
     "tensorflow-gpu": [
       {
-        "id": "GHSA-vwhq-49r4-gj9v",
-        "file": "GHSA-vwhq-49r4-gj9v.json",
-        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "id": "GHSA-374m-jm66-3vj8",
+        "file": "GHSA-374m-jm66-3vj8.json",
+        "summary": "Heap OOB in `SparseBinCount`",
         "aliases": [
-          "BIT-tensorflow-2021-41214",
-          "CVE-2021-41214",
-          "PYSEC-2021-406",
-          "PYSEC-2021-623",
-          "PYSEC-2021-821"
+          "BIT-tensorflow-2021-41226",
+          "CVE-2021-41226",
+          "PYSEC-2021-418",
+          "PYSEC-2021-635",
+          "PYSEC-2021-833"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-374m-jm66-3vj8",
+        "file": "GHSA-374m-jm66-3vj8.json",
+        "summary": "Heap OOB in `SparseBinCount`",
+        "aliases": [
+          "BIT-tensorflow-2021-41226",
+          "CVE-2021-41226",
+          "PYSEC-2021-418",
+          "PYSEC-2021-635",
+          "PYSEC-2021-833"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-374m-jm66-3vj8",
+        "file": "GHSA-374m-jm66-3vj8.json",
+        "summary": "Heap OOB in `SparseBinCount`",
+        "aliases": [
+          "BIT-tensorflow-2021-41226",
+          "CVE-2021-41226",
+          "PYSEC-2021-418",
+          "PYSEC-2021-635",
+          "PYSEC-2021-833"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-49rx-x2rw-pc6f",
+        "file": "GHSA-49rx-x2rw-pc6f.json",
+        "summary": "Heap OOB read in all `tf.raw_ops.QuantizeAndDequantizeV*` ops",
+        "aliases": [
+          "BIT-tensorflow-2021-41205",
+          "CVE-2021-41205",
+          "PYSEC-2021-398",
+          "PYSEC-2021-615",
+          "PYSEC-2021-813"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-49rx-x2rw-pc6f",
+        "file": "GHSA-49rx-x2rw-pc6f.json",
+        "summary": "Heap OOB read in all `tf.raw_ops.QuantizeAndDequantizeV*` ops",
+        "aliases": [
+          "BIT-tensorflow-2021-41205",
+          "CVE-2021-41205",
+          "PYSEC-2021-398",
+          "PYSEC-2021-615",
+          "PYSEC-2021-813"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-49rx-x2rw-pc6f",
+        "file": "GHSA-49rx-x2rw-pc6f.json",
+        "summary": "Heap OOB read in all `tf.raw_ops.QuantizeAndDequantizeV*` ops",
+        "aliases": [
+          "BIT-tensorflow-2021-41205",
+          "CVE-2021-41205",
+          "PYSEC-2021-398",
+          "PYSEC-2021-615",
+          "PYSEC-2021-813"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-7fvx-3jfc-2cpc",
+        "file": "GHSA-7fvx-3jfc-2cpc.json",
+        "summary": "Heap OOB in `ResourceScatterUpdate`",
+        "aliases": [
+          "BIT-tensorflow-2021-37655",
+          "CVE-2021-37655",
+          "PYSEC-2021-277",
+          "PYSEC-2021-568",
+          "PYSEC-2021-766"
         ],
         "severity": "high"
       },
       {
-        "id": "GHSA-vwhq-49r4-gj9v",
-        "file": "GHSA-vwhq-49r4-gj9v.json",
-        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "id": "GHSA-7fvx-3jfc-2cpc",
+        "file": "GHSA-7fvx-3jfc-2cpc.json",
+        "summary": "Heap OOB in `ResourceScatterUpdate`",
         "aliases": [
-          "BIT-tensorflow-2021-41214",
-          "CVE-2021-41214",
-          "PYSEC-2021-406",
-          "PYSEC-2021-623",
-          "PYSEC-2021-821"
+          "BIT-tensorflow-2021-37655",
+          "CVE-2021-37655",
+          "PYSEC-2021-277",
+          "PYSEC-2021-568",
+          "PYSEC-2021-766"
         ],
         "severity": "high"
       },
       {
-        "id": "GHSA-vwhq-49r4-gj9v",
-        "file": "GHSA-vwhq-49r4-gj9v.json",
-        "summary": "Reference binding to `nullptr` in `tf.ragged.cross`",
+        "id": "GHSA-7fvx-3jfc-2cpc",
+        "file": "GHSA-7fvx-3jfc-2cpc.json",
+        "summary": "Heap OOB in `ResourceScatterUpdate`",
         "aliases": [
-          "BIT-tensorflow-2021-41214",
-          "CVE-2021-41214",
-          "PYSEC-2021-406",
-          "PYSEC-2021-623",
-          "PYSEC-2021-821"
+          "BIT-tensorflow-2021-37655",
+          "CVE-2021-37655",
+          "PYSEC-2021-277",
+          "PYSEC-2021-568",
+          "PYSEC-2021-766"
         ],
         "severity": "high"
       },
       {
-        "id": "PYSEC-2021-774",
-        "file": "PYSEC-2021-774.json",
+        "id": "GHSA-8fxw-76px-3rxv",
+        "file": "GHSA-8fxw-76px-3rxv.json",
+        "summary": "Memory leak in Tensorflow",
+        "aliases": [
+          "BIT-tensorflow-2020-15192",
+          "CVE-2020-15192",
+          "PYSEC-2020-115",
+          "PYSEC-2020-272",
+          "PYSEC-2020-307"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-8fxw-76px-3rxv",
+        "file": "GHSA-8fxw-76px-3rxv.json",
+        "summary": "Memory leak in Tensorflow",
+        "aliases": [
+          "BIT-tensorflow-2020-15192",
+          "CVE-2020-15192",
+          "PYSEC-2020-115",
+          "PYSEC-2020-272",
+          "PYSEC-2020-307"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9697-98pf-4rw7",
+        "file": "GHSA-9697-98pf-4rw7.json",
+        "summary": "Heap OOB in `UpperBound` and `LowerBound`",
+        "aliases": [
+          "BIT-tensorflow-2021-37670",
+          "CVE-2021-37670",
+          "PYSEC-2021-292",
+          "PYSEC-2021-583",
+          "PYSEC-2021-781"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9697-98pf-4rw7",
+        "file": "GHSA-9697-98pf-4rw7.json",
+        "summary": "Heap OOB in `UpperBound` and `LowerBound`",
+        "aliases": [
+          "BIT-tensorflow-2021-37670",
+          "CVE-2021-37670",
+          "PYSEC-2021-292",
+          "PYSEC-2021-583",
+          "PYSEC-2021-781"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9697-98pf-4rw7",
+        "file": "GHSA-9697-98pf-4rw7.json",
+        "summary": "Heap OOB in `UpperBound` and `LowerBound`",
+        "aliases": [
+          "BIT-tensorflow-2021-37670",
+          "CVE-2021-37670",
+          "PYSEC-2021-292",
+          "PYSEC-2021-583",
+          "PYSEC-2021-781"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9vqj-64pv-w55c",
+        "file": "GHSA-9vqj-64pv-w55c.json",
+        "summary": "TensorFlow vulnerable to `CHECK` fail in `tf.linalg.matrix_rank`",
+        "aliases": [
+          "BIT-tensorflow-2022-35988",
+          "CVE-2022-35988"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9vqj-64pv-w55c",
+        "file": "GHSA-9vqj-64pv-w55c.json",
+        "summary": "TensorFlow vulnerable to `CHECK` fail in `tf.linalg.matrix_rank`",
+        "aliases": [
+          "BIT-tensorflow-2022-35988",
+          "CVE-2022-35988"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9vqj-64pv-w55c",
+        "file": "GHSA-9vqj-64pv-w55c.json",
+        "summary": "TensorFlow vulnerable to `CHECK` fail in `tf.linalg.matrix_rank`",
+        "aliases": [
+          "BIT-tensorflow-2022-35988",
+          "CVE-2022-35988"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-c9f3-9wfr-wgh7",
+        "file": "GHSA-c9f3-9wfr-wgh7.json",
+        "summary": "Lack of validation in data format attributes in TensorFlow",
+        "aliases": [
+          "BIT-tensorflow-2020-26267",
+          "CVE-2020-26267",
+          "PYSEC-2020-140",
+          "PYSEC-2020-298",
+          "PYSEC-2020-333"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-c9f3-9wfr-wgh7",
+        "file": "GHSA-c9f3-9wfr-wgh7.json",
+        "summary": "Lack of validation in data format attributes in TensorFlow",
+        "aliases": [
+          "BIT-tensorflow-2020-26267",
+          "CVE-2020-26267",
+          "PYSEC-2020-140",
+          "PYSEC-2020-298",
+          "PYSEC-2020-333"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-c9f3-9wfr-wgh7",
+        "file": "GHSA-c9f3-9wfr-wgh7.json",
+        "summary": "Lack of validation in data format attributes in TensorFlow",
+        "aliases": [
+          "BIT-tensorflow-2020-26267",
+          "CVE-2020-26267",
+          "PYSEC-2020-140",
+          "PYSEC-2020-298",
+          "PYSEC-2020-333"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-c9f3-9wfr-wgh7",
+        "file": "GHSA-c9f3-9wfr-wgh7.json",
+        "summary": "Lack of validation in data format attributes in TensorFlow",
+        "aliases": [
+          "BIT-tensorflow-2020-26267",
+          "CVE-2020-26267",
+          "PYSEC-2020-140",
+          "PYSEC-2020-298",
+          "PYSEC-2020-333"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-c9f3-9wfr-wgh7",
+        "file": "GHSA-c9f3-9wfr-wgh7.json",
+        "summary": "Lack of validation in data format attributes in TensorFlow",
+        "aliases": [
+          "BIT-tensorflow-2020-26267",
+          "CVE-2020-26267",
+          "PYSEC-2020-140",
+          "PYSEC-2020-298",
+          "PYSEC-2020-333"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-gv26-jpj9-c8gq",
+        "file": "GHSA-gv26-jpj9-c8gq.json",
+        "summary": "Incomplete validation in `SparseSparseMinimum`",
+        "aliases": [
+          "BIT-tensorflow-2021-29607",
+          "CVE-2021-29607",
+          "PYSEC-2021-244",
+          "PYSEC-2021-535",
+          "PYSEC-2021-733"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-gv26-jpj9-c8gq",
+        "file": "GHSA-gv26-jpj9-c8gq.json",
+        "summary": "Incomplete validation in `SparseSparseMinimum`",
+        "aliases": [
+          "BIT-tensorflow-2021-29607",
+          "CVE-2021-29607",
+          "PYSEC-2021-244",
+          "PYSEC-2021-535",
+          "PYSEC-2021-733"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-gv26-jpj9-c8gq",
+        "file": "GHSA-gv26-jpj9-c8gq.json",
+        "summary": "Incomplete validation in `SparseSparseMinimum`",
+        "aliases": [
+          "BIT-tensorflow-2021-29607",
+          "CVE-2021-29607",
+          "PYSEC-2021-244",
+          "PYSEC-2021-535",
+          "PYSEC-2021-733"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-gv26-jpj9-c8gq",
+        "file": "GHSA-gv26-jpj9-c8gq.json",
+        "summary": "Incomplete validation in `SparseSparseMinimum`",
+        "aliases": [
+          "BIT-tensorflow-2021-29607",
+          "CVE-2021-29607",
+          "PYSEC-2021-244",
+          "PYSEC-2021-535",
+          "PYSEC-2021-733"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-hx2x-85gr-wrpq",
+        "file": "GHSA-hx2x-85gr-wrpq.json",
+        "summary": "Out of bounds access in tensorflow-lite",
+        "aliases": [
+          "BIT-tensorflow-2020-15212",
+          "CVE-2020-15212",
+          "PYSEC-2020-135",
+          "PYSEC-2020-292",
+          "PYSEC-2020-327"
+        ],
+        "severity": "critical"
+      },
+      {
+        "id": "GHSA-hx2x-85gr-wrpq",
+        "file": "GHSA-hx2x-85gr-wrpq.json",
+        "summary": "Out of bounds access in tensorflow-lite",
+        "aliases": [
+          "BIT-tensorflow-2020-15212",
+          "CVE-2020-15212",
+          "PYSEC-2020-135",
+          "PYSEC-2020-292",
+          "PYSEC-2020-327"
+        ],
+        "severity": "critical"
+      },
+      {
+        "id": "GHSA-j8qh-3xrq-c825",
+        "file": "GHSA-j8qh-3xrq-c825.json",
+        "summary": "Division by zero in TFLite's implementation of `OneHot`",
+        "aliases": [
+          "BIT-tensorflow-2021-29600",
+          "CVE-2021-29600",
+          "PYSEC-2021-237",
+          "PYSEC-2021-528",
+          "PYSEC-2021-726"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-j8qh-3xrq-c825",
+        "file": "GHSA-j8qh-3xrq-c825.json",
+        "summary": "Division by zero in TFLite's implementation of `OneHot`",
+        "aliases": [
+          "BIT-tensorflow-2021-29600",
+          "CVE-2021-29600",
+          "PYSEC-2021-237",
+          "PYSEC-2021-528",
+          "PYSEC-2021-726"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-j8qh-3xrq-c825",
+        "file": "GHSA-j8qh-3xrq-c825.json",
+        "summary": "Division by zero in TFLite's implementation of `OneHot`",
+        "aliases": [
+          "BIT-tensorflow-2021-29600",
+          "CVE-2021-29600",
+          "PYSEC-2021-237",
+          "PYSEC-2021-528",
+          "PYSEC-2021-726"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-j8qh-3xrq-c825",
+        "file": "GHSA-j8qh-3xrq-c825.json",
+        "summary": "Division by zero in TFLite's implementation of `OneHot`",
+        "aliases": [
+          "BIT-tensorflow-2021-29600",
+          "CVE-2021-29600",
+          "PYSEC-2021-237",
+          "PYSEC-2021-528",
+          "PYSEC-2021-726"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-rmg2-f698-wq35",
+        "file": "GHSA-rmg2-f698-wq35.json",
+        "summary": "`tf.raw_ops.Mfcc` crashes",
+        "aliases": [
+          "BIT-tensorflow-2022-41896",
+          "CVE-2022-41896"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-rmg2-f698-wq35",
+        "file": "GHSA-rmg2-f698-wq35.json",
+        "summary": "`tf.raw_ops.Mfcc` crashes",
+        "aliases": [
+          "BIT-tensorflow-2022-41896",
+          "CVE-2022-41896"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-rmg2-f698-wq35",
+        "file": "GHSA-rmg2-f698-wq35.json",
+        "summary": "`tf.raw_ops.Mfcc` crashes",
+        "aliases": [
+          "BIT-tensorflow-2022-41896",
+          "CVE-2022-41896"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-xvjm-fvxx-q3hv",
+        "file": "GHSA-xvjm-fvxx-q3hv.json",
+        "summary": "CHECK-fail due to integer overflow",
+        "aliases": [
+          "BIT-tensorflow-2021-29584",
+          "CVE-2021-29584",
+          "PYSEC-2021-221",
+          "PYSEC-2021-512",
+          "PYSEC-2021-710"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-xvjm-fvxx-q3hv",
+        "file": "GHSA-xvjm-fvxx-q3hv.json",
+        "summary": "CHECK-fail due to integer overflow",
+        "aliases": [
+          "BIT-tensorflow-2021-29584",
+          "CVE-2021-29584",
+          "PYSEC-2021-221",
+          "PYSEC-2021-512",
+          "PYSEC-2021-710"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-xvjm-fvxx-q3hv",
+        "file": "GHSA-xvjm-fvxx-q3hv.json",
+        "summary": "CHECK-fail due to integer overflow",
+        "aliases": [
+          "BIT-tensorflow-2021-29584",
+          "CVE-2021-29584",
+          "PYSEC-2021-221",
+          "PYSEC-2021-512",
+          "PYSEC-2021-710"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-xvjm-fvxx-q3hv",
+        "file": "GHSA-xvjm-fvxx-q3hv.json",
+        "summary": "CHECK-fail due to integer overflow",
+        "aliases": [
+          "BIT-tensorflow-2021-29584",
+          "CVE-2021-29584",
+          "PYSEC-2021-221",
+          "PYSEC-2021-512",
+          "PYSEC-2021-710"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "PYSEC-2020-321",
+        "file": "PYSEC-2020-321.json",
         "summary": "",
         "aliases": [
-          "BIT-tensorflow-2021-37663",
-          "CVE-2021-37663",
-          "GHSA-g25h-jr74-qp5j",
-          "PYSEC-2021-285",
-          "PYSEC-2021-576"
+          "BIT-tensorflow-2020-15206",
+          "CVE-2020-15206",
+          "GHSA-w5gh-2wr2-pm6g",
+          "PYSEC-2020-129",
+          "PYSEC-2020-286"
         ]
-      }
-    ],
-    "beutifulsoup": [
+      },
       {
-        "id": "MAL-2023-1647",
-        "file": "MAL-2023-1647.json",
-        "summary": "Malicious code in beutifulsoup (PyPI)",
-        "aliases": []
-      }
-    ],
-    "tensofrlow": [
-      {
-        "id": "MAL-2023-2297",
-        "file": "MAL-2023-2297.json",
-        "summary": "Malicious code in tensofrlow (PyPI)",
-        "aliases": []
-      }
-    ],
-    "esqhttpgetmask": [
-      {
-        "id": "MAL-2023-2949",
-        "file": "MAL-2023-2949.json",
-        "summary": "Malicious code in esqhttpgetmask (PyPI)",
-        "aliases": []
-      }
-    ],
-    "gamestring": [
-      {
-        "id": "MAL-2023-3599",
-        "file": "MAL-2023-3599.json",
-        "summary": "Malicious code in gamestring (PyPI)",
-        "aliases": []
-      }
-    ],
-    "libminevmre": [
-      {
-        "id": "MAL-2023-4249",
-        "file": "MAL-2023-4249.json",
-        "summary": "Malicious code in libminevmre (PyPI)",
-        "aliases": []
-      }
-    ],
-    "postcontrol": [
-      {
-        "id": "MAL-2023-4899",
-        "file": "MAL-2023-4899.json",
-        "summary": "Malicious code in postcontrol (PyPI)",
-        "aliases": []
-      }
-    ],
-    "py-ramhacked": [
-      {
-        "id": "MAL-2023-5549",
-        "file": "MAL-2023-5549.json",
-        "summary": "Malicious code in py-ramhacked (PyPI)",
-        "aliases": []
-      }
-    ],
-    "selfinfoint": [
-      {
-        "id": "MAL-2023-6199",
-        "file": "MAL-2023-6199.json",
-        "summary": "Malicious code in selfinfoint (PyPI)",
-        "aliases": []
-      }
-    ],
-    "superint": [
-      {
-        "id": "MAL-2023-6849",
-        "file": "MAL-2023-6849.json",
-        "summary": "Malicious code in superint (PyPI)",
-        "aliases": []
-      }
-    ],
-    "tpramcced": [
-      {
-        "id": "MAL-2023-7499",
-        "file": "MAL-2023-7499.json",
-        "summary": "Malicious code in tpramcced (PyPI)",
-        "aliases": []
-      }
-    ],
-    "trustdecoderss": [
-      {
-        "id": "MAL-2024-10178",
-        "file": "MAL-2024-10178.json",
-        "summary": "Malicious code in trustdecoderss (PyPI)",
-        "aliases": [
-          "SNYK-PYTHON-TRUSTDECODERSS-8145477"
-        ]
-      }
-    ],
-    "18923aa": [
-      {
-        "id": "MAL-2024-4721",
-        "file": "MAL-2024-4721.json",
-        "summary": "Malicious code in 18923aa (PyPI)",
-        "aliases": []
-      }
-    ],
-    "mlp-data-product-producer": [
-      {
-        "id": "MAL-2024-5371",
-        "file": "MAL-2024-5371.json",
-        "summary": "Malicious code in mlp-data-product-producer (PyPI)",
-        "aliases": []
-      }
-    ],
-    "social-scrappers": [
-      {
-        "id": "MAL-2024-6021",
-        "file": "MAL-2024-6021.json",
-        "summary": "Malicious code in social-scrappers (PyPI)",
-        "aliases": [
-          "SNYK-PYTHON-SOCIALSCRAPPERS-5885054"
-        ]
-      }
-    ],
-    "time-check-server": [
-      {
-        "id": "MAL-2025-191900",
-        "file": "MAL-2025-191900.json",
-        "summary": "Malicious code in time-check-server (PyPI)",
-        "aliases": []
-      }
-    ],
-    "brotli-python": [
-      {
-        "id": "MAL-2025-47749",
-        "file": "MAL-2025-47749.json",
-        "summary": "Malicious code in brotli-python (PyPI)",
-        "aliases": []
-      }
-    ],
-    "databricks-clean-room-orchestrator": [
-      {
-        "id": "MAL-2026-2146",
-        "file": "MAL-2026-2146.json",
-        "summary": "Malicious code in databricks-clean-room-orchestrator (PyPI)",
-        "aliases": []
-      }
-    ],
-    "zodb3": [
-      {
-        "id": "PYSEC-2010-27",
-        "file": "PYSEC-2010-27.json",
+        "id": "PYSEC-2021-651",
+        "file": "PYSEC-2021-651.json",
         "summary": "",
         "aliases": [
-          "CVE-2010-3495",
-          "GHSA-j6m4-frxh-p4x8"
+          "BIT-tensorflow-2021-29525",
+          "CVE-2021-29525",
+          "GHSA-xm2v-8rrw-w9pm",
+          "PYSEC-2021-162",
+          "PYSEC-2021-453"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-687",
+        "file": "PYSEC-2021-687.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-29561",
+          "CVE-2021-29561",
+          "GHSA-gvm4-h8j3-rjrq",
+          "PYSEC-2021-198",
+          "PYSEC-2021-489"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-721",
+        "file": "PYSEC-2021-721.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-29595",
+          "CVE-2021-29595",
+          "GHSA-vf94-36g5-69v8",
+          "PYSEC-2021-232",
+          "PYSEC-2021-523"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-757",
+        "file": "PYSEC-2021-757.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-37646",
+          "CVE-2021-37646",
+          "GHSA-h6jh-7gv5-28vg",
+          "PYSEC-2021-268",
+          "PYSEC-2021-559"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-792",
+        "file": "PYSEC-2021-792.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-37681",
+          "CVE-2021-37681",
+          "GHSA-7xwj-5r4v-429p",
+          "PYSEC-2021-303",
+          "PYSEC-2021-594"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-827",
+        "file": "PYSEC-2021-827.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2021-41220",
+          "CVE-2021-41220",
+          "GHSA-gpfh-jvf9-7wg5",
+          "PYSEC-2021-412",
+          "PYSEC-2021-629"
+        ]
+      },
+      {
+        "id": "PYSEC-2022-109",
+        "file": "PYSEC-2022-109.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2022-21730",
+          "CVE-2022-21730",
+          "GHSA-vjg4-v33c-ggc4",
+          "PYSEC-2022-54"
+        ]
+      },
+      {
+        "id": "PYSEC-2022-144",
+        "file": "PYSEC-2022-144.json",
+        "summary": "",
+        "aliases": [
+          "BIT-tensorflow-2022-23580",
+          "CVE-2022-23580",
+          "GHSA-627q-g293-49q7",
+          "PYSEC-2022-89"
         ]
       }
     ],
-    "sqla-yaml-fixtures": [
+    "pillow": [
       {
-        "id": "PYSEC-2019-122",
-        "file": "PYSEC-2019-122.json",
+        "id": "GHSA-3f63-hfp8-52jq",
+        "file": "GHSA-3f63-hfp8-52jq.json",
+        "summary": "Arbitrary Code Execution in Pillow",
+        "aliases": [
+          "BIT-pillow-2023-50447",
+          "CVE-2023-50447"
+        ],
+        "severity": "critical"
+      },
+      {
+        "id": "PYSEC-2022-43145",
+        "file": "PYSEC-2022-43145.json",
         "summary": "",
         "aliases": [
-          "CVE-2019-3575",
-          "GHSA-2x54-j4m3-r6wx"
+          "BIT-pillow-2022-30595",
+          "CVE-2022-30595",
+          "GHSA-hr8g-f6r6-mr22"
+        ],
+        "severity": "critical"
+      }
+    ],
+    "recommender-xblock": [
+      {
+        "id": "GHSA-3j5x-7ccf-ppgm",
+        "file": "GHSA-3j5x-7ccf-ppgm.json",
+        "summary": "Cross-site scripting in recommender-xblock",
+        "aliases": [
+          "CVE-2018-20858",
+          "PYSEC-2019-219"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "django": [
+      {
+        "id": "GHSA-3jqw-crqj-w8qw",
+        "file": "GHSA-3jqw-crqj-w8qw.json",
+        "summary": "Denial of service in django",
+        "aliases": [
+          "CVE-2011-4137",
+          "PYSEC-2011-2"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-3jqw-crqj-w8qw",
+        "file": "GHSA-3jqw-crqj-w8qw.json",
+        "summary": "Denial of service in django",
+        "aliases": [
+          "CVE-2011-4137",
+          "PYSEC-2011-2"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-8p8v-wh79-9r56",
+        "file": "GHSA-8p8v-wh79-9r56.json",
+        "summary": "Django vulnerable to Uncontrolled Resource Consumption",
+        "aliases": [
+          "BIT-django-2026-25673",
+          "CVE-2026-25673"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-8p8v-wh79-9r56",
+        "file": "GHSA-8p8v-wh79-9r56.json",
+        "summary": "Django vulnerable to Uncontrolled Resource Consumption",
+        "aliases": [
+          "BIT-django-2026-25673",
+          "CVE-2026-25673"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-8p8v-wh79-9r56",
+        "file": "GHSA-8p8v-wh79-9r56.json",
+        "summary": "Django vulnerable to Uncontrolled Resource Consumption",
+        "aliases": [
+          "BIT-django-2026-25673",
+          "CVE-2026-25673"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-wxg3-mfph-qg9w",
+        "file": "GHSA-wxg3-mfph-qg9w.json",
+        "summary": "Django Might Allow CSRF Requests via URL Verification",
+        "aliases": [
+          "CVE-2011-4138",
+          "PYSEC-2011-3"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-wxg3-mfph-qg9w",
+        "file": "GHSA-wxg3-mfph-qg9w.json",
+        "summary": "Django Might Allow CSRF Requests via URL Verification",
+        "aliases": [
+          "CVE-2011-4138",
+          "PYSEC-2011-3"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-x88j-93vc-wpmp",
+        "file": "GHSA-x88j-93vc-wpmp.json",
+        "summary": "Session manipulation in Django",
+        "aliases": [
+          "CVE-2011-4136",
+          "PYSEC-2011-1"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-x88j-93vc-wpmp",
+        "file": "GHSA-x88j-93vc-wpmp.json",
+        "summary": "Session manipulation in Django",
+        "aliases": [
+          "CVE-2011-4136",
+          "PYSEC-2011-1"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "PYSEC-2008-1",
+        "file": "PYSEC-2008-1.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2008-2302",
+          "GHSA-54qj-48vx-cr9f"
         ]
+      }
+    ],
+    "ethyca-fides": [
+      {
+        "id": "GHSA-3rw2-wfc8-wmj5",
+        "file": "GHSA-3rw2-wfc8-wmj5.json",
+        "summary": "Fides Webserver Vulnerable to SVG Bomb File Uploads",
+        "aliases": [
+          "CVE-2023-37481"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-fq34-xw6c-fphf",
+        "file": "GHSA-fq34-xw6c-fphf.json",
+        "summary": "Fides Webserver API Rate Limiting Vulnerability in Proxied Environments",
+        "aliases": [
+          "CVE-2025-57816"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-hjfh-p8f5-24wr",
+        "file": "GHSA-hjfh-p8f5-24wr.json",
+        "summary": "Fides Webserver API is Vulnerable to OAuth Client Privilege Escalation",
+        "aliases": [
+          "CVE-2025-57817"
+        ],
+        "severity": "high"
+      }
+    ],
+    "marshmallow": [
+      {
+        "id": "GHSA-428g-f7cq-pgp5",
+        "file": "GHSA-428g-f7cq-pgp5.json",
+        "summary": "Marshmallow has DoS in Schema.load(many)",
+        "aliases": [
+          "CVE-2025-68480"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-428g-f7cq-pgp5",
+        "file": "GHSA-428g-f7cq-pgp5.json",
+        "summary": "Marshmallow has DoS in Schema.load(many)",
+        "aliases": [
+          "CVE-2025-68480"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "apache-superset": [
+      {
+        "id": "GHSA-42q4-9xf9-f67x",
+        "file": "GHSA-42q4-9xf9-f67x.json",
+        "summary": "Apache Superset allowed for database connections password leak for authenticated users",
+        "aliases": [
+          "BIT-superset-2021-41972",
+          "CVE-2021-41972",
+          "PYSEC-2021-434"
+        ],
+        "severity": "high"
+      }
+    ],
+    "ryu": [
+      {
+        "id": "GHSA-4987-5p3p-9r27",
+        "file": "GHSA-4987-5p3p-9r27.json",
+        "summary": "FaucetSDN Ryu Denial of Service Vulnerability",
+        "aliases": [
+          "CVE-2020-35139"
+        ],
+        "severity": "high"
+      }
+    ],
+    "quokka": [
+      {
+        "id": "GHSA-4q2r-qxp6-h5j6",
+        "file": "GHSA-4q2r-qxp6-h5j6.json",
+        "summary": "Improper Restriction of XML External Entity Reference in Quokka",
+        "aliases": [
+          "CVE-2020-18705",
+          "PYSEC-2021-145"
+        ],
+        "severity": "critical"
+      }
+    ],
+    "openssl-encrypt": [
+      {
+        "id": "GHSA-4rh7-jwg9-m28m",
+        "file": "GHSA-4rh7-jwg9-m28m.json",
+        "summary": "openssl-encrypt accepts refresh tokens as URL query parameters causing token leakage",
+        "aliases": [],
+        "severity": "medium"
+      }
+    ],
+    "mlflow": [
+      {
+        "id": "GHSA-4rqf-8pfm-p36r",
+        "file": "GHSA-4rqf-8pfm-p36r.json",
+        "summary": "MLflow has a Local File Read/Path Traversal in dbfs",
+        "aliases": [
+          "BIT-mlflow-2024-8859",
+          "CVE-2024-8859"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-cxfr-5q3r-2rc2",
+        "file": "GHSA-cxfr-5q3r-2rc2.json",
+        "summary": "Jinja2 template injection in mlflow",
+        "aliases": [
+          "BIT-mlflow-2023-6709",
+          "CVE-2023-6709",
+          "PYSEC-2023-281"
+        ],
+        "severity": "high"
+      }
+    ],
+    "rdiffweb": [
+      {
+        "id": "GHSA-4wph-9vrm-6v3w",
+        "file": "GHSA-4wph-9vrm-6v3w.json",
+        "summary": "Rdiffweb vulnerable to Missing Authentication for Critical Function",
+        "aliases": [
+          "CVE-2022-4018",
+          "PYSEC-2022-43001"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-wwrg-2w5j-grvx",
+        "file": "GHSA-wwrg-2w5j-grvx.json",
+        "summary": "RDiffWeb vulnerable to Allocation of Resources Without Limits or Throttling",
+        "aliases": [
+          "CVE-2023-4138"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "PYSEC-2022-285",
+        "file": "PYSEC-2022-285.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2022-3233",
+          "GHSA-9vxf-mcm6-5m42"
+        ]
+      },
+      {
+        "id": "PYSEC-2022-43010",
+        "file": "PYSEC-2022-43010.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2022-4724",
+          "GHSA-m8r9-qxx8-mrxp"
+        ]
+      }
+    ],
+    "octoprint": [
+      {
+        "id": "GHSA-5626-pw9c-hmjr",
+        "file": "GHSA-5626-pw9c-hmjr.json",
+        "summary": "OctoPrint Unverified Password Change via Access Control Settings",
+        "aliases": [
+          "CVE-2024-23637",
+          "PYSEC-2024-29"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-x9rq-fjp5-qgm9",
+        "file": "GHSA-x9rq-fjp5-qgm9.json",
+        "summary": "OctoPrint Incorrect Access Control",
+        "aliases": [
+          "CVE-2021-32560",
+          "PYSEC-2021-29"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "PYSEC-2021-30",
+        "file": "PYSEC-2021-30.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2021-32561",
+          "GHSA-vcx4-fpmp-mvv6"
+        ]
+      },
+      {
+        "id": "PYSEC-2024-201",
+        "file": "PYSEC-2024-201.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2024-49377",
+          "GHSA-xvxq-g8hw-fx4g"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "comfy-cli": [
+      {
+        "id": "GHSA-562r-8445-54r2",
+        "file": "GHSA-562r-8445-54r2.json",
+        "summary": "ComfyUI-Manager is Vulnerable to CRLF Injection in Configuration Handler",
+        "aliases": [
+          "CVE-2026-22777"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-562r-8445-54r2",
+        "file": "GHSA-562r-8445-54r2.json",
+        "summary": "ComfyUI-Manager is Vulnerable to CRLF Injection in Configuration Handler",
+        "aliases": [
+          "CVE-2026-22777"
+        ],
+        "severity": "high"
+      }
+    ],
+    "open-webui": [
+      {
+        "id": "GHSA-5gc6-xhv4-2wg6",
+        "file": "GHSA-5gc6-xhv4-2wg6.json",
+        "summary": "Open WebUI has an IDOR vulnerability in the pin_channel_message API endpoint",
+        "aliases": [
+          "CVE-2026-45386"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "cipherbcrypt": [
+      {
+        "id": "GHSA-5grr-72f9-678v",
+        "file": "GHSA-5grr-72f9-678v.json",
+        "summary": "Malware package cipherbcrypt",
+        "aliases": [],
+        "severity": "high"
+      }
+    ],
+    "picklescan": [
+      {
+        "id": "GHSA-5qwp-399c-mjwf",
+        "file": "GHSA-5qwp-399c-mjwf.json",
+        "summary": "Picklescan has a missing detection when calling built-in python trace.Trace.run",
+        "aliases": [],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-vr75-hjh9-7fr6",
+        "file": "GHSA-vr75-hjh9-7fr6.json",
+        "summary": "Duplicate Advisory: Remote Code Execution via Malicious Pickle File Bypassing Static Analysis",
+        "aliases": [],
+        "severity": "medium"
+      }
+    ],
+    "justhtml": [
+      {
+        "id": "GHSA-5vp3-3cg6-2rq3",
+        "file": "GHSA-5vp3-3cg6-2rq3.json",
+        "summary": "JustHTML is vulnerable to XSS via code fence breakout in <pre> content",
+        "aliases": [],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-r8cj-3554-33mr",
+        "file": "GHSA-r8cj-3554-33mr.json",
+        "summary": "justhtml introduces denial-of-service hardening",
+        "aliases": [],
+        "severity": "low"
+      }
+    ],
+    "pyarrow": [
+      {
+        "id": "GHSA-5wvp-7f3h-6wmm",
+        "file": "GHSA-5wvp-7f3h-6wmm.json",
+        "summary": "PyArrow: Arbitrary code execution when loading a malicious data file",
+        "aliases": [
+          "CVE-2023-47248",
+          "PYSEC-2023-238"
+        ],
+        "severity": "critical"
+      }
+    ],
+    "flask-caching": [
+      {
+        "id": "GHSA-656c-6cxf-hvcv",
+        "file": "GHSA-656c-6cxf-hvcv.json",
+        "summary": "Deserialization of Untrusted Data in Flask-Caching",
+        "aliases": [
+          "CVE-2021-33026"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "moin": [
+      {
+        "id": "GHSA-6gx4-29v9-g9q5",
+        "file": "GHSA-6gx4-29v9-g9q5.json",
+        "summary": "MoinMoin Multiple vulnerable to directory traversal",
+        "aliases": [
+          "CVE-2012-6495",
+          "PYSEC-2013-7"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-9gj2-ph57-56f5",
+        "file": "GHSA-9gj2-ph57-56f5.json",
+        "summary": "MoinMoin Cross-Site Scripting (XSS) vulnerability via hitcounts and general parameters",
+        "aliases": [
+          "CVE-2007-0901"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-cmg7-xr2j-4r9v",
+        "file": "GHSA-cmg7-xr2j-4r9v.json",
+        "summary": "MoinMoin Improper ACL handling for calendars and includes",
+        "aliases": [
+          "CVE-2007-2637"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "bentoml": [
+      {
+        "id": "GHSA-6r62-w2q3-48hf",
+        "file": "GHSA-6r62-w2q3-48hf.json",
+        "summary": "BentoML has a Path Traversal via Bentofile Configuration",
+        "aliases": [
+          "CVE-2026-24123"
+        ],
+        "severity": "high"
+      }
+    ],
+    "org.eclipse.jgit:org.eclipse.jgit": [
+      {
+        "id": "GHSA-6vvc-c2m3-cjf3",
+        "file": "GHSA-6vvc-c2m3-cjf3.json",
+        "summary": "JGit Improper Input Validation vulnerability",
+        "aliases": [
+          "CVE-2014-9390",
+          "PYSEC-2020-217"
+        ],
+        "severity": "critical"
+      }
+    ],
+    "mercurial": [
+      {
+        "id": "GHSA-6vvc-c2m3-cjf3",
+        "file": "GHSA-6vvc-c2m3-cjf3.json",
+        "summary": "JGit Improper Input Validation vulnerability",
+        "aliases": [
+          "CVE-2014-9390",
+          "PYSEC-2020-217"
+        ],
+        "severity": "critical"
+      },
+      {
+        "id": "PYSEC-2016-29",
+        "file": "PYSEC-2016-29.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2016-3630",
+          "GHSA-9vjf-jjcq-3gh7"
+        ]
+      }
+    ],
+    "poetry": [
+      {
+        "id": "GHSA-73h3-mf4w-8647",
+        "file": "GHSA-73h3-mf4w-8647.json",
+        "summary": "Poetry has Path Traversal in tar extraction on Python 3.10.0 - 3.10.12 and 3.11.0 - 3.11.4",
+        "aliases": [
+          "CVE-2026-41140"
+        ],
+        "severity": "low"
+      }
+    ],
+    "utcp": [
+      {
+        "id": "GHSA-75mj-4g74-9rg2",
+        "file": "GHSA-75mj-4g74-9rg2.json",
+        "summary": "Universal Tool Calling Protocol (UTCP) client library for Python vulnerable to Trust Boundary Violation through Manual JSON specification",
+        "aliases": [
+          "CVE-2025-14542"
+        ],
+        "severity": "high"
+      }
+    ],
+    "tornado": [
+      {
+        "id": "GHSA-78cv-mqj4-43f7",
+        "file": "GHSA-78cv-mqj4-43f7.json",
+        "summary": "Tornado has incomplete validation of cookie attributes",
+        "aliases": [],
+        "severity": "medium"
+      },
+      {
+        "id": "PYSEC-2023-75",
+        "file": "PYSEC-2023-75.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2023-28370",
+          "GHSA-hj3f-6gcp-jg8j"
+        ]
+      }
+    ],
+    "nbconvert": [
+      {
+        "id": "GHSA-7jqv-fw35-gmx9",
+        "file": "GHSA-7jqv-fw35-gmx9.json",
+        "summary": "nbconvert has an Arbitrary File Read via Path Traversal in HTMLExporter Image Embedding",
+        "aliases": [
+          "CVE-2026-39378"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "fastapi-proxy-lib": [
+      {
+        "id": "GHSA-7vwr-g6pm-9hc8",
+        "file": "GHSA-7vwr-g6pm-9hc8.json",
+        "summary": "Cookie leakage between different users in fastapi-proxy-lib",
+        "aliases": [],
+        "severity": "high"
+      }
+    ],
+    "vllm": [
+      {
+        "id": "GHSA-83vm-p52w-f9pw",
+        "file": "GHSA-83vm-p52w-f9pw.json",
+        "summary": "vLLM: extract_hidden_states speculative decoding crashes server on any request with penalty parameters",
+        "aliases": [
+          "CVE-2026-44223"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "sqlalchemy": [
+      {
+        "id": "GHSA-887w-45rq-vxgf",
+        "file": "GHSA-887w-45rq-vxgf.json",
+        "summary": "SQLAlchemy vulnerable to SQL Injection via order_by parameter",
+        "aliases": [
+          "CVE-2019-7164",
+          "PYSEC-2019-123"
+        ],
+        "severity": "critical"
+      }
+    ],
+    "pptagent": [
+      {
+        "id": "GHSA-89g2-xw5c-v95p",
+        "file": "GHSA-89g2-xw5c-v95p.json",
+        "summary": "PPTAgent: Arbitrary Code Execution via Python eval() of LLM-Generated Code with Builtins in Scope",
+        "aliases": [
+          "CVE-2026-42079"
+        ],
+        "severity": "high"
+      }
+    ],
+    "swift": [
+      {
+        "id": "GHSA-8fxc-qm65-vpxg",
+        "file": "GHSA-8fxc-qm65-vpxg.json",
+        "summary": "Temporary urls leaked via logging",
+        "aliases": [
+          "CVE-2017-8761"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-fxwr-2vxm-cg7p",
+        "file": "GHSA-fxwr-2vxm-cg7p.json",
+        "summary": "OpenStack Object Storage (Swift) allows remote attackers to cause a denial of service",
+        "aliases": [
+          "CVE-2016-0738"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-fxwr-2vxm-cg7p",
+        "file": "GHSA-fxwr-2vxm-cg7p.json",
+        "summary": "OpenStack Object Storage (Swift) allows remote attackers to cause a denial of service",
+        "aliases": [
+          "CVE-2016-0738"
+        ],
+        "severity": "high"
+      }
+    ],
+    "twisted": [
+      {
+        "id": "GHSA-8r99-h8j2-rw64",
+        "file": "GHSA-8r99-h8j2-rw64.json",
+        "summary": "Twisted vulnerable to HTTP Request Smuggling Attacks",
+        "aliases": [],
+        "severity": "medium"
+      }
+    ],
+    "praisonai": [
+      {
+        "id": "GHSA-98f9-fqg5-hvq5",
+        "file": "GHSA-98f9-fqg5-hvq5.json",
+        "summary": "PraisonAI Has Authentication Bypass via OAuthManager.validate_token()",
+        "aliases": [
+          "CVE-2026-34953"
+        ],
+        "severity": "critical"
+      },
+      {
+        "id": "GHSA-cfh6-vr3j-qc3g",
+        "file": "GHSA-cfh6-vr3j-qc3g.json",
+        "summary": "PraisonAI Has Missing Authentication in WebSocket Gateway",
+        "aliases": [
+          "CVE-2026-34952"
+        ],
+        "severity": "critical"
+      },
+      {
+        "id": "GHSA-f2h6-7xfr-xm8w",
+        "file": "GHSA-f2h6-7xfr-xm8w.json",
+        "summary": "PraisonAI Vulnerable to Decompression Bomb DoS via Recipe Bundle Extraction Without Size Limits",
+        "aliases": [
+          "CVE-2026-40148"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "pyload-ng": [
+      {
+        "id": "GHSA-9gjj-6gj7-c4wj",
+        "file": "GHSA-9gjj-6gj7-c4wj.json",
+        "summary": "Denial-of-Service attack in pyLoad CNL Blueprint using dukpy.evaljs",
+        "aliases": [
+          "CVE-2025-57751"
+        ],
+        "severity": "high"
+      }
+    ],
+    "starkbank-ecdsa": [
+      {
+        "id": "GHSA-9wx7-jrvc-28mm",
+        "file": "GHSA-9wx7-jrvc-28mm.json",
+        "summary": "Signature verification vulnerability in Stark Bank ecdsa libraries",
+        "aliases": [],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-9wx7-jrvc-28mm",
+        "file": "GHSA-9wx7-jrvc-28mm.json",
+        "summary": "Signature verification vulnerability in Stark Bank ecdsa libraries",
+        "aliases": [],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-9wx7-jrvc-28mm",
+        "file": "GHSA-9wx7-jrvc-28mm.json",
+        "summary": "Signature verification vulnerability in Stark Bank ecdsa libraries",
+        "aliases": [],
+        "severity": "high"
+      }
+    ],
+    "com.starkbank:ecdsa-java": [
+      {
+        "id": "GHSA-9wx7-jrvc-28mm",
+        "file": "GHSA-9wx7-jrvc-28mm.json",
+        "summary": "Signature verification vulnerability in Stark Bank ecdsa libraries",
+        "aliases": [],
+        "severity": "high"
+      }
+    ],
+    "django-unicorn": [
+      {
+        "id": "GHSA-c87f-fq5g-63r2",
+        "file": "GHSA-c87f-fq5g-63r2.json",
+        "summary": "Cross-site scripting in Unicorn framework",
+        "aliases": [
+          "CVE-2021-42053",
+          "PYSEC-2021-357"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "phoenix-ws": [
+      {
+        "id": "GHSA-c8f7-x2g7-7fxj",
+        "file": "GHSA-c8f7-x2g7-7fxj.json",
+        "summary": "Phoenix-ws source code and data in extensions folder is publicly available",
+        "aliases": [],
+        "severity": "high"
+      }
+    ],
+    "ansible": [
+      {
+        "id": "GHSA-cmwx-9m2h-x7v4",
+        "file": "GHSA-cmwx-9m2h-x7v4.json",
+        "summary": "Ansible apt_key module does not properly verify key fingerprint",
+        "aliases": [
+          "CVE-2016-8614",
+          "PYSEC-2018-37"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "PYSEC-2020-5",
+        "file": "PYSEC-2020-5.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2020-1733",
+          "GHSA-g4mq-6fp5-qwcf"
+        ]
+      }
+    ],
+    "mpmath": [
+      {
+        "id": "GHSA-f865-m6cq-j9vx",
+        "file": "GHSA-f865-m6cq-j9vx.json",
+        "summary": "ReDOS in Mpmath",
+        "aliases": [
+          "CVE-2021-29063",
+          "PYSEC-2021-427"
+        ],
+        "severity": "high"
+      }
+    ],
+    "salt": [
+      {
+        "id": "GHSA-fcr4-h6c4-rvvp",
+        "file": "GHSA-fcr4-h6c4-rvvp.json",
+        "summary": "Salt's on demand pillar functionality vulnerable to arbitrary command injections ",
+        "aliases": [
+          "CVE-2025-22237"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-fcr4-h6c4-rvvp",
+        "file": "GHSA-fcr4-h6c4-rvvp.json",
+        "summary": "Salt's on demand pillar functionality vulnerable to arbitrary command injections ",
+        "aliases": [
+          "CVE-2025-22237"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-phhw-3wc9-8q75",
+        "file": "GHSA-phhw-3wc9-8q75.json",
+        "summary": "SaltStack Salt command injection via a crafted process name",
+        "aliases": [
+          "CVE-2020-28243",
+          "PYSEC-2021-73"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-phhw-3wc9-8q75",
+        "file": "GHSA-phhw-3wc9-8q75.json",
+        "summary": "SaltStack Salt command injection via a crafted process name",
+        "aliases": [
+          "CVE-2020-28243",
+          "PYSEC-2021-73"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-phhw-3wc9-8q75",
+        "file": "GHSA-phhw-3wc9-8q75.json",
+        "summary": "SaltStack Salt command injection via a crafted process name",
+        "aliases": [
+          "CVE-2020-28243",
+          "PYSEC-2021-73"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-phhw-3wc9-8q75",
+        "file": "GHSA-phhw-3wc9-8q75.json",
+        "summary": "SaltStack Salt command injection via a crafted process name",
+        "aliases": [
+          "CVE-2020-28243",
+          "PYSEC-2021-73"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-phhw-3wc9-8q75",
+        "file": "GHSA-phhw-3wc9-8q75.json",
+        "summary": "SaltStack Salt command injection via a crafted process name",
+        "aliases": [
+          "CVE-2020-28243",
+          "PYSEC-2021-73"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-phhw-3wc9-8q75",
+        "file": "GHSA-phhw-3wc9-8q75.json",
+        "summary": "SaltStack Salt command injection via a crafted process name",
+        "aliases": [
+          "CVE-2020-28243",
+          "PYSEC-2021-73"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-phhw-3wc9-8q75",
+        "file": "GHSA-phhw-3wc9-8q75.json",
+        "summary": "SaltStack Salt command injection via a crafted process name",
+        "aliases": [
+          "CVE-2020-28243",
+          "PYSEC-2021-73"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-phhw-3wc9-8q75",
+        "file": "GHSA-phhw-3wc9-8q75.json",
+        "summary": "SaltStack Salt command injection via a crafted process name",
+        "aliases": [
+          "CVE-2020-28243",
+          "PYSEC-2021-73"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-phhw-3wc9-8q75",
+        "file": "GHSA-phhw-3wc9-8q75.json",
+        "summary": "SaltStack Salt command injection via a crafted process name",
+        "aliases": [
+          "CVE-2020-28243",
+          "PYSEC-2021-73"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-qcr3-hr2f-6557",
+        "file": "GHSA-qcr3-hr2f-6557.json",
+        "summary": "SaltStack Salt Permissions Bypass",
+        "aliases": [
+          "CVE-2022-22941",
+          "PYSEC-2022-174"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-qcr3-hr2f-6557",
+        "file": "GHSA-qcr3-hr2f-6557.json",
+        "summary": "SaltStack Salt Permissions Bypass",
+        "aliases": [
+          "CVE-2022-22941",
+          "PYSEC-2022-174"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-qcr3-hr2f-6557",
+        "file": "GHSA-qcr3-hr2f-6557.json",
+        "summary": "SaltStack Salt Permissions Bypass",
+        "aliases": [
+          "CVE-2022-22941",
+          "PYSEC-2022-174"
+        ],
+        "severity": "high"
+      }
+    ],
+    "neutron": [
+      {
+        "id": "GHSA-fh73-gjvg-349c",
+        "file": "GHSA-fh73-gjvg-349c.json",
+        "summary": "OpenStack Neutron vulnerable to authenticated attackers reconfiguring dnsmasq via crafted extra_dhcp_opts value",
+        "aliases": [
+          "CVE-2021-40085",
+          "PYSEC-2021-361"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-fh73-gjvg-349c",
+        "file": "GHSA-fh73-gjvg-349c.json",
+        "summary": "OpenStack Neutron vulnerable to authenticated attackers reconfiguring dnsmasq via crafted extra_dhcp_opts value",
+        "aliases": [
+          "CVE-2021-40085",
+          "PYSEC-2021-361"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-fh73-gjvg-349c",
+        "file": "GHSA-fh73-gjvg-349c.json",
+        "summary": "OpenStack Neutron vulnerable to authenticated attackers reconfiguring dnsmasq via crafted extra_dhcp_opts value",
+        "aliases": [
+          "CVE-2021-40085",
+          "PYSEC-2021-361"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-qh2x-hpf9-cf2g",
+        "file": "GHSA-qh2x-hpf9-cf2g.json",
+        "summary": "OpenStack Keystone and other components vulnerable to Improper Certificate Validation",
+        "aliases": [
+          "CVE-2013-2255"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "joserfc": [
+      {
+        "id": "GHSA-frfh-8v73-gjg4",
+        "file": "GHSA-frfh-8v73-gjg4.json",
+        "summary": "joserfc has Possible Uncontrolled Resource Consumption Vulnerability Triggered by Logging Arbitrarily Large JWT Token Payloads",
+        "aliases": [
+          "CVE-2025-65015"
+        ],
+        "severity": "critical"
+      },
+      {
+        "id": "GHSA-frfh-8v73-gjg4",
+        "file": "GHSA-frfh-8v73-gjg4.json",
+        "summary": "joserfc has Possible Uncontrolled Resource Consumption Vulnerability Triggered by Logging Arbitrarily Large JWT Token Payloads",
+        "aliases": [
+          "CVE-2025-65015"
+        ],
+        "severity": "critical"
+      }
+    ],
+    "vyper": [
+      {
+        "id": "GHSA-g2xh-c426-v8mf",
+        "file": "GHSA-g2xh-c426-v8mf.json",
+        "summary": "Vyper: reversed order of side effects for some operations",
+        "aliases": [
+          "CVE-2023-40015",
+          "PYSEC-2023-167"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-m2v9-w374-5hj9",
+        "file": "GHSA-m2v9-w374-5hj9.json",
+        "summary": "vyper default functions don't respect nonreentrancy keys",
+        "aliases": [
+          "CVE-2024-32648",
+          "PYSEC-2024-163"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "mcp-memory-service": [
+      {
+        "id": "GHSA-g9rg-8vq5-mpwm",
+        "file": "GHSA-g9rg-8vq5-mpwm.json",
+        "summary": "mcp-memory-service's Wildcard CORS with Credentials Enables Cross-Origin Memory Theft",
+        "aliases": [
+          "CVE-2026-33010"
+        ],
+        "severity": "high"
+      }
+    ],
+    "weblate": [
+      {
+        "id": "GHSA-gcg5-86jr-f7jg",
+        "file": "GHSA-gcg5-86jr-f7jg.json",
+        "summary": "Weblate Vulnerable to Private Translation Enumeration via Screenshot API",
+        "aliases": [
+          "CVE-2026-44263"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "pip": [
+      {
+        "id": "GHSA-gpvv-69j7-gwj8",
+        "file": "GHSA-gpvv-69j7-gwj8.json",
+        "summary": "Path Traversal in pip",
+        "aliases": [
+          "CVE-2019-20916",
+          "PYSEC-2020-173"
+        ],
+        "severity": "high"
+      }
+    ],
+    "nova": [
+      {
+        "id": "GHSA-grp5-h379-j75x",
+        "file": "GHSA-grp5-h379-j75x.json",
+        "summary": "OpenStack Nova live snapshots use an insecure local directory",
+        "aliases": [
+          "CVE-2013-7048"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "PYSEC-2012-38",
+        "file": "PYSEC-2012-38.json",
+        "summary": "",
+        "aliases": []
+      }
+    ],
+    "ray": [
+      {
+        "id": "GHSA-h3xg-wv58-5p43",
+        "file": "GHSA-h3xg-wv58-5p43.json",
+        "summary": "Ray OS Command Injection vulnerability",
+        "aliases": [
+          "CVE-2023-6019"
+        ],
+        "severity": "critical"
+      },
+      {
+        "id": "GHSA-w4rh-fgx7-q63m",
+        "file": "GHSA-w4rh-fgx7-q63m.json",
+        "summary": "ray vulnerable to Insertion of Sensitive Information into Log File",
+        "aliases": [
+          "CVE-2025-1979",
+          "PYSEC-2025-23"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "rucio-webui": [
+      {
+        "id": "GHSA-h79m-5jjm-jm4q",
+        "file": "GHSA-h79m-5jjm-jm4q.json",
+        "summary": "Rucio WebUI has a Reflected Cross-site Scripting Vulnerability",
+        "aliases": [
+          "CVE-2026-25136"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-h79m-5jjm-jm4q",
+        "file": "GHSA-h79m-5jjm-jm4q.json",
+        "summary": "Rucio WebUI has a Reflected Cross-site Scripting Vulnerability",
+        "aliases": [
+          "CVE-2026-25136"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-h79m-5jjm-jm4q",
+        "file": "GHSA-h79m-5jjm-jm4q.json",
+        "summary": "Rucio WebUI has a Reflected Cross-site Scripting Vulnerability",
+        "aliases": [
+          "CVE-2026-25136"
+        ],
+        "severity": "high"
+      }
+    ],
+    "apache-airflow-providers-mysql": [
+      {
+        "id": "GHSA-hhm6-jjf4-6pm3",
+        "file": "GHSA-hhm6-jjf4-6pm3.json",
+        "summary": "Apache Airflow MySQL Provider is Vulnerable to SQL Injection",
+        "aliases": [
+          "CVE-2025-27018"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "lxml-html-clean": [
+      {
+        "id": "GHSA-hw26-mmpg-fqfg",
+        "file": "GHSA-hw26-mmpg-fqfg.json",
+        "summary": "lxml-html-clean has CSS @import Filter Bypass via Unicode Escapes",
+        "aliases": [
+          "CVE-2026-28348"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "matrix-synapse": [
+      {
+        "id": "GHSA-hxmp-pqch-c8mm",
+        "file": "GHSA-hxmp-pqch-c8mm.json",
+        "summary": "Denial of service attack via incorrect parameters in Matrix Synapse",
+        "aliases": [
+          "CVE-2020-26257",
+          "PYSEC-2020-236"
+        ],
+        "severity": "high"
+      }
+    ],
+    "requests": [
+      {
+        "id": "GHSA-j8r2-6x86-q33q",
+        "file": "GHSA-j8r2-6x86-q33q.json",
+        "summary": "Unintended leak of Proxy-Authorization header in requests",
+        "aliases": [
+          "CVE-2023-32681",
+          "PYSEC-2023-74"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "motioneye": [
+      {
+        "id": "GHSA-j945-qm58-4gjx",
+        "file": "GHSA-j945-qm58-4gjx.json",
+        "summary": "motionEye vulnerable to RCE via unsanitized motion config parameter",
+        "aliases": [
+          "CVE-2025-60787"
+        ],
+        "severity": "high"
+      }
+    ],
+    "scrapy": [
+      {
+        "id": "GHSA-jm3v-qxmh-hxwv",
+        "file": "GHSA-jm3v-qxmh-hxwv.json",
+        "summary": "Scrapy's redirects ignoring scheme-specific proxy settings",
+        "aliases": [],
+        "severity": "medium"
+      }
+    ],
+    "lief": [
+      {
+        "id": "GHSA-jvp9-phwp-p738",
+        "file": "GHSA-jvp9-phwp-p738.json",
+        "summary": "LIEF heap buffer overflow in the LIEF::MachO::BinaryParser::parse_dyldinfo_generic_bind",
+        "aliases": [
+          "CVE-2022-43171",
+          "PYSEC-2022-43140"
+        ],
+        "severity": "high"
+      }
+    ],
+    "cobbler": [
+      {
+        "id": "GHSA-m26c-fcgh-cp6h",
+        "file": "GHSA-m26c-fcgh-cp6h.json",
+        "summary": "cobbler allows anyone to connect to cobbler XML-RPC server with known password and make changes",
+        "aliases": [
+          "CVE-2024-47533"
+        ],
+        "severity": "critical"
+      },
+      {
+        "id": "GHSA-m26c-fcgh-cp6h",
+        "file": "GHSA-m26c-fcgh-cp6h.json",
+        "summary": "cobbler allows anyone to connect to cobbler XML-RPC server with known password and make changes",
+        "aliases": [
+          "CVE-2024-47533"
+        ],
+        "severity": "critical"
+      }
+    ],
+    "skops": [
+      {
+        "id": "GHSA-m7f4-hrc6-fwg3",
+        "file": "GHSA-m7f4-hrc6-fwg3.json",
+        "summary": "Skops has Inconsistent Trusted Type Validation that Enables Hidden `operator` Methods Execution",
+        "aliases": [
+          "CVE-2025-54412"
+        ],
+        "severity": "high"
+      }
+    ],
+    "graphite-web": [
+      {
+        "id": "GHSA-m973-4vpc-x43c",
+        "file": "GHSA-m973-4vpc-x43c.json",
+        "summary": "Graphite Web Cross-site Scripting vulnerability",
+        "aliases": [
+          "CVE-2022-4730"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "ckan": [
+      {
+        "id": "GHSA-mpfm-fpgx-647q",
+        "file": "GHSA-mpfm-fpgx-647q.json",
+        "summary": "CKAN has no certificate validation on STMP connection",
+        "aliases": [
+          "CVE-2026-41132"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "GHSA-mpfm-fpgx-647q",
+        "file": "GHSA-mpfm-fpgx-647q.json",
+        "summary": "CKAN has no certificate validation on STMP connection",
+        "aliases": [
+          "CVE-2026-41132"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "nbgitpuller": [
+      {
+        "id": "GHSA-mq5p-2mcr-m52j",
+        "file": "GHSA-mq5p-2mcr-m52j.json",
+        "summary": "Code injection in nbgitpuller",
+        "aliases": [
+          "CVE-2021-39160",
+          "PYSEC-2021-315"
+        ],
+        "severity": "high"
+      }
+    ],
+    "dbt-core": [
+      {
+        "id": "GHSA-p3f3-5ccg-83xq",
+        "file": "GHSA-p3f3-5ccg-83xq.json",
+        "summary": "dbt has an implicit override for built-in materializations from installed packages",
+        "aliases": [
+          "CVE-2024-40637",
+          "PYSEC-2024-66"
+        ],
+        "severity": "low"
+      },
+      {
+        "id": "GHSA-p3f3-5ccg-83xq",
+        "file": "GHSA-p3f3-5ccg-83xq.json",
+        "summary": "dbt has an implicit override for built-in materializations from installed packages",
+        "aliases": [
+          "CVE-2024-40637",
+          "PYSEC-2024-66"
+        ],
+        "severity": "low"
+      }
+    ],
+    "flask-httpauth": [
+      {
+        "id": "GHSA-p44q-vqpr-4xmg",
+        "file": "GHSA-p44q-vqpr-4xmg.json",
+        "summary": "Flask-HTTPAuth invokes token verification callback when missing or empty token was given by client",
+        "aliases": [
+          "CVE-2026-34531"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "lxdui": [
+      {
+        "id": "GHSA-p4xh-4869-8vrg",
+        "file": "GHSA-p4xh-4869-8vrg.json",
+        "summary": "AdaptiveScale LXDUI Hardcoded JWT Secret Key",
+        "aliases": [
+          "CVE-2021-40494",
+          "PYSEC-2021-342"
+        ],
+        "severity": "critical"
+      }
+    ],
+    "agentscope": [
+      {
+        "id": "GHSA-p6h7-hfj2-vmcf",
+        "file": "GHSA-p6h7-hfj2-vmcf.json",
+        "summary": "AgentScope arbitrary file download vulnerability in rpc_agent_client",
+        "aliases": [
+          "CVE-2024-8501"
+        ],
+        "severity": "high"
+      }
+    ],
+    "inspiremusic": [
+      {
+        "id": "GHSA-pgp9-g5q8-j3wp",
+        "file": "GHSA-pgp9-g5q8-j3wp.json",
+        "summary": "FunAudioLLM InspireMusic deserialization vulnerability",
+        "aliases": [
+          "CVE-2025-5148"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "dtale": [
+      {
+        "id": "GHSA-pw44-4h99-wqff",
+        "file": "GHSA-pw44-4h99-wqff.json",
+        "summary": "D-Tale vulnerable to Remote Code Execution through the Query input on Chart Builder",
+        "aliases": [
+          "CVE-2024-45595"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "dynaconf": [
+      {
+        "id": "GHSA-pxrr-hq57-q35p",
+        "file": "GHSA-pxrr-hq57-q35p.json",
+        "summary": "dynaconf Affected by Remote Code Execution (RCE) via Insecure Template Evaluation in @jinja Resolver",
+        "aliases": [
+          "CVE-2026-33154"
+        ],
+        "severity": "high"
+      }
+    ],
+    "cherrymusic": [
+      {
+        "id": "GHSA-q624-9634-77gh",
+        "file": "GHSA-q624-9634-77gh.json",
+        "summary": "Cherry Music directory traversal vulnerability",
+        "aliases": [
+          "CVE-2015-8309",
+          "PYSEC-2017-99"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "python-keystoneclient": [
+      {
+        "id": "GHSA-qh2x-hpf9-cf2g",
+        "file": "GHSA-qh2x-hpf9-cf2g.json",
+        "summary": "OpenStack Keystone and other components vulnerable to Improper Certificate Validation",
+        "aliases": [
+          "CVE-2013-2255"
+        ],
+        "severity": "medium"
+      },
+      {
+        "id": "PYSEC-2015-31",
+        "file": "PYSEC-2015-31.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2015-1852",
+          "GHSA-p9wq-mjh8-q72m",
+          "PYSEC-2015-30"
+        ]
+      }
+    ],
+    "cinder": [
+      {
+        "id": "GHSA-qh2x-hpf9-cf2g",
+        "file": "GHSA-qh2x-hpf9-cf2g.json",
+        "summary": "OpenStack Keystone and other components vulnerable to Improper Certificate Validation",
+        "aliases": [
+          "CVE-2013-2255"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "keystone": [
+      {
+        "id": "GHSA-qh2x-hpf9-cf2g",
+        "file": "GHSA-qh2x-hpf9-cf2g.json",
+        "summary": "OpenStack Keystone and other components vulnerable to Improper Certificate Validation",
+        "aliases": [
+          "CVE-2013-2255"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "xblock-drag-and-drop-v2": [
+      {
+        "id": "GHSA-qv6c-367r-3w6q",
+        "file": "GHSA-qv6c-367r-3w6q.json",
+        "summary": "XBlock vulnerable to Cross-Site Scripting (XSS) ",
+        "aliases": [
+          "CVE-2022-46147",
+          "PYSEC-2022-43175"
+        ],
+        "severity": "high"
+      }
+    ],
+    "aiohttp": [
+      {
+        "id": "GHSA-qvrw-v9rv-5rjx",
+        "file": "GHSA-qvrw-v9rv-5rjx.json",
+        "summary": "aiohttp's ClientSession is vulnerable to CRLF injection via method",
+        "aliases": [
+          "CVE-2023-49082",
+          "PYSEC-2023-251"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "python-libnmap": [
+      {
+        "id": "GHSA-qwqv-j7jr-4hp6",
+        "file": "GHSA-qwqv-j7jr-4hp6.json",
+        "summary": "Argument injection in python-libnmap",
+        "aliases": [
+          "CVE-2022-30284",
+          "PYSEC-2022-42999"
+        ],
+        "severity": "critical"
+      }
+    ],
+    "postorius": [
+      {
+        "id": "GHSA-r7c9-7pjq-hmm8",
+        "file": "GHSA-r7c9-7pjq-hmm8.json",
+        "summary": "Postorius is vulnerable to XSS",
+        "aliases": [
+          "CVE-2026-44742"
+        ],
+        "severity": "high"
+      }
+    ],
+    "dpaste": [
+      {
+        "id": "GHSA-r8j9-5cj7-cv39",
+        "file": "GHSA-r8j9-5cj7-cv39.json",
+        "summary": "Reflected XSS Vulnerability in dpaste",
+        "aliases": [
+          "CVE-2023-49277"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "geonode": [
+      {
+        "id": "GHSA-rmxg-6qqf-x8mr",
+        "file": "GHSA-rmxg-6qqf-x8mr.json",
+        "summary": "GeoNode Server Side Request forgery",
+        "aliases": [
+          "CVE-2023-40017",
+          "PYSEC-2023-269"
+        ],
+        "severity": "high"
+      }
+    ],
+    "pycrypto": [
+      {
+        "id": "GHSA-v367-p58w-98h5",
+        "file": "GHSA-v367-p58w-98h5.json",
+        "summary": "PyCrypto makes Use of Insufficiently Random Values",
+        "aliases": [
+          "CVE-2012-2417",
+          "PYSEC-2012-16"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "djoser": [
+      {
+        "id": "GHSA-v49p-m6gh-747c",
+        "file": "GHSA-v49p-m6gh-747c.json",
+        "summary": "djoser Authentication Bypass",
+        "aliases": [
+          "CVE-2024-21543",
+          "PYSEC-2024-158"
+        ],
+        "severity": "high"
+      }
+    ],
+    "langchain-experimental": [
+      {
+        "id": "GHSA-v8vj-cv27-hjv8",
+        "file": "GHSA-v8vj-cv27-hjv8.json",
+        "summary": "LangChain Experimental vulnerable to arbitrary code execution",
+        "aliases": [
+          "CVE-2024-27444"
+        ],
+        "severity": "critical"
+      }
+    ],
+    "mage-ai": [
+      {
+        "id": "GHSA-v9wr-8wrm-h6p7",
+        "file": "GHSA-v9wr-8wrm-h6p7.json",
+        "summary": "Mage AI Path Traversal vulnerability",
+        "aliases": [
+          "CVE-2024-45188"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "vantage6-server": [
+      {
+        "id": "GHSA-vc3v-ppc7-v486",
+        "file": "GHSA-vc3v-ppc7-v486.json",
+        "summary": "vantage6-server node accepts non-whitelisted algorithms from malicious server",
+        "aliases": [
+          "CVE-2023-47631",
+          "PYSEC-2023-303",
+          "PYSEC-2023-304"
+        ],
+        "severity": "high"
+      }
+    ],
+    "vantage6-node": [
+      {
+        "id": "GHSA-vc3v-ppc7-v486",
+        "file": "GHSA-vc3v-ppc7-v486.json",
+        "summary": "vantage6-server node accepts non-whitelisted algorithms from malicious server",
+        "aliases": [
+          "CVE-2023-47631",
+          "PYSEC-2023-303",
+          "PYSEC-2023-304"
+        ],
+        "severity": "high"
+      }
+    ],
+    "bleach": [
+      {
+        "id": "GHSA-vqhp-cxgc-6wmm",
+        "file": "GHSA-vqhp-cxgc-6wmm.json",
+        "summary": "regular expression denial-of-service (ReDoS) in Bleach",
+        "aliases": [
+          "CVE-2020-6817",
+          "PYSEC-2020-340",
+          "SNYK-PYTHON-BLEACH-561754"
+        ],
+        "severity": "high"
+      }
+    ],
+    "zenml": [
+      {
+        "id": "GHSA-vwgf-7f9h-h499",
+        "file": "GHSA-vwgf-7f9h-h499.json",
+        "summary": "Cross site scripting in zenml",
+        "aliases": [
+          "CVE-2024-2171",
+          "PYSEC-2024-170"
+        ],
+        "severity": "low"
+      }
+    ],
+    "powerline-gitstatus": [
+      {
+        "id": "GHSA-w67g-6gjv-c599",
+        "file": "GHSA-w67g-6gjv-c599.json",
+        "summary": "Powerline Gitstatus vulnerable to arbitrary code execution",
+        "aliases": [
+          "CVE-2022-42906"
+        ],
+        "severity": "high"
+      }
+    ],
+    "farm-haystack": [
+      {
+        "id": "GHSA-w7qg-j435-78qw",
+        "file": "GHSA-w7qg-j435-78qw.json",
+        "summary": "Use of hard-coded, security-relevant constants in deepset-ai/haystack",
+        "aliases": [
+          "CVE-2023-1712"
+        ],
+        "severity": "critical"
+      }
+    ],
+    "jwcrypto": [
+      {
+        "id": "GHSA-wg33-x934-3ghh",
+        "file": "GHSA-wg33-x934-3ghh.json",
+        "summary": "jwcrypto lacks the Random Filling protection mechanism",
+        "aliases": [
+          "CVE-2016-6298",
+          "PYSEC-2016-4"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "ebookmeta": [
+      {
+        "id": "GHSA-whf4-fpj8-pgg8",
+        "file": "GHSA-whf4-fpj8-pgg8.json",
+        "summary": "ebookmeta XML External Entity vulnerability",
+        "aliases": [
+          "CVE-2024-36827",
+          "PYSEC-2024-76"
+        ],
+        "severity": "high"
+      }
+    ],
+    "calibreweb": [
+      {
+        "id": "GHSA-xp7p-3gx7-j6wx",
+        "file": "GHSA-xp7p-3gx7-j6wx.json",
+        "summary": "calibre-web is vulnerable to Business Logic Errors",
+        "aliases": [
+          "CVE-2021-4171"
+        ],
+        "severity": "critical"
+      },
+      {
+        "id": "PYSEC-2022-18",
+        "file": "PYSEC-2022-18.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2022-0352",
+          "GHSA-h56g-v4vp-q9q6"
+        ]
+      }
+    ],
+    "fava": [
+      {
+        "id": "GHSA-xrf4-39fm-j5f2",
+        "file": "GHSA-xrf4-39fm-j5f2.json",
+        "summary": "Fava time and filter parameters vulnerable to reflected Cross-site Scripting",
+        "aliases": [
+          "CVE-2022-2514",
+          "PYSEC-2022-239"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "pygresql": [
+      {
+        "id": "GHSA-xv6x-43gq-4hfj",
+        "file": "GHSA-xv6x-43gq-4hfj.json",
+        "summary": "PyGreSQL Might Be Vulnerable to Encoding-Based SQL Injection",
+        "aliases": [
+          "CVE-2009-2940"
+        ],
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-xv6x-43gq-4hfj",
+        "file": "GHSA-xv6x-43gq-4hfj.json",
+        "summary": "PyGreSQL Might Be Vulnerable to Encoding-Based SQL Injection",
+        "aliases": [
+          "CVE-2009-2940"
+        ],
+        "severity": "high"
+      }
+    ],
+    "barcodeqrgen": [
+      {
+        "id": "MAL-2023-1355",
+        "file": "MAL-2023-1355.json",
+        "summary": "Malicious code in barcodeqrgen (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pylint-py": [
+      {
+        "id": "MAL-2023-1394",
+        "file": "MAL-2023-1394.json",
+        "summary": "Malicious code in pylint-py (PyPI)",
+        "aliases": []
+      }
+    ],
+    "aiothtp": [
+      {
+        "id": "MAL-2023-1581",
+        "file": "MAL-2023-1581.json",
+        "summary": "Malicious code in aiothtp (PyPI)",
+        "aliases": []
+      }
+    ],
+    "beautifulsoupp": [
+      {
+        "id": "MAL-2023-1620",
+        "file": "MAL-2023-1620.json",
+        "summary": "Malicious code in beautifulsoupp (PyPI)",
+        "aliases": []
+      }
+    ],
+    "bitcoinlbi": [
+      {
+        "id": "MAL-2023-1659",
+        "file": "MAL-2023-1659.json",
+        "summary": "Malicious code in bitcoinlbi (PyPI)",
+        "aliases": []
+      }
+    ],
+    "crptocompare": [
+      {
+        "id": "MAL-2023-1698",
+        "file": "MAL-2023-1698.json",
+        "summary": "Malicious code in crptocompare (PyPI)",
+        "aliases": []
+      }
+    ],
+    "cryptofeedd": [
+      {
+        "id": "MAL-2023-1737",
+        "file": "MAL-2023-1737.json",
+        "summary": "Malicious code in cryptofeedd (PyPI)",
+        "aliases": []
+      }
+    ],
+    "discor-webhook": [
+      {
+        "id": "MAL-2023-1776",
+        "file": "MAL-2023-1776.json",
+        "summary": "Malicious code in discor-webhook (PyPI)",
+        "aliases": []
+      }
+    ],
+    "dsicord-py": [
+      {
+        "id": "MAL-2023-1815",
+        "file": "MAL-2023-1815.json",
+        "summary": "Malicious code in dsicord-py (PyPI)",
+        "aliases": []
+      }
+    ],
+    "ggitpython": [
+      {
+        "id": "MAL-2023-1854",
+        "file": "MAL-2023-1854.json",
+        "summary": "Malicious code in ggitpython (PyPI)",
+        "aliases": []
+      }
+    ],
+    "lxsxwriter": [
+      {
+        "id": "MAL-2023-1893",
+        "file": "MAL-2023-1893.json",
+        "summary": "Malicious code in lxsxwriter (PyPI)",
+        "aliases": []
+      }
+    ],
+    "oppenpyxl": [
+      {
+        "id": "MAL-2023-1932",
+        "file": "MAL-2023-1932.json",
+        "summary": "Malicious code in oppenpyxl (PyPI)",
+        "aliases": []
+      }
+    ],
+    "progerssbar2": [
+      {
+        "id": "MAL-2023-1971",
+        "file": "MAL-2023-1971.json",
+        "summary": "Malicious code in progerssbar2 (PyPI)",
+        "aliases": []
+      }
+    ],
+    "promt-toolkit": [
+      {
+        "id": "MAL-2023-2010",
+        "file": "MAL-2023-2010.json",
+        "summary": "Malicious code in promt-toolkit (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pycodestylle": [
+      {
+        "id": "MAL-2023-2049",
+        "file": "MAL-2023-2049.json",
+        "summary": "Malicious code in pycodestylle (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pyodestyle": [
+      {
+        "id": "MAL-2023-2088",
+        "file": "MAL-2023-2088.json",
+        "summary": "Malicious code in pyodestyle (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pytoch": [
+      {
+        "id": "MAL-2023-2127",
+        "file": "MAL-2023-2127.json",
+        "summary": "Malicious code in pytoch (PyPI)",
+        "aliases": []
+      }
+    ],
+    "requests-toolbellt": [
+      {
+        "id": "MAL-2023-2166",
+        "file": "MAL-2023-2166.json",
+        "summary": "Malicious code in requests-toolbellt (PyPI)",
+        "aliases": []
+      }
+    ],
+    "scikiit-learn": [
+      {
+        "id": "MAL-2023-2205",
+        "file": "MAL-2023-2205.json",
+        "summary": "Malicious code in scikiit-learn (PyPI)",
+        "aliases": []
+      }
+    ],
+    "sickit-learn": [
+      {
+        "id": "MAL-2023-2244",
+        "file": "MAL-2023-2244.json",
+        "summary": "Malicious code in sickit-learn (PyPI)",
+        "aliases": []
+      }
+    ],
+    "solnaa": [
+      {
+        "id": "MAL-2023-2283",
+        "file": "MAL-2023-2283.json",
+        "summary": "Malicious code in solnaa (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tkcalenar": [
+      {
+        "id": "MAL-2023-2322",
+        "file": "MAL-2023-2322.json",
+        "summary": "Malicious code in tkcalenar (PyPI)",
+        "aliases": []
+      }
+    ],
+    "wbsocket-client": [
+      {
+        "id": "MAL-2023-2361",
+        "file": "MAL-2023-2361.json",
+        "summary": "Malicious code in wbsocket-client (PyPI)",
+        "aliases": []
+      }
+    ],
+    "websockkets": [
+      {
+        "id": "MAL-2023-2400",
+        "file": "MAL-2023-2400.json",
+        "summary": "Malicious code in websockkets (PyPI)",
+        "aliases": []
+      }
+    ],
+    "xlsxwwriter": [
+      {
+        "id": "MAL-2023-2439",
+        "file": "MAL-2023-2439.json",
+        "summary": "Malicious code in xlsxwwriter (PyPI)",
+        "aliases": []
+      }
+    ],
+    "adcraft": [
+      {
+        "id": "MAL-2023-2480",
+        "file": "MAL-2023-2480.json",
+        "summary": "Malicious code in adcraft (PyPI)",
+        "aliases": []
+      }
+    ],
+    "candyhttp": [
+      {
+        "id": "MAL-2023-2519",
+        "file": "MAL-2023-2519.json",
+        "summary": "Malicious code in candyhttp (PyPI)",
+        "aliases": []
+      }
+    ],
+    "ccpost": [
+      {
+        "id": "MAL-2023-2558",
+        "file": "MAL-2023-2558.json",
+        "summary": "Malicious code in ccpost (PyPI)",
+        "aliases": []
+      }
+    ],
+    "controlvisa": [
+      {
+        "id": "MAL-2023-2597",
+        "file": "MAL-2023-2597.json",
+        "summary": "Malicious code in controlvisa (PyPI)",
+        "aliases": []
+      }
+    ],
+    "craftencode": [
+      {
+        "id": "MAL-2023-2636",
+        "file": "MAL-2023-2636.json",
+        "summary": "Malicious code in craftencode (PyPI)",
+        "aliases": []
+      }
+    ],
+    "cvmine": [
+      {
+        "id": "MAL-2023-2675",
+        "file": "MAL-2023-2675.json",
+        "summary": "Malicious code in cvmine (PyPI)",
+        "aliases": []
+      }
+    ],
+    "encodeping": [
+      {
+        "id": "MAL-2023-2714",
+        "file": "MAL-2023-2714.json",
+        "summary": "Malicious code in encodeping (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqccencode": [
+      {
+        "id": "MAL-2023-2753",
+        "file": "MAL-2023-2753.json",
+        "summary": "Malicious code in esqccencode (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqcpugrandpong": [
+      {
+        "id": "MAL-2023-2792",
+        "file": "MAL-2023-2792.json",
+        "summary": "Malicious code in esqcpugrandpong (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqcvstringvisa": [
+      {
+        "id": "MAL-2023-2831",
+        "file": "MAL-2023-2831.json",
+        "summary": "Malicious code in esqcvstringvisa (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqgameguiintel": [
+      {
+        "id": "MAL-2023-2870",
+        "file": "MAL-2023-2870.json",
+        "summary": "Malicious code in esqgameguiintel (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqgrandcandyload": [
+      {
+        "id": "MAL-2023-2909",
+        "file": "MAL-2023-2909.json",
+        "summary": "Malicious code in esqgrandcandyload (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqhttpcraftpong": [
+      {
+        "id": "MAL-2023-2948",
+        "file": "MAL-2023-2948.json",
+        "summary": "Malicious code in esqhttpcraftpong (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqinfostr": [
+      {
+        "id": "MAL-2023-2987",
+        "file": "MAL-2023-2987.json",
+        "summary": "Malicious code in esqinfostr (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqkillloadload": [
+      {
+        "id": "MAL-2023-3026",
+        "file": "MAL-2023-3026.json",
+        "summary": "Malicious code in esqkillloadload (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqloadcandy": [
+      {
+        "id": "MAL-2023-3065",
+        "file": "MAL-2023-3065.json",
+        "summary": "Malicious code in esqloadcandy (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqmcintel": [
+      {
+        "id": "MAL-2023-3104",
+        "file": "MAL-2023-3104.json",
+        "summary": "Malicious code in esqmcintel (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqnvidiaultrapep": [
+      {
+        "id": "MAL-2023-3143",
+        "file": "MAL-2023-3143.json",
+        "summary": "Malicious code in esqnvidiaultrapep (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqpepmaskram": [
+      {
+        "id": "MAL-2023-3182",
+        "file": "MAL-2023-3182.json",
+        "summary": "Malicious code in esqpepmaskram (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqpongpongad": [
+      {
+        "id": "MAL-2023-3221",
+        "file": "MAL-2023-3221.json",
+        "summary": "Malicious code in esqpongpongad (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqpullcraftlgtb": [
+      {
+        "id": "MAL-2023-3260",
+        "file": "MAL-2023-3260.json",
+        "summary": "Malicious code in esqpullcraftlgtb (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqpysuperinfo": [
+      {
+        "id": "MAL-2023-3299",
+        "file": "MAL-2023-3299.json",
+        "summary": "Malicious code in esqpysuperinfo (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqrandomhydrainfo": [
+      {
+        "id": "MAL-2023-3338",
+        "file": "MAL-2023-3338.json",
+        "summary": "Malicious code in esqrandomhydrainfo (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqrepullstring": [
+      {
+        "id": "MAL-2023-3377",
+        "file": "MAL-2023-3377.json",
+        "summary": "Malicious code in esqrepullstring (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqstringkillvisa": [
+      {
+        "id": "MAL-2023-3416",
+        "file": "MAL-2023-3416.json",
+        "summary": "Malicious code in esqstringkillvisa (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqstudypongcandy": [
+      {
+        "id": "MAL-2023-3455",
+        "file": "MAL-2023-3455.json",
+        "summary": "Malicious code in esqstudypongcandy (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqultralgtbhydra": [
+      {
+        "id": "MAL-2023-3494",
+        "file": "MAL-2023-3494.json",
+        "summary": "Malicious code in esqultralgtbhydra (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqvirtualkillint": [
+      {
+        "id": "MAL-2023-3533",
+        "file": "MAL-2023-3533.json",
+        "summary": "Malicious code in esqvirtualkillint (PyPI)",
+        "aliases": []
+      }
+    ],
+    "esqvmverpep": [
+      {
+        "id": "MAL-2023-3572",
+        "file": "MAL-2023-3572.json",
+        "summary": "Malicious code in esqvmverpep (PyPI)",
+        "aliases": []
+      }
+    ],
+    "getcraft": [
+      {
+        "id": "MAL-2023-3611",
+        "file": "MAL-2023-3611.json",
+        "summary": "Malicious code in getcraft (PyPI)",
+        "aliases": []
+      }
+    ],
+    "grandint": [
+      {
+        "id": "MAL-2023-3650",
+        "file": "MAL-2023-3650.json",
+        "summary": "Malicious code in grandint (PyPI)",
+        "aliases": []
+      }
+    ],
+    "guimine": [
+      {
+        "id": "MAL-2023-3689",
+        "file": "MAL-2023-3689.json",
+        "summary": "Malicious code in guimine (PyPI)",
+        "aliases": []
+      }
+    ],
+    "httpgame": [
+      {
+        "id": "MAL-2023-3728",
+        "file": "MAL-2023-3728.json",
+        "summary": "Malicious code in httpgame (PyPI)",
+        "aliases": []
+      }
+    ],
+    "hydraping": [
+      {
+        "id": "MAL-2023-3767",
+        "file": "MAL-2023-3767.json",
+        "summary": "Malicious code in hydraping (PyPI)",
+        "aliases": []
+      }
+    ],
+    "infourl": [
+      {
+        "id": "MAL-2023-3806",
+        "file": "MAL-2023-3806.json",
+        "summary": "Malicious code in infourl (PyPI)",
+        "aliases": []
+      }
+    ],
+    "lgtbad": [
+      {
+        "id": "MAL-2023-3845",
+        "file": "MAL-2023-3845.json",
+        "summary": "Malicious code in lgtbad (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libcandyretool": [
+      {
+        "id": "MAL-2023-3884",
+        "file": "MAL-2023-3884.json",
+        "summary": "Malicious code in libcandyretool (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libcontrolverlgtb": [
+      {
+        "id": "MAL-2023-3923",
+        "file": "MAL-2023-3923.json",
+        "summary": "Malicious code in libcontrolverlgtb (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libcvproofstr": [
+      {
+        "id": "MAL-2023-3962",
+        "file": "MAL-2023-3962.json",
+        "summary": "Malicious code in libcvproofstr (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libgetcccandy": [
+      {
+        "id": "MAL-2023-4001",
+        "file": "MAL-2023-4001.json",
+        "summary": "Malicious code in libgetcccandy (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libguiping": [
+      {
+        "id": "MAL-2023-4040",
+        "file": "MAL-2023-4040.json",
+        "summary": "Malicious code in libguiping (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libhydracandymask": [
+      {
+        "id": "MAL-2023-4079",
+        "file": "MAL-2023-4079.json",
+        "summary": "Malicious code in libhydracandymask (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libintelkillvm": [
+      {
+        "id": "MAL-2023-4118",
+        "file": "MAL-2023-4118.json",
+        "summary": "Malicious code in libintelkillvm (PyPI)",
+        "aliases": []
+      }
+    ],
+    "liblgtbgamesplit": [
+      {
+        "id": "MAL-2023-4157",
+        "file": "MAL-2023-4157.json",
+        "summary": "Malicious code in liblgtbgamesplit (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libloadpostvm": [
+      {
+        "id": "MAL-2023-4196",
+        "file": "MAL-2023-4196.json",
+        "summary": "Malicious code in libloadpostvm (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libmcpipver": [
+      {
+        "id": "MAL-2023-4235",
+        "file": "MAL-2023-4235.json",
+        "summary": "Malicious code in libmcpipver (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libosintramcontrol": [
+      {
+        "id": "MAL-2023-4274",
+        "file": "MAL-2023-4274.json",
+        "summary": "Malicious code in libosintramcontrol (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libpingpywproof": [
+      {
+        "id": "MAL-2023-4313",
+        "file": "MAL-2023-4313.json",
+        "summary": "Malicious code in libpingpywproof (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libpostinfo": [
+      {
+        "id": "MAL-2023-4352",
+        "file": "MAL-2023-4352.json",
+        "summary": "Malicious code in libpostinfo (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libpushcv": [
+      {
+        "id": "MAL-2023-4391",
+        "file": "MAL-2023-4391.json",
+        "summary": "Malicious code in libpushcv (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libramcpuhacked": [
+      {
+        "id": "MAL-2023-4430",
+        "file": "MAL-2023-4430.json",
+        "summary": "Malicious code in libramcpuhacked (PyPI)",
+        "aliases": []
+      }
+    ],
+    "librecontrolhacked": [
+      {
+        "id": "MAL-2023-4469",
+        "file": "MAL-2023-4469.json",
+        "summary": "Malicious code in librecontrolhacked (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libstringgameload": [
+      {
+        "id": "MAL-2023-4508",
+        "file": "MAL-2023-4508.json",
+        "summary": "Malicious code in libstringgameload (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libsuperint": [
+      {
+        "id": "MAL-2023-4547",
+        "file": "MAL-2023-4547.json",
+        "summary": "Malicious code in libsuperint (PyPI)",
+        "aliases": []
+      }
+    ],
+    "liburlccproof": [
+      {
+        "id": "MAL-2023-4586",
+        "file": "MAL-2023-4586.json",
+        "summary": "Malicious code in liburlccproof (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libvirtuallgtbrand": [
+      {
+        "id": "MAL-2023-4625",
+        "file": "MAL-2023-4625.json",
+        "summary": "Malicious code in libvirtuallgtbrand (PyPI)",
+        "aliases": []
+      }
+    ],
+    "libvmrandom": [
+      {
+        "id": "MAL-2023-4664",
+        "file": "MAL-2023-4664.json",
+        "summary": "Malicious code in libvmrandom (PyPI)",
+        "aliases": []
+      }
+    ],
+    "maskcpu": [
+      {
+        "id": "MAL-2023-4703",
+        "file": "MAL-2023-4703.json",
+        "summary": "Malicious code in maskcpu (PyPI)",
+        "aliases": []
+      }
+    ],
+    "mcpip": [
+      {
+        "id": "MAL-2023-4742",
+        "file": "MAL-2023-4742.json",
+        "summary": "Malicious code in mcpip (PyPI)",
+        "aliases": []
+      }
+    ],
+    "minesuper": [
+      {
+        "id": "MAL-2023-4781",
+        "file": "MAL-2023-4781.json",
+        "summary": "Malicious code in minesuper (PyPI)",
+        "aliases": []
+      }
+    ],
+    "paypalload": [
+      {
+        "id": "MAL-2023-4820",
+        "file": "MAL-2023-4820.json",
+        "summary": "Malicious code in paypalload (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pipcraft": [
+      {
+        "id": "MAL-2023-4859",
+        "file": "MAL-2023-4859.json",
+        "summary": "Malicious code in pipcraft (PyPI)",
+        "aliases": []
+      }
+    ],
+    "postcandy": [
+      {
+        "id": "MAL-2023-4898",
+        "file": "MAL-2023-4898.json",
+        "summary": "Malicious code in postcandy (PyPI)",
+        "aliases": []
+      }
+    ],
+    "proofgrand": [
+      {
+        "id": "MAL-2023-4937",
+        "file": "MAL-2023-4937.json",
+        "summary": "Malicious code in proofgrand (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pushping": [
+      {
+        "id": "MAL-2023-4976",
+        "file": "MAL-2023-4976.json",
+        "summary": "Malicious code in pushping (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-ccadsuper": [
+      {
+        "id": "MAL-2023-5015",
+        "file": "MAL-2023-5015.json",
+        "summary": "Malicious code in py-ccadsuper (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-craftguire": [
+      {
+        "id": "MAL-2023-5054",
+        "file": "MAL-2023-5054.json",
+        "summary": "Malicious code in py-craftguire (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-encodeping": [
+      {
+        "id": "MAL-2023-5093",
+        "file": "MAL-2023-5093.json",
+        "summary": "Malicious code in py-encodeping (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-grandpostver": [
+      {
+        "id": "MAL-2023-5132",
+        "file": "MAL-2023-5132.json",
+        "summary": "Malicious code in py-grandpostver (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-hackedurl": [
+      {
+        "id": "MAL-2023-5171",
+        "file": "MAL-2023-5171.json",
+        "summary": "Malicious code in py-hackedurl (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-infointelpost": [
+      {
+        "id": "MAL-2023-5210",
+        "file": "MAL-2023-5210.json",
+        "summary": "Malicious code in py-infointelpost (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-intpywhacked": [
+      {
+        "id": "MAL-2023-5249",
+        "file": "MAL-2023-5249.json",
+        "summary": "Malicious code in py-intpywhacked (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-libhttpmc": [
+      {
+        "id": "MAL-2023-5288",
+        "file": "MAL-2023-5288.json",
+        "summary": "Malicious code in py-libhttpmc (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-maskstringcpu": [
+      {
+        "id": "MAL-2023-5327",
+        "file": "MAL-2023-5327.json",
+        "summary": "Malicious code in py-maskstringcpu (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-nvidiapaypalsuper": [
+      {
+        "id": "MAL-2023-5366",
+        "file": "MAL-2023-5366.json",
+        "summary": "Malicious code in py-nvidiapaypalsuper (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-paypalsplitsplit": [
+      {
+        "id": "MAL-2023-5405",
+        "file": "MAL-2023-5405.json",
+        "summary": "Malicious code in py-paypalsplitsplit (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-pippip": [
+      {
+        "id": "MAL-2023-5444",
+        "file": "MAL-2023-5444.json",
+        "summary": "Malicious code in py-pippip (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-prooflib": [
+      {
+        "id": "MAL-2023-5483",
+        "file": "MAL-2023-5483.json",
+        "summary": "Malicious code in py-prooflib (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-pycpuload": [
+      {
+        "id": "MAL-2023-5522",
+        "file": "MAL-2023-5522.json",
+        "summary": "Malicious code in py-pycpuload (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-randcpustr": [
+      {
+        "id": "MAL-2023-5561",
+        "file": "MAL-2023-5561.json",
+        "summary": "Malicious code in py-randcpustr (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-replaceinfosplit": [
+      {
+        "id": "MAL-2023-5600",
+        "file": "MAL-2023-5600.json",
+        "summary": "Malicious code in py-replaceinfosplit (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-stringre": [
+      {
+        "id": "MAL-2023-5639",
+        "file": "MAL-2023-5639.json",
+        "summary": "Malicious code in py-stringre (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-studyvmpyw": [
+      {
+        "id": "MAL-2023-5678",
+        "file": "MAL-2023-5678.json",
+        "summary": "Malicious code in py-studyvmpyw (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-ultrareplace": [
+      {
+        "id": "MAL-2023-5717",
+        "file": "MAL-2023-5717.json",
+        "summary": "Malicious code in py-ultrareplace (PyPI)",
+        "aliases": []
+      }
+    ],
+    "py-virtualpaypalcraft": [
+      {
+        "id": "MAL-2023-5756",
+        "file": "MAL-2023-5756.json",
+        "summary": "Malicious code in py-virtualpaypalcraft (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pypep": [
+      {
+        "id": "MAL-2023-5795",
+        "file": "MAL-2023-5795.json",
+        "summary": "Malicious code in pypep (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pywvisa": [
+      {
+        "id": "MAL-2023-5834",
+        "file": "MAL-2023-5834.json",
+        "summary": "Malicious code in pywvisa (PyPI)",
+        "aliases": []
+      }
+    ],
+    "ramvm": [
+      {
+        "id": "MAL-2023-5873",
+        "file": "MAL-2023-5873.json",
+        "summary": "Malicious code in ramvm (PyPI)",
+        "aliases": []
+      }
+    ],
+    "remine": [
+      {
+        "id": "MAL-2023-5912",
+        "file": "MAL-2023-5912.json",
+        "summary": "Malicious code in remine (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfcandyrand": [
+      {
+        "id": "MAL-2023-5951",
+        "file": "MAL-2023-5951.json",
+        "summary": "Malicious code in selfcandyrand (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfcpulgtbpip": [
+      {
+        "id": "MAL-2023-5990",
+        "file": "MAL-2023-5990.json",
+        "summary": "Malicious code in selfcpulgtbpip (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfcvvirtual": [
+      {
+        "id": "MAL-2023-6029",
+        "file": "MAL-2023-6029.json",
+        "summary": "Malicious code in selfcvvirtual (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfgameedultra": [
+      {
+        "id": "MAL-2023-6068",
+        "file": "MAL-2023-6068.json",
+        "summary": "Malicious code in selfgameedultra (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfgrandcontroltool": [
+      {
+        "id": "MAL-2023-6107",
+        "file": "MAL-2023-6107.json",
+        "summary": "Malicious code in selfgrandcontroltool (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfhackedencode": [
+      {
+        "id": "MAL-2023-6146",
+        "file": "MAL-2023-6146.json",
+        "summary": "Malicious code in selfhackedencode (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfhydranvidiamc": [
+      {
+        "id": "MAL-2023-6185",
+        "file": "MAL-2023-6185.json",
+        "summary": "Malicious code in selfhydranvidiamc (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfintelpullpost": [
+      {
+        "id": "MAL-2023-6224",
+        "file": "MAL-2023-6224.json",
+        "summary": "Malicious code in selfintelpullpost (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selflgtbpostcandy": [
+      {
+        "id": "MAL-2023-6263",
+        "file": "MAL-2023-6263.json",
+        "summary": "Malicious code in selflgtbpostcandy (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfmaskgamepull": [
+      {
+        "id": "MAL-2023-6302",
+        "file": "MAL-2023-6302.json",
+        "summary": "Malicious code in selfmaskgamepull (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfminemasknvidia": [
+      {
+        "id": "MAL-2023-6341",
+        "file": "MAL-2023-6341.json",
+        "summary": "Malicious code in selfminemasknvidia (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfosinturlget": [
+      {
+        "id": "MAL-2023-6380",
+        "file": "MAL-2023-6380.json",
+        "summary": "Malicious code in selfosinturlget (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfpepultraad": [
+      {
+        "id": "MAL-2023-6419",
+        "file": "MAL-2023-6419.json",
+        "summary": "Malicious code in selfpepultraad (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfponggui": [
+      {
+        "id": "MAL-2023-6458",
+        "file": "MAL-2023-6458.json",
+        "summary": "Malicious code in selfponggui (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfproofsplitpush": [
+      {
+        "id": "MAL-2023-6497",
+        "file": "MAL-2023-6497.json",
+        "summary": "Malicious code in selfproofsplitpush (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfpywgamesuper": [
+      {
+        "id": "MAL-2023-6536",
+        "file": "MAL-2023-6536.json",
+        "summary": "Malicious code in selfpywgamesuper (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfrandompipencode": [
+      {
+        "id": "MAL-2023-6575",
+        "file": "MAL-2023-6575.json",
+        "summary": "Malicious code in selfrandompipencode (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfrerandom": [
+      {
+        "id": "MAL-2023-6614",
+        "file": "MAL-2023-6614.json",
+        "summary": "Malicious code in selfrerandom (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfstrtool": [
+      {
+        "id": "MAL-2023-6653",
+        "file": "MAL-2023-6653.json",
+        "summary": "Malicious code in selfstrtool (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selftoolmask": [
+      {
+        "id": "MAL-2023-6692",
+        "file": "MAL-2023-6692.json",
+        "summary": "Malicious code in selftoolmask (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfurlultra": [
+      {
+        "id": "MAL-2023-6731",
+        "file": "MAL-2023-6731.json",
+        "summary": "Malicious code in selfurlultra (PyPI)",
+        "aliases": []
+      }
+    ],
+    "selfvisacpu": [
+      {
+        "id": "MAL-2023-6770",
+        "file": "MAL-2023-6770.json",
+        "summary": "Malicious code in selfvisacpu (PyPI)",
+        "aliases": []
+      }
+    ],
+    "splitram": [
+      {
+        "id": "MAL-2023-6809",
+        "file": "MAL-2023-6809.json",
+        "summary": "Malicious code in splitram (PyPI)",
+        "aliases": []
+      }
+    ],
+    "superinfo": [
+      {
+        "id": "MAL-2023-6848",
+        "file": "MAL-2023-6848.json",
+        "summary": "Malicious code in superinfo (PyPI)",
+        "aliases": []
+      }
+    ],
+    "toolpep": [
+      {
+        "id": "MAL-2023-6887",
+        "file": "MAL-2023-6887.json",
+        "summary": "Malicious code in toolpep (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tpcandylgtbgame": [
+      {
+        "id": "MAL-2023-6926",
+        "file": "MAL-2023-6926.json",
+        "summary": "Malicious code in tpcandylgtbgame (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tpcpulgtb": [
+      {
+        "id": "MAL-2023-6965",
+        "file": "MAL-2023-6965.json",
+        "summary": "Malicious code in tpcpulgtb (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tpedpingpull": [
+      {
+        "id": "MAL-2023-7004",
+        "file": "MAL-2023-7004.json",
+        "summary": "Malicious code in tpedpingpull (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tpgamevisatool": [
+      {
+        "id": "MAL-2023-7043",
+        "file": "MAL-2023-7043.json",
+        "summary": "Malicious code in tpgamevisatool (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tpguiintelcv": [
+      {
+        "id": "MAL-2023-7082",
+        "file": "MAL-2023-7082.json",
+        "summary": "Malicious code in tpguiintelcv (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tphydraedencode": [
+      {
+        "id": "MAL-2023-7121",
+        "file": "MAL-2023-7121.json",
+        "summary": "Malicious code in tphydraedencode (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tpintelloadcc": [
+      {
+        "id": "MAL-2023-7160",
+        "file": "MAL-2023-7160.json",
+        "summary": "Malicious code in tpintelloadcc (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tplgtbgamestudy": [
+      {
+        "id": "MAL-2023-7199",
+        "file": "MAL-2023-7199.json",
+        "summary": "Malicious code in tplgtbgamestudy (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tploadsplithacked": [
+      {
+        "id": "MAL-2023-7238",
+        "file": "MAL-2023-7238.json",
+        "summary": "Malicious code in tploadsplithacked (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tpminehackedsuper": [
+      {
+        "id": "MAL-2023-7277",
+        "file": "MAL-2023-7277.json",
+        "summary": "Malicious code in tpminehackedsuper (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tposintsplitintel": [
+      {
+        "id": "MAL-2023-7316",
+        "file": "MAL-2023-7316.json",
+        "summary": "Malicious code in tposintsplitintel (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tppingultraload": [
+      {
+        "id": "MAL-2023-7355",
+        "file": "MAL-2023-7355.json",
+        "summary": "Malicious code in tppingultraload (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tppostrandomosint": [
+      {
+        "id": "MAL-2023-7394",
+        "file": "MAL-2023-7394.json",
+        "summary": "Malicious code in tppostrandomosint (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tppullproofurl": [
+      {
+        "id": "MAL-2023-7433",
+        "file": "MAL-2023-7433.json",
+        "summary": "Malicious code in tppullproofurl (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tppypip": [
+      {
+        "id": "MAL-2023-7472",
+        "file": "MAL-2023-7472.json",
+        "summary": "Malicious code in tppypip (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tpramultravm": [
+      {
+        "id": "MAL-2023-7511",
+        "file": "MAL-2023-7511.json",
+        "summary": "Malicious code in tpramultravm (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tprelibpost": [
+      {
+        "id": "MAL-2023-7550",
+        "file": "MAL-2023-7550.json",
+        "summary": "Malicious code in tprelibpost (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tpsplitpaypalmask": [
+      {
+        "id": "MAL-2023-7589",
+        "file": "MAL-2023-7589.json",
+        "summary": "Malicious code in tpsplitpaypalmask (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tpstrpycv": [
+      {
+        "id": "MAL-2023-7628",
+        "file": "MAL-2023-7628.json",
+        "summary": "Malicious code in tpstrpycv (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tptoolvisaver": [
+      {
+        "id": "MAL-2023-7667",
+        "file": "MAL-2023-7667.json",
+        "summary": "Malicious code in tptoolvisaver (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tpvirtualcontrolpong": [
+      {
+        "id": "MAL-2023-7706",
+        "file": "MAL-2023-7706.json",
+        "summary": "Malicious code in tpvirtualcontrolpong (PyPI)",
+        "aliases": []
+      }
+    ],
+    "ultraad": [
+      {
+        "id": "MAL-2023-7745",
+        "file": "MAL-2023-7745.json",
+        "summary": "Malicious code in ultraad (PyPI)",
+        "aliases": []
+      }
+    ],
+    "urlhttp": [
+      {
+        "id": "MAL-2023-7784",
+        "file": "MAL-2023-7784.json",
+        "summary": "Malicious code in urlhttp (PyPI)",
+        "aliases": []
+      }
+    ],
+    "virtualhttp": [
+      {
+        "id": "MAL-2023-7823",
+        "file": "MAL-2023-7823.json",
+        "summary": "Malicious code in virtualhttp (PyPI)",
+        "aliases": []
+      }
+    ],
+    "visasuper": [
+      {
+        "id": "MAL-2023-7862",
+        "file": "MAL-2023-7862.json",
+        "summary": "Malicious code in visasuper (PyPI)",
+        "aliases": []
+      }
+    ],
+    "poc-nvk": [
+      {
+        "id": "MAL-2023-8290",
+        "file": "MAL-2023-8290.json",
+        "summary": "Malicious code in poc-nvk (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pyghoster": [
+      {
+        "id": "MAL-2023-8571",
+        "file": "MAL-2023-8571.json",
+        "summary": "Malicious code in pyghoster (PyPI)",
+        "aliases": [
+          "SNYK-PYTHON-PYGHOSTER-6069638"
+        ]
+      }
+    ],
+    "etheruim": [
+      {
+        "id": "MAL-2024-10008",
+        "file": "MAL-2024-10008.json",
+        "summary": "Malicious code in etheruim (PyPI)",
+        "aliases": []
+      }
+    ],
+    "modeflow": [
+      {
+        "id": "MAL-2024-10047",
+        "file": "MAL-2024-10047.json",
+        "summary": "Malicious code in modeflow (PyPI)",
+        "aliases": []
+      }
+    ],
+    "openwae": [
+      {
+        "id": "MAL-2024-10086",
+        "file": "MAL-2024-10086.json",
+        "summary": "Malicious code in openwae (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pystlete": [
+      {
+        "id": "MAL-2024-10125",
+        "file": "MAL-2024-10125.json",
+        "summary": "Malicious code in pystlete (PyPI)",
+        "aliases": []
+      }
+    ],
+    "solana-transaction": [
+      {
+        "id": "MAL-2024-10164",
+        "file": "MAL-2024-10164.json",
+        "summary": "Malicious code in solana-transaction (PyPI)",
+        "aliases": []
+      }
+    ],
+    "web3-po": [
+      {
+        "id": "MAL-2024-10203",
+        "file": "MAL-2024-10203.json",
+        "summary": "Malicious code in web3-po (PyPI)",
+        "aliases": []
+      }
+    ],
+    "nerst": [
+      {
+        "id": "MAL-2024-10370",
+        "file": "MAL-2024-10370.json",
+        "summary": "Malicious code in nerst (PyPI)",
+        "aliases": []
+      }
+    ],
+    "salmonn": [
+      {
+        "id": "MAL-2024-10458",
+        "file": "MAL-2024-10458.json",
+        "summary": "Malicious code in salmonn (PyPI)",
+        "aliases": []
+      }
+    ],
+    "easydicts": [
+      {
+        "id": "MAL-2024-10640",
+        "file": "MAL-2024-10640.json",
+        "summary": "Malicious code in easydicts (PyPI)",
+        "aliases": []
+      }
+    ],
+    "deadiff": [
+      {
+        "id": "MAL-2024-10833",
+        "file": "MAL-2024-10833.json",
+        "summary": "Malicious code in deadiff (PyPI)",
+        "aliases": []
+      }
+    ],
+    "assulthimars": [
+      {
+        "id": "MAL-2024-11532",
+        "file": "MAL-2024-11532.json",
+        "summary": "Malicious code in assulthimars (PyPI)",
+        "aliases": []
+      }
+    ],
+    "detecron2": [
+      {
+        "id": "MAL-2024-11571",
+        "file": "MAL-2024-11571.json",
+        "summary": "Malicious code in detecron2 (PyPI)",
+        "aliases": []
+      }
+    ],
+    "huangpy": [
+      {
+        "id": "MAL-2024-11610",
+        "file": "MAL-2024-11610.json",
+        "summary": "Malicious code in huangpy (PyPI)",
+        "aliases": []
+      }
+    ],
+    "optimux": [
+      {
+        "id": "MAL-2024-11649",
+        "file": "MAL-2024-11649.json",
+        "summary": "Malicious code in optimux (PyPI)",
+        "aliases": []
+      }
+    ],
+    "replication-delay-client111": [
+      {
+        "id": "MAL-2024-11688",
+        "file": "MAL-2024-11688.json",
+        "summary": "Malicious code in replication-delay-client111 (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tingetone": [
+      {
+        "id": "MAL-2024-11727",
+        "file": "MAL-2024-11727.json",
+        "summary": "Malicious code in tingetone (PyPI)",
+        "aliases": []
+      }
+    ],
+    "artifact-lab-3-package-1f7a39bc": [
+      {
+        "id": "MAL-2024-12195",
+        "file": "MAL-2024-12195.json",
+        "summary": "Malicious code in artifact-lab-3-package-1f7a39bc (PyPI)",
+        "aliases": []
+      }
+    ],
+    "christmasmiraclemaker": [
+      {
+        "id": "MAL-2024-12234",
+        "file": "MAL-2024-12234.json",
+        "summary": "Malicious code in christmasmiraclemaker (PyPI)",
+        "aliases": []
+      }
+    ],
+    "flashinfer": [
+      {
+        "id": "MAL-2024-12273",
+        "file": "MAL-2024-12273.json",
+        "summary": "Malicious code in flashinfer (PyPI)",
+        "aliases": []
+      }
+    ],
+    "newpackagetest2024": [
+      {
+        "id": "MAL-2024-12312",
+        "file": "MAL-2024-12312.json",
+        "summary": "Malicious code in newpackagetest2024 (PyPI)",
+        "aliases": []
+      }
+    ],
+    "spy-ai": [
+      {
+        "id": "MAL-2024-12351",
+        "file": "MAL-2024-12351.json",
+        "summary": "Malicious code in spy-ai (PyPI)",
+        "aliases": []
+      }
+    ],
+    "1337test": [
+      {
+        "id": "MAL-2024-4720",
+        "file": "MAL-2024-4720.json",
+        "summary": "Malicious code in 1337test (PyPI)",
+        "aliases": []
+      }
+    ],
+    "airnitro": [
+      {
+        "id": "MAL-2024-4759",
+        "file": "MAL-2024-4759.json",
+        "summary": "Malicious code in airnitro (PyPI)",
+        "aliases": []
+      }
+    ],
+    "bhottwo": [
+      {
+        "id": "MAL-2024-4798",
+        "file": "MAL-2024-4798.json",
+        "summary": "Malicious code in bhottwo (PyPI)",
+        "aliases": []
+      }
+    ],
+    "bs5": [
+      {
+        "id": "MAL-2024-4837",
+        "file": "MAL-2024-4837.json",
+        "summary": "Malicious code in bs5 (PyPI)",
+        "aliases": []
+      }
+    ],
+    "capmonsterrcloudclient": [
+      {
+        "id": "MAL-2024-4876",
+        "file": "MAL-2024-4876.json",
+        "summary": "Malicious code in capmonsterrcloudclient (PyPI)",
+        "aliases": [
+          "SNYK-PYTHON-CAPMONSTERRCLOUDCLIENT-6513707"
+        ]
+      }
+    ],
+    "color-animated": [
+      {
+        "id": "MAL-2024-4915",
+        "file": "MAL-2024-4915.json",
+        "summary": "Malicious code in color-animated (PyPI)",
+        "aliases": []
+      }
+    ],
+    "colorema": [
+      {
+        "id": "MAL-2024-4954",
+        "file": "MAL-2024-4954.json",
+        "summary": "Malicious code in colorema (PyPI)",
+        "aliases": []
+      }
+    ],
+    "cookiesjar": [
+      {
+        "id": "MAL-2024-4993",
+        "file": "MAL-2024-4993.json",
+        "summary": "Malicious code in cookiesjar (PyPI)",
+        "aliases": []
+      }
+    ],
+    "datagraph": [
+      {
+        "id": "MAL-2024-5032",
+        "file": "MAL-2024-5032.json",
+        "summary": "Malicious code in datagraph (PyPI)",
+        "aliases": []
+      }
+    ],
+    "discord-slash": [
+      {
+        "id": "MAL-2024-5071",
+        "file": "MAL-2024-5071.json",
+        "summary": "Malicious code in discord-slash (PyPI)",
+        "aliases": []
+      }
+    ],
+    "embeddings-validation": [
+      {
+        "id": "MAL-2024-5110",
+        "file": "MAL-2024-5110.json",
+        "summary": "Malicious code in embeddings-validation (PyPI)",
+        "aliases": []
+      }
+    ],
+    "forenith": [
+      {
+        "id": "MAL-2024-5149",
+        "file": "MAL-2024-5149.json",
+        "summary": "Malicious code in forenith (PyPI)",
+        "aliases": []
+      }
+    ],
+    "gradientcolors": [
+      {
+        "id": "MAL-2024-5188",
+        "file": "MAL-2024-5188.json",
+        "summary": "Malicious code in gradientcolors (PyPI)",
+        "aliases": []
+      }
+    ],
+    "httpsrequestsfast": [
+      {
+        "id": "MAL-2024-5227",
+        "file": "MAL-2024-5227.json",
+        "summary": "Malicious code in httpsrequestsfast (PyPI)",
+        "aliases": []
+      }
+    ],
+    "insanepackage217424422342983": [
+      {
+        "id": "MAL-2024-5266",
+        "file": "MAL-2024-5266.json",
+        "summary": "Malicious code in insanepackage217424422342983 (PyPI)",
+        "aliases": []
+      }
+    ],
+    "lastweb3toolzbro": [
+      {
+        "id": "MAL-2024-5305",
+        "file": "MAL-2024-5305.json",
+        "summary": "Malicious code in lastweb3toolzbro (PyPI)",
+        "aliases": []
+      }
+    ],
+    "mall0d": [
+      {
+        "id": "MAL-2024-5344",
+        "file": "MAL-2024-5344.json",
+        "summary": "Malicious code in mall0d (PyPI)",
+        "aliases": []
+      }
+    ],
+    "multiconnection": [
+      {
+        "id": "MAL-2024-5383",
+        "file": "MAL-2024-5383.json",
+        "summary": "Malicious code in multiconnection (PyPI)",
+        "aliases": []
+      }
+    ],
+    "nuke-bot": [
+      {
+        "id": "MAL-2024-5422",
+        "file": "MAL-2024-5422.json",
+        "summary": "Malicious code in nuke-bot (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pathfound": [
+      {
+        "id": "MAL-2024-5461",
+        "file": "MAL-2024-5461.json",
+        "summary": "Malicious code in pathfound (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pipcolourextension": [
+      {
+        "id": "MAL-2024-5500",
+        "file": "MAL-2024-5500.json",
+        "summary": "Malicious code in pipcolourextension (PyPI)",
+        "aliases": [
+          "SNYK-PYTHON-PIPCOLOUREXTENSION-5932333"
+        ]
+      }
+    ],
+    "pipsqliext": [
+      {
+        "id": "MAL-2024-5539",
+        "file": "MAL-2024-5539.json",
+        "summary": "Malicious code in pipsqliext (PyPI)",
+        "aliases": [
+          "SNYK-PYTHON-PIPSQLIEXT-5591173"
+        ]
+      }
+    ],
+    "py-c0ard": [
+      {
+        "id": "MAL-2024-5578",
+        "file": "MAL-2024-5578.json",
+        "summary": "Malicious code in py-c0ard (PyPI)",
+        "aliases": [
+          "SNYK-PYTHON-PYC0ARD-6513228"
+        ]
+      }
+    ],
+    "py-corwd": [
+      {
+        "id": "MAL-2024-5617",
+        "file": "MAL-2024-5617.json",
+        "summary": "Malicious code in py-corwd (PyPI)",
+        "aliases": [
+          "SNYK-PYTHON-PYCORWD-6513508"
+        ]
+      }
+    ],
+    "pycolorate": [
+      {
+        "id": "MAL-2024-5656",
+        "file": "MAL-2024-5656.json",
+        "summary": "Malicious code in pycolorate (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pydefenderultra": [
+      {
+        "id": "MAL-2024-5695",
+        "file": "MAL-2024-5695.json",
+        "summary": "Malicious code in pydefenderultra (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pylibhelper": [
+      {
+        "id": "MAL-2024-5734",
+        "file": "MAL-2024-5734.json",
+        "summary": "Malicious code in pylibhelper (PyPI)",
+        "aliases": [
+          "SNYK-PYTHON-PYLIBHELPER-5932297"
+        ]
+      }
+    ],
+    "pysqlchiper-conv": [
+      {
+        "id": "MAL-2024-5773",
+        "file": "MAL-2024-5773.json",
+        "summary": "Malicious code in pysqlchiper-conv (PyPI)",
+        "aliases": [
+          "SNYK-PYTHON-PYSQLCHIPERCONV-5885062"
+        ]
+      }
+    ],
+    "pythoncryptov2": [
+      {
+        "id": "MAL-2024-5812",
+        "file": "MAL-2024-5812.json",
+        "summary": "Malicious code in pythoncryptov2 (PyPI)",
+        "aliases": []
+      }
+    ],
+    "rdependency1337": [
+      {
+        "id": "MAL-2024-5851",
+        "file": "MAL-2024-5851.json",
+        "summary": "Malicious code in rdependency1337 (PyPI)",
+        "aliases": []
+      }
+    ],
+    "requesters": [
+      {
+        "id": "MAL-2024-5890",
+        "file": "MAL-2024-5890.json",
+        "summary": "Malicious code in requesters (PyPI)",
+        "aliases": []
+      }
+    ],
+    "requssts": [
+      {
+        "id": "MAL-2024-5929",
+        "file": "MAL-2024-5929.json",
+        "summary": "Malicious code in requssts (PyPI)",
+        "aliases": [
+          "SNYK-PYTHON-REQUSSTS-6513647"
+        ]
+      }
+    ],
+    "sclighte": [
+      {
+        "id": "MAL-2024-5968",
+        "file": "MAL-2024-5968.json",
+        "summary": "Malicious code in sclighte (PyPI)",
+        "aliases": []
+      }
+    ],
+    "shiwers": [
+      {
+        "id": "MAL-2024-6007",
+        "file": "MAL-2024-6007.json",
+        "summary": "Malicious code in shiwers (PyPI)",
+        "aliases": []
+      }
+    ],
+    "stripepy": [
+      {
+        "id": "MAL-2024-6046",
+        "file": "MAL-2024-6046.json",
+        "summary": "Malicious code in stripepy (PyPI)",
+        "aliases": []
+      }
+    ],
+    "syssqlite3v2": [
+      {
+        "id": "MAL-2024-6085",
+        "file": "MAL-2024-6085.json",
+        "summary": "Malicious code in syssqlite3v2 (PyPI)",
+        "aliases": [
+          "SNYK-PYTHON-SYSSQLITE3V2-5932191"
+        ]
+      }
+    ],
+    "testpackages159": [
+      {
+        "id": "MAL-2024-6124",
+        "file": "MAL-2024-6124.json",
+        "summary": "Malicious code in testpackages159 (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tomproxies": [
+      {
+        "id": "MAL-2024-6163",
+        "file": "MAL-2024-6163.json",
+        "summary": "Malicious code in tomproxies (PyPI)",
+        "aliases": []
+      }
+    ],
+    "webhosting": [
+      {
+        "id": "MAL-2024-6202",
+        "file": "MAL-2024-6202.json",
+        "summary": "Malicious code in webhosting (PyPI)",
+        "aliases": []
+      }
+    ],
+    "xolosafhpodvqo": [
+      {
+        "id": "MAL-2024-6241",
+        "file": "MAL-2024-6241.json",
+        "summary": "Malicious code in xolosafhpodvqo (PyPI)",
+        "aliases": []
+      }
+    ],
+    "artifact-lab-3-package-3eef6c2c": [
+      {
+        "id": "MAL-2024-8051",
+        "file": "MAL-2024-8051.json",
+        "summary": "Malicious code in artifact-lab-3-package-3eef6c2c (PyPI)",
+        "aliases": []
+      }
+    ],
+    "better-gradient": [
+      {
+        "id": "MAL-2024-9949",
+        "file": "MAL-2024-9949.json",
+        "summary": "Malicious code in better-gradient (PyPI)",
+        "aliases": []
+      }
+    ],
+    "ethererum": [
+      {
+        "id": "MAL-2024-9988",
+        "file": "MAL-2024-9988.json",
+        "summary": "Malicious code in ethererum (PyPI)",
+        "aliases": []
+      }
+    ],
+    "egarcia-poc": [
+      {
+        "id": "MAL-2025-191623",
+        "file": "MAL-2025-191623.json",
+        "summary": "Malicious code in egarcia-poc (PyPI)",
+        "aliases": []
+      }
+    ],
+    "starexx": [
+      {
+        "id": "MAL-2025-191662",
+        "file": "MAL-2025-191662.json",
+        "summary": "Malicious code in starexx (PyPI)",
+        "aliases": []
+      }
+    ],
+    "computestpspeedcomp": [
+      {
+        "id": "MAL-2025-191704",
+        "file": "MAL-2025-191704.json",
+        "summary": "Malicious code in computestpspeedcomp (PyPI)",
+        "aliases": []
+      }
+    ],
+    "gpu-free-ai": [
+      {
+        "id": "MAL-2025-191743",
+        "file": "MAL-2025-191743.json",
+        "summary": "Malicious code in gpu-free-ai (PyPI)",
+        "aliases": []
+      }
+    ],
+    "loggerex": [
+      {
+        "id": "MAL-2025-191782",
+        "file": "MAL-2025-191782.json",
+        "summary": "Malicious code in loggerex (PyPI)",
+        "aliases": []
+      }
+    ],
+    "prof-qux": [
+      {
+        "id": "MAL-2025-191821",
+        "file": "MAL-2025-191821.json",
+        "summary": "Malicious code in prof-qux (PyPI)",
+        "aliases": []
+      }
+    ],
+    "rtcpy": [
+      {
+        "id": "MAL-2025-191860",
+        "file": "MAL-2025-191860.json",
+        "summary": "Malicious code in rtcpy (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tiksing": [
+      {
+        "id": "MAL-2025-191899",
+        "file": "MAL-2025-191899.json",
+        "summary": "Malicious code in tiksing (PyPI)",
+        "aliases": []
+      }
+    ],
+    "xwormclient": [
+      {
+        "id": "MAL-2025-191938",
+        "file": "MAL-2025-191938.json",
+        "summary": "Malicious code in xwormclient (PyPI)",
+        "aliases": []
+      }
+    ],
+    "synium": [
+      {
+        "id": "MAL-2025-192438",
+        "file": "MAL-2025-192438.json",
+        "summary": "Malicious code in synium (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pyrogrem": [
+      {
+        "id": "MAL-2025-192991",
+        "file": "MAL-2025-192991.json",
+        "summary": "Malicious code in pyrogrem (PyPI)",
+        "aliases": []
+      }
+    ],
+    "reque": [
+      {
+        "id": "MAL-2025-1989",
+        "file": "MAL-2025-1989.json",
+        "summary": "Malicious code in reque (PyPI)",
+        "aliases": []
+      }
+    ],
+    "bsb-connector": [
+      {
+        "id": "MAL-2025-2598",
+        "file": "MAL-2025-2598.json",
+        "summary": "Malicious code in bsb-connector (PyPI)",
+        "aliases": []
+      }
+    ],
+    "enquiry-exam": [
+      {
+        "id": "MAL-2025-2957",
+        "file": "MAL-2025-2957.json",
+        "summary": "Malicious code in enquiry-exam (PyPI)",
+        "aliases": []
+      }
+    ],
+    "shleeh": [
+      {
+        "id": "MAL-2025-2996",
+        "file": "MAL-2025-2996.json",
+        "summary": "Malicious code in shleeh (PyPI)",
+        "aliases": []
+      }
+    ],
+    "colorina": [
+      {
+        "id": "MAL-2025-3441",
+        "file": "MAL-2025-3441.json",
+        "summary": "Malicious code in colorina (PyPI)",
+        "aliases": []
+      }
+    ],
+    "web3connectpy": [
+      {
+        "id": "MAL-2025-3480",
+        "file": "MAL-2025-3480.json",
+        "summary": "Malicious code in web3connectpy (PyPI)",
+        "aliases": []
+      }
+    ],
+    "certifiy": [
+      {
+        "id": "MAL-2025-41635",
+        "file": "MAL-2025-41635.json",
+        "summary": "Malicious code in certifiy (PyPI)",
+        "aliases": []
+      }
+    ],
+    "fiinquantx": [
+      {
+        "id": "MAL-2025-41674",
+        "file": "MAL-2025-41674.json",
+        "summary": "Malicious code in fiinquantx (PyPI)",
+        "aliases": []
+      }
+    ],
+    "numbervalidator": [
+      {
+        "id": "MAL-2025-41713",
+        "file": "MAL-2025-41713.json",
+        "summary": "Malicious code in numbervalidator (PyPI)",
+        "aliases": []
+      }
+    ],
+    "rqrqrq": [
+      {
+        "id": "MAL-2025-41752",
+        "file": "MAL-2025-41752.json",
+        "summary": "Malicious code in rqrqrq (PyPI)",
+        "aliases": []
+      }
+    ],
+    "upgrade-requests": [
+      {
+        "id": "MAL-2025-41791",
+        "file": "MAL-2025-41791.json",
+        "summary": "Malicious code in upgrade-requests (PyPI)",
+        "aliases": []
+      }
+    ],
+    "ora3": [
+      {
+        "id": "MAL-2025-4227",
+        "file": "MAL-2025-4227.json",
+        "summary": "Malicious code in ora3 (PyPI)",
+        "aliases": []
+      }
+    ],
+    "web3-request-1-8-54": [
+      {
+        "id": "MAL-2025-4266",
+        "file": "MAL-2025-4266.json",
+        "summary": "Malicious code in web3-request-1-8-54 (PyPI)",
+        "aliases": []
+      }
+    ],
+    "eenomenallib": [
+      {
+        "id": "MAL-2025-47761",
+        "file": "MAL-2025-47761.json",
+        "summary": "Malicious code in eenomenallib (PyPI)",
+        "aliases": []
+      }
+    ],
+    "randar303": [
+      {
+        "id": "MAL-2025-47800",
+        "file": "MAL-2025-47800.json",
+        "summary": "Malicious code in randar303 (PyPI)",
+        "aliases": []
+      }
+    ],
+    "tronlastpy": [
+      {
+        "id": "MAL-2025-48908",
+        "file": "MAL-2025-48908.json",
+        "summary": "Malicious code in tronlastpy (PyPI)",
+        "aliases": []
+      }
+    ],
+    "readmecolorama": [
+      {
+        "id": "MAL-2025-5126",
+        "file": "MAL-2025-5126.json",
+        "summary": "Malicious code in readmecolorama (PyPI)",
+        "aliases": [
+          "SNYK-PYTHON-READMECOLORAMA-10305013"
+        ]
+      }
+    ],
+    "aphisher": [
+      {
+        "id": "MAL-2025-6434",
+        "file": "MAL-2025-6434.json",
+        "summary": "Malicious code in aphisher (PyPI)",
+        "aliases": []
+      }
+    ],
+    "carpentry-ci": [
+      {
+        "id": "MAL-2025-6473",
+        "file": "MAL-2025-6473.json",
+        "summary": "Malicious code in carpentry-ci (PyPI)",
+        "aliases": []
+      }
+    ],
+    "google-appengine-ext": [
+      {
+        "id": "MAL-2025-6512",
+        "file": "MAL-2025-6512.json",
+        "summary": "Malicious code in google-appengine-ext (PyPI)",
+        "aliases": []
+      }
+    ],
+    "murkh1111": [
+      {
+        "id": "MAL-2025-6551",
+        "file": "MAL-2025-6551.json",
+        "summary": "Malicious code in murkh1111 (PyPI)",
+        "aliases": []
+      }
+    ],
+    "sparseml-nightly": [
+      {
+        "id": "MAL-2025-6590",
+        "file": "MAL-2025-6590.json",
+        "summary": "Malicious code in sparseml-nightly (PyPI)",
+        "aliases": []
+      }
+    ],
+    "swiv": [
+      {
+        "id": "MAL-2025-6897",
+        "file": "MAL-2025-6897.json",
+        "summary": "Malicious code in swiv (PyPI)",
+        "aliases": []
+      }
+    ],
+    "huggingleg2": [
+      {
+        "id": "MAL-2025-934",
+        "file": "MAL-2025-934.json",
+        "summary": "Malicious code in huggingleg2 (PyPI)",
+        "aliases": []
+      }
+    ],
+    "requeszs": [
+      {
+        "id": "MAL-2025-973",
+        "file": "MAL-2025-973.json",
+        "summary": "Malicious code in requeszs (PyPI)",
+        "aliases": []
+      }
+    ],
+    "flycord": [
+      {
+        "id": "MAL-2026-1049",
+        "file": "MAL-2026-1049.json",
+        "summary": "Malicious code in flycord (PyPI)",
+        "aliases": []
+      }
+    ],
+    "prateek-yadav23": [
+      {
+        "id": "MAL-2026-1277",
+        "file": "MAL-2026-1277.json",
+        "summary": "Malicious code in prateek-yadav23 (PyPI)",
+        "aliases": []
+      }
+    ],
+    "python-anchor": [
+      {
+        "id": "MAL-2026-1435",
+        "file": "MAL-2026-1435.json",
+        "summary": "Malicious code in python-anchor (PyPI)",
+        "aliases": []
+      }
+    ],
+    "quantumania": [
+      {
+        "id": "MAL-2026-1912",
+        "file": "MAL-2026-1912.json",
+        "summary": "Malicious code in quantumania (PyPI)",
+        "aliases": []
+      }
+    ],
+    "hash-utils-py": [
+      {
+        "id": "MAL-2026-2118",
+        "file": "MAL-2026-2118.json",
+        "summary": "Malicious code in hash-utils-py (PyPI)",
+        "aliases": []
+      }
+    ],
+    "vision-service-python-client-internal": [
+      {
+        "id": "MAL-2026-2187",
+        "file": "MAL-2026-2187.json",
+        "summary": "Malicious code in vision-service-python-client-internal (PyPI)",
+        "aliases": []
+      }
+    ],
+    "lakeflow-community-connectors": [
+      {
+        "id": "MAL-2026-2310",
+        "file": "MAL-2026-2310.json",
+        "summary": "Malicious code in lakeflow-community-connectors (PyPI)",
+        "aliases": []
+      }
+    ],
+    "gc-grocery-api": [
+      {
+        "id": "MAL-2026-2521",
+        "file": "MAL-2026-2521.json",
+        "summary": "Malicious code in gc-grocery-api (PyPI)",
+        "aliases": []
+      }
+    ],
+    "robase-install": [
+      {
+        "id": "MAL-2026-2625",
+        "file": "MAL-2026-2625.json",
+        "summary": "Malicious code in robase-install (PyPI)",
+        "aliases": []
+      }
+    ],
+    "shan-lib-poc": [
+      {
+        "id": "MAL-2026-2843",
+        "file": "MAL-2026-2843.json",
+        "summary": "Malicious code in shan-lib-poc (PyPI)",
+        "aliases": []
+      }
+    ],
+    "byteclaw": [
+      {
+        "id": "MAL-2026-3084",
+        "file": "MAL-2026-3084.json",
+        "summary": "Malicious code in byteclaw (PyPI)",
+        "aliases": []
+      }
+    ],
+    "rblx-https": [
+      {
+        "id": "MAL-2026-3191",
+        "file": "MAL-2026-3191.json",
+        "summary": "Malicious code in rblx-https (PyPI)",
+        "aliases": []
+      }
+    ],
+    "sf-vmeval-requests": [
+      {
+        "id": "MAL-2026-3242",
+        "file": "MAL-2026-3242.json",
+        "summary": "Malicious code in sf-vmeval-requests (PyPI)",
+        "aliases": []
+      }
+    ],
+    "wallet-utils-pro": [
+      {
+        "id": "MAL-2026-3383",
+        "file": "MAL-2026-3383.json",
+        "summary": "Malicious code in wallet-utils-pro (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pandas-data": [
+      {
+        "id": "MAL-2026-3661",
+        "file": "MAL-2026-3661.json",
+        "summary": "Malicious code in pandas-data (PyPI)",
+        "aliases": []
+      }
+    ],
+    "xadauiom": [
+      {
+        "id": "MAL-2026-442",
+        "file": "MAL-2026-442.json",
+        "summary": "Malicious code in xadauiom (PyPI)",
+        "aliases": []
+      }
+    ],
+    "securedrop-workstation-dom0-config": [
+      {
+        "id": "MAL-2026-604",
+        "file": "MAL-2026-604.json",
+        "summary": "Malicious code in securedrop-workstation-dom0-config (PyPI)",
+        "aliases": []
+      }
+    ],
+    "metadata-checker": [
+      {
+        "id": "MAL-2026-762",
+        "file": "MAL-2026-762.json",
+        "summary": "Malicious code in metadata-checker (PyPI)",
+        "aliases": []
+      }
+    ],
+    "ritch": [
+      {
+        "id": "MAL-2026-869",
+        "file": "MAL-2026-869.json",
+        "summary": "Malicious code in ritch (PyPI)",
+        "aliases": []
+      }
+    ],
+    "questpro": [
+      {
+        "id": "MAL-2026-936",
+        "file": "MAL-2026-936.json",
+        "summary": "Malicious code in questpro (PyPI)",
+        "aliases": []
+      }
+    ],
+    "pyftpdlib": [
+      {
+        "id": "PYSEC-2010-20",
+        "file": "PYSEC-2010-20.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2007-6736",
+          "GHSA-f8wg-36r9-7f4q"
+        ]
+      }
+    ],
+    "products-plonehotfix20110928": [
+      {
+        "id": "PYSEC-2011-27",
+        "file": "PYSEC-2011-27.json",
+        "summary": "",
+        "aliases": []
+      }
+    ],
+    "freeipa": [
+      {
+        "id": "PYSEC-2013-36",
+        "file": "PYSEC-2013-36.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2012-5484"
+        ]
+      }
+    ],
+    "roundup": [
+      {
+        "id": "PYSEC-2014-15",
+        "file": "PYSEC-2014-15.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2012-6130",
+          "GHSA-mccq-3m7h-fjxg"
+        ]
+      }
+    ],
+    "oauth2": [
+      {
+        "id": "PYSEC-2014-86",
+        "file": "PYSEC-2014-86.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2013-4347",
+          "GHSA-rv8h-p43r-4x5r"
+        ]
+      }
+    ],
+    "exiv2": [
+      {
+        "id": "PYSEC-2017-131",
+        "file": "PYSEC-2017-131.json",
+        "summary": "",
+        "aliases": [],
+        "severity": "medium"
+      },
+      {
+        "id": "PYSEC-2018-148",
+        "file": "PYSEC-2018-148.json",
+        "summary": "",
+        "aliases": [],
+        "severity": "medium"
+      },
+      {
+        "id": "PYSEC-2024-106",
+        "file": "PYSEC-2024-106.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2024-24826",
+          "GHSA-g9xm-7538-mq8w"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "pysaml2": [
+      {
+        "id": "PYSEC-2017-26",
+        "file": "PYSEC-2017-26.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2017-1000246",
+          "GHSA-cq94-qf6q-mf2h"
+        ]
+      }
+    ],
+    "trytond": [
+      {
+        "id": "PYSEC-2017-97",
+        "file": "PYSEC-2017-97.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2017-0360",
+          "GHSA-7cwg-2575-3546"
+        ]
+      }
+    ],
+    "qutebrowser": [
+      {
+        "id": "PYSEC-2018-27",
+        "file": "PYSEC-2018-27.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2018-10895",
+          "GHSA-wgmx-52ph-qqcw"
+        ]
+      }
+    ],
+    "aubio": [
+      {
+        "id": "PYSEC-2018-62",
+        "file": "PYSEC-2018-62.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2018-14522",
+          "GHSA-g7g8-mx45-x4c8"
+        ]
+      }
+    ],
+    "pycsw": [
+      {
+        "id": "PYSEC-2018-98",
+        "file": "PYSEC-2018-98.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2016-8640",
+          "GHSA-hg4c-rgvm-964g"
+        ]
+      }
+    ],
+    "wagtail-2fa": [
+      {
+        "id": "PYSEC-2019-135",
+        "file": "PYSEC-2019-135.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2019-16766",
+          "GHSA-89px-ww3j-g2mm"
+        ]
+      }
+    ],
+    "python-engineio": [
+      {
+        "id": "PYSEC-2019-170",
+        "file": "PYSEC-2019-170.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2019-13611",
+          "GHSA-j3jp-gvr5-7hwq"
+        ]
+      }
+    ],
+    "lmdb": [
+      {
+        "id": "PYSEC-2019-240",
+        "file": "PYSEC-2019-240.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2019-16228",
+          "GHSA-ggwq-vrgp-6gv4"
+        ]
+      }
+    ],
+    "typed-ast": [
+      {
+        "id": "PYSEC-2019-61",
+        "file": "PYSEC-2019-61.json",
+        "summary": "",
+        "aliases": []
+      }
+    ],
+    "invenio-records": [
+      {
+        "id": "PYSEC-2019-97",
+        "file": "PYSEC-2019-97.json",
+        "summary": "",
+        "aliases": []
+      }
+    ],
+    "postfix-mta-sts-resolver": [
+      {
+        "id": "PYSEC-2020-174",
+        "file": "PYSEC-2020-174.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2019-16791",
+          "GHSA-h92m-42h4-82f6"
+        ]
+      }
+    ],
+    "beaker": [
+      {
+        "id": "PYSEC-2020-216",
+        "file": "PYSEC-2020-216.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2013-7489",
+          "GHSA-3cwm-7jmm-774w"
+        ]
+      }
+    ],
+    "scalyr-agent-2": [
+      {
+        "id": "PYSEC-2020-251",
+        "file": "PYSEC-2020-251.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2020-24714",
+          "GHSA-w6xv-mf6f-r5f6"
+        ]
+      }
+    ],
+    "accesscontrol": [
+      {
+        "id": "PYSEC-2021-335",
+        "file": "PYSEC-2021-335.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2021-32807",
+          "CVE-2021-32811",
+          "GHSA-g4gq-j4p2-j8fr",
+          "GHSA-qcx9-j53g-ccgf",
+          "PYSEC-2021-368",
+          "PYSEC-2021-370",
+          "PYSEC-2021-875"
+        ]
+      },
+      {
+        "id": "PYSEC-2021-370",
+        "file": "PYSEC-2021-370.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2021-32807",
+          "CVE-2021-32811",
+          "GHSA-g4gq-j4p2-j8fr",
+          "GHSA-qcx9-j53g-ccgf",
+          "PYSEC-2021-335",
+          "PYSEC-2021-368",
+          "PYSEC-2021-875"
+        ]
+      }
+    ],
+    "awsiotsdk": [
+      {
+        "id": "PYSEC-2021-862",
+        "file": "PYSEC-2021-862.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2021-40829",
+          "GHSA-743r-5g92-5vgf"
+        ]
+      }
+    ],
+    "eftl": [
+      {
+        "id": "PYSEC-2021-881",
+        "file": "PYSEC-2021-881.json",
+        "summary": "",
+        "aliases": [],
+        "severity": "high"
+      }
+    ],
+    "beginner": [
+      {
+        "id": "PYSEC-2022-214",
+        "file": "PYSEC-2022-214.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2022-33004"
+        ]
+      }
+    ],
+    "ujson": [
+      {
+        "id": "PYSEC-2022-25",
+        "file": "PYSEC-2022-25.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2021-45958",
+          "GHSA-fh56-85cw-5pq6"
+        ]
+      }
+    ],
+    "apache-iotdb": [
+      {
+        "id": "PYSEC-2022-42972",
+        "file": "PYSEC-2022-42972.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2022-43766",
+          "GHSA-g6hg-4v3c-6jq7"
+        ]
+      },
+      {
+        "id": "PYSEC-2024-11",
+        "file": "PYSEC-2024-11.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2023-46226",
+          "GHSA-rxgg-273w-rfw7"
+        ],
+        "severity": "critical"
+      }
+    ],
+    "democritus-urls": [
+      {
+        "id": "PYSEC-2022-43049",
+        "file": "PYSEC-2022-43049.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2022-41386",
+          "PYSEC-2022-43032"
+        ]
+      }
+    ],
+    "democritus-domains": [
+      {
+        "id": "PYSEC-2022-43097",
+        "file": "PYSEC-2022-43097.json",
+        "summary": "",
+        "aliases": [],
+        "severity": "critical"
+      }
+    ],
+    "tryton": [
+      {
+        "id": "PYSEC-2022-43170",
+        "file": "PYSEC-2022-43170.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2022-26661",
+          "GHSA-cj78-rgw3-4h5p"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "langchain": [
+      {
+        "id": "PYSEC-2023-110",
+        "file": "PYSEC-2023-110.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2023-36189",
+          "GHSA-7q94-qpjr-xpgm"
+        ]
+      }
+    ],
+    "opencv-python-headless": [
+      {
+        "id": "PYSEC-2023-184",
+        "file": "PYSEC-2023-184.json",
+        "summary": "",
+        "aliases": []
+      }
+    ],
+    "asyncua": [
+      {
+        "id": "PYSEC-2023-189",
+        "file": "PYSEC-2023-189.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2023-26150",
+          "GHSA-2894-qcqf-g23g"
+        ],
+        "severity": "high"
+      }
+    ],
+    "modoboa": [
+      {
+        "id": "PYSEC-2023-216",
+        "file": "PYSEC-2023-216.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2023-5689",
+          "GHSA-9wj3-cfq8-wpvj"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "upydev": [
+      {
+        "id": "PYSEC-2023-302",
+        "file": "PYSEC-2023-302.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2023-48051",
+          "GHSA-qc4j-hrj6-cppf"
+        ],
+        "severity": "high"
+      }
+    ],
+    "apache-dolphinscheduler": [
+      {
+        "id": "PYSEC-2023-4",
+        "file": "PYSEC-2023-4.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2022-45875",
+          "GHSA-3xh5-8hvq-rc8x"
+        ]
+      }
+    ],
+    "nltk": [
+      {
+        "id": "PYSEC-2024-167",
+        "file": "PYSEC-2024-167.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2024-39705",
+          "GHSA-cgvx-9447-vcch"
+        ]
+      }
+    ],
+    "waitress": [
+      {
+        "id": "PYSEC-2024-211",
+        "file": "PYSEC-2024-211.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2024-49769",
+          "GHSA-3f84-rpwh-47g6"
+        ],
+        "severity": "high"
+      }
+    ],
+    "micropython-os": [
+      {
+        "id": "PYSEC-2024-89",
+        "file": "PYSEC-2024-89.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2024-8948",
+          "GHSA-vh3x-525m-jp4r",
+          "PYSEC-2024-87",
+          "PYSEC-2024-88"
+        ],
+        "severity": "high"
+      }
+    ],
+    "plotai": [
+      {
+        "id": "PYSEC-2025-22",
+        "file": "PYSEC-2025-22.json",
+        "summary": "",
+        "aliases": [
+          "CVE-2025-1497",
+          "GHSA-2hmp-5wqg-f24h"
+        ],
+        "severity": "critical"
       }
     ]
   }

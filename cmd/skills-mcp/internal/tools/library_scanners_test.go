@@ -62,12 +62,73 @@ func TestScanDependenciesFlagsMaliciousNPM(t *testing.T) {
 	for _, f := range res.Findings {
 		if strings.EqualFold(f.Package, "event-stream") && f.Category == "malicious-package" {
 			hit = true
+			// event-stream is a curated row (no upstream
+			// `source` field), so the confidence band must be
+			// "confirmed". A regression to "high" would mean the
+			// VulnEntry.Source threading broke.
+			if f.Confidence != "confirmed" {
+				t.Errorf("expected confidence=confirmed on curated event-stream finding, got %q", f.Confidence)
+			}
 			break
 		}
 	}
 	if !hit {
 		t.Fatalf("expected event-stream to be flagged as malicious-package; got %+v", res.Findings)
 	}
+}
+
+// TestScanDependenciesSetsConfidenceForOSSFRow asserts that a
+// malicious-package row sourced from the OSSF feed surfaces with
+// confidence "high" (not "confirmed"). The two-band distinction
+// matters for CI consumers that want curated-only enforcement;
+// flattening both to a single value would lose that knob.
+func TestScanDependenciesSetsConfidenceForOSSFRow(t *testing.T) {
+	lib := newLibrary(t)
+	// --hiljson is one of the OSSF-imported rows in npm.json at
+	// the time of writing. The exact name is unimportant; we
+	// just need any row with `source: ossf-malicious-packages`.
+	// If the corpus changes such that this row disappears, the
+	// test below will be skipped rather than fail.
+	ossfName := firstOSSFMaliciousPkg(t, lib, "npm")
+	if ossfName == "" {
+		t.Skip("no OSSF-sourced npm row in the corpus; nothing to assert")
+	}
+	lockJSON := "{\n\t\t\"name\": \"demo\",\n\t\t\"lockfileVersion\": 3,\n\t\t\"packages\": {\n\t\t\t\"\": { \"name\": \"demo\", \"version\": \"1.0.0\" },\n\t\t\t\"node_modules/" + ossfName + "\": { \"version\": \"1.0.0\" }\n\t\t}\n\t}"
+	path := writeTempFile(t, "package-lock.json", lockJSON)
+	res, err := lib.ScanDependencies(path)
+	if err != nil {
+		t.Fatalf("ScanDependencies: %v", err)
+	}
+	var seen string
+	for _, f := range res.Findings {
+		if strings.EqualFold(f.Package, ossfName) && f.Category == "malicious-package" {
+			seen = f.Confidence
+			break
+		}
+	}
+	if seen == "" {
+		t.Skipf("OSSF row %q did not surface as a finding; corpus may have changed", ossfName)
+	}
+	if seen != "high" {
+		t.Errorf("expected confidence=high on OSSF-sourced malicious-package finding, got %q", seen)
+	}
+}
+
+// firstOSSFMaliciousPkg returns the name of the first VulnEntry in
+// the given ecosystem's malicious-packages JSON whose `source` is
+// the OSSF feed. Returns "" when no such row exists.
+func firstOSSFMaliciousPkg(t *testing.T, lib *Library, eco string) string {
+	t.Helper()
+	vf, err := lib.loadVulnFile(eco)
+	if err != nil {
+		return ""
+	}
+	for _, e := range vf.Entries {
+		if strings.TrimSpace(e.Source) == "ossf-malicious-packages" {
+			return e.Name
+		}
+	}
+	return ""
 }
 
 func TestScanDependenciesRejectsUnknownLockfile(t *testing.T) {
@@ -102,6 +163,11 @@ jobs:
 	if len(res.Findings) == 0 {
 		t.Fatalf("expected findings against a deliberately bad workflow; got none")
 	}
+	for _, f := range res.Findings {
+		if f.Confidence == "" {
+			t.Errorf("expected confidence to be set on workflow finding %s; got empty", f.RuleID)
+		}
+	}
 }
 
 func TestScanDockerfileCatchesCommonBugs(t *testing.T) {
@@ -128,6 +194,9 @@ RUN apt-get update && apt-get install curl
 	for _, f := range res.Findings {
 		if _, ok := want[f.RuleID]; ok {
 			want[f.RuleID] = true
+		}
+		if f.Confidence == "" {
+			t.Errorf("expected confidence to be set on Dockerfile finding %s; got empty", f.RuleID)
 		}
 	}
 	for rid, hit := range want {

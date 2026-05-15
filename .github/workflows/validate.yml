@@ -504,3 +504,45 @@ jobs:
                   fail = 1
           sys.exit(fail)
           PY
+
+  data-quality-report:
+    name: DATA_QUALITY.md is up to date
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Verify DATA_QUALITY.md matches the live corpus
+        run: python3 scripts/generate-data-quality.py --check
+
+  scanner-eval:
+    name: Scanner eval (dependencies / cicd / dockerfile)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Build skills-mcp
+        run: go build -o skills-mcp ./cmd/skills-mcp
+
+      - name: Run scanner-eval harness
+        run: |
+          python3 evals/benchmarks/scanner-eval.py \
+            --skills-mcp ./skills-mcp \
+            --out evals/baselines/scanner-eval-static.md \
+            --verbose

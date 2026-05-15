@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.7.3",
+  "id": "MAL-2025-44966",
+  "published": "2025-09-05T17:10:25Z",
+  "modified": "2025-09-05T17:10:25Z",
+  "summary": "Malicious code in laila-esdoger69-breki (npm)",
+  "details": "The package laila-esdoger69-breki was found to contain malicious code.",
+  "affected": [
+    {
+      "package": {
+        "name": "laila-esdoger69-breki",
+        "ecosystem": "npm",
+        "purl": "pkg:npm/laila-esdoger69-breki"
+      },
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "0"
+            }
+          ]
+        }
+      ],
+      "database_specific": {
+        "source": "https://github.com/ossf/malicious-packages/blob/main/osv/malicious/npm/laila-esdoger69-breki/MAL-2025-44966.json"
+      }
+    }
+  ],
+  "database_specific": {
+    "malicious-packages-origins": null
+  },
+  "credits": [
+    {
+      "name": "Amazon Inspector",
+      "contact": [
+        "actran@amazon.com"
+      ],
+      "type": "FINDER"
+    }
+  ],
+  "last_updated": "2025-09-05"
+}

@@ -46,6 +46,11 @@ CACHE_DIR = REPO_ROOT / "vulnerabilities" / "osv"
 
 # osv.dev uses these ecosystem labels in its bulk-export URLs. The
 # mapping is documented at https://google.github.io/osv.dev/data/.
+#
+# composer (Packagist), pub (Dart), and swift (SwiftURL) cover the
+# major language ecosystems the scanner did not previously index. The
+# osv.dev archive labels are taken verbatim from the documented bulk
+# URL list; the local cache directories use the lowercase short name.
 ECOSYSTEM_MAP = {
     "npm": "npm",
     "pypi": "PyPI",
@@ -54,12 +59,20 @@ ECOSYSTEM_MAP = {
     "nuget": "NuGet",
     "rubygems": "RubyGems",
     "crates": "crates.io",
+    "composer": "Packagist",
+    "pub": "Pub",
+    "swift": "SwiftURL",
 }
 
 # Default per-ecosystem sample size. The cap exists so the repo
-# doesn't balloon to hundreds of megabytes; production operators are
-# expected to override this via --per-ecosystem.
-DEFAULT_PER_ECO = 30
+# stays reviewable; production operators who need the full archive
+# should override via --per-ecosystem 0. 500 is the new floor (was
+# 30) because a 30-record stride produced obvious gaps in the OSV
+# coverage matrix — popular packages with multiple advisories often
+# lost the lower-severity rows. Combined with --severity-priority,
+# 500 captures the long tail of CRITICAL/HIGH advisories without
+# blowing past ~10 MB per ecosystem directory.
+DEFAULT_PER_ECO = 500
 
 UA = "skills-library-osv-ingest/0.1"
 BULK_URL = "https://osv-vulnerabilities.storage.googleapis.com/{}/all.zip"
@@ -90,12 +103,61 @@ def stride_sample(items: list[str], target: int) -> list[str]:
     return sample
 
 
-def extract_subset(zip_path: Path, dest_dir: Path, target: int, verbose: bool) -> int:
+# _SEVERITY_PRIORITY orders the four-bucket scale highest-first so a
+# severity-priority sort puts CRITICAL/HIGH advisories at the head of
+# the list and lets stride-sampling drop only the low-severity tail.
+# Unknown / unscored records sort after "low" so they're the first
+# casualties of a stride sample that doesn't reach them.
+_SEVERITY_PRIORITY = {
+    "critical": 0,
+    "high": 1,
+    "medium": 2,
+    "low": 3,
+    "": 4,
+}
+
+
+def _read_record(zf: zipfile.ZipFile, name: str) -> dict | None:
+    """Read one OSV JSON record from the zip. Returns None on parse error."""
+    try:
+        with zf.open(name) as src:
+            return json.loads(src.read())
+    except Exception:
+        return None
+
+
+def extract_subset(
+    zip_path: Path,
+    dest_dir: Path,
+    target: int,
+    verbose: bool,
+    severity_priority: bool = False,
+) -> int:
     dest_dir.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(zip_path) as zf:
         names = sorted(n for n in zf.namelist() if n.endswith(".json"))
         if not names:
             return 0
+        if severity_priority and (target == 0 or target < len(names)):
+            # Sort the candidate list so the most impactful advisories
+            # land at the head before stride-sampling trims the tail.
+            # We compute severity once per record (a JSON parse per file
+            # is unavoidable to read database_specific.severity); the
+            # secondary sort key keeps the result deterministic across
+            # runs by falling back to the original name order.
+            severity_cache: dict[str, str] = {}
+            for name in names:
+                rec = _read_record(zf, name)
+                if rec is None:
+                    severity_cache[name] = ""
+                    continue
+                severity_cache[name] = _severity_for_record(rec)
+            names.sort(
+                key=lambda n: (
+                    _SEVERITY_PRIORITY.get(severity_cache.get(n, ""), 99),
+                    n,
+                )
+            )
         sample = stride_sample(names, target)
         written = 0
         for name in sample:
@@ -293,6 +355,16 @@ def main() -> int:
         default=int(os.environ.get("OSV_PER_ECO", str(DEFAULT_PER_ECO))),
         help=f"How many advisories to cache per ecosystem (default {DEFAULT_PER_ECO}, 0=unlimited).",
     )
+    parser.add_argument(
+        "--severity-priority",
+        action="store_true",
+        help=(
+            "Sort each ecosystem's archive by severity (CRITICAL first) before"
+            " stride-sampling so a smaller --per-ecosystem still captures the"
+            " most impactful advisories. Costs one extra JSON parse per"
+            " archive entry."
+        ),
+    )
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
 
@@ -314,7 +386,13 @@ def main() -> int:
             if dest.exists():
                 for old in dest.glob("*.json"):
                     old.unlink()
-            written = extract_subset(zip_path, dest, args.per_ecosystem, args.verbose)
+            written = extract_subset(
+                zip_path,
+                dest,
+                args.per_ecosystem,
+                args.verbose,
+                severity_priority=args.severity_priority,
+            )
             print(f"    wrote {written} advisories -> {dest}")
             write_index(dest)
     finally:

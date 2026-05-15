@@ -93,4 +93,15 @@ PY
 echo "    fixture cross-references OK"
 
 echo
+echo "==> 4. scanner-eval (dependencies / cicd / dockerfile)"
+# The scanner-eval harness drives skills-mcp over JSON-RPC and scores
+# every fixture under evals/fixtures/{dependency-choice,
+# cicd-hardening, docker-hardening}/ against its expected.json. The
+# harness builds skills-mcp on demand if no binary is on PATH.
+python3 evals/benchmarks/scanner-eval.py \
+  --out evals/baselines/scanner-eval-static.md \
+  --verbose
+cat evals/baselines/scanner-eval-static.md
+
+echo
 echo "==> all eval checks passed"

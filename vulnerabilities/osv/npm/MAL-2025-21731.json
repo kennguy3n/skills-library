@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.7.3",
+  "id": "MAL-2025-21731",
+  "published": "2025-08-14T18:52:04Z",
+  "modified": "2025-08-14T18:52:04Z",
+  "summary": "Malicious code in googlesitekit-modules (npm)",
+  "details": "The package googlesitekit-modules was found to contain malicious code.",
+  "affected": [
+    {
+      "package": {
+        "name": "googlesitekit-modules",
+        "ecosystem": "npm",
+        "purl": "pkg:npm/googlesitekit-modules"
+      },
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "0"
+            }
+          ]
+        }
+      ],
+      "database_specific": {
+        "source": "https://github.com/ossf/malicious-packages/blob/main/osv/malicious/npm/googlesitekit-modules/MAL-2025-21731.json"
+      }
+    }
+  ],
+  "database_specific": {
+    "malicious-packages-origins": null
+  },
+  "credits": [
+    {
+      "name": "Amazon Inspector",
+      "contact": [
+        "actran@amazon.com"
+      ],
+      "type": "FINDER"
+    }
+  ],
+  "last_updated": "2025-08-14"
+}

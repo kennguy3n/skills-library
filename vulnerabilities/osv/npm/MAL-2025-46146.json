@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.7.3",
+  "id": "MAL-2025-46146",
+  "published": "2025-09-05T17:10:25Z",
+  "modified": "2025-09-05T17:10:25Z",
+  "summary": "Malicious code in storm-lantu (npm)",
+  "details": "The package storm-lantu was found to contain malicious code.",
+  "affected": [
+    {
+      "package": {
+        "name": "storm-lantu",
+        "ecosystem": "npm",
+        "purl": "pkg:npm/storm-lantu"
+      },
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "0"
+            }
+          ]
+        }
+      ],
+      "database_specific": {
+        "source": "https://github.com/ossf/malicious-packages/blob/main/osv/malicious/npm/storm-lantu/MAL-2025-46146.json"
+      }
+    }
+  ],
+  "database_specific": {
+    "malicious-packages-origins": null
+  },
+  "credits": [
+    {
+      "name": "Amazon Inspector",
+      "contact": [
+        "actran@amazon.com"
+      ],
+      "type": "FINDER"
+    }
+  ],
+  "last_updated": "2025-09-05"
+}

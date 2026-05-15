@@ -222,10 +222,19 @@ type CheckTyposquatResult struct {
 // is not equal to. Distance 0 (exact match against a popular name) is
 // never returned because the caller is most likely already using the
 // real package.
+//
+// Confidence is always "low" for runtime Levenshtein matches — the
+// signal is a fuzzy edit-distance suggestion against the
+// popular-packages list, not a curated typosquat-DB row. Curated DB
+// hits flow through the Typosquats slice on CheckTyposquatResult and
+// carry their own confidence in DependencyFinding ("high"); the two
+// surfaces are kept separate so a strict consumer can require
+// curated evidence by ignoring PotentialTyposquats entirely.
 type PotentialTyposquatHit struct {
-	Target    string `json:"target"`
-	Ecosystem string `json:"ecosystem"`
-	Distance  int    `json:"levenshtein_distance"`
+	Target     string `json:"target"`
+	Ecosystem  string `json:"ecosystem"`
+	Distance   int    `json:"levenshtein_distance"`
+	Confidence string `json:"confidence,omitempty"`
 }
 
 // CheckTyposquat returns every typosquat entry where pkg appears as
@@ -287,9 +296,10 @@ func (l *Library) CheckTyposquat(pkg, ecosystem string) (*CheckTyposquatResult, 
 				d := levenshtein(needle, targetKey)
 				if d > 0 && d <= 2 {
 					out.PotentialTyposquats = append(out.PotentialTyposquats, PotentialTyposquatHit{
-						Target:    target,
-						Ecosystem: ecosystem,
-						Distance:  d,
+						Target:     target,
+						Ecosystem:  ecosystem,
+						Distance:   d,
+						Confidence: "low",
 					})
 				}
 			}
