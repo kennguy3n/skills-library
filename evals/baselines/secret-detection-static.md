@@ -15,4 +15,7 @@ Corpus: `skills/secret-detection/tests/corpus.json` (232 fixtures: 129 TP, 103 T
 | engine | TP | FP | FN | TN | precision | recall | F1 |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | skills-library DLP patterns | 129 | 0 | 0 | 103 | 100.0% | 100.0% | 100.0% |
-| gitleaks (default ruleset, `gitleaks`) | 85 | 7 | 44 | 96 | 92.4% | 65.9% | 76.9% |
+| gitleaks (default ruleset) | n/a | n/a | n/a | n/a | n/a | n/a | n/a |
+
+> gitleaks not installed; pass `--gitleaks /path/to/gitleaks` to compare. 
+> Install via `go install github.com/gitleaks/gitleaks/v8@latest`.
