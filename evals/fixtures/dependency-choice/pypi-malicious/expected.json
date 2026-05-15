@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "last_updated": "2026-05-15",
-  "description": "Expected findings for the pypi-malicious fixture. 'ctx==0.2.2' is the version range the malicious 2022 release fell into; see vulnerabilities/supply-chain/malicious-packages/pypi.json for the upstream advisory. requests==2.31.0 is also pinned vulnerable to GHSA-j8r2-6x86-q33q (CVE-2023-32681, Proxy-Authorization header leak) per the local OSV cache. Known residual FP: requests is also surfaced as a typosquat because the typosquat-db contains 'request' (Levenshtein 1 from 'requests'); the typosquat detector does not exclude the canonical target, so the legitimate 'requests' install gets flagged. Tracked but not expected.",
+  "description": "Expected finding for the pypi-malicious fixture. 'ctx==0.2.2' is the version range the malicious 2022 release fell into; see vulnerabilities/supply-chain/malicious-packages/pypi.json for the upstream advisory. requests==2.31.0 is expected_clean: it is the FIXED version per GHSA-j8r2-6x86-q33q (vulnerable range [2.3.0, 2.31.0) exclusive, see vulnerabilities/osv/pypi/GHSA-j8r2-6x86-q33q.json). Two known scanner-side FPs on this fixture: (1) the OSV matcher fires on requests because it currently matches by package name only and does not apply version-range filtering (cmd/skills-mcp/internal/tools/library_scanners.go), and (2) the typosquat detector flags requests because the typosquat-db contains 'request' (Levenshtein 1) and does not exclude the canonical target. Both are real scanner bugs that depress dependency-scanner precision on this fixture; they are tracked here rather than masked in expected_findings.",
   "expected_findings": [
     {
       "ecosystem": "pypi",
@@ -9,14 +9,7 @@
       "version": "0.2.2",
       "kind": "malicious",
       "source": "vulnerabilities/supply-chain/malicious-packages/pypi.json"
-    },
-    {
-      "ecosystem": "pypi",
-      "package": "requests",
-      "version": "2.31.0",
-      "kind": "osv",
-      "source": "vulnerabilities/osv/pypi/GHSA-j8r2-6x86-q33q.json"
     }
   ],
-  "expected_clean": []
+  "expected_clean": ["requests"]
 }
