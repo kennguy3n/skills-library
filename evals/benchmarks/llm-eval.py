@@ -213,9 +213,15 @@ def _pick_provider(provider_flag: str | None, model_flag: str | None) -> LLMProv
     anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
     openai_key = os.environ.get("OPENAI_API_KEY")
 
-    if provider_flag == "anthropic" or (
-        provider_flag is None and anthropic_key and not openai_key
-    ):
+    # If both keys are set without an explicit --provider flag, the choice
+    # would be silent and non-obvious; require disambiguation instead of
+    # picking one and burying the decision.
+    if provider_flag is None and anthropic_key and openai_key:
+        raise SystemExit(
+            "both ANTHROPIC_API_KEY and OPENAI_API_KEY are set; "
+            "pass --provider anthropic|openai to choose"
+        )
+    if provider_flag == "anthropic" or (provider_flag is None and anthropic_key):
         if not anthropic_key:
             raise SystemExit("ANTHROPIC_API_KEY not set")
         return AnthropicProvider(
@@ -414,9 +420,18 @@ def _system_for_tier(tier: str) -> str | None:
             )
         return _read_text(SKILL_BUNDLE_PATH)
     if tier == "full-mcp":
-        body = _read_text(SKILL_BUNDLE_PATH) if SKILL_BUNDLE_PATH.exists() else ""
+        # full-mcp is defined as "compact-tier bundle + MCP tool access".
+        # Falling back to an empty body when the bundle is missing would
+        # silently degrade the tier to ~no-instructions and produce
+        # misleading baseline numbers — fail loudly instead, matching
+        # the minimal-skill tier's behaviour.
+        if not SKILL_BUNDLE_PATH.exists():
+            raise SystemExit(
+                f"missing {SKILL_BUNDLE_PATH}; run `skills-check regenerate` first"
+            )
+        body = _read_text(SKILL_BUNDLE_PATH)
         return (
-            (body + "\n\n" if body else "")
+            body + "\n\n"
             + "You also have access to the skills-mcp server. When you would "
             "benefit from scanning the input (scan_dependencies, scan_secrets, "
             "scan_dockerfile, scan_github_actions), prefer calling the tool "

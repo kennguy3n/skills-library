@@ -201,6 +201,15 @@ func LoadAll(root string) ([]*Skill, error) {
 }
 
 // parseBody walks the markdown body and extracts the three top-level sections.
+//
+// Body extraction is keyed on the English section headers "## Rules",
+// "## Context", and "## References". Localized SKILL.md files under
+// `locales/<bcp47>/` that translate these headers (e.g. "## Regeln",
+// "## Règles", "## Reglas") will parse with empty Body fields.
+// This is intentional: the English file under `skills/<id>/` is the
+// canonical source for body content, and translated files are
+// presentation-only today. If body-aware processing of translated
+// files is ever required, add a per-locale header alias table.
 func parseBody(body string) Body {
 	out := Body{}
 	lines := strings.Split(body, "\n")
@@ -416,6 +425,9 @@ func (s *Skill) Validate() error {
 	}
 	if !AllowedSeverities[s.Frontmatter.Severity] {
 		return fmt.Errorf("%s: invalid severity %q", s.Path, s.Frontmatter.Severity)
+	}
+	if s.Frontmatter.Dir != "" && s.Frontmatter.Dir != "ltr" && s.Frontmatter.Dir != "rtl" {
+		return fmt.Errorf("%s: invalid dir %q (allowed: ltr, rtl)", s.Path, s.Frontmatter.Dir)
 	}
 	return nil
 }

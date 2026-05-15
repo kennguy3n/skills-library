@@ -320,6 +320,28 @@ func TestParseInvalidDir(t *testing.T) {
 	}
 }
 
+// TestValidateRejectsInvalidDir verifies that Skill.Validate() applies the
+// same dir-allowlist check as ParseBytes — Validate is the entry point for
+// callers that construct a Skill outside of the parser.
+func TestValidateRejectsInvalidDir(t *testing.T) {
+	s, err := ParseBytes("locales/ar/example-skill/SKILL.md", []byte(localizedSkill))
+	if err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+	s.Frontmatter.Dir = "sideways"
+	verr := s.Validate()
+	if verr == nil {
+		t.Fatalf("Validate accepted dir=sideways; want error")
+	}
+	if !strings.Contains(verr.Error(), "invalid dir") {
+		t.Errorf("Validate error should mention invalid dir, got %v", verr)
+	}
+	s.Frontmatter.Dir = "rtl"
+	if err := s.Validate(); err != nil {
+		t.Errorf("Validate rejected dir=rtl: %v", err)
+	}
+}
+
 func TestParseDefaultsToNoLocaleFields(t *testing.T) {
 	// English source skill has none of language / source_revision /
 	// dir set — these must be empty strings (zero values), not
