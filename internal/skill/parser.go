@@ -414,15 +414,34 @@ func writeBullets(b *strings.Builder, label string, items []string) {
 	b.WriteString("\n")
 }
 
-// Validate runs the same checks that ParseBytes does, allowing the caller to
-// verify a Skill loaded from another source (e.g. constructed in code, decoded
-// from a different format, or pulled from a cache). Keep in sync with
-// ParseBytes — every check there must have a counterpart here.
+// Validate checks a Skill that may have been constructed outside the parser
+// (e.g. built in code, decoded from a non-YAML cache, or rebuilt by a
+// downstream tool).
+//
+// Validate is *at least as strict* as ParseBytes: every defect ParseBytes
+// rejects on a SKILL.md file, Validate also rejects on the typed Skill.
+// It is strictly stricter for two cases that ParseBytes cannot see on
+// the raw YAML:
+//
+//   - Empty slices for `applies_to` / `languages` / `sources`. ParseBytes
+//     only checks key *presence* via a raw-map lookup, so a file with
+//     `applies_to: []` passes ParseBytes but fails Validate. On a typed
+//     Frontmatter we cannot distinguish "key missing" from "key present
+//     but empty" — both arrive as a nil/empty slice — and an empty list
+//     is semantically equivalent to a missing one (the skill applies to
+//     nothing), so we reject both shapes.
+//   - Empty strings for required scalars. Same reason: a typed empty
+//     string is indistinguishable from an absent key.
+//
+// If you add or change a check here, mirror the corresponding check in
+// ParseBytes (lines 130–162) and vice versa.
 func (s *Skill) Validate() error {
 	fm := s.Frontmatter
-	// Presence of required scalar / slice fields. ParseBytes enforces these
-	// via a raw-map existence check on the YAML; on an already-typed
-	// Frontmatter we mirror it as zero-value checks.
+	// Required scalar fields. We treat an empty string as "missing" since
+	// the typed view cannot distinguish absent-from-YAML from
+	// present-but-empty. This intentionally produces a "missing X" error
+	// (matching the wording ParseBytes uses for raw-map absence) rather
+	// than "invalid X".
 	if fm.ID == "" {
 		return fmt.Errorf("%s: missing id", s.Path)
 	}
@@ -435,9 +454,18 @@ func (s *Skill) Validate() error {
 	if fm.Description == "" {
 		return fmt.Errorf("%s: missing description", s.Path)
 	}
+	if fm.Category == "" {
+		return fmt.Errorf("%s: missing category", s.Path)
+	}
+	if fm.Severity == "" {
+		return fmt.Errorf("%s: missing severity", s.Path)
+	}
 	if fm.LastUpdated == "" {
 		return fmt.Errorf("%s: missing last_updated", s.Path)
 	}
+	// Required slice fields. ParseBytes only checks key presence; we
+	// also reject empty lists because the semantics ("applies to no
+	// language at all", "has no sources") are nonsense.
 	if len(fm.AppliesTo) == 0 {
 		return fmt.Errorf("%s: applies_to must list at least one entry", s.Path)
 	}
@@ -447,7 +475,7 @@ func (s *Skill) Validate() error {
 	if len(fm.Sources) == 0 {
 		return fmt.Errorf("%s: sources must list at least one entry", s.Path)
 	}
-	// Allowlist checks.
+	// Allowlist checks for non-empty enum-style fields.
 	if !AllowedCategories[fm.Category] {
 		return fmt.Errorf("%s: invalid category %q", s.Path, fm.Category)
 	}

@@ -378,10 +378,10 @@ func TestValidateMirrorsParseBytes(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			// Shallow copy is enough; we only mutate top-level scalar fields
-			// and slice references, never the underlying slice contents.
+			// Shallow struct copy is enough — every mutation below either
+			// replaces a scalar or clears a slice header; nothing writes
+			// through the shared backing arrays.
 			s := *good
-			s.Frontmatter = good.Frontmatter
 			tc.mutate(&s)
 			err := s.Validate()
 			if err == nil {
@@ -389,6 +389,43 @@ func TestValidateMirrorsParseBytes(t *testing.T) {
 			}
 			if !strings.Contains(err.Error(), tc.wantMsg) {
 				t.Errorf("Validate error for %s = %v, want substring %q", tc.name, err, tc.wantMsg)
+			}
+		})
+	}
+}
+
+// TestValidateEmptyEnumsReportMissing verifies that empty-string Category /
+// Severity surface as "missing X" rather than "invalid X", matching the
+// wording ParseBytes uses for absent YAML keys. The allowlist check still
+// catches the *invalid-non-empty* case, exercised separately in
+// TestValidateMirrorsParseBytes.
+func TestValidateEmptyEnumsReportMissing(t *testing.T) {
+	good, err := ParseBytes("locales/ar/example-skill/SKILL.md", []byte(localizedSkill))
+	if err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+
+	cases := []struct {
+		name    string
+		mutate  func(s *Skill)
+		wantMsg string
+	}{
+		{"empty category", func(s *Skill) { s.Frontmatter.Category = "" }, "missing category"},
+		{"empty severity", func(s *Skill) { s.Frontmatter.Severity = "" }, "missing severity"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			s := *good
+			tc.mutate(&s)
+			err := s.Validate()
+			if err == nil {
+				t.Fatalf("Validate accepted %s; want %q", tc.name, tc.wantMsg)
+			}
+			if !strings.Contains(err.Error(), tc.wantMsg) {
+				t.Errorf("Validate error for %s = %v, want substring %q", tc.name, err, tc.wantMsg)
+			}
+			if strings.Contains(err.Error(), "invalid") {
+				t.Errorf("Validate error for %s should say 'missing', not 'invalid': %v", tc.name, err)
 			}
 		})
 	}

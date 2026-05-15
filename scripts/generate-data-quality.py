@@ -29,6 +29,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -75,6 +76,31 @@ def _age_days(ts: dt.datetime | None, now: dt.datetime) -> int | None:
     if ts is None:
         return None
     return (now - ts).days
+
+
+# Matches an "<N>d" or "<N>d ⚠️" token emitted by `_fmt_freshness`, in
+# either a table cell or an inline parenthetical. The token gets
+# replaced with the placeholder "<age>" during `--check` comparison so
+# that pure calendar drift does not trip CI.
+_AGE_TOKEN_RE = re.compile(r"\b\d+d(?:\s*\u26a0\ufe0f)?")
+
+
+def _strip_drift(text: str) -> str:
+    """Strip transient-only output from a generated DATA_QUALITY.md.
+
+    Removes the wall-clock `_Generated: ...UTC_` header and rewrites
+    every freshness age token (`<N>d`, `<N>d ⚠️`) to a stable
+    placeholder. The result is structurally equivalent to the input
+    for every part CI cares about (entries, curated/derived splits,
+    reference coverage, *dates*) while being insensitive to the time
+    the script happens to run.
+    """
+    out = []
+    for line in text.splitlines():
+        if line.startswith("_Generated:"):
+            continue
+        out.append(_AGE_TOKEN_RE.sub("<age>", line))
+    return "\n".join(out)
 
 
 def _ref_coverage(entries: list[dict]) -> tuple[int, int]:
@@ -406,15 +432,23 @@ def main(argv: list[str] | None = None) -> int:
             )
             return 1
         existing = OUTPUT_PATH.read_text()
-        # Compare everything except the "_Generated: ...Z_" line because
-        # that one mutates every run; CI cares about the structural
-        # contents, not the timestamp.
-        def _strip_timestamp(text: str) -> str:
-            return "\n".join(
-                line for line in text.splitlines() if not line.startswith("_Generated:")
-            )
-
-        if _strip_timestamp(existing) != _strip_timestamp(body):
+        # CI cares about structural / numeric drift, not pure clock
+        # rollover. Two things mutate on every run even when no curated
+        # data changed:
+        #
+        #   1. The "_Generated: <ts>_" line at the top, which is a
+        #      wall-clock timestamp.
+        #   2. The per-row freshness column, written as "<N>d" or
+        #      "<N>d \u26a0\ufe0f" via `_fmt_freshness`. `<N>` is
+        #      computed as `now - last_updated`, so every calendar day
+        #      that passes bumps it by one even though no source file
+        #      changed. Before this normalizer was added, a fresh PR
+        #      opened the day after a previous regen would fail the
+        #      CI check for purely temporal reasons.
+        #
+        # Strip both so the comparison only fires when actual entries,
+        # references, or last_updated *dates* change.
+        if _strip_drift(existing) != _strip_drift(body):
             print(
                 "DATA_QUALITY.md is out of date; run scripts/generate-data-quality.py and commit",
                 file=sys.stderr,
