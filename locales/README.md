@@ -10,7 +10,7 @@ of truth for the validator, evidence reports, and IDE config generators.
 See [`docs/LOCALE_AUDIT.md`](../docs/LOCALE_AUDIT.md) for the coverage
 roadmap (top-10 world languages, GCC, Southeast Asia, Germany).
 
-Initial coverage (Phase 5):
+Initial coverage:
 
 | Locale | Skills |
 |---|---|
