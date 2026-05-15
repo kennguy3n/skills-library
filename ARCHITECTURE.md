@@ -213,8 +213,8 @@ cmd/skills-check/
 │   ├── manifest.go            # skills-check manifest compute/verify/sign/delta
 │   ├── scheduler.go           # skills-check scheduler install/remove/status
 │   ├── selfupdate.go          # skills-check self-update (download + SHA-256 verify + atomic replace)
-│   ├── new.go                 # skills-check new <id> (Phase 5 scaffolder)
-│   ├── test.go                # skills-check test <id> (Phase 5 corpus runner)
+│   ├── new.go                 # skills-check new <id> (skill scaffolder)
+│   ├── test.go                # skills-check test <id> (test corpus runner)
 │   ├── evidence.go            # skills-check evidence --framework SOC2|HIPAA|PCI-DSS
 │   ├── configure.go           # skills-check configure (writes .skills-check.yaml)
 │   └── cmd_test.go            # integration tests for every subcommand
@@ -435,10 +435,11 @@ defended.
 - **CLI never collects telemetry, analytics, or usage data.** There is no opt-in
   toggle; the code that would do this does not exist.
 
-## Phase 5: Enterprise Layout
+## Enterprise Layout
 
-Phase 5 adds three sibling directories at the repo root that the CLI loads on
-demand. None of them change the core SKILL.md schema or break Phase 1-4 layouts.
+The enterprise layout adds three sibling directories at the repo root that the
+CLI loads on demand. None of them change the core SKILL.md schema or break the
+core layout.
 
 ```
 profiles/                 # --profile <name> mappings
