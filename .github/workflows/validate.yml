@@ -172,7 +172,11 @@ jobs:
               if missing:
                   print(f"::error file={path}::Missing fields: {sorted(missing)}")
                   fail = 1
-              for field in required:
+              # A missing key is already reported above; only run
+              # the value-shape check on keys that actually exist
+              # so contributors don't see two errors for the same
+              # field in their CI logs.
+              for field in required - missing:
                   val = data.get(field)
                   if not isinstance(val, str) or not val.strip():
                       print(f"::error file={path}::Field {field!r} must be a non-empty string")
