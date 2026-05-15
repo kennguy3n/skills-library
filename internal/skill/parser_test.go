@@ -342,6 +342,58 @@ func TestValidateRejectsInvalidDir(t *testing.T) {
 	}
 }
 
+// TestValidateMirrorsParseBytes ensures Skill.Validate() catches every kind
+// of frontmatter defect that ParseBytes catches — required-field presence,
+// allowlists, and TokenBudget positives — so callers constructing a Skill
+// outside the parser cannot bypass validation.
+func TestValidateMirrorsParseBytes(t *testing.T) {
+	// Start from a fully valid Skill, then mutate one field at a time.
+	good, err := ParseBytes("locales/ar/example-skill/SKILL.md", []byte(localizedSkill))
+	if err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+	if err := good.Validate(); err != nil {
+		t.Fatalf("baseline Validate failed: %v", err)
+	}
+
+	cases := []struct {
+		name    string
+		mutate  func(s *Skill)
+		wantMsg string
+	}{
+		{"missing id", func(s *Skill) { s.Frontmatter.ID = "" }, "missing id"},
+		{"missing version", func(s *Skill) { s.Frontmatter.Version = "" }, "missing version"},
+		{"missing title", func(s *Skill) { s.Frontmatter.Title = "" }, "missing title"},
+		{"missing description", func(s *Skill) { s.Frontmatter.Description = "" }, "missing description"},
+		{"missing last_updated", func(s *Skill) { s.Frontmatter.LastUpdated = "" }, "missing last_updated"},
+		{"empty applies_to", func(s *Skill) { s.Frontmatter.AppliesTo = nil }, "applies_to"},
+		{"empty languages", func(s *Skill) { s.Frontmatter.Languages = nil }, "languages"},
+		{"empty sources", func(s *Skill) { s.Frontmatter.Sources = nil }, "sources"},
+		{"bad category", func(s *Skill) { s.Frontmatter.Category = "nonsense" }, "invalid category"},
+		{"bad severity", func(s *Skill) { s.Frontmatter.Severity = "spicy" }, "invalid severity"},
+		{"zero minimal budget", func(s *Skill) { s.Frontmatter.TokenBudget.Minimal = 0 }, "token_budget"},
+		{"zero compact budget", func(s *Skill) { s.Frontmatter.TokenBudget.Compact = 0 }, "token_budget"},
+		{"zero full budget", func(s *Skill) { s.Frontmatter.TokenBudget.Full = 0 }, "token_budget"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			// Shallow copy is enough; we only mutate top-level scalar fields
+			// and slice references, never the underlying slice contents.
+			s := *good
+			s.Frontmatter = good.Frontmatter
+			tc.mutate(&s)
+			err := s.Validate()
+			if err == nil {
+				t.Fatalf("Validate accepted %s; want error containing %q", tc.name, tc.wantMsg)
+			}
+			if !strings.Contains(err.Error(), tc.wantMsg) {
+				t.Errorf("Validate error for %s = %v, want substring %q", tc.name, err, tc.wantMsg)
+			}
+		})
+	}
+}
+
 func TestParseDefaultsToNoLocaleFields(t *testing.T) {
 	// English source skill has none of language / source_revision /
 	// dir set — these must be empty strings (zero values), not

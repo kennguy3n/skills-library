@@ -414,20 +414,52 @@ func writeBullets(b *strings.Builder, label string, items []string) {
 	b.WriteString("\n")
 }
 
-// Validate runs the same checks that Parse does, allowing the caller to verify
-// a Skill loaded from another source.
+// Validate runs the same checks that ParseBytes does, allowing the caller to
+// verify a Skill loaded from another source (e.g. constructed in code, decoded
+// from a different format, or pulled from a cache). Keep in sync with
+// ParseBytes — every check there must have a counterpart here.
 func (s *Skill) Validate() error {
-	if s.Frontmatter.ID == "" {
+	fm := s.Frontmatter
+	// Presence of required scalar / slice fields. ParseBytes enforces these
+	// via a raw-map existence check on the YAML; on an already-typed
+	// Frontmatter we mirror it as zero-value checks.
+	if fm.ID == "" {
 		return fmt.Errorf("%s: missing id", s.Path)
 	}
-	if !AllowedCategories[s.Frontmatter.Category] {
-		return fmt.Errorf("%s: invalid category %q", s.Path, s.Frontmatter.Category)
+	if fm.Version == "" {
+		return fmt.Errorf("%s: missing version", s.Path)
 	}
-	if !AllowedSeverities[s.Frontmatter.Severity] {
-		return fmt.Errorf("%s: invalid severity %q", s.Path, s.Frontmatter.Severity)
+	if fm.Title == "" {
+		return fmt.Errorf("%s: missing title", s.Path)
 	}
-	if s.Frontmatter.Dir != "" && s.Frontmatter.Dir != "ltr" && s.Frontmatter.Dir != "rtl" {
-		return fmt.Errorf("%s: invalid dir %q (allowed: ltr, rtl)", s.Path, s.Frontmatter.Dir)
+	if fm.Description == "" {
+		return fmt.Errorf("%s: missing description", s.Path)
+	}
+	if fm.LastUpdated == "" {
+		return fmt.Errorf("%s: missing last_updated", s.Path)
+	}
+	if len(fm.AppliesTo) == 0 {
+		return fmt.Errorf("%s: applies_to must list at least one entry", s.Path)
+	}
+	if len(fm.Languages) == 0 {
+		return fmt.Errorf("%s: languages must list at least one entry", s.Path)
+	}
+	if len(fm.Sources) == 0 {
+		return fmt.Errorf("%s: sources must list at least one entry", s.Path)
+	}
+	// Allowlist checks.
+	if !AllowedCategories[fm.Category] {
+		return fmt.Errorf("%s: invalid category %q", s.Path, fm.Category)
+	}
+	if !AllowedSeverities[fm.Severity] {
+		return fmt.Errorf("%s: invalid severity %q", s.Path, fm.Severity)
+	}
+	// Numeric / structural checks.
+	if fm.TokenBudget.Minimal <= 0 || fm.TokenBudget.Compact <= 0 || fm.TokenBudget.Full <= 0 {
+		return fmt.Errorf("%s: token_budget must declare positive minimal, compact, and full counts", s.Path)
+	}
+	if fm.Dir != "" && fm.Dir != "ltr" && fm.Dir != "rtl" {
+		return fmt.Errorf("%s: invalid dir %q (allowed: ltr, rtl)", s.Path, fm.Dir)
 	}
 	return nil
 }
