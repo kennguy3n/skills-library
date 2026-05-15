@@ -53,7 +53,7 @@ func TestNfpmConfigParses(t *testing.T) {
 }
 
 // TestPackageManifestsPresent enforces that the per-platform manifests
-// referenced in PHASES.md and the install docs are checked in.
+// referenced in the install docs are checked in.
 func TestPackageManifestsPresent(t *testing.T) {
 	root := repoRoot(t)
 	for _, rel := range []string{

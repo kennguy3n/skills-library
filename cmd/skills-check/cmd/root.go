@@ -7,7 +7,7 @@ import (
 
 // CLIVersion is the semantic version of the skills-check binary. It is
 // stamped at build time via -ldflags "-X github.com/.../cmd.CLIVersion=...".
-var CLIVersion = "0.1.0-phase1"
+var CLIVersion = "0.1.0-dev"
 
 // Root returns the configured root command.
 func Root() *cobra.Command {
@@ -16,8 +16,8 @@ func Root() *cobra.Command {
 		Short: "Skills Library command-line tool",
 		Long: `skills-check is the Skills Library CLI.
 
-It validates skills, generates IDE-specific configuration files, and (Phase 2+)
-pulls signed updates of vulnerability data and detection rules.`,
+It validates skills, generates IDE-specific configuration files, and pulls
+signed updates of vulnerability data and detection rules.`,
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}

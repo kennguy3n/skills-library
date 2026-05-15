@@ -21,8 +21,8 @@ import (
 // SignaturePrefix is the canonical algorithm tag every signature carries.
 const SignaturePrefix = "ed25519:"
 
-// PlaceholderSignature is what Phase 1 / scaffolded manifests use before a
-// real signing key has been applied. ComputeChecksums and VerifyManifest both
+// PlaceholderSignature is what scaffolded manifests use before a real
+// signing key has been applied. ComputeChecksums and VerifyManifest both
 // treat it as "no signature yet" rather than as a malformed signature.
 const PlaceholderSignature = "TBD"
 
