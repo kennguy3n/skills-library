@@ -12,7 +12,13 @@ dependency-choice/
 ├── npm-malicious/         # package.json + lockfile with one malicious row
 ├── npm-typosquat/         # package.json with a typosquat candidate
 ├── pypi-malicious/        # requirements.txt with one known-bad package
-└── go-clean/              # control: a clean go.sum with no bad deps
+├── crates-malicious/      # Cargo.lock with rustdecimal (CVE-2022-36315)
+├── go-malicious/          # go.sum with github.com/jfrog/go-tools typosquat
+├── maven-malicious/       # pom.xml with org.apache.commons:commons-text@1.9 (Text4Shell)
+├── go-clean/              # control: a clean go.sum with no bad deps
+├── npm-clean/             # control: package-lock.json (v3) with no bad deps
+├── nuget-clean/           # control: packages.lock.json with no bad deps
+└── ruby-clean/            # control: Gemfile.lock with no bad deps
 ```
 
 Each subdirectory carries an `expected.json` describing the planted
