@@ -328,27 +328,43 @@ jobs:
             echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Publish GitHub Release
+      - name: Publish GitHub Release (draft)
+        # The release is created as a DRAFT so that consumers cannot
+        # download it via `skills-check update` (which follows the
+        # "latest" pointer) before the manifest has been signed
+        # offline and re-verified by `sign-and-publish.yml`. The
+        # draft → sign → verify → publish flow is documented in
+        # SIGNING.md. Running `sign-and-publish.yml` after the
+        # release manager re-uploads a signed manifest.json marks
+        # the release as non-draft.
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
           files: |
             release/*
           fail_on_unmatched_files: true
+          draft: true
           body: |
             Automated Skills Library release for tag ${{ steps.tag.outputs.tag }}.
+
+            > ⚠️ This release is a **draft**. The bundled `manifest.json`
+            > still contains `"signature": "TBD"` and is not consumable by
+            > `skills-check update`. The release manager must sign the
+            > manifest offline per [SIGNING.md](../SIGNING.md), re-upload
+            > it to the draft, and then run the `Sign & publish` workflow
+            > (`.github/workflows/sign-and-publish.yml`) to mark this
+            > release as published.
 
             **Assets:**
             - `skills-check-<goos>-<goarch>[.exe]` — CLI binary (reproducible build).
             - `checksums-<goos>-<goarch>.txt` — SHA-256 of each binary.
-            - `manifest.json` — signed library manifest.
+            - `manifest.json` — library manifest (signed out-of-band before publish).
             - `skills-library-data.tar.gz` — library payload (skills, vulnerabilities, dictionaries, dist, rules, compliance, profiles, locales, manifest.json). This is what `skills-check update` downloads by default.
             - `deltas.tar.gz` — patch set against the previous release (best effort).
             - `SHA256SUMS.txt` — checksum of every asset above.
 
-            **Verification:**
+            **Verification (post-publish):**
             - Verify the binary with the matching `checksums-<goos>-<goarch>.txt` file.
             - Verify `manifest.json` with `skills-check manifest verify --path .`.
-            - Out-of-band Ed25519 signing of `manifest.json` is performed by the
-              release manager per [SIGNING.md](../SIGNING.md) and pushed as a
-              follow-up commit before the release is marked latest.
+            - The `Sign & publish` workflow runs the same verification in CI
+              before flipping the draft to public.

@@ -81,10 +81,15 @@ type Library struct {
 
 	// allowedRoots, when non-nil and non-empty, restricts ScanSecrets
 	// file_path inputs to paths under one of these absolute,
-	// symlink-resolved directories. A nil/empty slice preserves the
-	// pre-existing "any path on the host" behaviour for backwards
-	// compatibility. Sensitive system directories (~/.ssh, ~/.aws,
-	// ~/.gnupg, /etc/shadow, ...) are denied regardless.
+	// symlink-resolved directories. The skills-mcp binary populates
+	// this with the current working directory by default (so a
+	// freshly-launched server cannot read /etc/<anything> or files
+	// under another user's home), and operators may override it via
+	// --allowed-roots <dirs> or opt out entirely via
+	// --allow-any-path. A nil/empty slice means "no restriction"
+	// (the legacy behaviour); sensitive system directories
+	// (~/.ssh, ~/.aws, ~/.gnupg, /etc/shadow, ...) are still denied
+	// regardless of the allow-list state.
 	allowedRoots []string
 }
 

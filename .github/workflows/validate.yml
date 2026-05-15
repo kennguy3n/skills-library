@@ -113,6 +113,77 @@ jobs:
           sys.exit(fail)
           PY
 
+  dist-skill-manifest-shape:
+    name: dist/ SKILL.md frontmatter shape
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install --quiet pyyaml
+
+      - name: Check every dist/**/SKILL.md has a minimal frontmatter shape
+        # The compiled bundles under dist/ target third-party agent
+        # tools (Claude / Cursor / Codex / etc.) and only need the
+        # cross-tool minimum: `name` + `description`. The richer
+        # source-of-truth frontmatter (token_budget, severity, ...)
+        # is enforced separately by the `skill-manifest-shape` job
+        # on skills/**/SKILL.md. This second job exists to catch a
+        # `regenerate` regression that would otherwise ship a
+        # native bundle missing the required keys.
+        shell: bash
+        run: |
+          set -e
+          python - <<'PY'
+          import re, sys, pathlib, yaml
+
+          required = {"name", "description"}
+          frontmatter_re = re.compile(r"\A---\s*\n(.*?)\n---\s*(?:\n|\Z)", re.DOTALL)
+
+          fail = 0
+          paths = sorted(pathlib.Path("dist").rglob("SKILL.md"))
+          if not paths:
+              print("::warning::no dist/**/SKILL.md files found; skipping")
+              sys.exit(0)
+          for path in paths:
+              text = path.read_text(encoding="utf-8")
+              match = frontmatter_re.match(text)
+              if not match:
+                  print(f"::error file={path}::Missing or malformed YAML frontmatter (expected file to start with '---' line and contain a closing '---' line)")
+                  fail = 1
+                  continue
+              try:
+                  data = yaml.safe_load(match.group(1)) or {}
+              except yaml.YAMLError as e:
+                  print(f"::error file={path}::Frontmatter is not valid YAML: {e}")
+                  fail = 1
+                  continue
+              if not isinstance(data, dict):
+                  print(f"::error file={path}::Frontmatter must be a YAML mapping")
+                  fail = 1
+                  continue
+              missing = required - data.keys()
+              if missing:
+                  print(f"::error file={path}::Missing fields: {sorted(missing)}")
+                  fail = 1
+              # A missing key is already reported above; only run
+              # the value-shape check on keys that actually exist
+              # so contributors don't see two errors for the same
+              # field in their CI logs.
+              for field in required - missing:
+                  val = data.get(field)
+                  if not isinstance(val, str) or not val.strip():
+                      print(f"::error file={path}::Field {field!r} must be a non-empty string")
+                      fail = 1
+          sys.exit(fail)
+          PY
+
   markdown-link-sanity:
     name: Markdown link sanity
     runs-on: ubuntu-latest
