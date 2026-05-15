@@ -469,7 +469,9 @@ def run_tier(
         "schema_version": "1.0",
         "last_updated": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
         "tier": tier,
-        "agent": fixture_results[0]["model"] if fixture_results else "n/a",
+        # `fixture_results[0]` may be an error row (no "model" key) if the
+        # very first API call failed, so fall back to "n/a".
+        "agent": (fixture_results[0].get("model", "n/a") if fixture_results else "n/a"),
         "fixtures": fixture_results,
         "summary": _summarise(fixture_results),
     }
