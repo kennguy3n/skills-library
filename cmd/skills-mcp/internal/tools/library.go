@@ -750,6 +750,60 @@ func isKnownFalsePositive(exclusions []Exclusion, ruleName, match string) bool {
 	return false
 }
 
+// dlpLocaleFile is the on-disk schema for dlp_patterns.locales.json,
+// the optional multilingual sidecar that augments each pattern's
+// English hotword list with locale translations of generic hotwords
+// (e.g. "password" -> "contraseña", "passwort", ...). Brand names
+// and tech acronyms are intentionally not translated; see the
+// `skipped_hotwords` block in the sidecar for the policy.
+type dlpLocaleFile struct {
+	SchemaVersion       string                       `json:"schema_version"`
+	HotwordTranslations map[string]map[string]string `json:"hotword_translations"`
+}
+
+// mergeLocaleHotwords appends every translation declared in the
+// sidecar to each pattern's Hotwords slice when an existing English
+// hotword has an entry in the translations map. Translations are
+// added once per pattern, case-insensitive, so repeat loads do not
+// inflate the list. A missing or malformed sidecar is a no-op — the
+// English hotwords stay unchanged. Returns the number of translations
+// merged so tests and operators can sanity-check the augmentation.
+func mergeLocaleHotwords(patterns []*Pattern, translations map[string]map[string]string) int {
+	if len(translations) == 0 || len(patterns) == 0 {
+		return 0
+	}
+	merged := 0
+	for _, pat := range patterns {
+		if len(pat.Hotwords) == 0 {
+			continue
+		}
+		seen := make(map[string]bool, len(pat.Hotwords))
+		for _, h := range pat.Hotwords {
+			seen[strings.ToLower(h)] = true
+		}
+		for _, h := range pat.Hotwords {
+			row, ok := translations[strings.ToLower(h)]
+			if !ok {
+				continue
+			}
+			for _, t := range row {
+				t = strings.TrimSpace(t)
+				if t == "" {
+					continue
+				}
+				lower := strings.ToLower(t)
+				if seen[lower] {
+					continue
+				}
+				seen[lower] = true
+				pat.Hotwords = append(pat.Hotwords, t)
+				merged++
+			}
+		}
+	}
+	return merged
+}
+
 func (l *Library) loadSecretRules() (*secretRules, error) {
 	l.secretsMu.Lock()
 	defer l.secretsMu.Unlock()
@@ -757,6 +811,7 @@ func (l *Library) loadSecretRules() (*secretRules, error) {
 		return l.secrets, nil
 	}
 	patternsPath := filepath.Join(l.root, "skills", "secret-detection", "rules", "dlp_patterns.json")
+	localesPath := filepath.Join(l.root, "skills", "secret-detection", "rules", "dlp_patterns.locales.json")
 	exclusionsPath := filepath.Join(l.root, "skills", "secret-detection", "rules", "dlp_exclusions.json")
 	pBody, err := os.ReadFile(patternsPath)
 	if err != nil {
@@ -765,6 +820,12 @@ func (l *Library) loadSecretRules() (*secretRules, error) {
 	var p secretRules
 	if err := json.Unmarshal(pBody, &p); err != nil {
 		return nil, err
+	}
+	if body, err := os.ReadFile(localesPath); err == nil {
+		var lf dlpLocaleFile
+		if json.Unmarshal(body, &lf) == nil {
+			mergeLocaleHotwords(p.Patterns, lf.HotwordTranslations)
+		}
 	}
 	for _, pat := range p.Patterns {
 		re, err := regexp.Compile(pat.Regex)
