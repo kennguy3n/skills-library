@@ -79,10 +79,14 @@ def _age_days(ts: dt.datetime | None, now: dt.datetime) -> int | None:
 
 
 # Matches an "<N>d" or "<N>d ⚠️" token emitted by `_fmt_freshness`, in
-# either a table cell or an inline parenthetical. The token gets
-# replaced with the placeholder "<age>" during `--check` comparison so
-# that pure calendar drift does not trip CI.
-_AGE_TOKEN_RE = re.compile(r"\b\d+d(?:\s*\u26a0\ufe0f)?")
+# either a table cell or an inline parenthetical. The leading sign is
+# also captured because the OSV indexer occasionally publishes records
+# with a `modified` timestamp slightly ahead of UTC (the upstream
+# advisory is timestamped in its own zone), so `(now - last_updated)`
+# can legitimately be -1d. Without `-?`, a fresh regen on the next
+# calendar day would normalize "-1d" -> "-<age>" but "0d" -> "<age>",
+# leaving a spurious diff that defeats this normalizer.
+_AGE_TOKEN_RE = re.compile(r"-?\b\d+d(?:\s*\u26a0\ufe0f)?")
 
 
 def _strip_drift(text: str) -> str:
