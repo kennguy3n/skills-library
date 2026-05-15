@@ -244,7 +244,7 @@ Select your tier with `skills-check init --budget compact`. Compact is the defau
 
 ```
 secure-code/
-├── README.md  PROPOSAL.md  ARCHITECTURE.md  PHASES.md  PROGRESS.md  SIGNING.md  LICENSE
+├── README.md  PROPOSAL.md  ARCHITECTURE.md  SIGNING.md  LICENSE
 ├── skills/                              # 28 skill definitions (the core product)
 │   ├── secret-detection/                #   74 DLP patterns + exclusions + test corpus
 │   ├── dependency-audit/                #   known-malicious package corpus
@@ -345,10 +345,6 @@ secure-code/
   audience, scope boundaries, and the canonical `SKILL.md` format specification.
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — system diagrams, compiler architecture,
   update protocol, CLI layout, scheduler implementation, and signing model.
-- [PHASES.md](./PHASES.md) — phased delivery plan with deliverable checklists and
-  a difficulty assessment per component.
-- [PROGRESS.md](./PROGRESS.md) — live progress tracker mirroring the deliverables
-  in PHASES.md.
 - [SIGNING.md](./SIGNING.md) — Ed25519 release signing procedure and key
   management policy.
 - [docs/](./docs/) — install guides (macOS / Linux / Windows / air-gapped), the

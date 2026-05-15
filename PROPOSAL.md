@@ -1,6 +1,6 @@
-# secure-code — Project Proposal
+# secure-code — Design Document
 
-This proposal describes the design and scope of **secure-code**, a security
+This document describes the design and scope of **secure-code**, a security
 knowledge framework for AI-assisted coding maintained by
 [ShieldNet360](https://www.shieldnet360.com) and released under the
 [MIT license](./LICENSE). The Go module path remains
@@ -46,7 +46,7 @@ secure-code exists to solve this gap with an MIT-licensed, file-based,
 offline-capable library that any developer can drop into their IDE in under five
 minutes.
 
-## Proposed Solution
+## Solution
 
 A structured, open-source library of security skills that:
 
@@ -188,10 +188,9 @@ The frontmatter schema is enforced by `skills-check validate` and by CI on every
 | Cline / OpenCode | `.clinerules` | project root | read on session start | compact (2000) | on new session |
 | MCP Server | n/a | any | on-demand tool calls | minimal per call | real-time |
 
-The MCP integration is Phase 4: it serves skills on demand via Model Context Protocol
-tool calls, which means the AI tool spends tokens *only* when it actively decides to
-consult a skill. This is the most token-efficient delivery model and the long-term
-direction.
+The MCP integration serves skills on demand via Model Context Protocol tool calls,
+which means the AI tool spends tokens *only* when it actively decides to consult a
+skill. This is the most token-efficient delivery model.
 
 ## Incremental Update Architecture
 

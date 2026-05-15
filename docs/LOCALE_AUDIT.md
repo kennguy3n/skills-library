@@ -360,5 +360,4 @@ To keep translations maintainable as English content evolves:
 | **What's the biggest win?** | Tier 1.2 (manifest language axis) + Tier 2.4 (translate the three flagship skills + `saas-security` into the 14 missing target locales). |
 
 No further changes are made in this PR for the locale axis. This audit
-serves as the scoping document for a future Phase-6-style multilingual
-rollout.
+serves as the scoping document for a future multilingual rollout.

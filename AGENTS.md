@@ -163,5 +163,3 @@ for it.
   `secure-code` itself.
 - [README.md](./README.md) — project overview, install, and IDE
   integration instructions.
-- [PHASES.md](./PHASES.md) and [PROGRESS.md](./PROGRESS.md) —
-  roadmap and changelog.

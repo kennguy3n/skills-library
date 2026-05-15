@@ -74,8 +74,6 @@ Published security advisories are listed at:
 
 - https://github.com/kennguy3n/skills-library/security/advisories
 
-Major incidents are also referenced in [PROGRESS.md](./PROGRESS.md).
-
 ## Hall of fame
 
 Researchers and contributors who responsibly disclose security issues are
