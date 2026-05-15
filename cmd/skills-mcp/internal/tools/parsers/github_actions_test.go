@@ -83,14 +83,14 @@ jobs:
 
 func TestHasUntrustedExpressionInjection(t *testing.T) {
 	cases := map[string]bool{
-		"echo hello":                                       false,
-		"echo ${{ github.event.pull_request.title }}":      true,
-		"echo ${{ github.head_ref }}":                      true,
-		"echo ${{ github.event.comment.body }}":            true,
-		"echo ${{ secrets.GITHUB_TOKEN }}":                 false,
-		"echo ${{ github.sha }}":                           false,
-		"echo ${{ github.event.pull_request.head.sha }}":   true,
-		"echo ${{ github.event.issue.title }}":             true,
+		"echo hello": false,
+		"echo ${{ github.event.pull_request.title }}":    true,
+		"echo ${{ github.head_ref }}":                    true,
+		"echo ${{ github.event.comment.body }}":          true,
+		"echo ${{ secrets.GITHUB_TOKEN }}":               false,
+		"echo ${{ github.sha }}":                         false,
+		"echo ${{ github.event.pull_request.head.sha }}": true,
+		"echo ${{ github.event.issue.title }}":           true,
 	}
 	for input, want := range cases {
 		if got := HasUntrustedExpressionInjection(input); got != want {
@@ -101,12 +101,12 @@ func TestHasUntrustedExpressionInjection(t *testing.T) {
 
 func TestIsCheckoutAction(t *testing.T) {
 	cases := map[string]bool{
-		"":                              false,
-		"actions/checkout@v4":           true,
-		"actions/checkout":              true,
-		"actions/Checkout@v4":           true,
-		"actions/setup-go@v5":           false,
-		"./.github/actions/checkout":    false,
+		"":                           false,
+		"actions/checkout@v4":        true,
+		"actions/checkout":           true,
+		"actions/Checkout@v4":        true,
+		"actions/setup-go@v5":        false,
+		"./.github/actions/checkout": false,
 	}
 	for input, want := range cases {
 		if got := IsCheckoutAction(input); got != want {

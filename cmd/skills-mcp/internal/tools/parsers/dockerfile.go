@@ -97,7 +97,7 @@ func ParseDockerfile(body []byte) *Dockerfile {
 	df := &Dockerfile{Args: map[string]string{}}
 
 	var (
-		joined     strings.Builder
+		joined      strings.Builder
 		joinedStart int
 		// stageIdx is the 0-based index of the stage we're currently
 		// inside; -1 means "file scope, before the first FROM".

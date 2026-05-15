@@ -696,7 +696,7 @@ func (l *Library) ScanDockerfile(filePath string) (*ScanDockerfileResult, error)
 	// already populate `flagged`, so this pass only ADDS findings
 	// the regex layer missed.
 	joinedRules := map[string]int{
-		"dkr-no-curl-pipe-sh": 0,
+		"dkr-no-curl-pipe-sh":  0,
 		"dkr-apt-pin-versions": 0,
 	}
 	for _, ln := range ast.Lines {
