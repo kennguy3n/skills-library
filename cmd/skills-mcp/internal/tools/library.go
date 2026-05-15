@@ -38,6 +38,9 @@ var knownEcosystems = map[string]bool{
 	"nuget":          true,
 	"github-actions": true,
 	"docker":         true,
+	"composer":       true,
+	"pub":            true,
+	"swift":          true,
 }
 
 // allEcosystems is the deterministic ordered list of ecosystem IDs the
@@ -53,6 +56,9 @@ var allEcosystems = []string{
 	"nuget",
 	"github-actions",
 	"docker",
+	"composer",
+	"pub",
+	"swift",
 }
 
 // Library is the live view of a skills-library checkout used to back the
@@ -222,6 +228,13 @@ func (l *Library) loadSkills() ([]*skill.Skill, error) {
 
 // VulnEntry is one entry in a per-ecosystem malicious-packages JSON file.
 // Only the fields downstream consumers care about are decoded.
+//
+// Source records the upstream provenance of the entry. Curated
+// hand-authored rows omit the field; rows imported from OSSF's
+// malicious-packages feed carry "ossf-malicious-packages". Callers
+// (notably scan_dependencies) read this to set a confidence band
+// on emitted findings — curated rows are "confirmed", OSSF-derived
+// rows are "high".
 type VulnEntry struct {
 	Name             string   `json:"name"`
 	VersionsAffected []string `json:"versions_affected,omitempty"`
@@ -232,6 +245,7 @@ type VulnEntry struct {
 	CVE              string   `json:"cve,omitempty"`
 	AttackType       string   `json:"attack_type,omitempty"`
 	Ecosystem        string   `json:"ecosystem,omitempty"`
+	Source           string   `json:"source,omitempty"`
 }
 
 type vulnFile struct {

@@ -7,6 +7,18 @@
 [![DLP patterns](https://img.shields.io/badge/DLP%20patterns-74-red)](./skills/secret-detection/rules/dlp_patterns.json)
 [![Platforms](https://img.shields.io/badge/platforms-win%20%7C%20mac%20%7C%20linux-green)](#platform-support)
 
+> [!WARNING]
+> **Pre-release notice.** This repository is tagged at `v0.1.0` but the
+> signed public release is pending. The committed `manifest.json` still
+> carries `"signature": "TBD"` — the Ed25519 release-signing key (held
+> on a YubiKey, see [SIGNING.md](./SIGNING.md)) has not yet been
+> applied to a published artefact. Do **not** rely on
+> `skills-check update` for production use until a signed release is
+> published; verify the on-disk bundle today with
+> `skills-check manifest verify --checksums-only` instead. The signing
+> pipeline (`release.yml` → `sign-and-publish.yml`) is implemented
+> end-to-end and waiting on the first signed cut.
+
 > **Security knowledge for AI-assisted coding — open, offline-first, with signed release support planned.**
 
 **secure-code** is a structured, machine-readable library of security skills and

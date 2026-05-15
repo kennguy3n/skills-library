@@ -21,10 +21,9 @@ import (
 	"sort"
 	"strings"
 
-	"gopkg.in/yaml.v3"
-
 	"github.com/kennguy3n/skills-library/cmd/skills-mcp/internal/tools/parsers"
 	"github.com/kennguy3n/skills-library/internal/skill"
+	"gopkg.in/yaml.v3"
 )
 
 // readScanFile is the shared on-disk read path for every new scanner.
@@ -67,12 +66,34 @@ func (l *Library) readScanFile(op, filePath string) ([]byte, int64, error) {
 // DependencyFinding is one row of the scan_dependencies output. It
 // flattens the existing CheckDependencyResult shape down to "one
 // finding per match" so that a SARIF run gets one Result per row.
+//
+// Confidence is a four-band qualitative signal describing how sure
+// the scanner is that the finding applies to the resolved dependency.
+// The bands are:
+//
+//   - "confirmed": curated, hand-reviewed evidence (e.g. an entry in
+//     the curated malicious-packages DB with no upstream `source`),
+//     or an OSV record whose version-range affected the resolved
+//     version.
+//   - "high":      structured database hit (OSSF malicious-packages
+//     feed, curated typosquat DB, regex against
+//     well-known anti-pattern in a workflow/Dockerfile)
+//     where the match is unambiguous but not
+//     individually reviewed.
+//   - "medium":    pattern-only signal (substring CVE-name match,
+//     runtime Levenshtein typosquat suggestion).
+//   - "low":       weakest tier; reserved for fuzzy heuristics.
+//
+// An empty Confidence means the scanner did not classify the
+// finding (older callers); consumers should treat the empty value
+// as "high" for backwards compatibility.
 type DependencyFinding struct {
 	Package    string            `json:"package"`
 	Version    string            `json:"version,omitempty"`
 	Ecosystem  string            `json:"ecosystem"`
 	Source     string            `json:"source,omitempty"`
 	Severity   string            `json:"severity"`
+	Confidence string            `json:"confidence,omitempty"`
 	Category   string            `json:"category"`
 	Message    string            `json:"message"`
 	CVE        string            `json:"cve,omitempty"`
@@ -135,12 +156,24 @@ func (l *Library) ScanDependencies(filePath string) (*ScanDependenciesResult, er
 			if sev == "" {
 				sev = "high"
 			}
+			// Curated rows (no upstream `source`) have been hand-reviewed
+			// against the upstream advisory and the affected version
+			// list; treat those as "confirmed". Rows imported from the
+			// OSSF malicious-packages feed are structured and reliable
+			// but not individually triaged — emit "high" so a downstream
+			// gate can choose to drop the floor by one notch if it
+			// wants curated-only enforcement.
+			conf := "confirmed"
+			if strings.TrimSpace(m.Source) == "ossf-malicious-packages" {
+				conf = "high"
+			}
 			out.Findings = append(out.Findings, DependencyFinding{
 				Package:    dep.Name,
 				Version:    dep.Version,
 				Ecosystem:  dep.Ecosystem,
 				Source:     dep.Source,
 				Severity:   sev,
+				Confidence: conf,
 				Category:   "malicious-package",
 				Message:    fmt.Sprintf("%s flagged as %s: %s", m.Name, m.Type, m.Description),
 				CVE:        m.CVE,
@@ -149,14 +182,20 @@ func (l *Library) ScanDependencies(filePath string) (*ScanDependenciesResult, er
 			})
 		}
 		for _, t := range inner.Typosquats {
+			// Typosquat rows come from the curated
+			// typosquat-db/known_typosquats.json file. Every entry
+			// names a known-good target and a known-bad squat that
+			// has already been validated by a human reviewer, so the
+			// match here is structural, not heuristic — "high".
 			out.Findings = append(out.Findings, DependencyFinding{
-				Package:   dep.Name,
-				Version:   dep.Version,
-				Ecosystem: dep.Ecosystem,
-				Source:    dep.Source,
-				Severity:  "medium",
-				Category:  "typosquat",
-				Message:   fmt.Sprintf("%s squats %s (Levenshtein distance %d)", t.Typosquat, t.Target, t.LevenshteinDistance),
+				Package:    dep.Name,
+				Version:    dep.Version,
+				Ecosystem:  dep.Ecosystem,
+				Source:     dep.Source,
+				Severity:   "medium",
+				Confidence: "high",
+				Category:   "typosquat",
+				Message:    fmt.Sprintf("%s squats %s (Levenshtein distance %d)", t.Typosquat, t.Target, t.LevenshteinDistance),
 				Extra: map[string]string{
 					"target":               t.Target,
 					"typosquat":            t.Typosquat,
@@ -169,12 +208,19 @@ func (l *Library) ScanDependencies(filePath string) (*ScanDependenciesResult, er
 			if sev == "" {
 				sev = "medium"
 			}
+			// CVE-pattern matches are substring hits against the
+			// curated CVE name/description; the underlying patterns
+			// describe code shapes, not pinned versions, so a hit
+			// against a package name is suggestive rather than
+			// definitive. Emit "medium" so a strict gate can require
+			// "high"+ for fail-the-build behaviour.
 			out.Findings = append(out.Findings, DependencyFinding{
 				Package:    dep.Name,
 				Version:    dep.Version,
 				Ecosystem:  dep.Ecosystem,
 				Source:     dep.Source,
 				Severity:   sev,
+				Confidence: "medium",
 				Category:   "cve-pattern",
 				Message:    fmt.Sprintf("%s (%s): %s", c.CVE, c.Name, c.Description),
 				CVE:        c.CVE,
@@ -198,12 +244,22 @@ func (l *Library) ScanDependencies(filePath string) (*ScanDependenciesResult, er
 			if severity == "" {
 				severity = "medium"
 			}
+			// The OSV cache currently surfaces every advisory whose
+			// `affected[].package.name` matches, regardless of
+			// whether the resolved version actually intersects an
+			// `affected[].ranges` entry. That makes a hit a strong
+			// structured signal but not a version-confirmed one, so
+			// we emit "high" rather than "confirmed". A future
+			// enhancement to lookupOSV that consults the per-record
+			// version ranges can promote this to "confirmed" when
+			// the dependency's version is in range.
 			out.Findings = append(out.Findings, DependencyFinding{
 				Package:    dep.Name,
 				Version:    dep.Version,
 				Ecosystem:  dep.Ecosystem,
 				Source:     dep.Source,
 				Severity:   severity,
+				Confidence: "high",
 				Category:   "osv-advisory",
 				Message:    fmt.Sprintf("%s: %s", adv.ID, adv.Summary),
 				References: refs,
@@ -219,14 +275,23 @@ func (l *Library) ScanDependencies(filePath string) (*ScanDependenciesResult, er
 
 // WorkflowFinding is one match against a hardening rule for a GitHub
 // Actions workflow file.
+//
+// Confidence follows the same four-band scheme as DependencyFinding
+// (see that type for the definition). The regex-only checklist hits
+// emitted by ScanGitHubActions are "high" — the patterns target
+// well-known anti-patterns (curl-pipe-sh, pull_request_target +
+// checkout, missing top-level permissions). When the structured YAML
+// parser becomes the primary path, those findings should be promoted
+// to "confirmed".
 type WorkflowFinding struct {
-	RuleID    string `json:"rule_id"`
-	Severity  string `json:"severity"`
-	Title     string `json:"title"`
-	Rationale string `json:"rationale,omitempty"`
-	Fix       string `json:"fix,omitempty"`
-	Line      int    `json:"line,omitempty"`
-	Snippet   string `json:"snippet,omitempty"`
+	RuleID     string `json:"rule_id"`
+	Severity   string `json:"severity"`
+	Confidence string `json:"confidence,omitempty"`
+	Title      string `json:"title"`
+	Rationale  string `json:"rationale,omitempty"`
+	Fix        string `json:"fix,omitempty"`
+	Line       int    `json:"line,omitempty"`
+	Snippet    string `json:"snippet,omitempty"`
 }
 
 // ScanGitHubActionsResult is what scan_github_actions returns.
@@ -313,11 +378,12 @@ func (l *Library) ScanGitHubActions(filePath string) (*ScanGitHubActionsResult, 
 			}
 			if pat.MatchString(text) && !req.MatchString(text) {
 				out.Findings = append(out.Findings, WorkflowFinding{
-					RuleID:    c.ID,
-					Severity:  c.Severity,
-					Title:     c.Title,
-					Rationale: collapseWS(c.Rationale),
-					Fix:       collapseWS(c.Fix),
+					RuleID:     c.ID,
+					Severity:   c.Severity,
+					Confidence: "high",
+					Title:      c.Title,
+					Rationale:  collapseWS(c.Rationale),
+					Fix:        collapseWS(c.Fix),
 				})
 			}
 			continue
@@ -325,27 +391,131 @@ func (l *Library) ScanGitHubActions(filePath string) (*ScanGitHubActionsResult, 
 		for _, idx := range pat.FindAllStringIndex(text, -1) {
 			line, snippet := lineInfo(text, idx[0])
 			out.Findings = append(out.Findings, WorkflowFinding{
-				RuleID:    c.ID,
-				Severity:  c.Severity,
-				Title:     c.Title,
-				Rationale: collapseWS(c.Rationale),
-				Fix:       collapseWS(c.Fix),
-				Line:      line,
-				Snippet:   snippet,
+				RuleID:     c.ID,
+				Severity:   c.Severity,
+				Confidence: "high",
+				Title:      c.Title,
+				Rationale:  collapseWS(c.Rationale),
+				Fix:        collapseWS(c.Fix),
+				Line:       line,
+				Snippet:    snippet,
 			})
 		}
+	}
+
+	// AST pass — structured YAML decode supplements the regex pass.
+	// We deliberately keep the regex layer untouched so checklist
+	// updates (in YAML) keep working without a code change. The AST
+	// pass only adds findings the regex layer cannot accurately
+	// detect:
+	//
+	//   * gha-ast-unpinned-action: the regex pass cannot reliably
+	//     tell a 40-char SHA pin from a version tag.
+	//   * gha-ast-pwn-request: pull_request_target + actions/checkout
+	//     of the PR head is the classic PWN-request pattern.
+	//   * gha-ast-expression-injection: untrusted github.event.* /
+	//     github.head_ref interpolated into a `run:` block.
+	if wf, err := parsers.ParseWorkflow(body); err == nil && wf != nil {
+		appendAstWorkflowFindings(wf, out)
 	}
 	return out, nil
 }
 
+// appendAstWorkflowFindings runs the structured checks on wf and
+// appends each finding to out.Findings. The function is split out so
+// the AST pass remains skippable on parse error (it's a strict
+// addition to the regex pass, not a replacement).
+func appendAstWorkflowFindings(wf *parsers.Workflow, out *ScanGitHubActionsResult) {
+	prTarget := wf.IsPullRequestTarget()
+	for jobName, job := range wf.Jobs {
+		for _, step := range job.Steps {
+			if step.Uses != "" && !parsers.IsPinnedAction(step.Uses) {
+				out.Findings = append(out.Findings, WorkflowFinding{
+					RuleID:     "gha-ast-unpinned-action",
+					Severity:   "high",
+					Confidence: "confirmed",
+					Title:      "Third-party action not pinned to a commit SHA",
+					Rationale: fmt.Sprintf(
+						"Job %s step uses %q. Pin to a 40-character commit SHA to defend"+
+							" against tag-rewrite supply-chain attacks.",
+						jobName, step.Uses,
+					),
+					Fix:     "Replace the @<tag> reference with @<40-char-sha>.",
+					Line:    step.Line,
+					Snippet: fmt.Sprintf("uses: %s", step.Uses),
+				})
+			}
+			if prTarget && parsers.IsCheckoutAction(step.Uses) {
+				out.Findings = append(out.Findings, WorkflowFinding{
+					RuleID:     "gha-ast-pwn-request",
+					Severity:   "critical",
+					Confidence: "confirmed",
+					Title:      "pull_request_target combined with actions/checkout",
+					Rationale: "pull_request_target runs with the base repo's secrets" +
+						" while actions/checkout may fetch attacker-controlled PR head" +
+						" code. The combination is the canonical PWN-request pattern.",
+					Fix:     "Switch the trigger to pull_request, or pin checkout to the merge ref and never run attacker-supplied code.",
+					Line:    step.Line,
+					Snippet: fmt.Sprintf("uses: %s (job %q)", step.Uses, jobName),
+				})
+			}
+			if step.Run != "" && parsers.HasUntrustedExpressionInjection(step.Run) {
+				out.Findings = append(out.Findings, WorkflowFinding{
+					RuleID:     "gha-ast-expression-injection",
+					Severity:   "critical",
+					Confidence: "confirmed",
+					Title:      "Untrusted github.event expression interpolated into `run:`",
+					Rationale: "Expressions like ${{ github.event.pull_request.title }} are" +
+						" attacker-controlled and Bash-expanded at runtime. Move the value" +
+						" through an env: mapping and reference it as $VAR instead.",
+					Fix:     "Bind the expression to env: NAME: ${{ ... }} and use \"$NAME\" inside `run:`.",
+					Line:    step.Line,
+					Snippet: firstLine(step.Run),
+				})
+			}
+		}
+	}
+}
+
+// truncateSnippet collapses runs of whitespace and clips the result
+// to n runes so a joined-line Dockerfile snippet stays readable in
+// scanner output.
+func truncateSnippet(s string, n int) string {
+	out := collapseWS(s)
+	if len([]rune(out)) <= n {
+		return out
+	}
+	r := []rune(out)
+	return string(r[:n]) + "…"
+}
+
+// firstLine returns the first non-empty line of s, trimmed. Used to
+// keep `run:`-block snippets readable in finding output.
+func firstLine(s string) string {
+	for _, line := range strings.Split(s, "\n") {
+		if t := strings.TrimSpace(line); t != "" {
+			return t
+		}
+	}
+	return ""
+}
+
 // DockerfileFinding is one match against a Dockerfile hardening rule.
+//
+// Confidence follows the same four-band scheme as DependencyFinding.
+// The regex-only checks emitted by ScanDockerfile are "high" — each
+// pattern targets a specific Dockerfile token (FROM, USER, ENV/ARG,
+// ADD, RUN curl|sh, apt-get install). When the multi-stage-aware AST
+// parser becomes the primary path, AST-confirmed findings can be
+// promoted to "confirmed".
 type DockerfileFinding struct {
-	RuleID   string `json:"rule_id"`
-	Severity string `json:"severity"`
-	Title    string `json:"title"`
-	Fix      string `json:"fix,omitempty"`
-	Line     int    `json:"line"`
-	Snippet  string `json:"snippet"`
+	RuleID     string `json:"rule_id"`
+	Severity   string `json:"severity"`
+	Confidence string `json:"confidence,omitempty"`
+	Title      string `json:"title"`
+	Fix        string `json:"fix,omitempty"`
+	Line       int    `json:"line"`
+	Snippet    string `json:"snippet"`
 }
 
 // ScanDockerfileResult is what scan_dockerfile returns.
@@ -432,6 +602,15 @@ var dockerfileChecks = []dockerfileCheck{
 // and returns the findings. The rules are deliberately Go-side: they
 // reference Dockerfile-specific tokens (FROM, USER, ADD, ENV, ARG,
 // RUN) that the broader hardening YAML keeps human-readable.
+//
+// The scanner runs an AST pass first (via parsers.ParseDockerfile)
+// to identify the final stage so multi-stage rules — USER and FROM
+// pinning — only fire on the published image. The AST pass also
+// resolves ARG-substituted FROM base images so `ARG B=node:latest`
+// + `FROM $B` is still flagged. AST-confirmed findings carry
+// confidence "confirmed"; the remaining regex checks (which fire
+// per-line and can't reason about stages or ARG substitution)
+// stay at "high".
 func (l *Library) ScanDockerfile(filePath string) (*ScanDockerfileResult, error) {
 	const op = "scan_dockerfile"
 	body, size, err := l.readScanFile(op, filePath)
@@ -443,6 +622,27 @@ func (l *Library) ScanDockerfile(filePath string) (*ScanDockerfileResult, error)
 		FileSize: size,
 		Findings: []DockerfileFinding{},
 	}
+
+	ast := parsers.ParseDockerfile(body)
+	finalIdx := -1
+	if final := ast.FinalStage(); final != nil {
+		finalIdx = final.Index
+	}
+	stageOf := buildDockerfileStageIndex(ast)
+
+	// stageSensitive rules only fire on the final stage. The other
+	// rules describe per-layer issues (secrets in env, ADD remote,
+	// curl-pipe-sh, apt without pins) and remain per-line.
+	stageSensitive := map[string]bool{
+		"dkr-pinned-base-digest":  true,
+		"dkr-explicit-latest-tag": true,
+		"dkr-non-root-user":       true,
+	}
+	// flagged tracks which (line, rule) pairs we've already emitted
+	// so the AST pass below does not double-emit a finding that
+	// already fired via the regex pass.
+	flagged := map[string]bool{}
+
 	lines := strings.Split(string(body), "\n")
 	for i, raw := range lines {
 		// Strip trailing CR so the snippet is portable across LF /
@@ -455,6 +655,11 @@ func (l *Library) ScanDockerfile(filePath string) (*ScanDockerfileResult, error)
 		for _, c := range dockerfileChecks {
 			if !c.pattern.MatchString(line) {
 				continue
+			}
+			if stageSensitive[c.id] && finalIdx >= 0 {
+				if stage := stageOf(i + 1); stage != finalIdx {
+					continue
+				}
 			}
 			// dkr-pinned-base-digest's intent is "no tag and no
 			// digest". Skip the rule when the line already pins to
@@ -472,16 +677,128 @@ func (l *Library) ScanDockerfile(filePath string) (*ScanDockerfileResult, error)
 				}
 			}
 			out.Findings = append(out.Findings, DockerfileFinding{
-				RuleID:   c.id,
-				Severity: c.severity,
-				Title:    c.title,
-				Fix:      c.fix,
-				Line:     i + 1,
-				Snippet:  trimmed,
+				RuleID:     c.id,
+				Severity:   c.severity,
+				Confidence: "high",
+				Title:      c.title,
+				Fix:        c.fix,
+				Line:       i + 1,
+				Snippet:    trimmed,
 			})
+			flagged[fmt.Sprintf("%d:%s", i+1, c.id)] = true
+		}
+	}
+
+	// Joined-line pass: re-run the multi-line-sensitive rules
+	// (curl-pipe-sh, apt-get-no-pin) against the AST's joined view
+	// so a `curl … \ | sh \` split across backslash continuations
+	// is still caught. Per-source-line findings from the regex pass
+	// already populate `flagged`, so this pass only ADDS findings
+	// the regex layer missed.
+	joinedRules := map[string]int{
+		"dkr-no-curl-pipe-sh":  0,
+		"dkr-apt-pin-versions": 0,
+	}
+	for _, ln := range ast.Lines {
+		for _, c := range dockerfileChecks {
+			if _, ok := joinedRules[c.id]; !ok {
+				continue
+			}
+			if !c.pattern.MatchString(ln.Text) {
+				continue
+			}
+			key := fmt.Sprintf("%d:%s", ln.StartLine, c.id)
+			if flagged[key] {
+				continue
+			}
+			// The joined view sometimes folds the offending RUN onto
+			// a deeper line than the source's first hit; mark every
+			// source line between StartLine and the next directive
+			// as flagged to avoid double-reporting on the source-line
+			// pass that runs first. In practice flagged[key] above
+			// already covers that case, and we lean on the AST
+			// confidence to signal "this came from the joined view".
+			out.Findings = append(out.Findings, DockerfileFinding{
+				RuleID:     c.id,
+				Severity:   c.severity,
+				Confidence: "confirmed",
+				Title:      c.title,
+				Fix:        c.fix,
+				Line:       ln.StartLine,
+				Snippet:    truncateSnippet(ln.Text, 240),
+			})
+			flagged[key] = true
+		}
+	}
+
+	// AST-aware pass: catch findings the regex layer missed because
+	// the base image is hidden behind an ARG reference, or because
+	// the final stage inherits a root USER from its base image.
+	if final := ast.FinalStage(); final != nil {
+		resolved := strings.TrimSpace(final.ResolvedBase)
+		if resolved == "" {
+			resolved = final.BaseImage
+		}
+		lowered := strings.ToLower(resolved)
+		hasLatest := strings.HasSuffix(lowered, ":latest") || strings.Contains(lowered, ":latest ")
+		hasDigest := strings.Contains(resolved, "@sha256:")
+		hasTag := strings.Contains(strings.Split(resolved, "@")[0], ":")
+		snippet := strings.TrimSpace(lookupRawLine(lines, final.Line))
+		key := func(rule string) string { return fmt.Sprintf("%d:%s", final.Line, rule) }
+		if hasLatest && !flagged[key("dkr-explicit-latest-tag")] {
+			out.Findings = append(out.Findings, DockerfileFinding{
+				RuleID:     "dkr-explicit-latest-tag",
+				Severity:   "high",
+				Confidence: "confirmed",
+				Title:      "FROM resolves to a :latest tag (ARG-substituted)",
+				Fix:        "Replace :latest with an explicit tag (and ideally pin to @sha256:<digest>).",
+				Line:       final.Line,
+				Snippet:    snippet,
+			})
+			flagged[key("dkr-explicit-latest-tag")] = true
+		}
+		if !hasDigest && !hasTag && !flagged[key("dkr-pinned-base-digest")] {
+			out.Findings = append(out.Findings, DockerfileFinding{
+				RuleID:     "dkr-pinned-base-digest",
+				Severity:   "high",
+				Confidence: "confirmed",
+				Title:      "FROM resolves to an untagged image (ARG-substituted)",
+				Fix:        "Pin the final FROM to `image:<tag>@sha256:<digest>` or at least an immutable tag.",
+				Line:       final.Line,
+				Snippet:    snippet,
+			})
+			flagged[key("dkr-pinned-base-digest")] = true
 		}
 	}
 	return out, nil
+}
+
+// buildDockerfileStageIndex returns a closure that maps a 1-based
+// source line number to the AST stage index it belongs to. Lines
+// that precede the first FROM return -1.
+func buildDockerfileStageIndex(df *parsers.Dockerfile) func(int) int {
+	if df == nil || len(df.Lines) == 0 {
+		return func(int) int { return -1 }
+	}
+	return func(line int) int {
+		stage := -1
+		for _, l := range df.Lines {
+			if l.StartLine > line {
+				break
+			}
+			stage = l.Stage
+		}
+		return stage
+	}
+}
+
+// lookupRawLine returns lines[idx-1] when idx is in range, or "".
+// Used to surface the original source line as a finding snippet.
+func lookupRawLine(lines []string, idx int) string {
+	if idx <= 0 || idx > len(lines) {
+		return ""
+	}
+	return strings.TrimRight(lines[idx-1], "\r")
 }
 
 // looksLikeUntaggedFROM returns true if a FROM line has no `:` after
@@ -651,15 +968,18 @@ type PolicyCheckResult struct {
 
 // PolicyCheckFinding is the row shape every scanner is flattened to
 // so policy_check can return a single homogeneous list to its
-// caller.
+// caller. Confidence is threaded through from the underlying scanner
+// finding so a CI consumer can drop low-confidence rows or escalate
+// high-confidence ones without re-running the scanner.
 type PolicyCheckFinding struct {
-	RuleID   string `json:"rule_id"`
-	Severity string `json:"severity"`
-	Title    string `json:"title"`
-	Line     int    `json:"line,omitempty"`
-	Snippet  string `json:"snippet,omitempty"`
-	Package  string `json:"package,omitempty"`
-	Version  string `json:"version,omitempty"`
+	RuleID     string `json:"rule_id"`
+	Severity   string `json:"severity"`
+	Confidence string `json:"confidence,omitempty"`
+	Title      string `json:"title"`
+	Line       int    `json:"line,omitempty"`
+	Snippet    string `json:"snippet,omitempty"`
+	Package    string `json:"package,omitempty"`
+	Version    string `json:"version,omitempty"`
 }
 
 // PolicyCheck dispatches to the appropriate scanner for filePath and
@@ -711,11 +1031,12 @@ func (l *Library) PolicyCheck(filePath, severityFloor string) (*PolicyCheckResul
 		out.FileSize = res.FileSize
 		for _, f := range res.Findings {
 			out.Findings = append(out.Findings, PolicyCheckFinding{
-				RuleID:   "skills-mcp." + f.Category,
-				Severity: f.Severity,
-				Title:    f.Message,
-				Package:  f.Package,
-				Version:  f.Version,
+				RuleID:     "skills-mcp." + f.Category,
+				Severity:   f.Severity,
+				Confidence: f.Confidence,
+				Title:      f.Message,
+				Package:    f.Package,
+				Version:    f.Version,
 			})
 		}
 	case "scan_github_actions":
@@ -726,11 +1047,12 @@ func (l *Library) PolicyCheck(filePath, severityFloor string) (*PolicyCheckResul
 		out.FileSize = res.FileSize
 		for _, f := range res.Findings {
 			out.Findings = append(out.Findings, PolicyCheckFinding{
-				RuleID:   f.RuleID,
-				Severity: f.Severity,
-				Title:    f.Title,
-				Line:     f.Line,
-				Snippet:  f.Snippet,
+				RuleID:     f.RuleID,
+				Severity:   f.Severity,
+				Confidence: f.Confidence,
+				Title:      f.Title,
+				Line:       f.Line,
+				Snippet:    f.Snippet,
 			})
 		}
 	case "scan_dockerfile":
@@ -741,11 +1063,12 @@ func (l *Library) PolicyCheck(filePath, severityFloor string) (*PolicyCheckResul
 		out.FileSize = res.FileSize
 		for _, f := range res.Findings {
 			out.Findings = append(out.Findings, PolicyCheckFinding{
-				RuleID:   f.RuleID,
-				Severity: f.Severity,
-				Title:    f.Title,
-				Line:     f.Line,
-				Snippet:  f.Snippet,
+				RuleID:     f.RuleID,
+				Severity:   f.Severity,
+				Confidence: f.Confidence,
+				Title:      f.Title,
+				Line:       f.Line,
+				Snippet:    f.Snippet,
 			})
 		}
 	}

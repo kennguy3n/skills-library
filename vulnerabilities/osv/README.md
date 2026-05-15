@@ -37,12 +37,18 @@ Run `scripts/ingest-osv.py` to refresh the cache.
 
 ```bash
 # Refresh every ecosystem (downloads ~25-200 MB per archive,
-# extracts a stride-sampled subset).
-python3 scripts/ingest-osv.py --per-ecosystem 30
+# extracts a stride-sampled subset). The default of 500 strikes a
+# balance between coverage and repo size; pass --per-ecosystem 0 to
+# cache the full archive.
+python3 scripts/ingest-osv.py --per-ecosystem 500 --severity-priority
 
 # Cache the full archive for one ecosystem:
 python3 scripts/ingest-osv.py --ecosystem npm --per-ecosystem 0
 ```
+
+The `--severity-priority` flag sorts each archive by qualitative
+severity (CRITICAL/HIGH first) before stride-sampling so a constrained
+`--per-ecosystem` budget still surfaces the highest-impact advisories.
 
 The script downloads each ecosystem's `all.zip` from
 `https://osv-vulnerabilities.storage.googleapis.com/<ECO>/all.zip`,

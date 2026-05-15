@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.7.3",
+  "id": "MAL-2025-26874",
+  "published": "2025-08-14T18:52:04Z",
+  "modified": "2025-08-14T18:52:04Z",
+  "summary": "Malicious code in mulavee (npm)",
+  "details": "The package mulavee was found to contain malicious code.",
+  "affected": [
+    {
+      "package": {
+        "name": "mulavee",
+        "ecosystem": "npm",
+        "purl": "pkg:npm/mulavee"
+      },
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "0"
+            }
+          ]
+        }
+      ],
+      "database_specific": {
+        "source": "https://github.com/ossf/malicious-packages/blob/main/osv/malicious/npm/mulavee/MAL-2025-26874.json"
+      }
+    }
+  ],
+  "database_specific": {
+    "malicious-packages-origins": null
+  },
+  "credits": [
+    {
+      "name": "Amazon Inspector",
+      "contact": [
+        "actran@amazon.com"
+      ],
+      "type": "FINDER"
+    }
+  ],
+  "last_updated": "2025-08-14"
+}

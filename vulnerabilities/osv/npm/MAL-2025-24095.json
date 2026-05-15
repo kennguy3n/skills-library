@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.7.3",
+  "id": "MAL-2025-24095",
+  "published": "2025-08-14T18:52:04Z",
+  "modified": "2025-08-14T18:52:04Z",
+  "summary": "Malicious code in juno-venus-rate-limiter-tectonophysics (npm)",
+  "details": "The package juno-venus-rate-limiter-tectonophysics was found to contain malicious code.",
+  "affected": [
+    {
+      "package": {
+        "name": "juno-venus-rate-limiter-tectonophysics",
+        "ecosystem": "npm",
+        "purl": "pkg:npm/juno-venus-rate-limiter-tectonophysics"
+      },
+      "ranges": [
+        {
+          "type": "SEMVER",
+          "events": [
+            {
+              "introduced": "0"
+            }
+          ]
+        }
+      ],
+      "database_specific": {
+        "source": "https://github.com/ossf/malicious-packages/blob/main/osv/malicious/npm/juno-venus-rate-limiter-tectonophysics/MAL-2025-24095.json"
+      }
+    }
+  ],
+  "database_specific": {
+    "malicious-packages-origins": null
+  },
+  "credits": [
+    {
+      "name": "Amazon Inspector",
+      "contact": [
+        "actran@amazon.com"
+      ],
+      "type": "FINDER"
+    }
+  ],
+  "last_updated": "2025-08-14"
+}
