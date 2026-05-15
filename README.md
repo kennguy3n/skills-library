@@ -7,14 +7,20 @@
 [![DLP patterns](https://img.shields.io/badge/DLP%20patterns-74-red)](./skills/secret-detection/rules/dlp_patterns.json)
 [![Platforms](https://img.shields.io/badge/platforms-win%20%7C%20mac%20%7C%20linux-green)](#platform-support)
 
-> **Security knowledge for AI-assisted coding — open, signed, offline-first.**
+> **Security knowledge for AI-assisted coding — open, offline-first, with signed release support planned.**
 
 **secure-code** is a structured, machine-readable library of security skills and
 supply-chain vulnerability intelligence designed to be embedded directly into AI
 coding assistants — Claude Code, Cursor, GitHub Copilot, Codex, Windsurf,
-Cline / OpenCode, Antigravity, and Devin. It ships bundled rules offline and
-supports incremental, **Ed25519-signed** remote updates for new vulnerabilities,
-detection patterns, and best practices.
+Cline / OpenCode, Antigravity, and Devin. It ships bundled rules offline and is
+designed for incremental, **Ed25519-signed** remote updates for new
+vulnerabilities, detection patterns, and best practices. The signing pipeline
+(`cmd/skills-check/internal/manifest`, `release.yml`, `sign-and-publish.yml`)
+is implemented end-to-end; the first publicly signed release is the upcoming
+`v0.1.0` cut. Releases prior to that ship the same bytes with a `"signature":
+"TBD"` placeholder and must be verified with `--checksums-only` against the
+committed `manifest.json`. See [SIGNING.md](./SIGNING.md) for the
+draft → sign → verify → publish flow.
 
 Maintained by **[ShieldNet360](https://www.shieldnet360.com)** and released under
 the [MIT license](./LICENSE) — free to fork, embed, and ship in commercial products.
@@ -69,7 +75,7 @@ generation*, before the diff ever touches your repo.
 | Area | Path | Description |
 |------|------|-------------|
 | **Skills** | [`skills/`](./skills) | 28 self-contained `SKILL.md` manifests with rules, patterns, and checklists. Each skill is a security capability the AI tool consults at generation time. |
-| **Vulnerability database** | [`vulnerabilities/`](./vulnerabilities) | 10-year (2015-2025) curated supply-chain corpus: 9 ecosystems (npm, PyPI, crates, Go, RubyGems, Maven, NuGet, GitHub Actions, Docker Hub), 71 documented typosquats, 58 code-relevant CVE detection patterns, and dependency-confusion rules. Delta-updatable. |
+| **Vulnerability database** | [`vulnerabilities/`](./vulnerabilities) | 10-year (2015-2025) curated supply-chain corpus across **9 ecosystems** for the data layer (npm, PyPI, crates, Go, RubyGems, Maven, NuGet, GitHub Actions, Docker Hub). Lockfile-parser scanner coverage today is the **7 package-manager ecosystems** (npm, PyPI, Go, crates, Maven, NuGet, RubyGems); GitHub Actions and Docker Hub are surfaced through the dedicated `scan_github_actions` / `scan_dockerfile` MCP tools and IOC pattern files, not lockfile parsing. 71 documented typosquats, 58 code-relevant CVE detection patterns, dependency-confusion rules, plus an **offline OSV cache** of ~30 advisories per ecosystem (210 total) — a sampled subset for offline lookups, not comprehensive vulnerability intelligence; refresh weekly via `scripts/ingest-osv.py` for a fuller view. Delta-updatable. |
 | **Detection rules** | [`rules/`](./rules) | Sigma-format detection rules for AWS, GCP, Azure, K8s, Linux, macOS, Windows, O365, Google Workspace, Salesforce, and Slack — designed to complement the prevention-time rules in `skills/`. |
 | **Compliance maps** | [`compliance/`](./compliance) | OWASP Top 10, CWE Top 25, SANS Top 25 framework mappings plus developer-facing compliance coverage maps (SOC 2, HIPAA, PCI-DSS, FedRAMP). |
 | **Dictionaries** | [`dictionaries/`](./dictionaries) | Security term definitions, CWE catalogue, MITRE ATT&CK technique references — context the AI needs to reason about security. |
@@ -148,7 +154,10 @@ cp secure-code/dist/SECURITY-SKILLS.md /your-project/SECURITY-SKILLS.md
 ## CLI install and routine updates
 
 Vulnerability data and detection patterns change every week. The CLI keeps your
-local copy current with incremental, **Ed25519-signed** updates.
+local copy current with incremental remote updates, with **Ed25519** signature
+verification enforced once the upcoming `v0.1.0` signed release ships (the
+release pipeline is implemented; the in-repo `manifest.json` carries a
+`"signature": "TBD"` placeholder until then — see [SIGNING.md](./SIGNING.md)).
 
 ### Install (all platforms)
 
@@ -273,8 +282,13 @@ secure-code/
 │   │   │                                #   github-actions/docker)
 │   │   ├── typosquat-db/                #   ~270 known typosquats (curated + derived)
 │   │   └── dependency-confusion/        #   internal-namespace patterns
-│   ├── osv/                             #   per-ecosystem OSV.dev cache (refreshed
-│   │                                    #   weekly via scripts/ingest-osv.py)
+│   ├── osv/                             #   per-ecosystem OSV.dev cache —
+│   │                                    #   sampled subset (~30 advisories per
+│   │                                    #   ecosystem, 210 total) for offline
+│   │                                    #   lookups, not comprehensive
+│   │                                    #   vulnerability intelligence;
+│   │                                    #   refresh weekly via
+│   │                                    #   scripts/ingest-osv.py
 │   └── cve/
 │       └── code-relevant/               #   58 CVE → code-pattern mappings (2015-2025)
 ├── rules/                               # Sigma detection rules

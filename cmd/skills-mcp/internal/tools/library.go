@@ -79,6 +79,15 @@ type Library struct {
 	osvMu    sync.Mutex
 	osvIndex map[string]*osvIndexFile
 
+	// osvSeverityMu protects osvSeverity, which memoises the severity
+	// bucket computed from each per-advisory OSV record file. The
+	// key is "<ecosystem>/<file>" matching the index entry's File
+	// field. An empty string value means the record carries no
+	// translatable severity — callers should fall back to a
+	// human-visible default (typically "medium").
+	osvSeverityMu sync.Mutex
+	osvSeverity   map[string]string
+
 	// allowedRoots, when non-nil and non-empty, restricts ScanSecrets
 	// file_path inputs to paths under one of these absolute,
 	// symlink-resolved directories. The skills-mcp binary populates
@@ -108,9 +117,10 @@ func NewLibrary(root string) (*Library, error) {
 		return nil, fmt.Errorf("library root %q has no skills/ subdirectory: %w", abs, err)
 	}
 	return &Library{
-		root:      abs,
-		vulnCache: map[string]*vulnFile{},
-		osvIndex:  map[string]*osvIndexFile{},
+		root:        abs,
+		vulnCache:   map[string]*vulnFile{},
+		osvIndex:    map[string]*osvIndexFile{},
+		osvSeverity: map[string]string{},
 	}, nil
 }
 
@@ -257,6 +267,13 @@ type LookupVulnerabilityResult struct {
 // callers don't need (full CVSS payloads, PoC code, etc); we keep
 // the cache compact by including only the fields downstream tools
 // (skills-check, IDE plugins) actually read.
+//
+// Severity is one of "critical", "high", "medium", "low", or "".
+// Empty means the underlying OSV record carries no structured
+// severity (neither database_specific.severity nor a parseable
+// CVSS v3 vector). Callers that surface severity to humans should
+// fall back to "medium" for an empty value — see the
+// scan_dependencies handler in library_scanners.go.
 type OSVAdvisory struct {
 	ID        string   `json:"id"`
 	Package   string   `json:"package,omitempty"`
@@ -266,6 +283,7 @@ type OSVAdvisory struct {
 	Published string   `json:"published,omitempty"`
 	Modified  string   `json:"modified,omitempty"`
 	Reference string   `json:"reference,omitempty"`
+	Severity  string   `json:"severity,omitempty"`
 }
 
 // osvIndexEntry mirrors the per-package entries in
@@ -275,6 +293,13 @@ type osvIndexEntry struct {
 	File    string   `json:"file"`
 	Summary string   `json:"summary"`
 	Aliases []string `json:"aliases"`
+	// Severity, when present, is a pre-computed severity bucket
+	// ("critical"/"high"/"medium"/"low") derived at index-build
+	// time from database_specific.severity or the CVSS vector on
+	// the OSV record. Older indexes generated before this field
+	// was added omit it; in that case lookupOSV computes the
+	// severity lazily from the on-disk record.
+	Severity string `json:"severity,omitempty"`
 }
 
 type osvIndexFile struct {
@@ -390,10 +415,40 @@ func (l *Library) lookupOSV(eco, pkg string) []OSVAdvisory {
 			Aliases:   e.Aliases,
 			Summary:   e.Summary,
 			Reference: "https://osv.dev/vulnerability/" + e.ID,
+			Severity:  l.osvSeverityFor(eco, e),
 		}
 		out = append(out, adv)
 	}
 	return out
+}
+
+// osvSeverityFor returns the severity bucket for one OSV advisory.
+// It prefers the index entry's pre-computed value (set by
+// scripts/ingest-osv.py at index-build time) and otherwise falls
+// back to reading the per-advisory JSON record from disk via
+// resolveOSVSeverity. The lazy on-disk lookup is cached on the
+// Library so each advisory's record is opened at most once across
+// the process lifetime.
+func (l *Library) osvSeverityFor(eco string, e osvIndexEntry) string {
+	if e.Severity != "" {
+		return normaliseSeverity(e.Severity)
+	}
+	if e.File == "" {
+		return ""
+	}
+	cacheKey := eco + "/" + e.File
+	l.osvSeverityMu.Lock()
+	if sev, ok := l.osvSeverity[cacheKey]; ok {
+		l.osvSeverityMu.Unlock()
+		return sev
+	}
+	l.osvSeverityMu.Unlock()
+	path := filepath.Join(l.root, "vulnerabilities", "osv", eco, e.File)
+	sev := resolveOSVSeverity(path)
+	l.osvSeverityMu.Lock()
+	l.osvSeverity[cacheKey] = sev
+	l.osvSeverityMu.Unlock()
+	return sev
 }
 
 func (l *Library) loadVulnFile(eco string) (*vulnFile, error) {

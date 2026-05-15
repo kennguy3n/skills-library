@@ -1,6 +1,7 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-05-14T16:13:01Z",
+  "last_updated": "2026-05-15",
+  "generated_at": "2026-05-15T04:37:05Z",
   "by_package": {
     "invokeai": [
       {
@@ -9,7 +10,8 @@
         "summary": "InvokeAI Arbitrary File Deletion vulnerability",
         "aliases": [
           "CVE-2024-11042"
-        ]
+        ],
+        "severity": "critical"
       }
     ],
     "nnabla": [
@@ -20,7 +22,8 @@
         "aliases": [
           "CVE-2019-10844",
           "PYSEC-2019-107"
-        ]
+        ],
+        "severity": "critical"
       }
     ],
     "ansible-runner": [
@@ -31,7 +34,8 @@
         "aliases": [
           "CVE-2021-3702",
           "PYSEC-2022-43068"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "eventlet": [
@@ -42,7 +46,8 @@
         "aliases": [
           "CVE-2021-21419",
           "PYSEC-2021-12"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "contentful": [
@@ -52,7 +57,8 @@
         "summary": "Cross-site scripting in Contentful",
         "aliases": [
           "CVE-2020-13258"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "trytond": [
@@ -64,7 +70,8 @@
           "CVE-2016-1242",
           "PYSEC-2016-13",
           "PYSEC-2016-41"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-jpr7-8rxm-4vgx",
@@ -74,7 +81,8 @@
           "CVE-2016-1242",
           "PYSEC-2016-13",
           "PYSEC-2016-41"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-jpr7-8rxm-4vgx",
@@ -84,7 +92,8 @@
           "CVE-2016-1242",
           "PYSEC-2016-13",
           "PYSEC-2016-41"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-jpr7-8rxm-4vgx",
@@ -94,7 +103,8 @@
           "CVE-2016-1242",
           "PYSEC-2016-13",
           "PYSEC-2016-41"
-        ]
+        ],
+        "severity": "medium"
       },
       {
         "id": "GHSA-jpr7-8rxm-4vgx",
@@ -104,7 +114,8 @@
           "CVE-2016-1242",
           "PYSEC-2016-13",
           "PYSEC-2016-41"
-        ]
+        ],
+        "severity": "medium"
       }
     ],
     "praisonaiagents": [
@@ -114,7 +125,8 @@
         "summary": "PraisonAI has an SSRF bypass",
         "aliases": [
           "CVE-2026-44335"
-        ]
+        ],
+        "severity": "high"
       }
     ],
     "tensorflow": [
@@ -128,7 +140,8 @@
           "PYSEC-2021-406",
           "PYSEC-2021-623",
           "PYSEC-2021-821"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "GHSA-vwhq-49r4-gj9v",
@@ -140,7 +153,8 @@
           "PYSEC-2021-406",
           "PYSEC-2021-623",
           "PYSEC-2021-821"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "GHSA-vwhq-49r4-gj9v",
@@ -152,7 +166,8 @@
           "PYSEC-2021-406",
           "PYSEC-2021-623",
           "PYSEC-2021-821"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "PYSEC-2021-188",
@@ -178,7 +193,8 @@
           "PYSEC-2021-406",
           "PYSEC-2021-623",
           "PYSEC-2021-821"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "GHSA-vwhq-49r4-gj9v",
@@ -190,7 +206,8 @@
           "PYSEC-2021-406",
           "PYSEC-2021-623",
           "PYSEC-2021-821"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "GHSA-vwhq-49r4-gj9v",
@@ -202,7 +219,8 @@
           "PYSEC-2021-406",
           "PYSEC-2021-623",
           "PYSEC-2021-821"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "PYSEC-2022-93",
@@ -227,7 +245,8 @@
           "PYSEC-2021-406",
           "PYSEC-2021-623",
           "PYSEC-2021-821"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "GHSA-vwhq-49r4-gj9v",
@@ -239,7 +258,8 @@
           "PYSEC-2021-406",
           "PYSEC-2021-623",
           "PYSEC-2021-821"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "GHSA-vwhq-49r4-gj9v",
@@ -251,7 +271,8 @@
           "PYSEC-2021-406",
           "PYSEC-2021-623",
           "PYSEC-2021-821"
-        ]
+        ],
+        "severity": "high"
       },
       {
         "id": "PYSEC-2021-774",
@@ -428,6 +449,5 @@
         ]
       }
     ]
-  },
-  "last_updated": "2026-05-14"
+  }
 }

@@ -183,18 +183,27 @@ func (l *Library) ScanDependencies(filePath string) (*ScanDependenciesResult, er
 			})
 		}
 		// OSV cache hits surface every advisory osv.dev knows for
-		// this package, regardless of CVE alias. Severity is left
-		// as "medium" because the OSV record itself has no single
-		// canonical severity (CVSS payloads sit under a structured
-		// "severity" array we don't translate yet).
+		// this package, regardless of CVE alias. Severity is
+		// translated from the OSV record's `severity[]` array (CVSS
+		// v3.x base score) or its `database_specific.severity`
+		// qualitative band (GHSA-style LOW/MODERATE/HIGH/CRITICAL),
+		// with the higher-confidence database_specific signal taking
+		// precedence. Records that have neither — typical of MAL-*
+		// malicious-package and some RUSTSEC advisories — fall back
+		// to "medium" so the finding still surfaces with a sensible
+		// default instead of being dropped.
 		for _, adv := range inner.OSVAdvisories {
 			refs := []string{adv.Reference}
+			severity := adv.Severity
+			if severity == "" {
+				severity = "medium"
+			}
 			out.Findings = append(out.Findings, DependencyFinding{
 				Package:    dep.Name,
 				Version:    dep.Version,
 				Ecosystem:  dep.Ecosystem,
 				Source:     dep.Source,
-				Severity:   "medium",
+				Severity:   severity,
 				Category:   "osv-advisory",
 				Message:    fmt.Sprintf("%s: %s", adv.ID, adv.Summary),
 				References: refs,
