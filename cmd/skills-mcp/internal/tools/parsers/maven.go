@@ -110,8 +110,18 @@ type mavenCoord struct {
 //   - parent is <dependencies>
 //   - grandparent is either <project> or <dependencyManagement>
 //
-// Anything else (e.g. <plugin><dependencies><dependency>) is
-// build-tooling configuration and intentionally rejected.
+// Anything else is intentionally rejected. In particular this
+// drops two shapes that the malicious-package and typosquat
+// scanners do not need to inspect:
+//
+//   - <build><plugins><plugin><dependencies><dependency>: deps
+//     scoped to a build-tooling plugin, not the application.
+//   - <profiles><profile>[/dependencyManagement]/dependencies/dependency:
+//     deps that are conditionally activated by a Maven profile.
+//     These can ship at runtime depending on which profile is
+//     active at build time, so a future enhancement could opt in
+//     by widening the grandparent check; for now they're a
+//     deliberate blind spot rather than a silent bug.
 func isRuntimeDependency(stack []string) bool {
 	if len(stack) < 3 {
 		return false

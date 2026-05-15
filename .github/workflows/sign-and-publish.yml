@@ -49,6 +49,14 @@ jobs:
           # not the workflow's default branch. The embedded public
           # key (and any signing-related code) MUST come from the
           # exact source tree the release was cut from.
+          #
+          # `inputs.tag` is interpolated directly here because `with:`
+          # parameters are evaluated by the actions runner as YAML
+          # inputs, never handed to a shell. The script-injection
+          # class addressed by the `env: TAG: ${{ inputs.tag }}`
+          # indirection in the shell `run:` steps below does not
+          # apply to action inputs. Worst case a bad tag value fails
+          # `actions/checkout@v4` with a "ref not found" error.
           ref: ${{ inputs.tag }}
 
       - name: Set up Go
