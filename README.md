@@ -87,7 +87,7 @@ generation*, before the diff ever touches your repo.
 | Area | Path | Description |
 |------|------|-------------|
 | **Skills** | [`skills/`](./skills) | 28 self-contained `SKILL.md` manifests with rules, patterns, and checklists. Each skill is a security capability the AI tool consults at generation time. |
-| **Vulnerability database** | [`vulnerabilities/`](./vulnerabilities) | 10-year (2015-2025) curated supply-chain corpus across **9 ecosystems** for the data layer (npm, PyPI, crates, Go, RubyGems, Maven, NuGet, GitHub Actions, Docker Hub). Lockfile-parser scanner coverage today is the **7 package-manager ecosystems** (npm, PyPI, Go, crates, Maven, NuGet, RubyGems); GitHub Actions and Docker Hub are surfaced through the dedicated `scan_github_actions` / `scan_dockerfile` MCP tools and IOC pattern files, not lockfile parsing. 71 documented typosquats, 58 code-relevant CVE detection patterns, dependency-confusion rules, plus an **offline OSV cache** of ~30 advisories per ecosystem (210 total) — a sampled subset for offline lookups, not comprehensive vulnerability intelligence; refresh weekly via `scripts/ingest-osv.py` for a fuller view. Delta-updatable. |
+| **Vulnerability database** | [`vulnerabilities/`](./vulnerabilities) | 10-year (2015-2025) curated supply-chain corpus across **9 ecosystems** for the malicious-packages layer (npm, PyPI, crates, Go, RubyGems, Maven, NuGet, GitHub Actions, Docker Hub). Lockfile-parser scanner coverage today is the **7 package-manager ecosystems** (npm, PyPI, Go, crates, Maven, NuGet, RubyGems); GitHub Actions and Docker Hub are surfaced through the dedicated `scan_github_actions` / `scan_dockerfile` MCP tools and IOC pattern files, not lockfile parsing. 71 documented typosquats, 58 code-relevant CVE detection patterns, dependency-confusion rules, plus an **offline OSV cache** of **7,271 advisories across 10 ecosystems** (composer, crates, go, maven, npm, nuget, pub, pypi, rubygems, swift) — a sampled subset (default stride target 500/ecosystem) for offline lookups, not comprehensive vulnerability intelligence; refresh via `scripts/ingest-osv.py` (`--per-ecosystem 0` for full archive). See [DATA_QUALITY.md](./DATA_QUALITY.md) for current per-ecosystem counts. Delta-updatable. |
 | **Detection rules** | [`rules/`](./rules) | Sigma-format detection rules for AWS, GCP, Azure, K8s, Linux, macOS, Windows, O365, Google Workspace, Salesforce, and Slack — designed to complement the prevention-time rules in `skills/`. |
 | **Compliance maps** | [`compliance/`](./compliance) | OWASP Top 10, CWE Top 25, SANS Top 25 framework mappings plus developer-facing compliance coverage maps (SOC 2, HIPAA, PCI-DSS, FedRAMP). |
 | **Dictionaries** | [`dictionaries/`](./dictionaries) | Security term definitions, CWE catalogue, MITRE ATT&CK technique references — context the AI needs to reason about security. |
@@ -295,12 +295,14 @@ secure-code/
 │   │   ├── typosquat-db/                #   ~270 known typosquats (curated + derived)
 │   │   └── dependency-confusion/        #   internal-namespace patterns
 │   ├── osv/                             #   per-ecosystem OSV.dev cache —
-│   │                                    #   sampled subset (~30 advisories per
-│   │                                    #   ecosystem, 210 total) for offline
+│   │                                    #   sampled subset (~7,271 advisories
+│   │                                    #   across 10 ecosystems: composer,
+│   │                                    #   crates, go, maven, npm, nuget, pub,
+│   │                                    #   pypi, rubygems, swift) for offline
 │   │                                    #   lookups, not comprehensive
 │   │                                    #   vulnerability intelligence;
-│   │                                    #   refresh weekly via
-│   │                                    #   scripts/ingest-osv.py
+│   │                                    #   refresh via scripts/ingest-osv.py
+│   │                                    #   (see DATA_QUALITY.md for counts)
 │   └── cve/
 │       └── code-relevant/               #   58 CVE → code-pattern mappings (2015-2025)
 ├── rules/                               # Sigma detection rules
@@ -343,7 +345,14 @@ secure-code/
 │   ├── python/                          #   skillslib Python package
 │   └── typescript/                      #   skillslib npm package
 ├── locales/                             # Translated SKILL.md (informational)
-│   ├── es/ fr/ de/                      #   secret-detection, supply-chain, infrastructure
+│   ├── es/ fr/ de/ ar/ zh-Hans/ pt-BR/  #   28 SKILL.md per locale; the 3 flagship
+│   │                                    #   skills (secret-detection, supply-chain,
+│   │                                    #   infrastructure) under es/ fr/ de/ are
+│   │                                    #   translated; the remaining 25 + every
+│   │                                    #   ar/ zh-Hans/ pt-BR/ cell is a stub with
+│   │                                    #   a TRANSLATION PENDING banner over the
+│   │                                    #   English original (regenerate via
+│   │                                    #   scripts/generate-locale-stubs.py)
 │   └── README.md                        #   translation policy + locale audit reference
 ├── manifest.json                        # Root manifest for signed remote updates
 └── .github/workflows/
@@ -595,11 +604,25 @@ console.log(extract(s, "compact"));
 
 ## Localization
 
-Translated copies of the top 3 skills (Spanish, French, German) live under
-[`locales/`](./locales). Translations are informational — the canonical English
-file under `skills/<id>/SKILL.md` remains the source of truth for the validator
-and the IDE config generators. A full audit of language coverage gaps for top-10
-world languages, the GCC region, Southeast Asia, and Germany is in
+Translated copies of the SKILL.md files live under [`locales/`](./locales).
+Tier 1 coverage today: **6 locales** (`es`, `fr`, `de`, `ar`, `zh-Hans`,
+`pt-BR`) × **28 skills**, of which 9 cells are real translations (the three
+flagship skills `secret-detection`, `supply-chain-security`,
+`infrastructure-security` under `es/`, `fr/`, `de/`) and the remaining 159
+cells are stubs that prepend a `> ⚠️ TRANSLATION PENDING` banner over the
+untranslated English body. Run [`scripts/generate-locale-stubs.py`](./scripts/generate-locale-stubs.py)
+to regenerate the stubs after adding a skill or a locale.
+
+For the secret-detection scanner there is also a multilingual hotword
+sidecar at [`skills/secret-detection/rules/dlp_patterns.locales.json`](./skills/secret-detection/rules/dlp_patterns.locales.json)
+that the loader merges into the live hotword set at compile time so the
+scoring path can match locale-language variable names (e.g. `contraseña`,
+`passwort`) in non-English codebases.
+
+Translations remain informational — the canonical English file under
+`skills/<id>/SKILL.md` is the source of truth for the validator and the IDE
+config generators. A full audit of language coverage gaps for top-10 world
+languages, the GCC region, Southeast Asia, and Germany is in
 [`docs/LOCALE_AUDIT.md`](./docs/LOCALE_AUDIT.md).
 
 ## Contributing
