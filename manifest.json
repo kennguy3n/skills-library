@@ -1820,8 +1820,8 @@
     },
     {
       "path": "skills/secret-detection/tests/corpus.json",
-      "sha256": "43988792ee8adb6667701bdb1d9ba04ab43ea78e298ed8375675b59f01348d5a",
-      "size": 5875,
+      "sha256": "d994230978845a6c60211028b0dbbd5fd3d1a12e289aac2a299771e004029924",
+      "size": 58412,
       "action": "unchanged"
     },
     {
