@@ -1,6 +1,7 @@
 ---
 id: infrastructure-security
 language: fr
+source_revision: "fbb3a823a2a0"
 version: "1.0.0"
 title: "Sécurité de l'infrastructure"
 description: "Durcir l'infrastructure : buckets S3 publics, security groups ouverts, IAM permissif, secrets en clair"

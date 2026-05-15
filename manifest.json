@@ -1420,8 +1420,8 @@
     },
     {
       "path": "locales/de/infrastructure-security/SKILL.md",
-      "sha256": "e5ea51d3f45433192f7cbd5a6a63eab39a5633d87d11760b61ca4e89a8afa994",
-      "size": 2035,
+      "sha256": "bb847906a1f88819d2da1338f9090b487b47da6fb2d1950f6b14c6100ee34145",
+      "size": 2067,
       "language": "de",
       "action": "unchanged"
     },
@@ -1462,8 +1462,8 @@
     },
     {
       "path": "locales/de/secret-detection/SKILL.md",
-      "sha256": "07d5326b066724f3906e25e124abc1d1d866ee2bd95260cf159c35487bab292c",
-      "size": 2797,
+      "sha256": "f0e406a2ab9e89fa2d94d48d3c7b7ae71096d6edfbaf50300725439b0f45bc59",
+      "size": 2829,
       "language": "de",
       "action": "unchanged"
     },
@@ -1490,8 +1490,8 @@
     },
     {
       "path": "locales/de/supply-chain-security/SKILL.md",
-      "sha256": "86b99f699de3585b653eb6b7be1808ea2dd1cf285f2009af3a042d0872dd178a",
-      "size": 2296,
+      "sha256": "0b9b62178dfc9ff7398ce8b5e6f0bf5f81949a921b2e01eb0c712d3e63b8333e",
+      "size": 2328,
       "language": "de",
       "action": "unchanged"
     },
@@ -1616,8 +1616,8 @@
     },
     {
       "path": "locales/es/infrastructure-security/SKILL.md",
-      "sha256": "4c7e089b4388af4f13fd4368df992b4ef5d2f5e72d451a37d51087c095a34b30",
-      "size": 2034,
+      "sha256": "2f5cdb0c62c0b77a8cf4a918c4a288f2a5bd7757728f94feed68eb91160dd8f6",
+      "size": 2066,
       "language": "es",
       "action": "unchanged"
     },
@@ -1658,8 +1658,8 @@
     },
     {
       "path": "locales/es/secret-detection/SKILL.md",
-      "sha256": "c51bb41331725a76522859856649b13cd9e1d7a06b6f327db2640ba56ef9f25d",
-      "size": 2741,
+      "sha256": "ecea5e0d9e8d73bb71012134f452d1f898829fdce5bc5b1a2db32236b6e04895",
+      "size": 2773,
       "language": "es",
       "action": "unchanged"
     },
@@ -1686,8 +1686,8 @@
     },
     {
       "path": "locales/es/supply-chain-security/SKILL.md",
-      "sha256": "49aecf73b8e4e3e45d2850da9a3c0bba3986bf79d162b5d54e40031f359f979f",
-      "size": 2468,
+      "sha256": "b4a9aa8c695b158cd31a6a61ad99cc1f494870ce8a483aeddb92c3a43077d059",
+      "size": 2500,
       "language": "es",
       "action": "unchanged"
     },
@@ -1812,8 +1812,8 @@
     },
     {
       "path": "locales/fr/infrastructure-security/SKILL.md",
-      "sha256": "86298d8be624ed001c3aa49668dd732281ccfcd226b3e79c898a6f1612658c67",
-      "size": 2010,
+      "sha256": "1e3d884348377a8de0de5385c5acfcccec481ddb90928a71e853a757448bde72",
+      "size": 2042,
       "language": "fr",
       "action": "unchanged"
     },
@@ -1854,8 +1854,8 @@
     },
     {
       "path": "locales/fr/secret-detection/SKILL.md",
-      "sha256": "6f1ae9ebdec8eb7d2fc5f8d9e2fc3533a1094290d79227fe9447baac20a1415a",
-      "size": 2779,
+      "sha256": "3dd84f9254e542f665651a667d73fdd2e01ac6a9c58591b8f04bf5badd73f3cd",
+      "size": 2811,
       "language": "fr",
       "action": "unchanged"
     },
@@ -1882,8 +1882,8 @@
     },
     {
       "path": "locales/fr/supply-chain-security/SKILL.md",
-      "sha256": "04313e235aa1cda7b5a7d74fe86752688c6d4c1626aee3064471cd372b4bf914",
-      "size": 2447,
+      "sha256": "80fe7ea61b62704b1557858fa319ac6bf319e17f74baf5939237be98c26734dd",
+      "size": 2479,
       "language": "fr",
       "action": "unchanged"
     },
@@ -1893,6 +1893,48 @@
       "size": 6199,
       "language": "fr",
       "action": "unchanged"
+    },
+    {
+      "path": "locales/glossary.README.md",
+      "sha256": "3ed9cd00cc85fbda8e01c743d93229b4025d80376ea8f97a81452a8afa86449c",
+      "size": 1696,
+      "action": "added"
+    },
+    {
+      "path": "locales/glossary.ar.yaml",
+      "sha256": "9f9efb57bb665317e906054f798d4e22b29311c366487583342136bf28db4cc0",
+      "size": 2553,
+      "action": "added"
+    },
+    {
+      "path": "locales/glossary.de.yaml",
+      "sha256": "1fa1e46b82af6a6d8f8cb6fbedf8f6eb7fc6f691e686f14f57bd20710cd5eabb",
+      "size": 2264,
+      "action": "added"
+    },
+    {
+      "path": "locales/glossary.es.yaml",
+      "sha256": "717bd100504898c601d8a5de29a70035b818af9acef3c704a769b7196f8b352f",
+      "size": 2171,
+      "action": "added"
+    },
+    {
+      "path": "locales/glossary.fr.yaml",
+      "sha256": "985276d461d54e05afa4d2fab0e0a920d0246e860022abd0013fe721a540e21c",
+      "size": 2132,
+      "action": "added"
+    },
+    {
+      "path": "locales/glossary.pt-BR.yaml",
+      "sha256": "9e3203a3d3f2f4cb195a77002d858803515a77ffa0c7ccbbe22e4b7c17182baf",
+      "size": 2152,
+      "action": "added"
+    },
+    {
+      "path": "locales/glossary.zh-Hans.yaml",
+      "sha256": "66fe18471cc5f068fef88a695a70e0ba3dbce1c9fbe004defa14a2362568a312",
+      "size": 2096,
+      "action": "added"
     },
     {
       "path": "locales/pt-BR/api-security/SKILL.md",

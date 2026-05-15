@@ -1,6 +1,7 @@
 ---
 id: infrastructure-security
 language: es
+source_revision: "fbb3a823a2a0"
 version: "1.0.0"
 title: "Seguridad de infraestructura"
 description: "Endurecer la infraestructura: buckets S3 públicos, security groups abiertos, IAM permisivo, secretos en código"

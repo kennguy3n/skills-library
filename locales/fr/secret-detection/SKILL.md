@@ -1,6 +1,7 @@
 ---
 id: secret-detection
 language: fr
+source_revision: "afe376a81d76"
 version: "1.3.0"
 title: "Détection de secrets"
 description: "Détecter et empêcher les secrets, clés d'API, jetons et identifiants codés en dur dans le code"

@@ -1,6 +1,7 @@
 ---
 id: secret-detection
 language: de
+source_revision: "afe376a81d76"
 version: "1.3.0"
 title: "Geheimnisse erkennen"
 description: "Hardcodierte Geheimnisse, API-Schlüssel, Token und Anmeldedaten im Code erkennen und verhindern"

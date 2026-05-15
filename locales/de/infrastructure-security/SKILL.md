@@ -1,6 +1,7 @@
 ---
 id: infrastructure-security
 language: de
+source_revision: "fbb3a823a2a0"
 version: "1.0.0"
 title: "Infrastruktursicherheit"
 description: "Infrastruktur härten: öffentliche S3-Buckets, offene Security Groups, zu großzügige IAM-Policies, Klartext-Geheimnisse"

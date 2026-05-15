@@ -381,7 +381,7 @@ def _render_report(rows: list[FixtureResult]) -> str:
 
 def _evaluate(
     scanners: list[str], skills_mcp: pathlib.Path, verbose: bool
-) -> list[FixtureResult]:
+) -> tuple[list[FixtureResult], list[tuple[str, str, str]]]:
     # Allow the MCP scanner to read every fixture directory + the repo
     # root (some fixtures reference shared data, e.g. cve_patterns.json).
     allowed_roots = [REPO_ROOT]
@@ -391,6 +391,10 @@ def _evaluate(
             allowed_roots.append(d)
     client = MCPClient(skills_mcp, allowed_roots)
     rows: list[FixtureResult] = []
+    # (scanner, fixture-rel-path, reason) for fixtures the harness could
+    # not evaluate. Returned alongside `rows` so callers can surface them
+    # rather than silently dropping them from precision / recall counts.
+    skipped: list[tuple[str, str, str]] = []
     try:
         for scanner in scanners:
             for input_path, expected_path in _iter_fixtures(scanner):
@@ -400,8 +404,9 @@ def _evaluate(
                 try:
                     findings = _run_scanner(client, scanner, input_path)
                 except _SkipFixture as exc:
+                    rel = input_path.relative_to(REPO_ROOT).as_posix()
+                    skipped.append((scanner, rel, str(exc)))
                     if verbose:
-                        rel = input_path.relative_to(REPO_ROOT).as_posix()
                         print(f"    [{scanner}] SKIP {rel}: {exc}")
                     continue
                 tp, fp, fn, missing, unexpected = _score(scanner, expected, findings)
@@ -430,7 +435,7 @@ def _evaluate(
                         print(f"        missing: {missing}")
     finally:
         client.close()
-    return rows
+    return rows, skipped
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -461,6 +466,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--no-check", dest="check", action="store_false")
     parser.set_defaults(check=True)
+    parser.add_argument(
+        "--strict-skips",
+        action="store_true",
+        help="Treat any skipped fixture as a failure (exit non-zero). "
+        "Useful for CI runs where silent drops should not be allowed.",
+    )
     args = parser.parse_args(argv)
 
     scanners = args.scanner or sorted(SCANNERS.keys())
@@ -473,7 +484,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"skills-mcp binary not found: {binary}", file=sys.stderr)
         return 1
 
-    rows = _evaluate(scanners, binary, args.verbose)
+    rows, skipped = _evaluate(scanners, binary, args.verbose)
     report = _render_report(rows)
 
     out_path = pathlib.Path(args.out)
@@ -481,9 +492,29 @@ def main(argv: list[str] | None = None) -> int:
     out_path.write_text(report)
     print(f"==> wrote {out_path}")
 
+    if skipped:
+        # Always surface skipped fixtures, even when --verbose is off — a
+        # silent drop is exactly the kind of thing that hides a regression
+        # (e.g. a fixture stops being recognised by the parser and no longer
+        # contributes to precision / recall). The detail line above only
+        # prints under --verbose.
+        print(
+            f"warn: {len(skipped)} fixture(s) skipped and excluded from "
+            f"precision / recall:",
+            file=sys.stderr,
+        )
+        for scanner, rel, reason in skipped:
+            print(f"  [{scanner}] {rel}: {reason}", file=sys.stderr)
+
     failures = [r for r in rows if r.fn > 0]
     if args.check and failures:
         print(f"FAIL: {len(failures)} fixture(s) had missing expected findings")
+        return 1
+    if args.strict_skips and skipped:
+        print(
+            f"FAIL: --strict-skips and {len(skipped)} fixture(s) skipped",
+            file=sys.stderr,
+        )
         return 1
     return 0
 
