@@ -86,7 +86,7 @@ def _age_days(ts: dt.datetime | None, now: dt.datetime) -> int | None:
 # can legitimately be -1d. Without `-?`, a fresh regen on the next
 # calendar day would normalize "-1d" -> "-<age>" but "0d" -> "<age>",
 # leaving a spurious diff that defeats this normalizer.
-_AGE_TOKEN_RE = re.compile(r"-?\b\d+d(?:\s*\u26a0\ufe0f)?")
+_AGE_TOKEN_RE = re.compile(r"-?\b\d+d\b(?:\s*\u26a0\ufe0f)?")
 
 
 def _strip_drift(text: str) -> str:
