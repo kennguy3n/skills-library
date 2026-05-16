@@ -1,16 +1,17 @@
 ---
 id: secret-detection
 language: zh-Hans
+source_revision: "9808b0fa"
 version: "1.4.0"
-title: "Secret Detection"
-description: "Detect and prevent hardcoded secrets, API keys, tokens, and credentials in code"
+title: "秘密检测"
+description: "在代码里检测并阻止硬编码的 secret、API key、token 和凭据"
 category: prevention
 severity: critical
 applies_to:
-  - "before every commit"
-  - "when reviewing code that handles credentials"
-  - "when writing configuration files"
-  - "when creating .env or config templates"
+  - "每次 commit 之前"
+  - "review 处理凭据的代码时"
+  - "编写配置文件时"
+  - "创建 .env 或配置模板时"
 languages: ["*"]
 token_budget:
   minimal: 800
@@ -27,84 +28,88 @@ sources:
   - "NIST SP 800-57 Part 1 Rev. 5: Key Management"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: zh-Hans` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# 秘密检测
 
-# Secret Detection
+## 规则(面向 AI 代理)
 
-## Rules (for AI agents)
+### 必须
+- 检查所有靠近以下关键词、且长度超过 20 字符的 string literal:
+  `api_key`、`secret`、`token`、`password`、`credential`、`auth`、
+  `bearer`、`private_key`、`access_key`、`client_secret`、
+  `refresh_token`。
+- 对匹配已知 secret pattern 的任何字符串发警告。内置 pattern set
+  覆盖:AWS(`AKIA...`)、GitHub 经典(`ghp_`、`gho_`)以及
+  **细粒度**(`github_pat_`)PAT、OpenAI(`sk-`)、**Anthropic
+  (`sk-ant-api03-`)**、Slack(`xox[baprs]-`)、Stripe
+  (`sk_live_`)、Google(`AIza...`)、**Azure AD client secret**、
+  **Databricks(`dapi`)**、**Datadog 32-hex 配合 hotword**、
+  **Twilio(`SK`)**、**SendGrid(`SG.`)**、**npm(`npm_`)**、
+  **PyPI 上传(`pypi-AgEI`)**、**Heroku UUID 配合 hotword**、
+  **DigitalOcean(`dop_v1_`)**、**HashiCorp Vault(`hvs.`)**、
+  **Supabase(`sbp_`)**、**Linear(`lin_api_`)**、JWT,以及
+  PEM 私钥。
+- 确认 `.gitignore` 包含:`*.pem`、`*.key`、`.env`、`.env.*`、
+  `*credentials*`、`*secret*`、`id_rsa*`、`*.ppk`。
+- 对任何带 secret 的凭据、连接字符串或 API endpoint,优先使用环境
+  变量(`os.environ`、`process.env`、`os.Getenv`)而不是硬编码值。
+- 当凭据需要跨机器或服务共享时,建议使用 secrets manager
+  (1Password、AWS Secrets Manager、HashiCorp Vault、Doppler)。
 
-### ALWAYS
-- Check all string literals longer than 20 characters near keywords: `api_key`, `secret`,
-  `token`, `password`, `credential`, `auth`, `bearer`, `private_key`, `access_key`,
-  `client_secret`, `refresh_token`.
-- Flag any string matching known secret patterns. The bundled pattern set covers AWS
-  (`AKIA...`), GitHub classic (`ghp_`, `gho_`) **and fine-grained** (`github_pat_`)
-  PATs, OpenAI (`sk-`), **Anthropic (`sk-ant-api03-`)**, Slack (`xox[baprs]-`),
-  Stripe (`sk_live_`), Google (`AIza...`), **Azure AD client secrets**, **Databricks
-  (`dapi`)**, **Datadog 32-hex with hotword**, **Twilio (`SK`)**, **SendGrid
-  (`SG.`)**, **npm (`npm_`)**, **PyPI upload (`pypi-AgEI`)**, **Heroku UUID with
-  hotword**, **DigitalOcean (`dop_v1_`)**, **HashiCorp Vault (`hvs.`)**, **Supabase
-  (`sbp_`)**, **Linear (`lin_api_`)**, JWT, and PEM private keys.
-- Verify `.gitignore` includes: `*.pem`, `*.key`, `.env`, `.env.*`, `*credentials*`,
-  `*secret*`, `id_rsa*`, `*.ppk`.
-- Prefer environment variable usage (`os.environ`, `process.env`, `os.Getenv`) over
-  hardcoded values for any credential, connection string, or API endpoint that has an
-  attached secret.
-- Suggest a secret manager (1Password, AWS Secrets Manager, HashiCorp Vault, Doppler)
-  when credentials must be shared across machines or services.
+### 禁止
+- 不要 commit 匹配以下 pattern 的文件:`*.pem`、`*.key`、`*.p12`、
+  `*.pfx`、`.env`、`.env.local`、`*credentials*`、`id_rsa`、
+  `id_dsa`、`id_ecdsa`、`id_ed25519`。
+- 不要在源码里硬编码 API key、token、密码或连接字符串。
+- 不要在测试 fixture 里放真 secret —— 用有文档的占位符,例如
+  `AKIAIOSFODNN7EXAMPLE`、
+  `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` 或
+  `xoxb-EXAMPLE-EXAMPLE`。
+- 不要打印或记录 secret 值,即使在 debug 模式也不行。
+- 不要把 secret 回显到 CI log 的终端里(在 GitHub Actions 里用
+  `::add-mask::` 遮蔽)。
+- 不要把签名密钥嵌进容器镜像里,哪怕是 base image。
 
-### NEVER
-- Commit files matching: `*.pem`, `*.key`, `*.p12`, `*.pfx`, `.env`, `.env.local`,
-  `*credentials*`, `id_rsa`, `id_dsa`, `id_ecdsa`, `id_ed25519`.
-- Hardcode API keys, tokens, passwords, or connection strings in source code.
-- Include real secrets in test fixtures — use documented placeholders such as
-  `AKIAIOSFODNN7EXAMPLE`, `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`, or
-  `xoxb-EXAMPLE-EXAMPLE`.
-- Log or print secret values, even in debug mode.
-- Echo secrets to terminals in CI logs (mask via `::add-mask::` in GitHub Actions).
-- Embed signing keys in container images, even base images.
+### 已知误报
+- AWS 文档示例:`AKIAIOSFODNN7EXAMPLE` 以及对应的 secret access
+  key `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`。
+- 包含以下字样的字符串:"example"、"test"、"placeholder"、
+  "dummy"、"sample"、"changeme"、"your-key-here"、"REPLACE_ME"、
+  "TODO"、"FIXME"、"XXX"。
+- CSS/SCSS 里的 hash literal(例如 `#ff0000`、`#deadbeef`)。
+- 测试里用 base64 编码的非敏感内容(编码过的 lorem ipsum、图像
+  fixture)。
+- changelog 和 release notes 里的 git commit SHA。
+- OAuth RFC 文档示例里的 JWT token(注释中出现的 `eyJ...` 字
+  符串)。
 
-### KNOWN FALSE POSITIVES
-- AWS documentation example: `AKIAIOSFODNN7EXAMPLE` and the matching secret access key
-  `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`.
-- Strings containing: "example", "test", "placeholder", "dummy", "sample", "changeme",
-  "your-key-here", "REPLACE_ME", "TODO", "FIXME", "XXX".
-- Hash literals in CSS/SCSS (e.g., `#ff0000`, `#deadbeef`).
-- Base64-encoded non-secret content in tests (lorem ipsum encoded, image fixtures).
-- Git commit SHAs in changelogs and release notes.
-- JWT tokens in the OAuth RFC documentation examples (`eyJ...` strings appearing in
-  comments).
+## 背景(面向人类)
 
-## Context (for humans)
+硬编码 secret 至今仍是最常见的入侵原因之一。GitHub 每年的
+"State of the Octoverse" 报告里,secret 泄露持续位列前三大被披露
+漏洞类别,而单次 secret 泄露的平均成本(补救 + 轮换 + 影响)还没
+算上客户数据,就已经按每事件几万美元来衡量。
 
-Hardcoded secrets remain one of the most common causes of breaches. GitHub's annual
-"State of the Octoverse" reports consistently rank secret leakage in the top three
-disclosed vulnerability categories, and the average cost of a leaked credential
-(remediation + rotation + impact) is measured in tens of thousands of dollars per
-incident even before customer data is involved.
+AI 编码助手会加剧这个风险,因为阻力最小的路径就是 inline 一个能
+跑的凭据并"以后再修"。本 skill 是它的对冲:训练 AI 拒绝这条阻力
+最小的路径。
 
-AI coding assistants accelerate this risk because the path of least resistance is to
-inline a working credential and "fix it later." This skill is the counterweight: it
-trains the AI to refuse the path of least resistance.
+`rules/dlp_patterns.json` 里的检测策略对应那条分层 pipeline,现
+在带 **26 个不同的 pattern**,覆盖开发平台(GitHub 细粒度 PAT、
+Anthropic、OpenAI、Supabase、Linear)、云(AWS、Azure AD、GCP、
+DigitalOcean、Heroku)、数据平台(Databricks、Datadog、HashiCorp
+Vault)和通讯(Twilio、SendGrid、Slack)。每个 pattern 都带有严
+重程度、hotword、hotword 邻近窗口,以及一个 entropy 下限来提升
+精度。
+在 [secure-edge ARCHITECTURE.md](https://github.com/kennguy3n/secure-edge/blob/main/ARCHITECTURE.md)
+里有记录 —— Aho-Corasick 前缀扫描、对候选做 regex 验证、hotword
+邻近、entropy 阈值,以及排除规则 —— 全部为静态分析场景做了适配。
 
-The detection strategy in `rules/dlp_patterns.json` mirrors the layered pipeline,
-now with **26 distinct patterns** spanning developer platforms (GitHub fine-grained
-PATs, Anthropic, OpenAI, Supabase, Linear), cloud (AWS, Azure AD, GCP, DigitalOcean,
-Heroku), data platforms (Databricks, Datadog, HashiCorp Vault), and comms (Twilio,
-SendGrid, Slack). Each pattern carries severity, hotwords, hotword proximity
-window, and an entropy floor to drive precision.
-documented in [secure-edge ARCHITECTURE.md](https://github.com/kennguy3n/secure-edge/blob/main/ARCHITECTURE.md)
-— Aho-Corasick prefix scan, regex validation on candidates, hotword proximity,
-entropy thresholds, and exclusion rules — adapted for the static-analysis context.
+## 参考
 
-## References
-
-- `rules/dlp_patterns.json` — machine-readable patterns with Aho-Corasick prefixes,
-  hotwords, entropy thresholds.
-- `rules/dlp_exclusions.json` — community-maintained false positive suppressions.
-- `tests/corpus.json` — test fixtures for validation.
+- `rules/dlp_patterns.json` —— 机器可读的 pattern,带 Aho-Corasick
+  前缀、hotword、entropy 阈值。
+- `rules/dlp_exclusions.json` —— 社区维护的误报抑制规则。
+- `tests/corpus.json` —— 用于验证的测试 fixture。
 - [OWASP Secrets Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html)
-- [CWE-798](https://cwe.mitre.org/data/definitions/798.html) — Use of Hard-coded
-  Credentials.
-- [CWE-259](https://cwe.mitre.org/data/definitions/259.html) — Use of Hard-coded
-  Password.
+- [CWE-798](https://cwe.mitre.org/data/definitions/798.html) —— 使用硬编码凭据。
+- [CWE-259](https://cwe.mitre.org/data/definitions/259.html) —— 使用硬编码密码。

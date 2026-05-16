@@ -1,16 +1,17 @@
 ---
 id: secure-code-review
 language: fr
+source_revision: "fbb3a823"
 version: "1.0.0"
-title: "Secure Code Review"
-description: "Apply OWASP Top 10 and CWE Top 25 patterns during code generation and review"
+title: "Revue de code sécurisée"
+description: "Appliquer les patterns OWASP Top 10 et CWE Top 25 pendant la génération et la revue de code"
 category: prevention
 severity: high
 applies_to:
-  - "when generating new code"
-  - "when reviewing pull requests"
-  - "when refactoring security-sensitive paths (auth, input handling, file I/O)"
-  - "when adding new HTTP handlers or endpoints"
+  - "lors de la génération de nouveau code"
+  - "lors de la revue de pull requests"
+  - "lors du refactoring de chemins sensibles à la sécurité (auth, gestion d'input, I/O de fichiers)"
+  - "lors de l'ajout de nouveaux handlers ou endpoints HTTP"
 languages: ["*"]
 token_budget:
   minimal: 700
@@ -25,61 +26,75 @@ sources:
   - "SEI CERT Coding Standards"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: fr` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Revue de code sécurisée
 
-# Secure Code Review
+## Règles (pour les agents IA)
 
-## Rules (for AI agents)
+### TOUJOURS
+- Utiliser des queries paramétrées / prepared statements pour tout accès
+  base de données. Ne jamais construire du SQL par concaténation de
+  strings, même pour des inputs "de confiance".
+- Valider l'input à la trust boundary — type, longueur, caractères
+  autorisés, plage autorisée — et rejeter avant traitement.
+- Encoder l'output pour le contexte de rendu (HTML escape pour HTML,
+  URL encode pour query params, JSON encode pour output JSON).
+- Utiliser la librairie de cryptographie built-in du langage, jamais de
+  crypto fait main. Préférer AES-GCM pour le chiffrement symétrique,
+  Ed25519 / RSA-PSS pour les signatures, Argon2id / bcrypt pour le
+  hashing de password.
+- Utiliser `crypto/rand` (Go), le module `secrets` (Python),
+  `crypto.randomBytes` (Node.js), ou le CSPRNG de la plateforme pour
+  toute valeur aléatoire impliquée dans la sécurité (tokens, IDs, session
+  keys).
+- Mettre des headers de sécurité explicites sur les responses HTTP :
+  `Content-Security-Policy`, `Strict-Transport-Security`,
+  `X-Content-Type-Options: nosniff`, `Referrer-Policy`.
+- Utiliser le principe du moindre privilège pour les paths de fichiers,
+  les utilisateurs de base de données, les policies IAM et les privilèges
+  de process.
 
-### ALWAYS
-- Use parameterized queries / prepared statements for all database access. Never build
-  SQL by string concatenation, even for "trusted" inputs.
-- Validate input at the trust boundary — type, length, allowed characters, allowed
-  range — and reject before processing.
-- Encode output for the rendering context (HTML escape for HTML, URL encode for query
-  params, JSON encode for JSON output).
-- Use the language's built-in cryptography library, never custom-rolled crypto. Prefer
-  AES-GCM for symmetric encryption, Ed25519 / RSA-PSS for signatures, Argon2id /
-  bcrypt for password hashing.
-- Use `crypto/rand` (Go), `secrets` module (Python), `crypto.randomBytes` (Node.js), or
-  the platform CSPRNG for any random value involved in security (tokens, IDs,
-  session keys).
-- Set explicit security headers on HTTP responses: `Content-Security-Policy`,
-  `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`.
-- Use the principle of least privilege for file paths, database users, IAM policies,
-  and process privileges.
+### JAMAIS
+- Construire des queries SQL/NoSQL par concaténation de strings avec de
+  l'input utilisateur.
+- Passer de l'input utilisateur directement à `exec`, `system`, `eval`,
+  `Function()`, `child_process`, `subprocess.run(shell=True)`, ou tout
+  autre path d'exécution de commande.
+- Faire confiance à la validation côté client. Toujours re-valider côté
+  serveur.
+- Utiliser `MD5` ou `SHA1` pour aucun nouveau but sensible à la sécurité
+  (passwords, signatures, HMAC). Utiliser SHA-256 / SHA-3 / BLAKE2 /
+  Argon2id à la place.
+- Utiliser le mode ECB pour aucun chiffrement, jamais. Préférer GCM, CCM
+  ou ChaCha20-Poly1305.
+- Utiliser `==` pour comparer des passwords — utiliser une comparaison à
+  temps constant (`hmac.compare_digest`, `crypto.timingSafeEqual`,
+  `subtle.ConstantTimeCompare`).
+- Laisser l'input utilisateur déterminer des paths de fichier sans
+  canonicalisation et checks de allowlist (défend contre le path
+  traversal style `../../../etc/passwd`).
+- Désactiver la vérification de certificat TLS en code de production —
+  `verify=False`, `InsecureSkipVerify: true`,
+  `rejectUnauthorized: false`.
 
-### NEVER
-- Build SQL/NoSQL queries by string concatenation with user input.
-- Pass user input directly to `exec`, `system`, `eval`, `Function()`, `child_process`,
-  `subprocess.run(shell=True)`, or any other command-execution path.
-- Trust client-side validation. Always re-validate server-side.
-- Use `MD5` or `SHA1` for any new security-sensitive purpose (passwords, signatures,
-  HMAC). Use SHA-256 / SHA-3 / BLAKE2 / Argon2id instead.
-- Use ECB mode for any encryption, ever. Prefer GCM, CCM, or ChaCha20-Poly1305.
-- Use `==` for password comparison — use a constant-time comparison
-  (`hmac.compare_digest`, `crypto.timingSafeEqual`, `subtle.ConstantTimeCompare`).
-- Allow user input to determine file paths without canonicalization and allowlist
-  checks (defends against `../../../etc/passwd` style path traversal).
-- Disable TLS certificate verification in production code — `verify=False`,
-  `InsecureSkipVerify: true`, `rejectUnauthorized: false`.
+### FAUX POSITIFS CONNUS
+- Les outils admin internes qui exécutent intentionnellement des commandes
+  shell contre des arguments fixes et de confiance sont acceptables
+  quand ils sont documentés et code-reviewed.
+- Les vecteurs de test cryptographiques utilisant `MD5` / `SHA1` pour la
+  compatibilité avec des protocoles documentés (ex. tests d'interop
+  legacy) sont acceptables.
+- La comparaison à temps constant est overkill pour des comparaisons non
+  secrètes (égalité de string dans des logs, matching de tags).
 
-### KNOWN FALSE POSITIVES
-- Internal admin tools intentionally executing shell commands against trusted, fixed
-  arguments are acceptable when documented and code-reviewed.
-- Cryptographic test vectors using `MD5` / `SHA1` for compatibility with documented
-  protocols (e.g. legacy interop tests) are acceptable.
-- Constant-time comparison is overkill for non-secret comparisons (string equality in
-  logs, tag matching).
+## Contexte (pour les humains)
 
-## Context (for humans)
+La plupart des vulnérabilités web modernes se ramènent à la même poignée
+de causes racines : ne pas valider l'input, ne pas utiliser la primitive
+cryptographique correcte, ne pas appliquer le moindre privilège, ne pas
+utiliser les défenses built-in du framework. Ce skill est la checklist
+de l'IA pour ne pas tomber dans ces pièges.
 
-Most modern web vulnerabilities boil down to the same handful of root causes: failure
-to validate input, failure to use the right cryptographic primitive, failure to apply
-least privilege, failure to use the framework's built-in defenses. This skill is the
-AI's checklist for not falling into those traps.
-
-## References
+## Références
 
 - `checklists/owasp_top10.yaml`
 - `checklists/injection_patterns.yaml`

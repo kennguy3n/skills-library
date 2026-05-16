@@ -1,16 +1,17 @@
 ---
 id: secret-detection
 language: pt-BR
+source_revision: "9808b0fa"
 version: "1.4.0"
-title: "Secret Detection"
-description: "Detect and prevent hardcoded secrets, API keys, tokens, and credentials in code"
+title: "Detecção de segredos"
+description: "Detectar e prevenir segredos hardcoded, API keys, tokens e credenciais no código"
 category: prevention
 severity: critical
 applies_to:
-  - "before every commit"
-  - "when reviewing code that handles credentials"
-  - "when writing configuration files"
-  - "when creating .env or config templates"
+  - "antes de cada commit"
+  - "ao revisar código que lida com credenciais"
+  - "ao escrever arquivos de configuração"
+  - "ao criar templates de .env ou config"
 languages: ["*"]
 token_budget:
   minimal: 800
@@ -27,84 +28,102 @@ sources:
   - "NIST SP 800-57 Part 1 Rev. 5: Key Management"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: pt-BR` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Detecção de segredos
 
-# Secret Detection
+## Regras (para agentes de IA)
 
-## Rules (for AI agents)
+### SEMPRE
+- Confira todos os string literals com mais de 20 caracteres perto de
+  keywords: `api_key`, `secret`, `token`, `password`, `credential`,
+  `auth`, `bearer`, `private_key`, `access_key`, `client_secret`,
+  `refresh_token`.
+- Sinalize qualquer string que bate com patterns conhecidos de
+  segredo. O pattern set incluído cobre AWS (`AKIA...`), GitHub
+  clássico (`ghp_`, `gho_`) **e fine-grained** (`github_pat_`) PATs,
+  OpenAI (`sk-`), **Anthropic (`sk-ant-api03-`)**, Slack
+  (`xox[baprs]-`), Stripe (`sk_live_`), Google (`AIza...`),
+  **client secrets do Azure AD**, **Databricks (`dapi`)**, **Datadog
+  32-hex com hotword**, **Twilio (`SK`)**, **SendGrid (`SG.`)**,
+  **npm (`npm_`)**, **upload de PyPI (`pypi-AgEI`)**, **Heroku UUID
+  com hotword**, **DigitalOcean (`dop_v1_`)**, **HashiCorp Vault
+  (`hvs.`)**, **Supabase (`sbp_`)**, **Linear (`lin_api_`)**, JWT, e
+  PEM private keys.
+- Verifique que o `.gitignore` inclui: `*.pem`, `*.key`, `.env`,
+  `.env.*`, `*credentials*`, `*secret*`, `id_rsa*`, `*.ppk`.
+- Prefira o uso de variáveis de ambiente (`os.environ`,
+  `process.env`, `os.Getenv`) em vez de valores hardcoded para
+  qualquer credencial, connection string ou API endpoint que tenha
+  um segredo associado.
+- Sugira um secrets manager (1Password, AWS Secrets Manager,
+  HashiCorp Vault, Doppler) quando as credenciais precisam ser
+  compartilhadas entre máquinas ou serviços.
 
-### ALWAYS
-- Check all string literals longer than 20 characters near keywords: `api_key`, `secret`,
-  `token`, `password`, `credential`, `auth`, `bearer`, `private_key`, `access_key`,
-  `client_secret`, `refresh_token`.
-- Flag any string matching known secret patterns. The bundled pattern set covers AWS
-  (`AKIA...`), GitHub classic (`ghp_`, `gho_`) **and fine-grained** (`github_pat_`)
-  PATs, OpenAI (`sk-`), **Anthropic (`sk-ant-api03-`)**, Slack (`xox[baprs]-`),
-  Stripe (`sk_live_`), Google (`AIza...`), **Azure AD client secrets**, **Databricks
-  (`dapi`)**, **Datadog 32-hex with hotword**, **Twilio (`SK`)**, **SendGrid
-  (`SG.`)**, **npm (`npm_`)**, **PyPI upload (`pypi-AgEI`)**, **Heroku UUID with
-  hotword**, **DigitalOcean (`dop_v1_`)**, **HashiCorp Vault (`hvs.`)**, **Supabase
-  (`sbp_`)**, **Linear (`lin_api_`)**, JWT, and PEM private keys.
-- Verify `.gitignore` includes: `*.pem`, `*.key`, `.env`, `.env.*`, `*credentials*`,
-  `*secret*`, `id_rsa*`, `*.ppk`.
-- Prefer environment variable usage (`os.environ`, `process.env`, `os.Getenv`) over
-  hardcoded values for any credential, connection string, or API endpoint that has an
-  attached secret.
-- Suggest a secret manager (1Password, AWS Secrets Manager, HashiCorp Vault, Doppler)
-  when credentials must be shared across machines or services.
-
-### NEVER
-- Commit files matching: `*.pem`, `*.key`, `*.p12`, `*.pfx`, `.env`, `.env.local`,
-  `*credentials*`, `id_rsa`, `id_dsa`, `id_ecdsa`, `id_ed25519`.
-- Hardcode API keys, tokens, passwords, or connection strings in source code.
-- Include real secrets in test fixtures — use documented placeholders such as
-  `AKIAIOSFODNN7EXAMPLE`, `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`, or
+### NUNCA
+- Não commite arquivos que batem com: `*.pem`, `*.key`, `*.p12`,
+  `*.pfx`, `.env`, `.env.local`, `*credentials*`, `id_rsa`,
+  `id_dsa`, `id_ecdsa`, `id_ed25519`.
+- Não hardcode API keys, tokens, senhas ou connection strings no
+  código-fonte.
+- Não use segredos reais em fixtures de teste — use placeholders
+  documentados como `AKIAIOSFODNN7EXAMPLE`,
+  `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` ou
   `xoxb-EXAMPLE-EXAMPLE`.
-- Log or print secret values, even in debug mode.
-- Echo secrets to terminals in CI logs (mask via `::add-mask::` in GitHub Actions).
-- Embed signing keys in container images, even base images.
+- Não logue nem dê print em valores de segredo, mesmo em modo
+  debug.
+- Não dê eco de segredos para terminais em logs de CI (mascare via
+  `::add-mask::` no GitHub Actions).
+- Não embuta signing keys em imagens de container, nem mesmo em
+  imagens base.
 
-### KNOWN FALSE POSITIVES
-- AWS documentation example: `AKIAIOSFODNN7EXAMPLE` and the matching secret access key
+### FALSOS POSITIVOS CONHECIDOS
+- Exemplo da documentação da AWS: `AKIAIOSFODNN7EXAMPLE` e a
+  secret access key correspondente
   `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`.
-- Strings containing: "example", "test", "placeholder", "dummy", "sample", "changeme",
-  "your-key-here", "REPLACE_ME", "TODO", "FIXME", "XXX".
-- Hash literals in CSS/SCSS (e.g., `#ff0000`, `#deadbeef`).
-- Base64-encoded non-secret content in tests (lorem ipsum encoded, image fixtures).
-- Git commit SHAs in changelogs and release notes.
-- JWT tokens in the OAuth RFC documentation examples (`eyJ...` strings appearing in
-  comments).
+- Strings que contêm: "example", "test", "placeholder", "dummy",
+  "sample", "changeme", "your-key-here", "REPLACE_ME", "TODO",
+  "FIXME", "XXX".
+- Hash literals em CSS/SCSS (ex.: `#ff0000`, `#deadbeef`).
+- Conteúdo não secreto codificado em base64 em testes (lorem ipsum
+  codificado, fixtures de imagem).
+- SHAs de git commit em changelogs e release notes.
+- JWT tokens nos exemplos da documentação OAuth RFC (strings
+  `eyJ...` que aparecem em comentários).
 
-## Context (for humans)
+## Contexto (para humanos)
 
-Hardcoded secrets remain one of the most common causes of breaches. GitHub's annual
-"State of the Octoverse" reports consistently rank secret leakage in the top three
-disclosed vulnerability categories, and the average cost of a leaked credential
-(remediation + rotation + impact) is measured in tens of thousands of dollars per
-incident even before customer data is involved.
+Segredos hardcoded continuam sendo uma das causas mais comuns de
+breaches. Os relatórios anuais "State of the Octoverse" do GitHub
+colocam consistentemente o vazamento de segredos entre as três
+principais categorias de vulnerabilidades divulgadas, e o custo
+médio de uma credencial vazada (remediação + rotação + impacto) é
+medido em dezenas de milhares de dólares por incidente, mesmo
+antes de envolver dados de cliente.
 
-AI coding assistants accelerate this risk because the path of least resistance is to
-inline a working credential and "fix it later." This skill is the counterweight: it
-trains the AI to refuse the path of least resistance.
+Assistentes de código com IA aceleram esse risco porque o caminho
+de menor resistência é inlinear uma credencial que funciona e
+"corrigir depois". Esse skill é o contrapeso: ele treina a IA a
+recusar o caminho de menor resistência.
 
-The detection strategy in `rules/dlp_patterns.json` mirrors the layered pipeline,
-now with **26 distinct patterns** spanning developer platforms (GitHub fine-grained
-PATs, Anthropic, OpenAI, Supabase, Linear), cloud (AWS, Azure AD, GCP, DigitalOcean,
-Heroku), data platforms (Databricks, Datadog, HashiCorp Vault), and comms (Twilio,
-SendGrid, Slack). Each pattern carries severity, hotwords, hotword proximity
-window, and an entropy floor to drive precision.
-documented in [secure-edge ARCHITECTURE.md](https://github.com/kennguy3n/secure-edge/blob/main/ARCHITECTURE.md)
-— Aho-Corasick prefix scan, regex validation on candidates, hotword proximity,
-entropy thresholds, and exclusion rules — adapted for the static-analysis context.
+A estratégia de detecção em `rules/dlp_patterns.json` espelha o
+pipeline em camadas, agora com **26 patterns distintos** abrangendo
+plataformas de dev (GitHub fine-grained PATs, Anthropic, OpenAI,
+Supabase, Linear), cloud (AWS, Azure AD, GCP, DigitalOcean,
+Heroku), plataformas de dados (Databricks, Datadog, HashiCorp
+Vault) e comunicação (Twilio, SendGrid, Slack). Cada pattern
+carrega severidade, hotwords, janela de proximidade de hotword, e
+um piso de entropia para dirigir a precisão.
+documentado em [secure-edge ARCHITECTURE.md](https://github.com/kennguy3n/secure-edge/blob/main/ARCHITECTURE.md)
+— scan de prefixo Aho-Corasick, validação de regex nos candidatos,
+proximidade de hotword, thresholds de entropia e regras de exclusão
+— adaptado para o contexto de análise estática.
 
-## References
+## Referências
 
-- `rules/dlp_patterns.json` — machine-readable patterns with Aho-Corasick prefixes,
-  hotwords, entropy thresholds.
-- `rules/dlp_exclusions.json` — community-maintained false positive suppressions.
-- `tests/corpus.json` — test fixtures for validation.
+- `rules/dlp_patterns.json` — patterns legíveis por máquina com
+  prefixos Aho-Corasick, hotwords, thresholds de entropia.
+- `rules/dlp_exclusions.json` — supressões de falso positivo
+  mantidas pela comunidade.
+- `tests/corpus.json` — fixtures de teste para validação.
 - [OWASP Secrets Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html)
-- [CWE-798](https://cwe.mitre.org/data/definitions/798.html) — Use of Hard-coded
-  Credentials.
-- [CWE-259](https://cwe.mitre.org/data/definitions/259.html) — Use of Hard-coded
-  Password.
+- [CWE-798](https://cwe.mitre.org/data/definitions/798.html) — Uso de credenciais hardcoded.
+- [CWE-259](https://cwe.mitre.org/data/definitions/259.html) — Uso de senha hardcoded.
