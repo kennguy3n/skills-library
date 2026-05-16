@@ -1,15 +1,16 @@
 ---
 id: error-handling-security
 language: es
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Error-Handling Security"
-description: "No stack traces / SQL / paths / framework versions in client responses; generic errors out, structured errors in logs"
+title: "Seguridad en el manejo de errores"
+description: "Sin stack traces / SQL / paths / versiones de framework en respuestas al cliente; errores genéricos hacia afuera, errores estructurados en los logs"
 category: prevention
 severity: medium
 applies_to:
-  - "when generating HTTP / GraphQL / RPC error handlers"
-  - "when generating exception / panic / rescue blocks"
-  - "when wiring framework default error pages"
+  - "al generar handlers de error HTTP / GraphQL / RPC"
+  - "al generar bloques exception / panic / rescue"
+  - "al cablear páginas de error default del framework"
 languages: ["*"]
 token_budget:
   minimal: 1000
@@ -24,74 +25,81 @@ sources:
   - "CWE-754 — Improper Check for Unusual or Exceptional Conditions"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: es` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Seguridad en el manejo de errores
 
-# Error-Handling Security
+## Reglas (para agentes de IA)
 
-## Rules (for AI agents)
+### SIEMPRE
+- Capturar excepciones en el boundary (handler HTTP, método RPC,
+  consumer de mensajes). Loguearlas con contexto completo del lado
+  servidor; devolver un error saneado hacia afuera.
+- Las respuestas de error externas incluyen: un código de error
+  estable, un mensaje corto legible por humanos y un ID de
+  correlación / request. Nunca incluyen: stack trace, fragmento de
+  SQL, path de archivo, hostname interno, banner de versión del
+  framework.
+- Loguear errores en el nivel adecuado: `ERROR` / `WARN` para fallas
+  accionables; `INFO` para resultados de negocio esperados; `DEBUG`
+  para detalle de diagnóstico (y sólo cuando se habilita
+  explícitamente).
+- Devolver respuestas de error uniformes en toda la superficie de la
+  API — misma forma, mismo set de códigos — para que los atacantes no
+  puedan inferir comportamiento a partir de variaciones de error
+  (p. ej., login: mismo mensaje y mismo timing para "usuario
+  incorrecto" vs "password incorrecto").
+- Deshabilitar las páginas de error default del framework en
+  producción (`app.debug = False` / `Rails.env.production?` /
+  `Environment=Production` / `DEBUG=False`). Reemplazar con una
+  página 5xx que devuelva sólo el ID de correlación.
+- Usar un helper centralizado de render de errores para que las
+  reglas de sanitización vivan en un solo lugar, no duplicadas.
 
-### ALWAYS
-- Catch exceptions at the boundary (HTTP handler, RPC method, message
-  consumer). Log them with full context server-side; return a sanitized
-  error externally.
-- External error responses include: a stable error code, a short
-  human-readable message, and a correlation / request ID. They never
-  include: stack trace, SQL fragment, file path, internal hostname,
-  framework version banner.
-- Log errors at the appropriate level: `ERROR` / `WARN` for actionable
-  failures; `INFO` for expected business outcomes; `DEBUG` for diagnostic
-  detail (and only when explicitly enabled).
-- Return uniform error responses across the API surface — same shape, same
-  set of codes — so attackers can't infer behavior from error variation
-  (e.g., login: same message and timing for "wrong username" vs "wrong
-  password").
-- Disable framework default error pages in production
-  (`app.debug = False` / `Rails.env.production?` / `Environment=Production`
-  / `DEBUG=False`). Replace with a 5xx page that returns only the
-  correlation ID.
-- Use a centralized error-rendering helper so the sanitization rules are
-  in one place, not duplicated.
+### NUNCA
+- Renderizar `traceback.format_exc()`, `e.toString()`,
+  `printStackTrace()`, `panic` o páginas de debug del framework al
+  cliente en producción.
+- Eco de queries / parámetros SQL en mensajes de error —
+  `IntegrityError: duplicate key value violates unique constraint
+  "users_email_key"` le dice al atacante el nombre de la tabla y la
+  columna.
+- Filtrar información de presencia de registro: `User not found` vs
+  `Invalid password` permite enumerar cuentas. Usar un único mensaje
+  para ambos.
+- Filtrar paths del filesystem (`/var/www/app/src/handlers.py`) o
+  banners de versión (`X-Powered-By: Express/4.17.1`).
+- Tratar `try / except: pass` como manejo de error; o la excepción es
+  esperada (loguear + seguir) o no lo es (dejar que propague).
+- Usar respuestas de error 4xx para validar la forma del input — los
+  bots iteran sobre parámetros y usan el body de la respuesta para
+  aprender el schema. Devolver un 400 uniforme más un ID de
+  correlación para input mal formado.
+- Mandar detalles completos de error (incluida PII) a servicios de
+  error tracking de terceros sin un scrubber. Redactar `password`,
+  `Authorization`, `Cookie`, `Set-Cookie`, `token`, `secret` y
+  patrones comunes de PII.
 
-### NEVER
-- Render `traceback.format_exc()`, `e.toString()`, `printStackTrace()`,
-  `panic`, or framework debug pages to the client in production.
-- Echo SQL queries / parameters in error messages — `IntegrityError:
-  duplicate key value violates unique constraint "users_email_key"` tells
-  an attacker the table and column name.
-- Leak presence-of-record information: `User not found` vs
-  `Invalid password` lets an attacker enumerate accounts. Use a single
-  message for both.
-- Leak filesystem paths (`/var/www/app/src/handlers.py`) or version banners
-  (`X-Powered-By: Express/4.17.1`).
-- Treat `try / except: pass` as error handling; either the exception is
-  expected (log + continue) or it isn't (let it propagate).
-- Use 4xx error responses to validate input shape — bots iterate over
-  parameters and use the response body to learn the schema. Return a
-  uniform 400 plus a correlation ID for malformed input.
-- Send full error details (including PII) to third-party error tracking
-  services without a scrubber. Redact `password`, `Authorization`,
-  `Cookie`, `Set-Cookie`, `token`, `secret`, common PII patterns.
+### FALSOS POSITIVOS CONOCIDOS
+- Páginas de error orientadas a developers en `localhost` / `*.local`
+  están bien.
+- Un puñado de endpoints de API (debug, admin, RPC interno) pueden
+  legítimamente devolver más detalle; deben requerir callers
+  autenticados y autorizados y nunca ser alcanzables desde internet.
+- Health checks y smoke tests de CI exponen detalle intencionalmente
+  cuando se invocan desde dentro del cluster.
 
-### KNOWN FALSE POSITIVES
-- Developer-facing error pages on `localhost` / `*.local` are fine.
-- A handful of API endpoints (debug, admin, internal RPC) may legitimately
-  return more detail; they must require authenticated, authorized
-  callers and never be reachable from the internet.
-- Health checks and CI smoke tests intentionally expose details when
-  invoked from inside the cluster.
+## Contexto (para humanos)
 
-## Context (for humans)
+CWE-209 es texto chico pero impacto grande: es cómo los atacantes
+pasan de "este servicio existe" a "este servicio corre Spring 5.2
+sobre Tomcat 9 con una tabla PostgreSQL llamada `users` y una columna
+llamada `email_normalized`". Cada detalle extra en el mensaje de
+error reduce el costo del siguiente ataque.
 
-CWE-209 is small text but big impact: it's how attackers go from "this
-service exists" to "this service runs Spring 5.2 on Tomcat 9 with a
-PostgreSQL table called `users` and a column called `email_normalized`".
-Every extra detail in the error message reduces the cost of the next
-attack.
+Esta skill es deliberadamente estrecha y se complementa con
+`logging-security` (el lado *log* de la misma operación) y
+`api-security` (la forma de la respuesta).
 
-This skill is intentionally narrow and pairs with `logging-security` (the
-*log* side of the same operation) and `api-security` (the response shape).
-
-## References
+## Referencias
 
 - `rules/error_response_template.json`
 - `rules/redaction_patterns.json`

@@ -1,15 +1,16 @@
 ---
 id: error-handling-security
 language: de
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Error-Handling Security"
-description: "No stack traces / SQL / paths / framework versions in client responses; generic errors out, structured errors in logs"
+title: "Sicherheit beim Error-Handling"
+description: "Keine Stack-Traces / SQL / Pfade / Framework-Versionen in Client-Responses; generische Fehler nach aussen, strukturierte Fehler in den Logs"
 category: prevention
 severity: medium
 applies_to:
-  - "when generating HTTP / GraphQL / RPC error handlers"
-  - "when generating exception / panic / rescue blocks"
-  - "when wiring framework default error pages"
+  - "beim Erzeugen von HTTP- / GraphQL- / RPC-Error-Handlern"
+  - "beim Erzeugen von Exception- / Panic- / Rescue-Blöcken"
+  - "beim Verdrahten von Framework-Default-Error-Pages"
 languages: ["*"]
 token_budget:
   minimal: 1000
@@ -24,74 +25,80 @@ sources:
   - "CWE-754 — Improper Check for Unusual or Exceptional Conditions"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: de` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Sicherheit beim Error-Handling
 
-# Error-Handling Security
+## Regeln (für KI-Agenten)
 
-## Rules (for AI agents)
+### IMMER
+- Exceptions an der Grenze fangen (HTTP-Handler, RPC-Methode,
+  Message-Consumer). Sie serverseitig mit vollständigem Kontext
+  loggen; einen bereinigten Fehler nach aussen zurückgeben.
+- Externe Error-Responses enthalten: einen stabilen Error-Code, eine
+  kurze menschenlesbare Message und eine Correlation- / Request-ID.
+  Sie enthalten nie: Stack-Trace, SQL-Fragment, Filesystem-Pfad,
+  internen Hostnamen, Framework-Version-Banner.
+- Fehler auf der passenden Stufe loggen: `ERROR` / `WARN` für
+  handlungsrelevante Fehler; `INFO` für erwartete Business-Outcomes;
+  `DEBUG` für Diagnose-Detail (und nur, wenn explizit aktiviert).
+- Uniforme Error-Responses über die gesamte API-Oberfläche
+  zurückgeben — gleiche Form, gleiches Set an Codes — damit
+  Angreifer aus Error-Variation kein Verhalten ableiten können
+  (z. B. Login: gleiche Message und gleiches Timing für "falscher
+  Username" vs. "falsches Password").
+- Framework-Default-Error-Pages in Produktion deaktivieren
+  (`app.debug = False` / `Rails.env.production?` /
+  `Environment=Production` / `DEBUG=False`). Durch eine 5xx-Seite
+  ersetzen, die nur die Correlation-ID zurückgibt.
+- Einen zentralen Error-Render-Helper nutzen, damit die
+  Sanitisierungs-Regeln an einer Stelle leben, nicht dupliziert.
 
-### ALWAYS
-- Catch exceptions at the boundary (HTTP handler, RPC method, message
-  consumer). Log them with full context server-side; return a sanitized
-  error externally.
-- External error responses include: a stable error code, a short
-  human-readable message, and a correlation / request ID. They never
-  include: stack trace, SQL fragment, file path, internal hostname,
-  framework version banner.
-- Log errors at the appropriate level: `ERROR` / `WARN` for actionable
-  failures; `INFO` for expected business outcomes; `DEBUG` for diagnostic
-  detail (and only when explicitly enabled).
-- Return uniform error responses across the API surface — same shape, same
-  set of codes — so attackers can't infer behavior from error variation
-  (e.g., login: same message and timing for "wrong username" vs "wrong
-  password").
-- Disable framework default error pages in production
-  (`app.debug = False` / `Rails.env.production?` / `Environment=Production`
-  / `DEBUG=False`). Replace with a 5xx page that returns only the
-  correlation ID.
-- Use a centralized error-rendering helper so the sanitization rules are
-  in one place, not duplicated.
+### NIE
+- `traceback.format_exc()`, `e.toString()`, `printStackTrace()`,
+  `panic` oder Framework-Debug-Pages in Produktion an den Client
+  rendern.
+- SQL-Queries / -Parameter in Error-Messages echoen —
+  `IntegrityError: duplicate key value violates unique constraint
+  "users_email_key"` verrät dem Angreifer Tabellen- und
+  Spaltennamen.
+- Existenz-Information leaken: `User not found` vs `Invalid
+  password` erlaubt Account-Enumeration. Eine einzige Message für
+  beides verwenden.
+- Filesystem-Pfade (`/var/www/app/src/handlers.py`) oder Version-
+  Banner (`X-Powered-By: Express/4.17.1`) leaken.
+- `try / except: pass` als Error-Handling behandeln; entweder ist
+  die Exception erwartet (loggen + weiter) oder nicht (propagieren
+  lassen).
+- 4xx-Error-Responses zur Validierung der Input-Form nutzen — Bots
+  iterieren über Parameter und nutzen den Response-Body, um das
+  Schema zu lernen. Uniformes 400 plus Correlation-ID für
+  malformeden Input zurückgeben.
+- Volle Fehler-Details (inkl. PII) an Drittanbieter-Error-Tracker
+  ohne Scrubber schicken. `password`, `Authorization`, `Cookie`,
+  `Set-Cookie`, `token`, `secret` und gängige PII-Patterns
+  redigieren.
 
-### NEVER
-- Render `traceback.format_exc()`, `e.toString()`, `printStackTrace()`,
-  `panic`, or framework debug pages to the client in production.
-- Echo SQL queries / parameters in error messages — `IntegrityError:
-  duplicate key value violates unique constraint "users_email_key"` tells
-  an attacker the table and column name.
-- Leak presence-of-record information: `User not found` vs
-  `Invalid password` lets an attacker enumerate accounts. Use a single
-  message for both.
-- Leak filesystem paths (`/var/www/app/src/handlers.py`) or version banners
-  (`X-Powered-By: Express/4.17.1`).
-- Treat `try / except: pass` as error handling; either the exception is
-  expected (log + continue) or it isn't (let it propagate).
-- Use 4xx error responses to validate input shape — bots iterate over
-  parameters and use the response body to learn the schema. Return a
-  uniform 400 plus a correlation ID for malformed input.
-- Send full error details (including PII) to third-party error tracking
-  services without a scrubber. Redact `password`, `Authorization`,
-  `Cookie`, `Set-Cookie`, `token`, `secret`, common PII patterns.
+### BEKANNTE FALSCH-POSITIVE
+- Entwickler-Error-Pages auf `localhost` / `*.local` sind ok.
+- Eine Handvoll API-Endpoints (Debug, Admin, internes RPC) darf
+  legitim mehr Detail zurückgeben; sie müssen authentifizierte,
+  autorisierte Caller verlangen und nie aus dem Internet erreichbar
+  sein.
+- Health-Checks und CI-Smoke-Tests legen Detail absichtlich offen,
+  wenn sie aus dem Cluster aufgerufen werden.
 
-### KNOWN FALSE POSITIVES
-- Developer-facing error pages on `localhost` / `*.local` are fine.
-- A handful of API endpoints (debug, admin, internal RPC) may legitimately
-  return more detail; they must require authenticated, authorized
-  callers and never be reachable from the internet.
-- Health checks and CI smoke tests intentionally expose details when
-  invoked from inside the cluster.
+## Kontext (für Menschen)
 
-## Context (for humans)
+CWE-209 ist kleiner Text mit grosser Wirkung: so kommen Angreifer
+vom "dieser Service existiert" zu "dieser Service läuft Spring 5.2
+auf Tomcat 9 mit einer PostgreSQL-Tabelle `users` und Column
+`email_normalized`". Jedes zusätzliche Detail in der Error-Message
+senkt die Kosten des nächsten Angriffs.
 
-CWE-209 is small text but big impact: it's how attackers go from "this
-service exists" to "this service runs Spring 5.2 on Tomcat 9 with a
-PostgreSQL table called `users` and a column called `email_normalized`".
-Every extra detail in the error message reduces the cost of the next
-attack.
+Dieser Skill ist bewusst eng zugeschnitten und ergänzt
+`logging-security` (die *Log*-Seite derselben Operation) und
+`api-security` (die Response-Form).
 
-This skill is intentionally narrow and pairs with `logging-security` (the
-*log* side of the same operation) and `api-security` (the response shape).
-
-## References
+## Referenzen
 
 - `rules/error_response_template.json`
 - `rules/redaction_patterns.json`
