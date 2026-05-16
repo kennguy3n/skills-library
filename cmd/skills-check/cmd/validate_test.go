@@ -222,6 +222,68 @@ func TestValidateAcceptsAllCurrentSkillReferences(t *testing.T) {
 	}
 }
 
+// TestValidateUnwrapsAccumulatedValidateErrors verifies the CLI properly
+// unwraps the multi-error returned by skill.(*Skill).Validate() — every
+// sub-error must surface as its own "FAIL:" line and the final summary
+// count must reflect the true number of defects (not "1" per skill).
+//
+// Regression for Devin Review finding on PR #42: before this change,
+// `validate.go` appended `err.Error()` directly, so a skill with 3
+// defects produced one "FAIL: <newline-joined>" line and the summary
+// said "1 validation problem(s)".
+func TestValidateUnwrapsAccumulatedValidateErrors(t *testing.T) {
+	tmp := buildMinimalLibrary(t)
+
+	// Corrupt api-security's frontmatter so it has three defects that
+	// only Validate (not ParseBytes) catches: empty title, description,
+	// and last_updated. The keys remain present (so the raw-map
+	// presence check in ParseBytes still passes), but the values are
+	// empty strings — exactly the gap Validate fills.
+	skillPath := filepath.Join(tmp, "skills", "api-security", "SKILL.md")
+	raw, err := os.ReadFile(skillPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	body := string(raw)
+	for find, replace := range map[string]string{
+		`title: "API Security"`: `title: ""`,
+		`description: "Apply OWASP API Top 10 patterns to authentication, authorization, and input validation"`: `description: ""`,
+		`last_updated: "2026-05-12"`: `last_updated: ""`,
+	} {
+		next := strings.Replace(body, find, replace, 1)
+		if next == body {
+			t.Fatalf("setup: failed to swap %q in api-security SKILL.md", find)
+		}
+		body = next
+	}
+	if err := os.WriteFile(skillPath, []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	_, stderr, err := executeRoot(t, "validate", "--path", tmp)
+	if err == nil {
+		t.Fatalf("expected validate to fail with 3 defects; stderr:\n%s", stderr)
+	}
+
+	// Each sub-error must be on its own FAIL: line.
+	wantFails := []string{
+		"FAIL: " + skillPath + ": missing title",
+		"FAIL: " + skillPath + ": missing description",
+		"FAIL: " + skillPath + ": missing last_updated",
+	}
+	for _, want := range wantFails {
+		if !strings.Contains(stderr, want) {
+			t.Errorf("expected stderr to contain its own line %q; got:\n%s", want, stderr)
+		}
+	}
+
+	// Summary count must reflect the true number of defects (>=3 — the
+	// rule-file walk may report extras; what matters is it's not "1").
+	if strings.Contains(err.Error(), "1 validation problem(s)") {
+		t.Errorf("summary undercounted defects as '1 validation problem(s)'; got: %v\nstderr:\n%s", err, stderr)
+	}
+}
+
 // buildMinimalLibrary builds a small valid library on disk with one real
 // skill (api-security copied from the repo) and the minimum directory
 // scaffolding needed for `validate` to run. Returns the absolute path.
