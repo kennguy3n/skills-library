@@ -45,6 +45,7 @@ the [MIT license](./LICENSE) — free to fork, embed, and ship in commercial pro
 - [What's inside](#whats-inside)
 - [Quick start — embed in your IDE](#quick-start--embed-in-your-ide)
 - [CLI install and routine updates](#cli-install-and-routine-updates)
+- [Vulnerability database — repo sample vs full upstream](#vulnerability-database--repo-sample-vs-full-upstream)
 - [Token efficiency](#token-efficiency)
 - [Project layout](#project-layout)
 - [Documentation](#documentation)
@@ -230,6 +231,39 @@ cd /path/to/secure-code
 git pull origin main
 skills-check regenerate    # rebuild dist/ files from the latest skills
 ```
+
+### Vulnerability database — repo sample vs full upstream
+
+The committed `vulnerabilities/osv/` directory is a **2,000-records-per-ecosystem,
+latest-first sample** drawn from the upstream OSV archives at
+`osv-vulnerabilities.storage.googleapis.com`. It exists as an offline
+fallback so a fresh `git clone` can scan without network access, biased
+toward the most recently edited advisories so the long-tail of stale
+historical records doesn't displace currently-relevant ones.
+
+The sample is **not a complete mirror**. Upstream npm alone has ~80,000
+advisories; the sample keeps the 2,000 most-recently-edited. To get full
+coverage at scan time, populate the user-local cache:
+
+```bash
+# One-time setup (downloads ~250 MB, takes 5–10 minutes)
+skills-check fetch-vulns
+
+# Verify the cache is present and fresh (exit 1 if missing or >7d old;
+# suitable for cron / CI)
+skills-check fetch-vulns --check
+
+# Pull only specific ecosystems (e.g. JS/Python only)
+skills-check fetch-vulns --only npm,pypi
+```
+
+The cache lives at `$SKILLS_MCP_CACHE` (falling back to
+`$XDG_CACHE_HOME/skills-mcp/vulns` and then `~/.cache/skills-mcp/vulns`).
+`skills-mcp` and `skills-check validate` prefer the user cache and only
+fall back to the repo-bundled sample when the cache is missing or
+incomplete — so populating it is purely additive and does not require
+changes to skill content. Re-run weekly (or wire up the
+`skills-check scheduler` to do it for you) to stay current with osv.dev.
 
 ## Token efficiency
 

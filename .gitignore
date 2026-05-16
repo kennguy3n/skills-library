@@ -30,3 +30,4 @@ sdk/python/dist/
 # TypeScript build
 sdk/typescript/node_modules/
 sdk/typescript/dist/
+/.osv-tmp/

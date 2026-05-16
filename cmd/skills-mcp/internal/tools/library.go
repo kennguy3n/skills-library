@@ -68,6 +68,19 @@ var allEcosystems = []string{
 type Library struct {
 	root string
 
+	// userCacheRoot is the user-local OSV cache root (the path that
+	// `skills-check fetch-vulns` populates). When non-empty and the
+	// corresponding `osv/<eco>/index.json` exists, OSV lookups use
+	// the user cache in preference to the repo-bundled offline
+	// fallback under `<root>/vulnerabilities/osv/`. The committed
+	// sample is a 2,000-records-per-ecosystem latest-first slice
+	// suitable for offline use; the user cache is the full
+	// upstream archive (`--per-ecosystem 0`).
+	//
+	// Configured via the SKILLS_MCP_CACHE environment variable;
+	// defaults to `${XDG_CACHE_HOME:-$HOME/.cache}/skills-mcp/vulns`.
+	userCacheRoot string
+
 	once       sync.Once
 	skills     []*skill.Skill
 	loadErr    error
@@ -123,11 +136,62 @@ func NewLibrary(root string) (*Library, error) {
 		return nil, fmt.Errorf("library root %q has no skills/ subdirectory: %w", abs, err)
 	}
 	return &Library{
-		root:        abs,
-		vulnCache:   map[string]*vulnFile{},
-		osvIndex:    map[string]*osvIndexFile{},
-		osvSeverity: map[string]string{},
+		root:          abs,
+		userCacheRoot: defaultUserCacheRoot(),
+		vulnCache:     map[string]*vulnFile{},
+		osvIndex:      map[string]*osvIndexFile{},
+		osvSeverity:   map[string]string{},
 	}, nil
+}
+
+// defaultUserCacheRoot returns the OSV user-cache root the Library
+// should consult before falling back to the repo-bundled sample. It
+// resolves, in order:
+//
+//   - the $SKILLS_MCP_CACHE environment variable, if set
+//   - $XDG_CACHE_HOME/skills-mcp/vulns, if XDG_CACHE_HOME is set
+//   - $HOME/.cache/skills-mcp/vulns, if HOME is set
+//   - the empty string, in which case the Library only reads the
+//     repo-bundled OSV cache (no fallback)
+//
+// Callers that want to override the resolved default can mutate
+// Library.userCacheRoot after construction (for tests).
+func defaultUserCacheRoot() string {
+	if v := os.Getenv("SKILLS_MCP_CACHE"); v != "" {
+		return v
+	}
+	if v := os.Getenv("XDG_CACHE_HOME"); v != "" {
+		return filepath.Join(v, "skills-mcp", "vulns")
+	}
+	if home, err := os.UserHomeDir(); err == nil && home != "" {
+		return filepath.Join(home, ".cache", "skills-mcp", "vulns")
+	}
+	return ""
+}
+
+// osvDir returns the directory that should be consulted for the given
+// ecosystem's OSV records. If a populated user cache exists (i.e. an
+// `osv/<eco>/index.json` is present beneath Library.userCacheRoot),
+// the user-cache directory is returned. Otherwise the repo-bundled
+// offline fallback is returned. The repo path is always returned
+// when userCacheRoot is empty.
+//
+// The user-cache probe is a stat() of the index file, performed on
+// every call: this is cheap (the OS caches the dirent) and means
+// `skills-check fetch-vulns` populates the cache without restarting
+// the MCP server. The probe deliberately only checks for index.json
+// (not the per-advisory JSONs); index.json is what `loadOSVIndex`
+// reads first and `osvSeverityFor` opens advisories that the index
+// references, so a half-populated cache (e.g. ingest crashed mid-eco)
+// fails closed back to the repo sample.
+func (l *Library) osvDir(eco string) string {
+	if l.userCacheRoot != "" {
+		userDir := filepath.Join(l.userCacheRoot, "osv", eco)
+		if _, err := os.Stat(filepath.Join(userDir, "index.json")); err == nil {
+			return userDir
+		}
+	}
+	return filepath.Join(l.root, "vulnerabilities", "osv", eco)
 }
 
 // Root returns the absolute path of the library checkout this Library
@@ -393,7 +457,7 @@ func (l *Library) loadOSVIndex(eco string) *osvIndexFile {
 	if cached, ok := l.osvIndex[eco]; ok {
 		return cached
 	}
-	path := filepath.Join(l.root, "vulnerabilities", "osv", eco, "index.json")
+	path := filepath.Join(l.osvDir(eco), "index.json")
 	body, err := os.ReadFile(path)
 	if err != nil {
 		l.osvIndex[eco] = nil
@@ -457,7 +521,7 @@ func (l *Library) osvSeverityFor(eco string, e osvIndexEntry) string {
 		return sev
 	}
 	l.osvSeverityMu.Unlock()
-	path := filepath.Join(l.root, "vulnerabilities", "osv", eco, e.File)
+	path := filepath.Join(l.osvDir(eco), e.File)
 	sev := resolveOSVSeverity(path)
 	l.osvSeverityMu.Lock()
 	l.osvSeverity[cacheKey] = sev
