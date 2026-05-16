@@ -1,15 +1,16 @@
 ---
 id: ml-security
 language: pt-BR
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "ML / LLM Security"
-description: "Prompt injection, model poisoning, deserialization attacks, PII in training data, secret leaks in notebooks"
+title: "Segurança de ML / LLM"
+description: "Prompt injection, poisoning de modelos, ataques de desserialização, PII em dados de treinamento, vazamentos de segredo em notebooks"
 category: prevention
 severity: high
 applies_to:
-  - "when generating code that calls an LLM API or builds an LLM-driven agent"
-  - "when generating code that loads ML models from disk / Hub / S3"
-  - "when generating data pipelines that ingest user content for fine-tuning"
+  - "ao gerar código que chama uma API de LLM ou constrói um agente movido por LLM"
+  - "ao gerar código que carrega modelos de ML do disco / Hub / S3"
+  - "ao gerar pipelines de dados que ingerem conteúdo de usuário para fine-tuning"
 languages: ["python", "javascript", "typescript", "jupyter", "go"]
 token_budget:
   minimal: 1000
@@ -25,83 +26,98 @@ sources:
   - "CWE-502, CWE-1039, CWE-1426"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: pt-BR` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Segurança de ML / LLM
 
-# ML / LLM Security
+## Regras (para agentes de IA)
 
-## Rules (for AI agents)
+### SEMPRE
+- Trate toda entrada do modelo — incluindo saídas de tools e
+  documentos recuperados realimentados no prompt — como não
+  confiável. Prompt injection indireta via uma página web ou
+  documento recuperado é o ataque a LLM mais comum em ambiente
+  real.
+- Sanitize e re-codifique qualquer coisa que o modelo emita antes
+  de passar a um sistema downstream: builder de SQL, shell, escritor
+  de arquivos, request HTTP, avaliador de código. A saída do
+  modelo nunca é chave primária para confiança.
+- Force um **schema de saída** com geração estruturada (JSON
+  Schema, modo function-call, decoding restrito) quando o próximo
+  passo consome a saída programaticamente. Rejeite o que falhar
+  validação.
+- Mantenha uma allowlist de tools / nomes de função que o modelo
+  pode invocar; rejeite qualquer outra invocação. Aplique
+  autorização por-tool ao *usuário humano* do agente, não só ao
+  modelo.
+- Para RAG: carimbe documentos recuperados com proveniência e
+  separe "instruções" de "contexto" no prompt; não deixe os dados
+  recuperados sobrepor as instruções de sistema.
+- Ao carregar modelos, use **safetensors** para PyTorch e Hugging
+  Face; use `weights_only=True` com `torch.load` no PyTorch 2.4+;
+  nunca carregue arquivos `.pkl` / `.pt` arbitrários de fontes não
+  confiáveis.
+- Limpe PII, credenciais e segredos dos dados de treinamento — na
+  fonte (ingestão), no armazenamento (criptografia + controle de
+  acesso) e na saída (filtros / detectores de resposta).
+- Rate-limit / cota em cada endpoint apoiado em LLM. Rastreie
+  gasto de token por tenant.
+- Rastreie cada prompt + versão de modelo + contexto recuperado
+  como log de auditoria; redija os segredos antes.
 
-### ALWAYS
-- Treat every model input — including tool outputs and retrieved documents
-  fed back into the prompt — as untrusted. Indirect prompt injection through
-  a retrieved web page or document is the most common LLM attack in the
-  wild.
-- Sanitize and re-encode anything the model emits before feeding it to a
-  downstream system: SQL builder, shell, file writer, HTTP request, code
-  evaluator. Model output is never a primary key for trust.
-- Enforce an **output schema** with structured generation (JSON Schema,
-  function-call mode, constrained decoding) when the next step consumes the
-  output programmatically. Reject anything that fails validation.
-- Maintain an allowlist of tools / function names a model can invoke; reject
-  any other invocation. Apply per-tool authorization to the *human user* of
-  the agent, not just the model.
-- For RAG: stamp retrieved documents with provenance, and segregate
-  "instructions" from "context" in the prompt; do not let retrieved data
-  override system instructions.
-- When loading models, use **safetensors** for PyTorch and Hugging Face; use
-  `weights_only=True` with `torch.load` on PyTorch 2.4+; never load
-  arbitrary `.pkl` / `.pt` files from untrusted sources.
-- Scrub PII, credentials, and secrets from training data — at the source
-  (data ingestion), at storage (encryption + access control), and at output
-  (response filters / detectors).
-- Rate-limit / quota every LLM-backed endpoint. Track per-tenant token
-  spend.
-- Track every prompt + model version + retrieved context as an audit log;
-  redact secrets first.
+### NUNCA
+- `pickle.loads` / `joblib.load` / `dill.loads` / `torch.load` de
+  um artefato buscado em runtime de fonte não confiável. Esses
+  desserializadores executam código arbitrário por design.
+- Concatenar input de usuário direto em um prompt que contém
+  instruções de maior confiança: ex.:
+  `f"You are a helpful agent. {user_input}"`. Use uma boundary
+  templated mais separação explícita por role de sistema.
+- Passar uma string derivada de LLM direto a `eval`, `exec`,
+  `os.system`, `subprocess(shell=True)`, `vm.runInNewContext` ou
+  um `.raw()` de SQL.
+- Hardcodar API keys de OpenAI / Anthropic / Cohere em notebooks
+  ou arquivos do repo. Use variáveis de ambiente e o skill
+  `secret-detection`.
+- Guardar exemplos de dados de treinamento contendo PII em
+  armazenamento de longo prazo sem consentimento explícito,
+  janelas de retenção e APIs de deleção.
+- Confiar em parâmetros de modelo fornecidos pelo cliente (nome
+  do modelo, system prompt, lista de tools) sem validação no
+  servidor — clientes vão fazer downgrade para modelos mais
+  baratos / fracos / não autorizados.
+- Usar um modelo fine-tuned por um vendor externo sem
+  verificação de proveniência / linhagem.
+- Cachear respostas de LLM indexadas só pelo texto do prompt —
+  isso mistura contextos entre usuários quando prompts
+  compartilham prefixos.
 
-### NEVER
-- `pickle.loads` / `joblib.load` / `dill.loads` / `torch.load` an artifact
-  fetched at runtime from an untrusted source. These deserializers execute
-  arbitrary code by design.
-- Concatenate user input directly into a prompt that contains higher-trust
-  instructions: e.g. `f"You are a helpful agent. {user_input}"`. Use a
-  templated boundary plus explicit system-role separation.
-- Hand an LLM-derived string straight to `eval`, `exec`, `os.system`,
-  `subprocess(shell=True)`, `vm.runInNewContext`, or a SQL `.raw()` call.
-- Hard-code OpenAI / Anthropic / Cohere API keys in notebooks or repo
-  files. Use environment variables and the `secret-detection` skill.
-- Store training-data examples that contain PII in long-term storage
-  without explicit consent, retention windows, and deletion APIs.
-- Trust client-supplied model parameters (model name, system prompt, tool
-  list) without server-side validation — clients will downgrade to
-  cheaper / weaker / unauthorized models.
-- Use a model fine-tuned by an external vendor without provenance / lineage
-  verification.
-- Cache LLM responses indexed only by prompt text — that mixes users'
-  contexts when prompts share prefixes.
+### FALSOS POSITIVOS CONHECIDOS
+- Notebooks de pesquisa / red-team que intencionalmente exercitam
+  prompts de jailbreak vão em um ambiente isolado sem
+  credenciais de produção.
+- Modelos acadêmicos pré-publicação de autores confiáveis
+  costumam ser distribuídos como checkpoints `.pt`; converter
+  para safetensors como primeiro passo.
+- Pipelines de geração de dados sintéticos podem legitimamente
+  produzir saída crua de modelo que é depois commitada —
+  garanta que esteja rotulada e revisada para PII / segredos
+  alucinados inadvertidos.
 
-### KNOWN FALSE POSITIVES
-- Research / red-team notebooks that intentionally exercise jailbreak prompts
-  belong in an isolated environment without production credentials.
-- Pre-publication academic models from trusted authors are often distributed
-  as `.pt` checkpoints; convert to safetensors as a first step.
-- Synthetic data generation pipelines may legitimately produce raw model
-  output that's then committed — make sure it's labeled and reviewed for
-  inadvertent PII / hallucinated secrets.
+## Contexto (para humanos)
 
-## Context (for humans)
+O OWASP LLM Top 10 (2025) agrupa os ataques mais comuns em dez
+classes; **LLM01 Prompt Injection** e **LLM05 Improper Output
+Handling** são as preocupações operacionais principais por
+aplicarem-se a praticamente todo deploy agêntico. NIST AI 100-2
+enquadra as categorias subjacentes de ML adversarial (evasão,
+poisoning, extração); MITRE ATLAS oferece uma visão de
+kill-chain.
 
-The OWASP LLM Top 10 (2025) folds the most-common attacks into ten classes;
-**LLM01 Prompt Injection** and **LLM05 Improper Output Handling** are the
-top operational concerns because they apply to virtually every agentic
-deployment. NIST AI 100-2 frames the underlying adversarial ML categories
-(evasion, poisoning, extraction); MITRE ATLAS provides a kill-chain view.
+Este skill assume que Devin (ou qualquer assistente de IA) é quem
+constrói a app que usa LLM. Trate a app resultante como uma
+fronteira de segurança — mesmo quando o "usuário" é outro agente
+de IA.
 
-This skill assumes Devin (or any AI assistant) is the one building the
-LLM-using app. Treat the resulting app as a security boundary — even when
-the "user" is another AI agent.
-
-## References
+## Referências
 
 - `rules/prompt_injection_patterns.json`
 - `rules/unsafe_deserialization.json`

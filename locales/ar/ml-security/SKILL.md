@@ -2,15 +2,16 @@
 id: ml-security
 language: ar
 dir: rtl
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "ML / LLM Security"
-description: "Prompt injection, model poisoning, deserialization attacks, PII in training data, secret leaks in notebooks"
+title: "أمن ML / LLM"
+description: "حقن prompt، وتسميم النماذج، وهجمات إلغاء التسلسل، وPII في بيانات التدريب، وتسرّبات أسرار في notebooks"
 category: prevention
 severity: high
 applies_to:
-  - "when generating code that calls an LLM API or builds an LLM-driven agent"
-  - "when generating code that loads ML models from disk / Hub / S3"
-  - "when generating data pipelines that ingest user content for fine-tuning"
+  - "عند توليد كود يَستدعي API لـ LLM أو يبني وكيلًا مدفوعًا بـ LLM"
+  - "عند توليد كود يُحمِّل نماذج ML من القرص / Hub / S3"
+  - "عند توليد pipelines بيانات تَستوعب محتوى مستخدم لـ fine-tuning"
 languages: ["python", "javascript", "typescript", "jupyter", "go"]
 token_budget:
   minimal: 1000
@@ -26,83 +27,86 @@ sources:
   - "CWE-502, CWE-1039, CWE-1426"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: ar` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# أمن ML / LLM
 
-# ML / LLM Security
+## القواعد (لوكلاء الذكاء الاصطناعي)
 
-## Rules (for AI agents)
+### دائمًا
+- عامِل كل مدخل للنموذج — بما في ذلك مخرجات الـ tools والوثائق
+  المُستَرجَعة المُعادة إلى الـ prompt — على أنّه غير موثوق. فحقن
+  الـ prompt غير المباشر عبر صفحة وب أو وثيقة مُستَرجَعة هو هجوم
+  LLM الأكثر شيوعًا في البريّة.
+- نَقِّ وأَعِد ترميز أيّ شيء يُصدِره النموذج قبل إعطائه لنظامٍ
+  تابعٍ في الاتّجاه السفليّ: بَناء SQL، أو shell، أو كاتب ملفّات،
+  أو طلب HTTP، أو مُقَيِّم كود. فمُخرَج النموذج ليس أبدًا مفتاحًا
+  أوّليًّا للثقة.
+- افرض **schema للمُخرَج** بتوليد مُهيكَل (JSON Schema، أو نمط
+  function-call، أو decoding مقيَّد) حين تَستهلك الخطوة التالية
+  المُخرَج برمجيًّا. وارفض كل ما يَفشل التحقّق.
+- احتفظ بقائمة بيضاء (allowlist) من tools / أسماء دوال يستطيع
+  النموذج استدعاءها؛ ارفض أيّ استدعاء آخر. وطبِّق التفويض لكلّ
+  tool على *المستخدم البشريّ* للوكيل، لا على النموذج وحده.
+- لـ RAG: اختم الوثائق المُستَرجَعة بمصدرها (provenance)، وافصل بين
+  "التعليمات" و"السياق" في الـ prompt؛ ولا تَدَع البيانات
+  المُستَرجَعة تُلغي تعليمات النظام.
+- عند تحميل النماذج، استخدم **safetensors** لـ PyTorch و
+  Hugging Face؛ واستخدم `weights_only=True` مع `torch.load` على
+  PyTorch 2.4+؛ ولا تُحمِّل أبدًا ملفّات `.pkl` / `.pt` عشوائيّة
+  من مصادر غير موثوقة.
+- نَظِّف PII، والاعتمادات، والأسرار من بيانات التدريب — عند
+  المصدر (استيعاب البيانات)، وفي التخزين (تشفير + ضوابط وصول)،
+  وفي المُخرَج (مرشِّحات / كواشف الردّ).
+- ضع rate-limit / حصّة على كل endpoint مدعوم بـ LLM. وتَتَبَّع
+  إنفاق tokens لكل tenant.
+- تَتَبَّع كل prompt + إصدار النموذج + السياق المُستَرجَع بوصفه
+  سجلّ تدقيق؛ ونَقِّ الأسرار قبل ذلك.
 
-### ALWAYS
-- Treat every model input — including tool outputs and retrieved documents
-  fed back into the prompt — as untrusted. Indirect prompt injection through
-  a retrieved web page or document is the most common LLM attack in the
-  wild.
-- Sanitize and re-encode anything the model emits before feeding it to a
-  downstream system: SQL builder, shell, file writer, HTTP request, code
-  evaluator. Model output is never a primary key for trust.
-- Enforce an **output schema** with structured generation (JSON Schema,
-  function-call mode, constrained decoding) when the next step consumes the
-  output programmatically. Reject anything that fails validation.
-- Maintain an allowlist of tools / function names a model can invoke; reject
-  any other invocation. Apply per-tool authorization to the *human user* of
-  the agent, not just the model.
-- For RAG: stamp retrieved documents with provenance, and segregate
-  "instructions" from "context" in the prompt; do not let retrieved data
-  override system instructions.
-- When loading models, use **safetensors** for PyTorch and Hugging Face; use
-  `weights_only=True` with `torch.load` on PyTorch 2.4+; never load
-  arbitrary `.pkl` / `.pt` files from untrusted sources.
-- Scrub PII, credentials, and secrets from training data — at the source
-  (data ingestion), at storage (encryption + access control), and at output
-  (response filters / detectors).
-- Rate-limit / quota every LLM-backed endpoint. Track per-tenant token
-  spend.
-- Track every prompt + model version + retrieved context as an audit log;
-  redact secrets first.
+### أبدًا
+- لا تُنفِّذ `pickle.loads` / `joblib.load` / `dill.loads` /
+  `torch.load` على أداةٍ مُجلَبَةٍ في وقت التشغيل من مصدرٍ غير
+  موثوق. فهذه مُفكِّكات التسلسل تُنفِّذ كودًا اعتباطيًّا بالتصميم.
+- لا تَدمج مدخل المستخدم مباشرةً داخل prompt يحوي تعليمات أعلى
+  ثقةً، مثل `f"You are a helpful agent. {user_input}"`. استخدم
+  حدًّا بقالب، مع فصلٍ صريحٍ للدور النظاميّ.
+- لا تُمرِّر سلسلة مشتقّة من LLM مباشرةً إلى `eval`، أو `exec`، أو
+  `os.system`، أو `subprocess(shell=True)`، أو
+  `vm.runInNewContext`، أو نداء `.raw()` لـ SQL.
+- لا تُصلِّب مفاتيح API لـ OpenAI / Anthropic / Cohere داخل
+  notebooks أو ملفّات المستودع. استخدم متغيّرات بيئة وskill
+  `secret-detection`.
+- لا تُخزِّن أمثلة بيانات تدريب تحوي PII في تخزينٍ بعيد المدى بلا
+  موافقة صريحة، ونوافذ احتفاظ، وAPIs حذف.
+- لا تَثِق بمُعطَيات نموذج يُورِّدها العميل (اسم النموذج، أو
+  system prompt، أو قائمة tools) بلا تحقّق من جانب الخادم — فالعملاء
+  سيُخفِّضون إلى نماذج أرخص / أضعف / غير مُصرَّح بها.
+- لا تستخدم نموذجًا مُدرَّبًا بدقّة من قِبَل بائع خارجيّ بلا تحقّق
+  من المصدر / النسب.
+- لا تُخزِّن ردود LLM في cache مفهرَسة بنصّ الـ prompt وحده — فذلك
+  يَمزج سياقات المستخدمين حين تَتشارَك الـ prompts بادئات.
 
-### NEVER
-- `pickle.loads` / `joblib.load` / `dill.loads` / `torch.load` an artifact
-  fetched at runtime from an untrusted source. These deserializers execute
-  arbitrary code by design.
-- Concatenate user input directly into a prompt that contains higher-trust
-  instructions: e.g. `f"You are a helpful agent. {user_input}"`. Use a
-  templated boundary plus explicit system-role separation.
-- Hand an LLM-derived string straight to `eval`, `exec`, `os.system`,
-  `subprocess(shell=True)`, `vm.runInNewContext`, or a SQL `.raw()` call.
-- Hard-code OpenAI / Anthropic / Cohere API keys in notebooks or repo
-  files. Use environment variables and the `secret-detection` skill.
-- Store training-data examples that contain PII in long-term storage
-  without explicit consent, retention windows, and deletion APIs.
-- Trust client-supplied model parameters (model name, system prompt, tool
-  list) without server-side validation — clients will downgrade to
-  cheaper / weaker / unauthorized models.
-- Use a model fine-tuned by an external vendor without provenance / lineage
-  verification.
-- Cache LLM responses indexed only by prompt text — that mixes users'
-  contexts when prompts share prefixes.
+### إيجابيات خاطئة معروفة
+- notebooks البحث / red-team التي تُمارس prompts jailbreak قصدًا
+  تَنتمي إلى بيئة معزولة بلا اعتمادات إنتاج.
+- النماذج الأكاديميّة قبل النشر من مؤلِّفين موثوقين تُوزَّع عادةً
+  بوصفها checkpoints `.pt`؛ حوِّلها إلى safetensors كخطوةٍ أولى.
+- pipelines توليد البيانات التركيبيّة قد تُنتج مشروعًا مُخرَجَ
+  نموذج خامًا يُرفَع لاحقًا بـ commit — تَحقَّق من وسمه ومن
+  مراجعته لاكتشاف PII / أسرار مهلوسة عَرَضًا.
 
-### KNOWN FALSE POSITIVES
-- Research / red-team notebooks that intentionally exercise jailbreak prompts
-  belong in an isolated environment without production credentials.
-- Pre-publication academic models from trusted authors are often distributed
-  as `.pt` checkpoints; convert to safetensors as a first step.
-- Synthetic data generation pipelines may legitimately produce raw model
-  output that's then committed — make sure it's labeled and reviewed for
-  inadvertent PII / hallucinated secrets.
+## السياق (للبشر)
 
-## Context (for humans)
+تُجمِّع OWASP LLM Top 10 (2025) أكثر الهجمات شيوعًا في عشر فئات؛
+وتُمثِّل **LLM01 Prompt Injection** و**LLM05 Improper Output
+Handling** الهمَّ التشغيليّ الأكبر لأنّهما يَنطبقان على كلّ نشرٍ
+وكيليٍّ تقريبًا. ويُؤطِّر NIST AI 100-2 فئات ML الخصميّ الأساسيّة
+(evasion، وpoisoning، وextraction)؛ ويُقدِّم MITRE ATLAS رؤية
+kill-chain.
 
-The OWASP LLM Top 10 (2025) folds the most-common attacks into ten classes;
-**LLM01 Prompt Injection** and **LLM05 Improper Output Handling** are the
-top operational concerns because they apply to virtually every agentic
-deployment. NIST AI 100-2 frames the underlying adversarial ML categories
-(evasion, poisoning, extraction); MITRE ATLAS provides a kill-chain view.
+يَفترض هذا الـ skill أنّ Devin (أو أيّ مساعد ذكاءٍ اصطناعيّ) هو
+مَن يَبني التطبيق المُستخدِم لـ LLM. عامِل التطبيقَ الناتجَ على
+أنّه حدٌّ أمنيّ — حتى لو كان "المستخدم" وكيلَ ذكاء اصطناعيّ آخر.
 
-This skill assumes Devin (or any AI assistant) is the one building the
-LLM-using app. Treat the resulting app as a security boundary — even when
-the "user" is another AI agent.
-
-## References
+## مراجع
 
 - `rules/prompt_injection_patterns.json`
 - `rules/unsafe_deserialization.json`
