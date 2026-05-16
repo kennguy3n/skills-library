@@ -1,17 +1,18 @@
 ---
 id: saas-security
 language: es
+source_revision: "f231fd47"
 version: "1.0.0"
-title: "SaaS Application Security"
-description: "Detect tokens, misconfigurations, and admin red flags for major SaaS platforms (GWS, Atlassian, Notion, HubSpot, Salesforce, BambooHR, Workday, Odoo, chat platforms, Zoom, Calendly, NetSuite)"
+title: "Seguridad de aplicaciones SaaS"
+description: "Detectar tokens, misconfiguraciones y red flags de admin en las plataformas SaaS principales (GWS, Atlassian, Notion, HubSpot, Salesforce, BambooHR, Workday, Odoo, plataformas de chat, Zoom, Calendly, NetSuite)"
 category: prevention
 severity: critical
 applies_to:
-  - "when wiring a SaaS API key or OAuth token into code"
-  - "when reviewing a SaaS connector / webhook / SCIM bridge"
-  - "when triaging suspicious SaaS admin activity"
-  - "when authoring infrastructure that proxies SaaS traffic"
-  - "when answering a SaaS-related security question"
+  - "al cablear una API key o token OAuth de SaaS en código"
+  - "al revisar un connector / webhook / bridge SCIM de SaaS"
+  - "al hacer triage de actividad sospechosa de admin de SaaS"
+  - "al diseñar infraestructura que proxea tráfico SaaS"
+  - "al responder una pregunta de seguridad relacionada con SaaS"
 languages: ["*"]
 token_budget:
   minimal: 1800
@@ -39,177 +40,195 @@ sources:
   - "CWE-1392: Use of Default Credentials"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: es` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Seguridad de aplicaciones SaaS
 
-# SaaS Application Security
+## Reglas (para agentes de IA)
 
-## Rules (for AI agents)
-
-### ALWAYS
-- Store SaaS API tokens, OAuth secrets, webhook signing keys, and
-  service-account JSON files in a **secrets manager** (Vault, AWS
-  Secrets Manager, GCP Secret Manager, Doppler, 1Password Connect) —
-  never inline, never `os.Setenv`-from-source, never in CI repo
-  variables (only `secrets.*`).
-- For **OAuth-based** SaaS integrations (Google Workspace, Microsoft
-  365, Slack, Atlassian Cloud, HubSpot, Zoom, Notion, Lark, Calendly,
-  NetSuite OAuth 2.0, Salesforce Connected Apps): persist `refresh_token`
-  encrypted-at-rest, refresh access tokens before expiry, and store the
-  client secret in a server-only path (never in JS/mobile bundles).
-- For **HMAC webhook callbacks** (Slack `X-Slack-Signature`, Calendly
-  V2 `Calendly-Webhook-Signature`, HubSpot v3 `X-HubSpot-Signature-v3`,
-  Stripe-style platforms, Zoom verification token, Teams outgoing
+### SIEMPRE
+- Guardar API tokens de SaaS, OAuth secrets, webhook signing keys y
+  archivos JSON de service-account en un **secrets manager** (Vault,
+  AWS Secrets Manager, GCP Secret Manager, Doppler, 1Password Connect)
+  — nunca inline, nunca `os.Setenv`-desde-source, nunca en variables
+  de repo de CI (sólo `secrets.*`).
+- Para integraciones SaaS **basadas en OAuth** (Google Workspace,
+  Microsoft 365, Slack, Atlassian Cloud, HubSpot, Zoom, Notion, Lark,
+  Calendly, NetSuite OAuth 2.0, Salesforce Connected Apps): persistir
+  `refresh_token` cifrado-en-reposo, refrescar access tokens antes de
+  que expiren, y guardar el client secret en una ruta solo-server
+  (nunca en bundles de JS/mobile).
+- Para **webhooks HMAC** (Slack `X-Slack-Signature`, Calendly V2
+  `Calendly-Webhook-Signature`, HubSpot v3 `X-HubSpot-Signature-v3`,
+  plataformas estilo Stripe, Zoom verification token, Teams outgoing
   webhook HMAC, Lark `X-Lark-Signature`, Notion verification token):
-  validate the signature and the timestamp window (default 5 min) on
-  every inbound request **before** parsing the body or trusting any
-  field.
-- Pin SaaS API base URLs to the vendor's production hostnames
-  (`api.atlassian.com`, `api.hubapi.com`, `api.calendly.com`, `*.zoom.us`,
-  `slack.com/api`, `graph.microsoft.com`, `api.bamboohr.com`,
-  `wd*.myworkday.com`, `*.salesforce.com`/`*.force.com`,
-  `api.notion.com`, `open.larksuite.com`/`open.feishu.cn`,
-  `*.netsuite.com`). Reject responses from unexpected hostnames — this
-  catches DNS-takeover and account-takeover proxy attempts.
-- Treat **SCIM** and **directory-sync** endpoints as security-sensitive:
-  require mutual TLS or signed JWT bearer, rate-limit, and log every
-  user/group write to a tamper-evident sink.
-- Use **least-privilege scopes** on every SaaS app you create. Salesforce
-  Connected Apps: avoid `full`/`refresh_token` unless required. Slack
-  bot tokens: list only the scopes you call. Google Workspace OAuth:
-  request `.../auth/admin.directory.user.readonly` instead of
-  `admin.directory.user` if you don't write. HubSpot Private Apps: tick
-  only the scope checkboxes you actually call.
-- Enforce **2-step verification (2SV / MFA)** on every SaaS admin
-  console, **including** super-admin / org-owner / billing-owner
-  accounts. Tie SSO to your IdP and disable password fallback for
-  admins.
-- Require **dedicated, non-shared service accounts** for system-to-system
-  SaaS integrations. Service account names should encode purpose
-  (`jira-ingestion-sa`, not `api-user-3`). Disable interactive login on
-  these accounts where the platform allows.
-- For Google Workspace specifically: rotate domain-wide delegation
-  service-account keys ≤ 90 days, prefer Workload Identity Federation
-  where supported, and audit `Admin SDK` calls in Admin Console >
-  Reports.
-- For Atlassian (Jira/Confluence) specifically: prefer **OAuth 2.0 (3LO)
-  / Atlassian Connect** with `actAsAccountId`; only fall back to
-  user-bound API tokens when scripting personal automation. Rotate the
-  per-user API tokens ≤ 90 days.
-- For NetSuite specifically: prefer **OAuth 2.0** or **TBA (Token-Based
-  Authentication)** with a dedicated integration record; never use the
-  user/password login flow for system integrations.
-- For BambooHR / Workday / NetSuite (HRIS/ERP class): treat every bulk
-  employee/PII export as a **DLP boundary** — log the request, the
-  authenticated principal, the row count, and the destination. Alert on
-  unusual volume.
+  validar la firma y la ventana de timestamp (default 5 min) en cada
+  request entrante **antes** de parsear el body o confiar en
+  cualquier campo.
+- Pinear las base URLs de SaaS APIs a los hostnames de producción
+  del vendor (`api.atlassian.com`, `api.hubapi.com`,
+  `api.calendly.com`, `*.zoom.us`, `slack.com/api`,
+  `graph.microsoft.com`, `api.bamboohr.com`, `wd*.myworkday.com`,
+  `*.salesforce.com`/`*.force.com`, `api.notion.com`,
+  `open.larksuite.com`/`open.feishu.cn`, `*.netsuite.com`). Rechazar
+  respuestas de hostnames inesperados — esto atrapa intentos de
+  DNS-takeover y proxy de account-takeover.
+- Tratar endpoints **SCIM** y **directory-sync** como
+  security-sensitive: requerir mutual TLS o JWT bearer firmado,
+  rate-limit, y loggear cada write de usuario/grupo a un sink con
+  evidencia de manipulación.
+- Usar **scopes de mínimo privilegio** en cada app SaaS que crees.
+  Salesforce Connected Apps: evitar `full`/`refresh_token` salvo que
+  sea requerido. Slack bot tokens: listar sólo los scopes que llamás.
+  Google Workspace OAuth: pedir
+  `.../auth/admin.directory.user.readonly` en lugar de
+  `admin.directory.user` si no escribís. HubSpot Private Apps:
+  tildar sólo los scope checkboxes que efectivamente usás.
+- Imponer **verificación en 2 pasos (2SV / MFA)** en cada consola
+  de admin SaaS, **incluyendo** cuentas super-admin / org-owner /
+  billing-owner. Atar SSO a tu IdP y deshabilitar el fallback de
+  password para admins.
+- Requerir **service accounts dedicadas, no compartidas** para
+  integraciones SaaS sistema-a-sistema. Los nombres de service
+  account deben codificar propósito (`jira-ingestion-sa`, no
+  `api-user-3`). Deshabilitar el login interactivo en esas cuentas
+  donde la plataforma lo permita.
+- Específicamente para Google Workspace: rotar service-account keys
+  con domain-wide delegation ≤ 90 días, preferir Workload Identity
+  Federation donde esté soportado, y auditar las llamadas a
+  `Admin SDK` en Admin Console > Reports.
+- Específicamente para Atlassian (Jira/Confluence): preferir
+  **OAuth 2.0 (3LO) / Atlassian Connect** con `actAsAccountId`; sólo
+  caer a API tokens user-bound cuando hagas scripting de
+  automatización personal. Rotar los API tokens por-usuario
+  ≤ 90 días.
+- Específicamente para NetSuite: preferir **OAuth 2.0** o **TBA
+  (Token-Based Authentication)** con un integration record
+  dedicado; nunca usar el flujo de login user/password para
+  integraciones sistema.
+- Para BambooHR / Workday / NetSuite (clase HRIS/ERP): tratar
+  cada export bulk de empleados/PII como un **boundary de DLP** —
+  loggear el request, el principal autenticado, el row count y el
+  destino. Alertar sobre volumen inusual.
 
-### NEVER
-- Hard-code a SaaS API token, OAuth client secret, webhook signing key,
-  or service-account JSON in source, container images, mobile app
-  binaries, or client-side JS. The vendor token formats this rule file
-  detects (e.g. `xoxb-`, `xapp-`, `jira_pat_`, `pat-na`,
-  `ya29.`, `1//`, `sk_live_`) are mass-scanned by attackers on public
-  GitHub, npm, PyPI, and Docker Hub within minutes of push.
-- Disable webhook signature verification "for testing." Every Slack /
-  HubSpot / Zoom / Calendly / Teams / Lark / Notion compromise via
-  spoofed webhook in the public record exploited an integration that
-  shipped to prod with signature checks off.
-- Issue a Google Workspace **super admin** OAuth scope (`https://www.googleapis.com/auth/admin`)
-  to anything other than a tightly-controlled IT-owned automation. Most
-  use cases need only the narrower `admin.directory.*.readonly`.
-- Share a single **personal API token** across services for Jira,
-  Confluence, BambooHR, Workday, NetSuite, or Notion. Person-bound
-  tokens inherit the human's privileges and leak through that human's
-  laptop / SaaS account.
-- Configure a Slack / Teams / Lark / Google Chat **incoming webhook URL**
-  that posts into a channel of higher trust than its consumers. If a
-  CI bot can post into `#secops`, a CI compromise = direct phishing of
-  secops. Use signed apps + per-channel posting permissions instead.
-- Leave **link sharing** on Google Drive / Notion / Confluence /
-  Atlassian Cloud / SharePoint at "Anyone with the link" for documents
-  containing customer data, secrets, or non-public roadmaps. Default
-  the org sharing policy to **domain-restricted**.
-- Trust the **`From` / `email` field** of a Calendly / HubSpot / Zoom
-  webhook payload as authoritative identity. The signature proves the
-  *vendor* sent the payload; the body fields can still be attacker-
-  supplied (spoofed invitee, attacker-set custom field). Look up the
-  user by canonical ID server-side.
-- Forward SaaS **OAuth refresh tokens** between environments
-  (dev↔staging↔prod) — each environment must have its own connected
-  app / OAuth client, otherwise prod credentials live in dev's
-  blast-radius.
-- Trust **Salesforce Apex / NetSuite SuiteScript / Workday Studio /
-  Jira ScriptRunner** code installed by a third party without a
-  security review. These run with elevated privileges and are a
-  recurring vector for SaaS supply-chain incidents (e.g. the
-  Salesforce-via-AppExchange ATO patterns documented by Salesforce
-  Security 2024).
+### NUNCA
+- Hard-codear un API token de SaaS, OAuth client secret, webhook
+  signing key, o service-account JSON en source, container images,
+  binarios de mobile app, o JS client-side. Los formatos de token
+  del vendor que este rule file detecta (por ej. `xoxb-`, `xapp-`,
+  `jira_pat_`, `pat-na`, `ya29.`, `1//`, `sk_live_`) son
+  masivamente scaneados por atacantes en GitHub público, npm, PyPI
+  y Docker Hub a minutos de cada push.
+- Deshabilitar la verificación de firma de webhook "para testing".
+  Cada compromise público de Slack / HubSpot / Zoom / Calendly /
+  Teams / Lark / Notion vía webhook spoofeado explotó una
+  integración que llegó a prod con los checks de firma apagados.
+- Emitir un scope OAuth **super admin** de Google Workspace
+  (`https://www.googleapis.com/auth/admin`) a cualquier cosa que
+  no sea una automatización IT-owned bien controlada. La mayoría
+  de los casos de uso necesitan sólo el más angosto
+  `admin.directory.*.readonly`.
+- Compartir un único **personal API token** entre servicios para
+  Jira, Confluence, BambooHR, Workday, NetSuite o Notion. Los
+  tokens person-bound heredan los privilegios del humano y
+  filtran por la laptop / cuenta SaaS de ese humano.
+- Configurar una **URL de incoming webhook** de Slack / Teams /
+  Lark / Google Chat que postee en un canal de confianza más alta
+  que sus consumers. Si un CI bot puede postear en `#secops`, un
+  compromise de CI = phishing directo a secops. Usar apps firmadas
+  + permisos de posteo por-canal en su lugar.
+- Dejar el **link sharing** de Google Drive / Notion / Confluence /
+  Atlassian Cloud / SharePoint en "Anyone with the link" para
+  documentos que contengan datos de cliente, secretos, o roadmaps
+  no públicos. Que la sharing policy por default de la org sea
+  **restricted-al-dominio**.
+- Confiar en el campo **`From` / `email`** de un payload de
+  webhook de Calendly / HubSpot / Zoom como identidad autoritativa.
+  La firma prueba que el *vendor* mandó el payload; los campos del
+  body siguen pudiendo ser attacker-supplied (invitee spoofeado,
+  custom field puesto por el atacante). Buscar al usuario por ID
+  canónico server-side.
+- Forwardear **refresh tokens de OAuth** de SaaS entre entornos
+  (dev↔staging↔prod) — cada entorno debe tener su propia
+  connected app / OAuth client, sino las credenciales de prod
+  viven dentro del blast-radius de dev.
+- Confiar en código **Salesforce Apex / NetSuite SuiteScript /
+  Workday Studio / Jira ScriptRunner** instalado por un tercero sin
+  una security review. Estos corren con privilegios elevados y son
+  vector recurrente de incidentes de SaaS supply-chain (por ej.,
+  los patterns de Salesforce-via-AppExchange ATO documentados por
+  Salesforce Security 2024).
 
-### KNOWN FALSE POSITIVES
-- Vendor-provided **sandbox / example tokens** in official docs (e.g.
-  Slack `xoxb-XXXXXXX-XXXXXXXX`, Stripe `sk_test_…`,
-  Calendly `eyJ…example…`) — match the regexes but contain literal
-  `EXAMPLE` / `XXX` / `test` markers in the surrounding context.
-- `ghp_…` / `gho_…` in third-party SaaS docs explaining how to wire
-  GitHub into them — these are GitHub tokens, not SaaS-platform
-  tokens, and are covered by `secret-detection`.
-- Public **service-account email** of a published Google Marketplace
-  app (`*@gserviceaccount.com`) — the email is public; only the JSON
-  key is sensitive.
-- **OAuth client IDs** for public mobile / web SPAs — they are
-  designed to be public. The matching **client secret** must still be
-  private; signal only on the secret.
+### FALSOS POSITIVOS CONOCIDOS
+- **Tokens de sandbox / ejemplo** provistos por el vendor en docs
+  oficiales (por ej. Slack `xoxb-XXXXXXX-XXXXXXXX`, Stripe
+  `sk_test_…`, Calendly `eyJ…example…`) — matchean los regexes
+  pero contienen marcadores literales `EXAMPLE` / `XXX` / `test`
+  en el contexto circundante.
+- `ghp_…` / `gho_…` en docs SaaS de terceros explicando cómo
+  cablear GitHub en ellos — esos son tokens de GitHub, no tokens
+  de SaaS-platform, y están cubiertos por `secret-detection`.
+- **Email público de service-account** de una app publicada de
+  Google Marketplace (`*@gserviceaccount.com`) — el email es
+  público; sólo la JSON key es sensible.
+- **OAuth client IDs** para SPAs mobile / web públicas — están
+  diseñados para ser públicos. El **client secret** correspondiente
+  igual debe ser privado; alertar sólo sobre el secret.
 
-## Context (for humans)
+## Contexto (para humanos)
 
-SaaS is now the dominant data-egress vector. The 2023-2025 incident
-record (Snowflake / OAuth-token theft, Okta / HAR-file leakage,
-GitHub-to-Slack token replay, Salesforce-via-Atlassian movement,
-calendar/scheduling phish via Calendly-style links) shows three
-recurring failure modes:
+SaaS es hoy el vector dominante de data-egress. El historial de
+incidentes 2023-2025 (Snowflake / robo de OAuth tokens, Okta /
+filtración de HAR file, replay de token de GitHub-a-Slack,
+movimiento Salesforce-vía-Atlassian, phish de calendar/scheduling
+vía links estilo Calendly) muestra tres modos de fallo
+recurrentes:
 
-1. **Token sprawl.** Personal-bound tokens and OAuth refresh tokens
-   accumulate across vendors. Every one of them is a credential.
-   Centralise them; expire them on cadence.
-2. **Misconfigured sharing.** SaaS platforms default to convenience
-   ("anyone with the link"). Customer data, deal pipelines, M&A docs,
-   and internal IAM diagrams leak through these defaults more often
-   than through code bugs.
-3. **Admin-action blindspots.** Bulk exports, mass permission grants,
-   API-key rotations, and SCIM user-write spikes are diagnostic of
-   account-takeover or insider misuse — but only if you are watching.
+1. **Token sprawl.** Los tokens person-bound y los refresh tokens
+   de OAuth se acumulan a través de vendors. Cada uno es una
+   credential. Centralizarlos; expirarlos por cadencia.
+2. **Sharing misconfigurado.** Las plataformas SaaS hacen default
+   a la conveniencia ("anyone with the link"). Los datos de
+   clientes, pipelines de deals, docs de M&A y diagramas de IAM
+   internos se filtran por esos defaults más seguido que por bugs
+   de código.
+3. **Blindspots de admin-action.** Los exports bulk, las
+   concesiones masivas de permisos, las rotaciones de API-key y
+   los spikes de SCIM user-write son diagnósticos de
+   account-takeover o abuso interno — pero sólo si los estás
+   observando.
 
-This skill's per-platform JSON rule files give an AI reviewer:
+Los rule files por-plataforma de este skill le dan a un revisor de
+IA:
 
-- **Token formats** — regex patterns for detecting hard-coded SaaS
-  secrets at PR time.
-- **Misconfigurations** — concrete settings to assert (or refuse) when
-  generating SaaS-integration code.
-- **Admin red flags** — log query shapes that an SIEM / SOAR /
-  detection rule should already be looking for.
+- **Formatos de token** — patrones regex para detectar secretos
+  SaaS hard-codeados a tiempo de PR.
+- **Misconfiguraciones** — settings concretos para asertar (o
+  rechazar) al generar código de integración SaaS.
+- **Red flags de admin** — formas de log query que un SIEM / SOAR /
+  rule de detección ya debería estar mirando.
 
-The rule files are deliberately specific to each vendor so AI agents
-do not generate "generic" SaaS detection logic that misses real
-attacks. They are also small enough that the compiled
-`SECURITY-SKILLS.md` distribution can carry them in the `full` tier
-without blowing the token budget.
+Los rule files son deliberadamente específicos a cada vendor para
+que los agentes de IA no generen lógica de detección SaaS
+"genérica" que se pierda ataques reales. También son lo
+suficientemente chicos como para que la distribución compilada
+`SECURITY-SKILLS.md` pueda llevarlos en la tier `full` sin
+explotar el token budget.
 
-## References
+## Referencias
 
 - `rules/google_workspace.json` — GWS OAuth, service-account, Admin SDK
-- `rules/google_chat.json` — Google Chat webhooks and bot tokens
+- `rules/google_chat.json` — Google Chat webhooks y bot tokens
 - `rules/atlassian.json` — Jira & Confluence Cloud, OAuth 2.0 / API tokens
-- `rules/notion.json` — Notion integration tokens, workspace sharing
+- `rules/notion.json` — Tokens de integración Notion, sharing de workspace
 - `rules/hubspot.json` — HubSpot Private Apps, OAuth, webhook v3 HMAC
 - `rules/salesforce.json` — Connected Apps, session tokens, Apex/Flow
-- `rules/bamboohr.json` — BambooHR API key, SSO, employee export
+- `rules/bamboohr.json` — BambooHR API key, SSO, export de empleados
 - `rules/workday.json` — Workday ISU, OAuth, report-as-a-service
 - `rules/odoo.json` — Odoo XML-RPC / JSON-RPC, master password
-- `rules/microsoft_teams.json` — Teams app + bot creds, outgoing webhook HMAC
-- `rules/slack.json` — Slack bot/user/app/config tokens, webhook URLs
-- `rules/larksuite.json` — Lark/Feishu tenant access tokens, webhook
+- `rules/microsoft_teams.json` — Creds de app + bot de Teams, HMAC de outgoing webhook
+- `rules/slack.json` — Tokens bot/user/app/config de Slack, URLs de webhook
+- `rules/larksuite.json` — Tokens de tenant access de Lark/Feishu, webhook
 - `rules/zoom.json` — Zoom JWT (legacy), Server-to-Server OAuth, webhook
-- `rules/calendly.json` — Calendly PAT, OAuth, V2 webhook signature
-- `rules/netsuite.json` — NetSuite TBA, OAuth 2.0, SuiteScript red flags
+- `rules/calendly.json` — Calendly PAT, OAuth, firma de webhook V2
+- `rules/netsuite.json` — NetSuite TBA, OAuth 2.0, red flags de SuiteScript
 - CWE-798, CWE-284, CWE-1392
 - OWASP API Security Top 10 (2023) — API2 (auth), API8 (security misconfig)

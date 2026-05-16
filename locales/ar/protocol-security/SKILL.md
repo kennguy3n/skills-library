@@ -2,15 +2,16 @@
 id: protocol-security
 language: ar
 dir: rtl
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Protocol Security"
-description: "TLS 1.2+, mTLS, certificate validation, HSTS, gRPC channel credentials, WebSocket origin checks"
+title: "أمن البروتوكولات"
+description: "TLS 1.2+، وmTLS، والتحقّق من الشهادات، وHSTS، واعتمادات قنوات gRPC، وفحوصات Origin في WebSocket"
 category: hardening
 severity: critical
 applies_to:
-  - "when generating HTTP / gRPC / WebSocket / SMTP / database clients & servers"
-  - "when generating TLS configuration in code or platform config"
-  - "when generating service-to-service auth"
+  - "عند توليد عملاء وخوادم HTTP / gRPC / WebSocket / SMTP / قواعد البيانات"
+  - "عند توليد تكوين TLS في الكود أو في تكوين المنصّة"
+  - "عند توليد مصادقة من خدمة إلى خدمة"
 languages: ["*"]
 token_budget:
   minimal: 1000
@@ -27,77 +28,79 @@ sources:
   - "CWE-295, CWE-326, CWE-319, CWE-757"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: ar` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# أمن البروتوكولات
 
-# Protocol Security
+## القواعد (لوكلاء الذكاء الاصطناعيّ)
 
-## Rules (for AI agents)
-
-### ALWAYS
-- Default to **TLS 1.3** for new clients and servers; permit TLS 1.2 only for
-  interop with legacy peers. Disable TLS 1.0/1.1, SSLv2/v3.
-- Validate the server certificate: chain to a trusted CA, name matches the
-  expected hostname (or SAN), not expired, not revoked (OCSP stapling
-  enabled).
-- Enable HSTS on HTTP responses for everything served over HTTPS:
+### دائمًا
+- اجعل الافتراض **TLS 1.3** للعملاء والخوادم الجديدة؛ ولا تَسمح بـ
+  TLS 1.2 إلّا لتشغيل بين الأقران القُدامى. وعطِّل TLS 1.0/1.1
+  وSSLv2/v3.
+- تَحقَّق من شهادة الخادم: سَلسلة موثوقة إلى CA، والاسم يُطابق
+  الـ hostname المتوقَّع (أو SAN)، وغير منتهية، وغير ملغاة (OCSP
+  stapling مُفعَّل).
+- فَعِّل HSTS على ردود HTTP لكلّ ما يُقدَّم عبر HTTPS:
   `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`.
-  Add the host to the HSTS preload list once stable.
-- Use **mutual TLS** (mTLS) for service-to-service traffic inside a trust
-  domain (mesh: Istio / Linkerd; standalone: SPIFFE / SPIRE for identity).
-- For gRPC clients/servers, use `grpc.secure_channel` /
-  `grpc.SslCredentials` / `credentials.NewTLS` — never `insecure_channel`
-  in production.
-- For WebSocket servers, validate the `Origin` header against an allowlist
-  and authenticate the handshake (cookies + CSRF token, or a query-string
-  bearer used once at upgrade and re-validated).
-- For service-to-service tokens, prefer **SPIFFE IDs** (`spiffe://trust-domain/...`)
-  with short-lived workload certs over long-lived API keys.
-- Pin the certificate (public key pinning) for high-risk mobile / desktop
-  clients calling back to the operator's own backend.
+  وأَضِف الـ host إلى قائمة HSTS preload بعد الاستقرار.
+- استخدم **mutual TLS** (mTLS) لحركة من خدمة إلى خدمة داخل نطاق
+  ثقة (شبكة: Istio / Linkerd؛ ومستقلّ: SPIFFE / SPIRE للهويّة).
+- لِعملاء/خوادم gRPC، استخدم `grpc.secure_channel` /
+  `grpc.SslCredentials` / `credentials.NewTLS` — ولا تستخدم أبدًا
+  `insecure_channel` في الإنتاج.
+- لخوادم WebSocket، تَحقَّق من ترويسة `Origin` مقابل قائمة بيضاء،
+  وصادِق على المصافحة (cookies + token CSRF، أو bearer في
+  query-string يُستخدَم مرّةً عند الترقية ويُعاد التحقّق منه).
+- لِـ tokens من خدمة إلى خدمة، فَضِّل **معرّفات SPIFFE**
+  (`spiffe://trust-domain/...`) مع شهادات حِمل قصيرة العمر بدل
+  مفاتيح API طويلة العمر.
+- ثَبِّت الشهادة (pinning للمفتاح العامّ) لِعملاء الجوّال / سطح
+  المكتب عالية المخاطر التي تَتّصل بخلفيّة مُشغِّلها.
 
-### NEVER
-- Disable certificate verification (`InsecureSkipVerify: true`,
-  `verify=False`, `rejectUnauthorized: false`,
-  `CURLOPT_SSL_VERIFYPEER=0`). The only acceptable use is in a unit test
-  that runs against a localhost ephemeral cert.
-- Implement a custom `X509TrustManager` / `HostnameVerifier` /
-  `URLSessionDelegate` / `ServerCertificateValidationCallback` that
-  unconditionally returns trusted.
-- Mix HTTP and HTTPS resources on the same page (mixed content) — modern
-  browsers will block subresources, but APIs are still vulnerable to MITM
-  downgrade.
-- Send tokens / passwords over plain HTTP — even on localhost in dev unless
-  the dev environment is documented as not security-relevant.
-- Use `grpc.insecure_channel(...)` in production code.
-- Trust the `Host` / `X-Forwarded-Host` / `Forwarded` header without an
-  allowlist; absolute URLs built from `Host` enable host-header injection
-  and password-reset poisoning.
-- Forward incoming `Authorization` / `Cookie` headers blindly across origins
-  in your service mesh — re-derive identity from mTLS or a service token.
-- Enable TLS renegotiation on clients you control; pin to `tls.NoRenegotiation`
-  where available.
+### أبدًا
+- لا تُعطِّل التحقّق من الشهادة (`InsecureSkipVerify: true`،
+  `verify=False`، `rejectUnauthorized: false`،
+  `CURLOPT_SSL_VERIFYPEER=0`). الاستخدام الوحيد المقبول هو في
+  اختبار وحدة يَعمل مقابل شهادة عابرة على localhost.
+- لا تُنفِّذ `X509TrustManager` / `HostnameVerifier` /
+  `URLSessionDelegate` / `ServerCertificateValidationCallback`
+  مُخصَّصًا يَعود بـ "موثوق" دون شرط.
+- لا تَخلط موارد HTTP وHTTPS في الصفحة نفسها (محتوى مختلَط) —
+  ستحجب المتصفّحات الحديثة الموارد الفرعيّة، لكنّ APIs تَبقى
+  عُرضة لخفض رتبة MITM.
+- لا تُرسِل tokens / كلمات مرور عبر HTTP صريح — حتى على localhost
+  في dev، ما لم تكن بيئة dev موثَّقةً على أنّها غير ذات صلة
+  بالأمن.
+- لا تَستخدم `grpc.insecure_channel(...)` في كود الإنتاج.
+- لا تَثِق بترويسات `Host` / `X-Forwarded-Host` / `Forwarded` بلا
+  قائمة بيضاء؛ فعناوين URL المطلقة المبنيّة من `Host` تَفتح بابَ
+  حقن ترويسة Host وتسميم إعادة تعيين كلمة المرور.
+- لا تُمرِّر ترويسات `Authorization` / `Cookie` الواردة عَمْياء
+  عبر أصول مختلفة في service mesh لديك — اشتقّ الهويّة من جديد
+  من mTLS أو من service token.
+- لا تُفعِّل إعادة تفاوُض TLS على العملاء الذين تَتحكَّم بهم؛
+  ثَبِّت على `tls.NoRenegotiation` حيثما توفّر ذلك.
 
-### KNOWN FALSE POSITIVES
-- Localhost-only dev servers with self-signed certs and explicit
-  documentation are fine; CI tests against ephemeral CA-signed certs are
-  fine.
-- A small number of legacy enterprise integrations require TLS 1.2 with a
-  specific cipher; document the exception and isolate the integration
-  behind a proxy.
-- Public read-only endpoints (e.g., status pages) can legitimately serve
-  over HTTP for cacheability, though HTTPS is still preferred.
+### إيجابيّات خاطئة معروفة
+- خوادم dev مَحصورة على localhost بِشهادات موقَّعة ذاتيًّا
+  ومُوثَّقة صراحةً لا بأس بها؛ واختبارات CI مقابل شهادات عابرة
+  مُوقَّعة من CA لا بأس بها.
+- يَتطلَّب عدد قليل من تكاملات المؤسّسات القديمة TLS 1.2 بِـ
+  cipher محدَّد؛ وَثِّق الاستثناء وَاعزل التكامل خلف وكيل.
+- يُمكن لِنقاط النهاية العامّة للقراءة فقط (مثلًا صفحات الحالة) أن
+  تُقدَّم عبر HTTP بشكل مشروع لِأجل قابليّة التخزين المؤقَّت، وإن
+  ظلّ HTTPS مفضَّلًا.
 
-## Context (for humans)
+## السياق (للبشر)
 
-NIST SP 800-52 Rev. 2 is the authoritative US-government TLS reference;
-RFC 8446 is TLS 1.3 itself. The recurring failure mode in code review is
-**`InsecureSkipVerify`** (or its equivalents in every language) — usually
-introduced "to make tests work" and never reverted.
+NIST SP 800-52 Rev. 2 هو المرجع الأمريكيّ الحكوميّ المعتمَد لـ TLS؛
+وRFC 8446 هو TLS 1.3 ذاته. ووضع الفشل المتكرّر في مراجعة الكود هو
+**`InsecureSkipVerify`** (أو ما يُعادله في كلّ لغة) — ويُدخَل عادةً
+"لتشغيل الاختبارات"، ولا يُعاد إلى وضعه السليم.
 
-This skill pairs naturally with `crypto-misuse` (algorithm choice) and
-`auth-security` (token issuance).
+يَتكامَل هذا الـ skill بشكل طبيعيّ مع `crypto-misuse` (اختيار
+الخوارزميّة) و`auth-security` (إصدار الـ tokens).
 
-## References
+## مراجع
 
 - `rules/tls_defaults.json`
 - `rules/cert_validation_sinks.json`
