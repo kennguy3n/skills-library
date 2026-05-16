@@ -1,15 +1,16 @@
 ---
 id: mobile-security
 language: zh-Hans
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Mobile Application Security"
-description: "Android and iOS hardening: exported components, ATS, keychain, certificate pinning, root/jailbreak detection"
+title: "移动应用安全"
+description: "Android 和 iOS 加固:exported 组件、ATS、keychain、certificate pinning、root/jailbreak 检测"
 category: hardening
 severity: high
 applies_to:
-  - "when generating Android (Kotlin / Java) app code or manifests"
-  - "when generating iOS (Swift / Objective-C) app code"
-  - "when generating React Native / Flutter native modules"
+  - "在生成 Android (Kotlin / Java) 应用代码或 manifest 时"
+  - "在生成 iOS (Swift / Objective-C) 应用代码时"
+  - "在生成 React Native / Flutter 原生模块时"
 languages: ["kotlin", "java", "swift", "objc", "dart", "javascript", "typescript", "xml", "plist"]
 token_budget:
   minimal: 1000
@@ -26,90 +27,83 @@ sources:
   - "Android Developers — App Security Best Practices"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: zh-Hans` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# 移动应用安全
 
-# Mobile Application Security
+## 规则(面向 AI 代理)
 
-## Rules (for AI agents)
+### 必须
+- **Android**:`AndroidManifest.xml` 里每一个 `<activity>`、
+  `<service>`、`<receiver>`、`<provider>` 要么 `android:exported="false"`,
+  要么显式声明 intent filter 且是有意 export 的。Android 12 (API 31)
+  之后,声明了 intent-filter 就必须显式写 `android:exported`。
+- **Android**:secret 放在 **Android Keystore** 里(`KeyStore` /
+  EncryptedSharedPreferences 配 `MasterKey`)。绝不放在明文
+  `SharedPreferences`、明文文件或 `BuildConfig` 里。
+- **iOS**:secret 放在 **Keychain** 里,用
+  `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` 或更严。不要放
+  在 `UserDefaults`、plist 或文件里。
+- **iOS**:`Info.plist` 中保持 App Transport Security (ATS) 开启。如
+  果非要例外,用 `NSExceptionDomains` 限定到具体 host。
+- 对你掌控的后端,要用 **certificate pinning**(优先 public key
+  pinning)验证服务端 TLS 证书。Android 用
+  `OkHttp.CertificatePinner`,iOS 用
+  `URLSessionDelegate didReceiveChallenge`,或者用框架自带的 pinning
+  模块。
+- release 构建要做混淆 / 瘦身(Android R8 / ProGuard 配
+  `proguard-rules.pro`;iOS bitcode + Swift symbol stripping)。从
+  release 构建中剥离 debug 日志。
+- 对高风险 app(银行、支付、企业)检测 root / 越狱设备并降低敏感度
+  (拒绝支付、拒绝接入受管 profile)。在 Android 上用 Play Integrity
+  API,在 iOS 上用 `DeviceCheck` / `AppAttest` 作为权威的远程认证。
 
-### ALWAYS
-- **Android**: every `<activity>`, `<service>`, `<receiver>`, `<provider>` in
-  `AndroidManifest.xml` either has `android:exported="false"` *or* explicitly
-  declares an intent filter and is intentionally exported. As of Android 12
-  (API 31), `android:exported` is required when an intent-filter is declared.
-- **Android**: store secrets in the **Android Keystore** (`KeyStore` /
-  EncryptedSharedPreferences with `MasterKey`). Never in plain
-  `SharedPreferences`, plain files, or `BuildConfig`.
-- **iOS**: store secrets in the **Keychain** with
-  `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` or stricter. Don't store
-  in `UserDefaults`, plist, or files.
-- **iOS**: keep App Transport Security (ATS) enabled in `Info.plist`. If an
-  exception is required, scope it to a specific host with
-  `NSExceptionDomains`.
-- Validate the server's TLS certificate with **certificate pinning** (public
-  key pinning preferred) for backends you control. Use
-  `OkHttp.CertificatePinner` on Android,
-  `URLSessionDelegate didReceiveChallenge` on iOS, or your framework's
-  pinning module.
-- Obfuscate / shrink release builds (Android R8 / ProGuard with
-  `proguard-rules.pro`; iOS bitcode + Swift symbol stripping). Strip debug
-  logs from release builds.
-- Detect rooted / jailbroken devices for high-risk apps (banking, payment,
-  enterprise) and reduce sensitivity (block payments, refuse to attach to
-  a managed profile). Use the Play Integrity API on Android and
-  `DeviceCheck` / `AppAttest` on iOS as the authoritative attestation.
+### 禁止
+- 不要把 API key、签名 key 或后端 secret 放进 source / resources /
+  `strings.xml` / `BuildConfig` / `Info.plist`。改用从后端下发的、按
+  设备 scope 的短期 token。
+- 不要给存储凭据的 app 设 `android:allowBackup="true"` —— 备份的数据
+  在开发机上是可读的。用 `android:fullBackupContent` 来排除敏感
+  路径。
+- 不要在 release 构建里设 `android:debuggable="true"`,也不要用
+  `<application android:networkSecurityConfig>` 允许 cleartext 到任意
+  host。
+- 不要在 iOS 上全 app 关闭 ATS(`NSAllowsArbitraryLoads=true`)。如
+  果不得不弱化,要按 host 分别 scope。
+- 不要实现返回 "trust all" 的自定义 TLS / 证书处理
+  (`X509TrustManager.checkServerTrusted` 空方法体,
+  `URLSessionDelegate` 一律信任)。这是流到生产环境里的 Android 头
+  号安全问题。
+- 不要把用户输入传给 `WebView.loadUrl` / `WKWebView.load` 而不校验
+  scheme;绝不要启用 `WebSettings.setAllowFileAccessFromFileURLs(true)`
+  或 `setUniversalAccessFromFileURLs(true)`。
+- 不要实现生物识别认证而不让 `BiometricPrompt` 的
+  `setUserAuthenticationRequired(true)` 把 key 绑定上 —— 单一的生物
+  识别 "true" 没有密码学挑战,什么都证明不了。
+- 不要把 request/response 的完整 body(包括 `Authorization` header)
+  打到日志 —— 它们最后会出现在 adb / xcrun 日志里。
 
-### NEVER
-- Ship API keys, signing keys, or backend secrets in source / resources /
-  `strings.xml` / `BuildConfig` / `Info.plist`. Issue short-lived,
-  device-scoped tokens from a backend instead.
-- Set `android:allowBackup="true"` for apps that store credentials — the
-  backed-up data is readable on developer machines. Use
-  `android:fullBackupContent` to exclude sensitive paths.
-- Set `android:debuggable="true"` in release builds, or
-  `<application android:networkSecurityConfig>` that allows cleartext to
-  arbitrary hosts.
-- Disable ATS app-wide on iOS (`NSAllowsArbitraryLoads=true`). If you must
-  weaken it, scope per-host.
-- Implement custom TLS / certificate handling that returns "trust all"
-  (`X509TrustManager.checkServerTrusted` empty body,
-  `URLSessionDelegate` always-trust). This is the #1 Android security
-  finding shipped to production.
-- Pass user input to `WebView.loadUrl` / `WKWebView.load` without scheme
-  validation; never enable
-  `WebSettings.setAllowFileAccessFromFileURLs(true)` or
-  `setUniversalAccessFromFileURLs(true)`.
-- Implement biometric auth without `BiometricPrompt`'s
-  `setUserAuthenticationRequired(true)` binding the key — biometric "true"
-  alone proves nothing without a cryptographic challenge.
-- Log full request/response bodies including `Authorization` headers — they
-  end up in adb / xcrun logs.
+### 已知误报
+- 嵌入在二进制里的公开只读 ID(analytics public key、公开 DSN)不
+  是 secret;它们本来就要在那里。
+- debug variant 默认 `debuggable=true` 是正常的 —— 这条规则只针对
+  release 构建。
+- 用于 OAuth 回调的自定义 URL scheme(`myapp://`)是预期内的;要确
+  保对应的 intent filter 是受限的,而且 `state` 参数有被校验。
 
-### KNOWN FALSE POSITIVES
-- Public read-only IDs (analytics public key, public DSN) embedded in the
-  binary are not secrets; they're meant to be there.
-- The default debuggable=true on debug variants is normal — the rule applies
-  to release builds.
-- Custom URL schemes (`myapp://`) for OAuth callbacks are expected; ensure
-  the corresponding intent filter is restricted and the `state` parameter is
-  verified.
+## 背景(面向人类)
 
-## Context (for humans)
+移动安全清晰地分成两半:**二进制里有什么**(secret、debug flag、
+exported 组件、pinning)和**运行时发生了什么**(TLS 信任、keychain
+访问、生物识别绑定)。OWASP MASVS v2 给出权威的可测试控制项;MASTG
+则是流程化的测试指南。
 
-Mobile security splits cleanly into **what's in the binary** (secrets, debug
-flags, exported components, pinning) and **what happens at runtime** (TLS
-trust, keychain access, biometric binding). OWASP MASVS v2 provides the
-authoritative testable controls; the MASTG is the procedural test guide.
+AI 助手经常会生成 `allowBackup=true`、没开 ProGuard、把 API key 硬
+编码在 `strings.xml` 里的 Android 代码,以及不带校验就调
+`SecCertificateCreateWithData` 的 iOS 代码。这个 skill 就是用来对
+冲这一现象的。
 
-AI assistants frequently generate Android code with `allowBackup=true`, no
-ProGuard, hardcoded API keys in `strings.xml`, and iOS code that calls
-`SecCertificateCreateWithData` with no verification. This skill is the
-counterweight.
-
-## References
+## 参考
 
 - `checklists/android_manifest.yaml`
 - `checklists/ios_keychain_ats.yaml`
-- [OWASP MASVS v2.0](https://mas.owasp.org/MASVS/).
+- [OWASP MASVS](https://mas.owasp.org/MASVS/).
 - [OWASP MASTG](https://mas.owasp.org/MASTG/).
-- [CWE-919 — Weaknesses in Mobile Applications](https://cwe.mitre.org/data/definitions/919.html).
