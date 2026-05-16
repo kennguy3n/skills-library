@@ -108,3 +108,55 @@ func TestCacheIndexPaths(t *testing.T) {
 		t.Errorf("cacheIndexPaths = %v, want %v", got, want)
 	}
 }
+
+// TestResolveReleaseAssetURL covers the three resolution paths for
+// --from-release: explicit --release-url wins, --release-tag=latest
+// builds the GitHub "latest" redirect URL, and any other tag value
+// builds the per-tag download URL. An empty tag is rejected.
+func TestResolveReleaseAssetURL(t *testing.T) {
+	cases := []struct {
+		name        string
+		explicitURL string
+		tag         string
+		want        string
+		wantErr     bool
+	}{
+		{
+			name: "latest tag uses /releases/latest/download/",
+			tag:  "latest",
+			want: "https://github.com/kennguy3n/skills-library/releases/latest/download/osv-cache.tar.gz",
+		},
+		{
+			name: "specific tag uses /releases/download/<tag>/",
+			tag:  "v0.1.1",
+			want: "https://github.com/kennguy3n/skills-library/releases/download/v0.1.1/osv-cache.tar.gz",
+		},
+		{
+			name:        "explicit URL overrides tag",
+			explicitURL: "https://example.test/custom.tar.gz",
+			tag:         "v0.1.1",
+			want:        "https://example.test/custom.tar.gz",
+		},
+		{
+			name:    "empty tag without explicit URL errors",
+			tag:     "",
+			wantErr: true,
+		},
+		{
+			name:    "whitespace-only tag errors",
+			tag:     "   ",
+			wantErr: true,
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := resolveReleaseAssetURL(tc.explicitURL, tc.tag)
+			if (err != nil) != tc.wantErr {
+				t.Fatalf("err = %v, wantErr = %v", err, tc.wantErr)
+			}
+			if got != tc.want {
+				t.Errorf("got %q, want %q", got, tc.want)
+			}
+		})
+	}
+}

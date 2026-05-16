@@ -2,7 +2,7 @@
   "schema_version": "1.7.5",
   "id": "GHSA-xj4f-8jjg-vx4q",
   "published": "2026-05-04T19:31:22Z",
-  "modified": "2026-05-05T16:14:34.977785Z",
+  "modified": "2026-05-16T00:10:46.998566Z",
   "aliases": [
     "CVE-2026-41258"
   ],
@@ -62,6 +62,10 @@
       "url": "https://github.com/openmrs/openmrs-core/security/advisories/GHSA-xj4f-8jjg-vx4q"
     },
     {
+      "type": "ADVISORY",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-41258"
+    },
+    {
       "type": "WEB",
       "url": "https://github.com/openmrs/openmrs-core/commit/8d1c193"
     },
@@ -80,7 +84,7 @@
     ],
     "github_reviewed": true,
     "github_reviewed_at": "2026-05-04T19:31:22Z",
-    "nvd_published_at": null,
+    "nvd_published_at": "2026-05-15T17:16:46Z",
     "severity": "CRITICAL"
   },
   "severity": [
@@ -89,5 +93,5 @@
       "score": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:C/C:H/I:H/A:H"
     }
   ],
-  "last_updated": "2026-05-05"
+  "last_updated": "2026-05-16"
 }

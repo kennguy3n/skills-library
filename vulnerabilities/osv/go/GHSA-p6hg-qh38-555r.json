@@ -2,7 +2,7 @@
   "schema_version": "1.7.5",
   "id": "GHSA-p6hg-qh38-555r",
   "published": "2026-05-04T19:26:33Z",
-  "modified": "2026-05-05T16:12:56.183678Z",
+  "modified": "2026-05-16T00:10:07.569074Z",
   "aliases": [
     "CVE-2026-41181"
   ],
@@ -88,6 +88,10 @@
       "url": "https://github.com/traefik/traefik/security/advisories/GHSA-p6hg-qh38-555r"
     },
     {
+      "type": "ADVISORY",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-41181"
+    },
+    {
       "type": "PACKAGE",
       "url": "https://github.com/traefik/traefik"
     },
@@ -110,7 +114,7 @@
     ],
     "github_reviewed": true,
     "github_reviewed_at": "2026-05-04T19:26:33Z",
-    "nvd_published_at": null,
+    "nvd_published_at": "2026-05-15T17:16:46Z",
     "severity": "MODERATE"
   },
   "severity": [
@@ -119,5 +123,5 @@
       "score": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:N/SC:L/SI:N/SA:N"
     }
   ],
-  "last_updated": "2026-05-05"
+  "last_updated": "2026-05-16"
 }

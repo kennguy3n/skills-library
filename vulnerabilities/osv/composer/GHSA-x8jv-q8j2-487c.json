@@ -2,7 +2,7 @@
   "schema_version": "1.7.5",
   "id": "GHSA-x8jv-q8j2-487c",
   "published": "2026-05-06T20:57:37Z",
-  "modified": "2026-05-06T21:05:32.927442Z",
+  "modified": "2026-05-16T00:11:02.020509Z",
   "aliases": [
     "CVE-2026-42458"
   ],
@@ -133,6 +133,10 @@
       "url": "https://github.com/OpenMage/magento-lts/security/advisories/GHSA-x8jv-q8j2-487c"
     },
     {
+      "type": "ADVISORY",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-42458"
+    },
+    {
       "type": "PACKAGE",
       "url": "https://github.com/OpenMage/magento-lts"
     }
@@ -143,7 +147,7 @@
     ],
     "github_reviewed": true,
     "github_reviewed_at": "2026-05-06T20:57:37Z",
-    "nvd_published_at": null,
+    "nvd_published_at": "2026-05-15T17:16:46Z",
     "severity": "MODERATE"
   },
   "severity": [
@@ -152,5 +156,5 @@
       "score": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:N/VI:N/VA:N/SC:L/SI:L/SA:N"
     }
   ],
-  "last_updated": "2026-05-06"
+  "last_updated": "2026-05-16"
 }

@@ -2,7 +2,7 @@
   "schema_version": "1.7.5",
   "id": "GHSA-v8vw-gw5j-w7m6",
   "published": "2026-05-08T17:02:12Z",
-  "modified": "2026-05-10T04:44:28.963068849Z",
+  "modified": "2026-05-16T00:10:50.657721Z",
   "aliases": [
     "CVE-2026-44427"
   ],
@@ -42,6 +42,10 @@
       "url": "https://github.com/modelcontextprotocol/registry/security/advisories/GHSA-v8vw-gw5j-w7m6"
     },
     {
+      "type": "ADVISORY",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-44427"
+    },
+    {
       "type": "WEB",
       "url": "https://github.com/modelcontextprotocol/registry/pull/1227"
     },
@@ -64,7 +68,7 @@
     ],
     "github_reviewed": true,
     "github_reviewed_at": "2026-05-08T17:02:12Z",
-    "nvd_published_at": null,
+    "nvd_published_at": "2026-05-14T22:16:44Z",
     "severity": "MODERATE"
   },
   "severity": [
@@ -73,5 +77,5 @@
       "score": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:N/VI:H/VA:N/SC:N/SI:N/SA:N/E:P"
     }
   ],
-  "last_updated": "2026-05-10"
+  "last_updated": "2026-05-16"
 }

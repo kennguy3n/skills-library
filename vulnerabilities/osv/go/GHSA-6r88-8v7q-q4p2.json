@@ -2,7 +2,7 @@
   "schema_version": "1.7.5",
   "id": "GHSA-6r88-8v7q-q4p2",
   "published": "2026-05-13T15:32:35Z",
-  "modified": "2026-05-13T15:48:32.653872Z",
+  "modified": "2026-05-16T00:09:45.827578Z",
   "aliases": [
     "CVE-2026-45147"
   ],
@@ -39,6 +39,10 @@
       "url": "https://github.com/siyuan-note/siyuan/security/advisories/GHSA-6r88-8v7q-q4p2"
     },
     {
+      "type": "ADVISORY",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-45147"
+    },
+    {
       "type": "PACKAGE",
       "url": "https://github.com/siyuan-note/siyuan"
     }
@@ -50,7 +54,7 @@
     ],
     "github_reviewed": true,
     "github_reviewed_at": "2026-05-13T15:32:35Z",
-    "nvd_published_at": null,
+    "nvd_published_at": "2026-05-14T19:16:38Z",
     "severity": "MODERATE"
   },
   "severity": [
@@ -59,5 +63,5 @@
       "score": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N"
     }
   ],
-  "last_updated": "2026-05-13"
+  "last_updated": "2026-05-16"
 }
