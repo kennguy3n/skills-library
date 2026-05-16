@@ -2,7 +2,7 @@
   "schema_version": "1.7.5",
   "id": "GHSA-gfm2-xm6c-37qc",
   "published": "2026-05-14T20:24:35Z",
-  "modified": "2026-05-14T20:32:57.383291Z",
+  "modified": "2026-05-16T00:08:26.712820Z",
   "aliases": [
     "CVE-2026-45349"
   ],
@@ -193,6 +193,10 @@
       "url": "https://github.com/open-webui/open-webui/security/advisories/GHSA-gfm2-xm6c-37qc"
     },
     {
+      "type": "ADVISORY",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-45349"
+    },
+    {
       "type": "WEB",
       "url": "https://github.com/open-webui/open-webui/commit/cf4218e688def6f11d195aeda6665ae5b5376b67"
     },
@@ -211,7 +215,7 @@
     ],
     "github_reviewed": true,
     "github_reviewed_at": "2026-05-14T20:24:35Z",
-    "nvd_published_at": null,
+    "nvd_published_at": "2026-05-15T20:16:48Z",
     "severity": "HIGH"
   },
   "severity": [
@@ -220,5 +224,5 @@
       "score": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:L/A:N"
     }
   ],
-  "last_updated": "2026-05-14"
+  "last_updated": "2026-05-16"
 }

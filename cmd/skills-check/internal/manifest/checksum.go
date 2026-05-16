@@ -45,7 +45,10 @@ func (m *Manifest) ComputeChecksums(repoRoot string) error {
 }
 
 // ComputeChecksumsForRoots is the variant that lets callers (for example,
-// tests) pin the exact set of roots to walk.
+// tests) pin the exact set of roots to walk. It is additive: entries
+// already in the manifest that are no longer on disk are left intact.
+// Use PruneMissing (or the `manifest compute --prune` CLI flag) when a
+// large batch of files has been intentionally removed.
 func (m *Manifest) ComputeChecksumsForRoots(repoRoot string, roots []string) error {
 	seen := make(map[string]struct{}, len(m.Files))
 	for i := range m.Files {
@@ -134,15 +137,43 @@ func (m *Manifest) ComputeChecksumsForRoots(repoRoot string, roots []string) err
 			Action:   "added",
 		})
 	}
-	// Any files that were in the manifest but not found on disk: clear the
-	// "seen" marker but leave them in place so the maintainer can decide
-	// whether to drop them.
+	// Any files that were in the manifest but not found on disk: leave the
+	// `seen` set populated with their paths and let the caller decide via
+	// PruneMissing whether to drop them. We deliberately do not prune by
+	// default to keep `manifest compute` non-destructive when invoked on
+	// a partial checkout.
 	_ = seen
 
 	m.SortFiles()
 	// Invalidate any prior signature: the bytes changed.
 	m.Signature = PlaceholderSignature
 	return nil
+}
+
+// PruneMissing removes entries from m.Files whose paths do not exist
+// on disk under repoRoot. Returns the list of removed paths so callers
+// can report what was dropped. Use this after a wholesale regeneration
+// that intentionally deleted files (for example, swapping the OSV
+// stride-sample for a latest-first sample).
+func (m *Manifest) PruneMissing(repoRoot string) ([]string, error) {
+	var dropped []string
+	kept := m.Files[:0]
+	for _, f := range m.Files {
+		abs := filepath.Join(repoRoot, f.Path)
+		if _, err := os.Stat(abs); err == nil {
+			kept = append(kept, f)
+			continue
+		} else if !errors.Is(err, fs.ErrNotExist) {
+			return nil, fmt.Errorf("stat %s: %w", abs, err)
+		}
+		dropped = append(dropped, f.Path)
+	}
+	m.Files = kept
+	if len(dropped) > 0 {
+		m.SortFiles()
+		m.Signature = PlaceholderSignature
+	}
+	return dropped, nil
 }
 
 // HashFile returns the lowercase hex SHA-256 and size of the file at path.

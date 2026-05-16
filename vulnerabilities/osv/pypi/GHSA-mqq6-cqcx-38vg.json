@@ -2,7 +2,7 @@
   "schema_version": "1.7.5",
   "id": "GHSA-mqq6-cqcx-38vg",
   "published": "2026-05-08T19:52:25Z",
-  "modified": "2026-05-08T20:05:21.163491Z",
+  "modified": "2026-05-16T00:10:35.724870Z",
   "aliases": [
     "CVE-2026-44562"
   ],
@@ -193,17 +193,22 @@
       "url": "https://github.com/open-webui/open-webui/security/advisories/GHSA-mqq6-cqcx-38vg"
     },
     {
+      "type": "ADVISORY",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-44562"
+    },
+    {
       "type": "PACKAGE",
       "url": "https://github.com/open-webui/open-webui"
     }
   ],
   "database_specific": {
     "cwe_ids": [
+      "CWE-283",
       "CWE-862"
     ],
     "github_reviewed": true,
     "github_reviewed_at": "2026-05-08T19:52:25Z",
-    "nvd_published_at": null,
+    "nvd_published_at": "2026-05-15T20:16:47Z",
     "severity": "MODERATE"
   },
   "severity": [
@@ -212,5 +217,5 @@
       "score": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N"
     }
   ],
-  "last_updated": "2026-05-08"
+  "last_updated": "2026-05-16"
 }

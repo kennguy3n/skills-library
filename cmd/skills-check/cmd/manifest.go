@@ -24,6 +24,7 @@ func manifestCmd() *cobra.Command {
 func manifestComputeCmd() *cobra.Command {
 	var path string
 	var write bool
+	var prune bool
 	c := &cobra.Command{
 		Use:   "compute",
 		Short: "Walk distributable roots and update manifest.json with real SHA-256 checksums",
@@ -41,6 +42,13 @@ func manifestComputeCmd() *cobra.Command {
 				return err
 			}
 			out := c.OutOrStdout()
+			if prune {
+				dropped, err := m.PruneMissing(root)
+				if err != nil {
+					return err
+				}
+				fmt.Fprintf(out, "prune: removed %d entries no longer present on disk\n", len(dropped))
+			}
 			fmt.Fprintf(out, "manifest %s: %d files\n", m.Version, len(m.Files))
 			if write {
 				if err := m.Save(mfPath); err != nil {
@@ -61,6 +69,7 @@ func manifestComputeCmd() *cobra.Command {
 	}
 	c.Flags().StringVar(&path, "path", ".", "library root")
 	c.Flags().BoolVar(&write, "write", false, "write updated manifest.json back to disk")
+	c.Flags().BoolVar(&prune, "prune", false, "drop manifest entries whose files no longer exist on disk")
 	return c
 }
 

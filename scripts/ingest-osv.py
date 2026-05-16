@@ -335,9 +335,15 @@ def write_index(dest_dir: Path) -> None:
     parsing when an older index pre-dates this field.
     """
     now = dt.datetime.now(dt.timezone.utc)
+    # last_updated is full RFC3339 so two regenerations on the same UTC
+    # calendar day produce distinct values; CI's `last_updated must be
+    # bumped` check is a string-equality test against the base branch,
+    # and date-only granularity caused spurious failures whenever the
+    # OSV index was rebuilt twice in the same day. The malicious-package
+    # bundles already use the same format.
     index: dict = {
         "schema_version": "1.0",
-        "last_updated": now.strftime("%Y-%m-%d"),
+        "last_updated": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "generated_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "by_package": {},
     }

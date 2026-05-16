@@ -2,7 +2,7 @@
   "schema_version": "1.7.5",
   "id": "GHSA-26g9-27vm-x3q8",
   "published": "2026-05-14T20:28:34Z",
-  "modified": "2026-05-14T20:47:34.415589Z",
+  "modified": "2026-05-16T00:01:27.588821Z",
   "aliases": [
     "CVE-2026-45671"
   ],
@@ -193,6 +193,10 @@
       "url": "https://github.com/open-webui/open-webui/security/advisories/GHSA-26g9-27vm-x3q8"
     },
     {
+      "type": "ADVISORY",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-45671"
+    },
+    {
       "type": "WEB",
       "url": "https://github.com/open-webui/open-webui/commit/2e52ad8ff2f8d9ed9f38f76e9bc19c8f92d91fc3"
     },
@@ -211,7 +215,7 @@
     ],
     "github_reviewed": true,
     "github_reviewed_at": "2026-05-14T20:28:34Z",
-    "nvd_published_at": null,
+    "nvd_published_at": "2026-05-15T20:16:49Z",
     "severity": "HIGH"
   },
   "severity": [
@@ -220,5 +224,5 @@
       "score": "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:H"
     }
   ],
-  "last_updated": "2026-05-14"
+  "last_updated": "2026-05-16"
 }

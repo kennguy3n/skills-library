@@ -2,7 +2,7 @@
   "schema_version": "1.7.5",
   "id": "GHSA-c7wp-3qh5-55pv",
   "published": "2026-05-08T19:51:48Z",
-  "modified": "2026-05-08T20:06:13.246626Z",
+  "modified": "2026-05-16T00:06:23.538724Z",
   "aliases": [
     "CVE-2026-44559"
   ],
@@ -193,6 +193,10 @@
       "url": "https://github.com/open-webui/open-webui/security/advisories/GHSA-c7wp-3qh5-55pv"
     },
     {
+      "type": "ADVISORY",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-44559"
+    },
+    {
       "type": "PACKAGE",
       "url": "https://github.com/open-webui/open-webui"
     }
@@ -203,7 +207,7 @@
     ],
     "github_reviewed": true,
     "github_reviewed_at": "2026-05-08T19:51:48Z",
-    "nvd_published_at": null,
+    "nvd_published_at": "2026-05-15T20:16:47Z",
     "severity": "MODERATE"
   },
   "severity": [
@@ -212,5 +216,5 @@
       "score": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N"
     }
   ],
-  "last_updated": "2026-05-08"
+  "last_updated": "2026-05-16"
 }

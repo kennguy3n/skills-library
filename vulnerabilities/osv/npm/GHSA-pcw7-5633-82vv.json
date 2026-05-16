@@ -2,7 +2,7 @@
   "schema_version": "1.7.5",
   "id": "GHSA-pcw7-5633-82vv",
   "published": "2026-05-14T13:12:56Z",
-  "modified": "2026-05-14T13:33:36.796605Z",
+  "modified": "2026-05-16T00:05:04.490119Z",
   "aliases": [
     "CVE-2026-22707"
   ],
@@ -40,6 +40,10 @@
       "url": "https://github.com/strapi/strapi/security/advisories/GHSA-pcw7-5633-82vv"
     },
     {
+      "type": "ADVISORY",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-22707"
+    },
+    {
       "type": "PACKAGE",
       "url": "https://github.com/strapi/strapi"
     }
@@ -51,7 +55,7 @@
     ],
     "github_reviewed": true,
     "github_reviewed_at": "2026-05-14T13:12:56Z",
-    "nvd_published_at": null,
+    "nvd_published_at": "2026-05-14T19:16:30Z",
     "severity": "MODERATE"
   },
   "severity": [
@@ -60,5 +64,5 @@
       "score": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N"
     }
   ],
-  "last_updated": "2026-05-14"
+  "last_updated": "2026-05-16"
 }

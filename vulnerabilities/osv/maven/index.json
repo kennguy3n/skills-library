@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "last_updated": "2026-05-16",
-  "generated_at": "2026-05-16T00:19:40Z",
+  "last_updated": "2026-05-16T00:35:33Z",
+  "generated_at": "2026-05-16T00:35:33Z",
   "by_package": {
     "com.liferay.portal:release.portal.bom": [
       {

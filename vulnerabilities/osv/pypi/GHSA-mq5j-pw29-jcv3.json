@@ -2,7 +2,7 @@
   "schema_version": "1.7.5",
   "id": "GHSA-mq5j-pw29-jcv3",
   "published": "2026-05-15T18:25:34Z",
-  "modified": "2026-05-15T18:31:25.399661Z",
+  "modified": "2026-05-16T00:10:58.190239Z",
   "aliases": [
     "CVE-2026-46383"
   ],
@@ -104,6 +104,10 @@
       "url": "https://github.com/microsoft/apm/security/advisories/GHSA-mq5j-pw29-jcv3"
     },
     {
+      "type": "ADVISORY",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-46383"
+    },
+    {
       "type": "WEB",
       "url": "https://github.com/microsoft/apm/commit/77d1dda8303c8d7ccb6148788a6274fdece98499"
     },
@@ -123,7 +127,7 @@
     ],
     "github_reviewed": true,
     "github_reviewed_at": "2026-05-15T18:25:34Z",
-    "nvd_published_at": null,
+    "nvd_published_at": "2026-05-15T17:16:49Z",
     "severity": "MODERATE"
   },
   "severity": [
@@ -132,5 +136,5 @@
       "score": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N"
     }
   ],
-  "last_updated": "2026-05-15"
+  "last_updated": "2026-05-16"
 }
