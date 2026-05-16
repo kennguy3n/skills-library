@@ -1,16 +1,17 @@
 ---
 id: database-security
 language: es
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Database Security"
-description: "Prevent SQL injection, ORM misuse, credential leaks; enforce least-privilege DB users and safe migrations"
+title: "Seguridad de bases de datos"
+description: "Prevenir inyección SQL, mal uso de ORM, fugas de credenciales; exigir usuarios DB con privilegios mínimos y migraciones seguras"
 category: prevention
 severity: critical
 applies_to:
-  - "when generating SQL or raw query strings"
-  - "when generating ORM model code or queries"
-  - "when generating database migration files"
-  - "when wiring connection strings or pooling"
+  - "al generar SQL o cadenas de query raw"
+  - "al generar código de modelos / queries ORM"
+  - "al generar archivos de migración de base de datos"
+  - "al cablear cadenas de conexión o pooling"
 languages: ["sql", "python", "javascript", "typescript", "go", "ruby", "java", "kotlin", "csharp"]
 token_budget:
   minimal: 1000
@@ -26,77 +27,89 @@ sources:
   - "CIS PostgreSQL / MySQL Benchmarks"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: es` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Seguridad de bases de datos
 
-# Database Security
+## Reglas (para agentes de IA)
 
-## Rules (for AI agents)
-
-### ALWAYS
-- Use parameterized queries / prepared statements for any SQL that touches
-  user-controlled values. Pass values as parameters, never via string
-  concatenation or formatting (`%s`, `+`, template literals).
-- Use the ORM's safe query API. In SQLAlchemy: `session.execute(text(":id"),
-  {"id": user_id})`. In Django: ORM methods, `Model.objects.filter(...)`. In
-  Sequelize / Prisma / SQLAlchemy core: `.where({ ... })` builders. In Go:
+### SIEMPRE
+- Usar queries parametrizadas / prepared statements para cualquier SQL
+  que toque valores controlados por el usuario. Pasar valores como
+  parámetros, nunca vía concatenación o formato de strings (`%s`, `+`,
+  template literals).
+- Usar la API segura de queries del ORM. En SQLAlchemy:
+  `session.execute(text(":id"), {"id": user_id})`. En Django: métodos
+  ORM, `Model.objects.filter(...)`. En Sequelize / Prisma / SQLAlchemy
+  core: builders `.where({ ... })`. En Go:
   `db.QueryContext(ctx, "select ... where id = $1", id)`.
-- Validate that identifier columns / table names — which can't be parameterized —
-  come from a hard-coded allowlist, not from user input.
-- Use a dedicated database user per application with the minimum grants needed.
-  Web apps that only read shouldn't have `INSERT`/`UPDATE`/`DELETE`. Migration
-  jobs run as a separate `DDL`-capable user.
-- Enable Row-Level Security (Postgres `CREATE POLICY` / Supabase RLS / Azure SQL
-  RLS) for multi-tenant tables and set the tenant context per session.
-- Pull DB credentials from a secret manager or env var injected at start —
-  never from a committed `database.yml` / `.env`. Rotate on schedule.
-- Use TLS to the database (`sslmode=require` for Postgres, `requireSSL=true`
-  for MySQL, encrypted connection for MSSQL). Pin the CA where the driver
-  supports it.
-- Connection pooling has a max size that fits within the DB's `max_connections`,
-  with healthy back-pressure on the application.
+- Validar que nombres de columnas / tablas identificadores — que no se
+  pueden parametrizar — vengan de una allowlist hardcodeada, no de
+  input de usuario.
+- Usar un usuario de base de datos dedicado por aplicación con los
+  grants mínimos necesarios. Las apps web que solo leen no deberían
+  tener `INSERT`/`UPDATE`/`DELETE`. Los jobs de migración corren como
+  un usuario separado con capacidad `DDL`.
+- Habilitar Row-Level Security (Postgres `CREATE POLICY` / Supabase
+  RLS / Azure SQL RLS) para tablas multi-tenant y fijar el contexto
+  de tenant por sesión.
+- Sacar credenciales de DB de un secret manager o variable de entorno
+  inyectada al arrancar — nunca de un `database.yml` / `.env`
+  versionado. Rotar según calendario.
+- Usar TLS hacia la base de datos (`sslmode=require` para Postgres,
+  `requireSSL=true` para MySQL, conexión cifrada para MSSQL). Pinear
+  la CA donde el driver lo soporte.
+- El pooling de conexiones tiene un tamaño máximo que cabe dentro del
+  `max_connections` de la DB, con back-pressure sano hacia la app.
 
-### NEVER
-- Concatenate user input into SQL: `"SELECT * FROM users WHERE name='" + name
-  + "'"`. Even if you "escape" it yourself — drivers escape correctly only
-  when binding through the parameter API.
-- Use ORM raw query methods (`.raw()`, `.objects.raw()`, `.query(text(...))`)
-  with f-string interpolation of user input.
-- Run application workloads as the database superuser / `root` / `postgres` /
-  `sa`. Create a service user.
-- Disable TLS to the database (`sslmode=disable`, `useSSL=false`).
-- Store secrets, PII, or large blobs in JSON columns without encryption-at-rest
-  and a key rotation plan.
-- Run destructive migrations (DROP TABLE, DROP COLUMN, ALTER COLUMN type changes
-  on populated tables) inline with deploys without an expand–contract plan and
-  a backup verified to be restorable.
-- Bind an internet-exposed database listener with no allowlist; databases stay
-  in a private network and are reached via a bastion / VPN / private link.
-- Log entire SQL statements with bound values at INFO level — bound values are
-  almost always sensitive.
+### NUNCA
+- Concatenar input de usuario en SQL:
+  `"SELECT * FROM users WHERE name='" + name + "'"`. Aunque lo
+  "escapes" a mano — los drivers escapan correctamente solo cuando
+  bindeás por la API de parámetros.
+- Usar métodos raw del ORM (`.raw()`, `.objects.raw()`,
+  `.query(text(...))`) con interpolación f-string de input de
+  usuario.
+- Correr cargas de trabajo de la aplicación como el superusuario de
+  base de datos / `root` / `postgres` / `sa`. Crear un usuario de
+  servicio.
+- Deshabilitar TLS hacia la base de datos (`sslmode=disable`,
+  `useSSL=false`).
+- Guardar secretos, PII o blobs grandes en columnas JSON sin
+  encriptación-en-reposo y plan de rotación de claves.
+- Correr migraciones destructivas (DROP TABLE, DROP COLUMN, ALTER
+  COLUMN cambiando tipo en tablas pobladas) inline con deploys sin un
+  plan de expand-contract y un backup verificado-restaurable.
+- Bindear un listener de base de datos expuesto a internet sin
+  allowlist; las bases de datos se quedan en red privada y se acceden
+  vía bastión / VPN / private link.
+- Loguear sentencias SQL enteras con valores bindeados a nivel INFO —
+  los valores bindeados son casi siempre sensibles.
 
-### KNOWN FALSE POSITIVES
-- Reporting tools that run analyst-authored ad-hoc SQL legitimately interpolate
-  identifiers; they should run against a read-only replica with a separate user
-  whose grants prevent damage.
-- Some ORMs (Django, SQLAlchemy 1.x) use `%s` placeholders as *parameter
-  markers*, not Python format-string placeholders — that's safe.
-- Health-check queries (`SELECT 1`) are intentionally trivial.
+### FALSOS POSITIVOS CONOCIDOS
+- Las herramientas de reporting que corren SQL ad-hoc autoría-analista
+  legítimamente interpolan identificadores; deberían correr contra
+  una réplica read-only con un usuario separado cuyos grants impidan
+  daño.
+- Algunos ORM (Django, SQLAlchemy 1.x) usan placeholders `%s` como
+  *marcadores de parámetro*, no placeholders de format-string de
+  Python — eso es seguro.
+- Queries de health-check (`SELECT 1`) son trivialmente intencionadas.
 
-## Context (for humans)
+## Contexto (para humanos)
 
-SQL injection has been #1 or #2 on every OWASP Top 10 for fifteen years and it
-hasn't budged because the failure mode is *easy by default*: any language with
-string concatenation lets you produce a query. AI assistants happily generate
-"works in dev" code that interpolates user input — particularly for sorting
-columns, dynamic filters, and pagination.
+La inyección SQL ha estado #1 o #2 en cada OWASP Top 10 durante
+quince años y no se mueve porque el modo de falla es *fácil por
+defecto*: cualquier lenguaje con concatenación de strings te deja
+producir una query. Los asistentes de IA generan felizmente código
+"funciona-en-dev" que interpola input de usuario — particularmente
+para columnas de ordenamiento, filtros dinámicos y paginación.
 
-This skill pairs naturally with `api-security` (which guards the route) and
-`secret-detection` (which guards the connection string).
+Esta skill empareja naturalmente con `api-security` (que guarda la
+ruta) y `secret-detection` (que guarda la cadena de conexión).
 
-## References
+## Referencias
 
 - `rules/sql_injection_sinks.json`
 - `rules/orm_safe_patterns.json`
 - [OWASP SQL Injection Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html).
-- [CWE-89](https://cwe.mitre.org/data/definitions/89.html) — SQL Injection.
+- [CWE-89](https://cwe.mitre.org/data/definitions/89.html) — Inyección SQL.
 - [PostgreSQL Row-Level Security](https://www.postgresql.org/docs/current/ddl-rowsecurity.html).
