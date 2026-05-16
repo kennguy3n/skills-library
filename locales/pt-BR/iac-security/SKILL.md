@@ -1,15 +1,16 @@
 ---
 id: iac-security
 language: pt-BR
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Infrastructure-as-Code Security"
-description: "Hardening rules for Terraform, CloudFormation, and Pulumi: state, providers, drift, secrets"
+title: "Segurança de Infrastructure-as-Code"
+description: "Regras de hardening para Terraform, CloudFormation e Pulumi: state, providers, drift, segredos"
 category: hardening
 severity: high
 applies_to:
-  - "when generating Terraform / Pulumi / CloudFormation"
-  - "when reviewing IaC changes in PR"
-  - "when wiring up a new cloud account or workspace"
+  - "ao gerar Terraform / Pulumi / CloudFormation"
+  - "ao revisar mudanças de IaC em PR"
+  - "ao configurar uma nova conta ou workspace de cloud"
 languages: ["hcl", "yaml", "json", "typescript", "python", "go"]
 token_budget:
   minimal: 1000
@@ -25,66 +26,80 @@ sources:
   - "OWASP IaC Security Top 10"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: pt-BR` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Segurança de Infrastructure-as-Code
 
-# Infrastructure-as-Code Security
+## Regras (para agentes de IA)
 
-## Rules (for AI agents)
-
-### ALWAYS
-- Pin every provider/module to an exact version or a pessimistic constraint
-  (`~> 5.42`); never `>= 0` or unpinned `latest`.
-- Configure a **remote backend** with encryption at rest, server-side state locking,
-  and versioning (Terraform: `s3` + DynamoDB lock table with `kms_key_id`; Pulumi:
-  the managed backend or `s3://?kmskey=`; CloudFormation: managed by AWS).
-- Encrypt every persistent resource by default with a customer-managed KMS key:
-  S3 buckets, EBS volumes, RDS, EFS, DynamoDB, SQS, SNS, CloudWatch log groups.
-- Tag every resource with `owner`, `environment`, `cost-center`, and `data-classification`
-  via a default tags block.
-- Run `terraform plan` (or `pulumi preview`, `aws cloudformation deploy --no-execute-changeset`)
-  in CI and require a human approval before `apply` on production stacks.
-- Add a drift-detection job that runs daily and opens an issue when actual cloud
-  state diverges from code (Terraform Cloud drift detection, `pulumi refresh`,
+### SEMPRE
+- Fixe cada provider/módulo em uma versão exata ou em uma restrição
+  pessimista (`~> 5.42`); nunca `>= 0` ou um `latest` sem pin.
+- Configure um **backend remoto** com criptografia em repouso,
+  locking de state no lado servidor e versionamento (Terraform: `s3`
+  + tabela de lock no DynamoDB com `kms_key_id`; Pulumi: o backend
+  gerenciado ou `s3://?kmskey=`; CloudFormation: gerenciado pela
+  AWS).
+- Criptografe por padrão cada recurso persistente com uma chave KMS
+  gerenciada pelo cliente: buckets S3, volumes EBS, RDS, EFS,
+  DynamoDB, SQS, SNS, log groups do CloudWatch.
+- Marque cada recurso com `owner`, `environment`, `cost-center` e
+  `data-classification` via um bloco de default tags.
+- Rode `terraform plan` (ou `pulumi preview`,
+  `aws cloudformation deploy --no-execute-changeset`) na CI e exija
+  aprovação humana antes do `apply` em stacks de produção.
+- Adicione um job de detecção de drift que rode diariamente e abra
+  uma issue quando o estado real do cloud divergir do código
+  (Terraform Cloud drift detection, `pulumi refresh`,
   `cfn-drift-detect`).
-- Use IAM Conditions to scope every role: `aws:SourceArn`, `aws:SourceAccount`,
-  `aws:PrincipalOrgID`, and TLS-only access policies on storage.
+- Use IAM Conditions para limitar cada role: `aws:SourceArn`,
+  `aws:SourceAccount`, `aws:PrincipalOrgID`, e policies de acesso
+  TLS-only em storage.
 
-### NEVER
-- Hardcode provider credentials in the code or `.tfvars` (`access_key`, `secret_key`,
-  `client_secret`, `service_account_key`). Use OIDC federation from CI, the
-  provider's instance metadata service, or a secret manager.
-- Commit `terraform.tfstate`, `terraform.tfstate.backup`, `.pulumi/`, or any
-  `*.tfvars` containing real secrets. They contain plaintext secrets even if the
-  code references variables.
-- Use `local_exec` / `null_resource` to fetch secrets at apply time and stash them
-  in state. State is queryable plaintext by anyone with backend read access.
-- Open security groups / firewall rules to `0.0.0.0/0` for ports 22, 3389, 3306,
-  5432, 1433, 6379, 27017, 9200, 11211 — even for "just dev". Use bastion or VPN.
-- Grant `*:*` (wildcard action on wildcard resource) IAM policies. Use `iam:PassRole`
-  with explicit resource ARNs.
-- Disable provider TLS verification (`skip_tls_verify`, `insecure = true`).
-- Use `count = 0` to "soft-delete" resources you actually want gone — destroy them.
+### NUNCA
+- Hardcode credenciais do provider no código ou em `.tfvars`
+  (`access_key`, `secret_key`, `client_secret`,
+  `service_account_key`). Use federação OIDC vinda da CI, o serviço
+  de metadata da instância do provider, ou um secret manager.
+- Commite `terraform.tfstate`, `terraform.tfstate.backup`,
+  `.pulumi/`, ou qualquer `*.tfvars` contendo segredos reais. Eles
+  contêm segredos em texto plano mesmo que o código referencie
+  variáveis.
+- Use `local_exec` / `null_resource` para buscar segredos na hora do
+  apply e enfiar no state. O state é texto plano consultável por
+  qualquer um com acesso de leitura ao backend.
+- Abra security groups / regras de firewall para `0.0.0.0/0` nas
+  portas 22, 3389, 3306, 5432, 1433, 6379, 27017, 9200, 11211 —
+  nem mesmo em "é só dev". Use bastion ou VPN.
+- Conceda policies IAM `*:*` (ação wildcard em recurso wildcard).
+  Use `iam:PassRole` com ARNs de recurso explícitos.
+- Desabilite a verificação TLS do provider (`skip_tls_verify`,
+  `insecure = true`).
+- Use `count = 0` para "soft-deletar" recursos que você na verdade
+  quer fora — destrua-os.
 
-### KNOWN FALSE POSITIVES
-- Bastion hosts intentionally exposed on port 22 to the internet with hardened
-  configurations are not the same risk as opening RDS to the world. Document the
-  exception inline.
-- Public CloudFront distributions, ALB listeners on 80/443, API Gateways, and
-  Lambda function URLs that *are* meant to be internet-facing.
-- Bootstrap resources (the S3 bucket and DynamoDB lock table the backend itself
-  uses) must exist before remote state can; this chicken-and-egg is usually
-  bootstrapped by a one-time `local` backend that's then migrated.
+### FALSOS POSITIVOS CONHECIDOS
+- Bastion hosts intencionalmente expostos na porta 22 para a
+  internet com configurações endurecidas não são o mesmo risco que
+  abrir o RDS para o mundo. Documente a exceção inline.
+- Distribuições CloudFront públicas, listeners de ALB em 80/443, API
+  Gateways e URLs de funções Lambda que *são* feitos para serem
+  voltados à internet.
+- Recursos de bootstrap (o bucket S3 e a tabela de lock do DynamoDB
+  que o próprio backend usa) precisam existir antes do state remoto
+  poder existir; esse ciclo ovo-e-galinha geralmente é bootstrapado
+  com um backend `local` único, que depois é migrado.
 
-## Context (for humans)
+## Contexto (para humanos)
 
-IaC mistakes scale: a single bad module gets `terraform apply`'d into hundreds of
-accounts. The classes of issue we cover here — state-secret leaks, unbounded
-network exposure, wildcard IAM, drift — are exactly what CIS and the cloud
-providers' own well-architected reviews flag the most. AI assistants are
-particularly prone to generating "works on my machine" Terraform that pins nothing
-and uses local state; this skill is the counterbalance.
+Erros de IaC escalam: um único módulo ruim recebe `terraform apply`
+em centenas de contas. As classes de problema que cobrimos aqui —
+vazamentos de segredo via state, exposição de rede sem limite, IAM
+wildcard, drift — são exatamente o que CIS e as revisões
+well-architected dos próprios cloud providers mais sinalizam.
+Assistentes de IA são particularmente propensos a gerar Terraform
+"funciona na minha máquina" que não fixa nada e usa state local;
+este skill é o contrapeso.
 
-## References
+## Referências
 
 - `checklists/terraform_hardening.yaml`
 - `checklists/cloudformation_hardening.yaml`

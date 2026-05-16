@@ -1,15 +1,16 @@
 ---
 id: iac-security
 language: fr
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Infrastructure-as-Code Security"
-description: "Hardening rules for Terraform, CloudFormation, and Pulumi: state, providers, drift, secrets"
+title: "Sécurité de l'Infrastructure-as-Code"
+description: "Règles de durcissement pour Terraform, CloudFormation et Pulumi : state, providers, drift, secrets"
 category: hardening
 severity: high
 applies_to:
-  - "when generating Terraform / Pulumi / CloudFormation"
-  - "when reviewing IaC changes in PR"
-  - "when wiring up a new cloud account or workspace"
+  - "lors de la génération de Terraform / Pulumi / CloudFormation"
+  - "lors de la revue de modifications IaC en PR"
+  - "lors du câblage d'un nouveau compte cloud ou workspace"
 languages: ["hcl", "yaml", "json", "typescript", "python", "go"]
 token_budget:
   minimal: 1000
@@ -25,66 +26,88 @@ sources:
   - "OWASP IaC Security Top 10"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: fr` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Sécurité de l'Infrastructure-as-Code
 
-# Infrastructure-as-Code Security
+## Règles (pour les agents IA)
 
-## Rules (for AI agents)
+### TOUJOURS
+- Épingler chaque provider/module à une version exacte ou à une
+  contrainte pessimiste (`~> 5.42`) ; jamais `>= 0` ni un `latest`
+  non épinglé.
+- Configurer un **backend distant** avec chiffrement au repos,
+  verrouillage du state côté serveur et versionnement (Terraform :
+  `s3` + table de verrouillage DynamoDB avec `kms_key_id` ; Pulumi :
+  le backend managé ou `s3://?kmskey=` ; CloudFormation : géré par
+  AWS).
+- Chiffrer par défaut chaque ressource persistante avec une clé KMS
+  gérée par le client : buckets S3, volumes EBS, RDS, EFS, DynamoDB,
+  SQS, SNS, log groups CloudWatch.
+- Tagger chaque ressource avec `owner`, `environment`, `cost-center`
+  et `data-classification` via un bloc de default tags.
+- Lancer `terraform plan` (ou `pulumi preview`,
+  `aws cloudformation deploy --no-execute-changeset`) en CI et
+  exiger une approbation humaine avant l'`apply` sur les stacks de
+  production.
+- Ajouter un job de détection de drift qui s'exécute
+  quotidiennement et ouvre un issue lorsque l'état réel du cloud
+  diverge du code (Terraform Cloud drift detection,
+  `pulumi refresh`, `cfn-drift-detect`).
+- Utiliser des IAM Conditions pour cadrer chaque rôle :
+  `aws:SourceArn`, `aws:SourceAccount`, `aws:PrincipalOrgID`, et
+  des policies d'accès TLS-only sur le stockage.
 
-### ALWAYS
-- Pin every provider/module to an exact version or a pessimistic constraint
-  (`~> 5.42`); never `>= 0` or unpinned `latest`.
-- Configure a **remote backend** with encryption at rest, server-side state locking,
-  and versioning (Terraform: `s3` + DynamoDB lock table with `kms_key_id`; Pulumi:
-  the managed backend or `s3://?kmskey=`; CloudFormation: managed by AWS).
-- Encrypt every persistent resource by default with a customer-managed KMS key:
-  S3 buckets, EBS volumes, RDS, EFS, DynamoDB, SQS, SNS, CloudWatch log groups.
-- Tag every resource with `owner`, `environment`, `cost-center`, and `data-classification`
-  via a default tags block.
-- Run `terraform plan` (or `pulumi preview`, `aws cloudformation deploy --no-execute-changeset`)
-  in CI and require a human approval before `apply` on production stacks.
-- Add a drift-detection job that runs daily and opens an issue when actual cloud
-  state diverges from code (Terraform Cloud drift detection, `pulumi refresh`,
-  `cfn-drift-detect`).
-- Use IAM Conditions to scope every role: `aws:SourceArn`, `aws:SourceAccount`,
-  `aws:PrincipalOrgID`, and TLS-only access policies on storage.
+### JAMAIS
+- Mettre en dur des credentials de provider dans le code ou dans
+  `.tfvars` (`access_key`, `secret_key`, `client_secret`,
+  `service_account_key`). Utiliser une fédération OIDC depuis le
+  CI, le service de métadonnées d'instance du provider, ou un
+  secret manager.
+- Committer `terraform.tfstate`, `terraform.tfstate.backup`,
+  `.pulumi/`, ou tout `*.tfvars` contenant des vrais secrets. Ils
+  contiennent des secrets en clair même si le code référence des
+  variables.
+- Utiliser `local_exec` / `null_resource` pour récupérer des
+  secrets au moment de l'apply et les planquer dans le state. Le
+  state est du clair interrogeable par quiconque a un accès en
+  lecture au backend.
+- Ouvrir des security groups / règles de firewall vers `0.0.0.0/0`
+  pour les ports 22, 3389, 3306, 5432, 1433, 6379, 27017, 9200,
+  11211 — même pas pour « c'est juste de la dev ». Passer par un
+  bastion ou un VPN.
+- Accorder des policies IAM `*:*` (action wildcard sur ressource
+  wildcard). Utiliser `iam:PassRole` avec des ARN de ressource
+  explicites.
+- Désactiver la vérification TLS du provider (`skip_tls_verify`,
+  `insecure = true`).
+- Utiliser `count = 0` pour « supprimer en douceur » des ressources
+  dont vous voulez vraiment vous débarrasser — détruisez-les.
 
-### NEVER
-- Hardcode provider credentials in the code or `.tfvars` (`access_key`, `secret_key`,
-  `client_secret`, `service_account_key`). Use OIDC federation from CI, the
-  provider's instance metadata service, or a secret manager.
-- Commit `terraform.tfstate`, `terraform.tfstate.backup`, `.pulumi/`, or any
-  `*.tfvars` containing real secrets. They contain plaintext secrets even if the
-  code references variables.
-- Use `local_exec` / `null_resource` to fetch secrets at apply time and stash them
-  in state. State is queryable plaintext by anyone with backend read access.
-- Open security groups / firewall rules to `0.0.0.0/0` for ports 22, 3389, 3306,
-  5432, 1433, 6379, 27017, 9200, 11211 — even for "just dev". Use bastion or VPN.
-- Grant `*:*` (wildcard action on wildcard resource) IAM policies. Use `iam:PassRole`
-  with explicit resource ARNs.
-- Disable provider TLS verification (`skip_tls_verify`, `insecure = true`).
-- Use `count = 0` to "soft-delete" resources you actually want gone — destroy them.
+### FAUX POSITIFS CONNUS
+- Les bastion hosts intentionnellement exposés sur le port 22 à
+  internet avec des configurations durcies ne sont pas le même
+  risque qu'un RDS ouvert au monde. Documenter l'exception inline.
+- Les distributions CloudFront publiques, les listeners ALB en
+  80/443, les API Gateways et les URLs de fonctions Lambda qui
+  *sont* censés être accessibles depuis internet.
+- Les ressources de bootstrap (le bucket S3 et la table de
+  verrouillage DynamoDB que le backend lui-même utilise) doivent
+  exister avant que le state distant existe ; ce dilemme de la
+  poule et de l'œuf se bootstrappe en général via un backend
+  `local` qu'on migre ensuite.
 
-### KNOWN FALSE POSITIVES
-- Bastion hosts intentionally exposed on port 22 to the internet with hardened
-  configurations are not the same risk as opening RDS to the world. Document the
-  exception inline.
-- Public CloudFront distributions, ALB listeners on 80/443, API Gateways, and
-  Lambda function URLs that *are* meant to be internet-facing.
-- Bootstrap resources (the S3 bucket and DynamoDB lock table the backend itself
-  uses) must exist before remote state can; this chicken-and-egg is usually
-  bootstrapped by a one-time `local` backend that's then migrated.
+## Contexte (pour les humains)
 
-## Context (for humans)
+Les erreurs IaC passent à l'échelle : un seul mauvais module se
+fait `terraform apply` sur des centaines de comptes. Les classes
+de problèmes qu'on couvre ici — fuites de secrets via le state,
+exposition réseau sans borne, IAM en wildcard, drift — sont
+exactement ce que CIS et les revues well-architected des cloud
+providers eux-mêmes signalent le plus. Les assistants IA sont
+particulièrement enclins à générer du Terraform « ça marche sur ma
+machine » qui n'épingle rien et utilise un state local ; ce skill
+est le contrepoids.
 
-IaC mistakes scale: a single bad module gets `terraform apply`'d into hundreds of
-accounts. The classes of issue we cover here — state-secret leaks, unbounded
-network exposure, wildcard IAM, drift — are exactly what CIS and the cloud
-providers' own well-architected reviews flag the most. AI assistants are
-particularly prone to generating "works on my machine" Terraform that pins nothing
-and uses local state; this skill is the counterbalance.
-
-## References
+## Références
 
 - `checklists/terraform_hardening.yaml`
 - `checklists/cloudformation_hardening.yaml`
