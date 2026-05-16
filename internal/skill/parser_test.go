@@ -186,6 +186,127 @@ func TestParseInvalidSeverity(t *testing.T) {
 	}
 }
 
+// TestParseRejectsEmptyListFields verifies ParseBytes' slice-emptiness
+// parity with Validate: a SKILL.md declaring `applies_to: []`,
+// `languages: []`, or `sources: []` has the key present (so the raw-map
+// check passes) but no entries, which has the same semantic meaning as
+// the key being absent. Both shapes must be rejected uniformly.
+func TestParseRejectsEmptyListFields(t *testing.T) {
+	cases := []struct {
+		name    string
+		find    string
+		replace string
+		wantMsg string
+	}{
+		{
+			"empty applies_to",
+			"applies_to:\n  - \"before every commit\"",
+			"applies_to: []",
+			"applies_to must list at least one entry",
+		},
+		{
+			"empty languages",
+			`languages: ["*"]`,
+			`languages: []`,
+			"languages must list at least one entry",
+		},
+		{
+			"empty sources",
+			"sources:\n  - \"Test source\"",
+			"sources: []",
+			"sources must list at least one entry",
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			doc := strings.Replace(validSkill, tc.find, tc.replace, 1)
+			if doc == validSkill {
+				t.Fatalf("setup: failed to swap %q in validSkill fixture", tc.find)
+			}
+			_, err := ParseBytes("bad.md", []byte(doc))
+			if err == nil {
+				t.Fatalf("ParseBytes accepted %s; want error containing %q", tc.name, tc.wantMsg)
+			}
+			if !strings.Contains(err.Error(), tc.wantMsg) {
+				t.Errorf("ParseBytes error for %s = %v, want substring %q", tc.name, err, tc.wantMsg)
+			}
+		})
+	}
+}
+
+// TestValidateAccumulatesAllDefects pins the accumulator contract:
+// when a Skill has multiple defects, Validate must report every one
+// of them in a single returned error (joined via errors.Join) so a
+// caller fixing the typed Skill can address everything in one pass,
+// matching sdk/go.Validate's collect-all behavior.
+func TestValidateAccumulatesAllDefects(t *testing.T) {
+	good, err := ParseBytes("locales/ar/example-skill/SKILL.md", []byte(localizedSkill))
+	if err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+	s := *good
+	// Three distinct defects in unrelated fields.
+	s.Frontmatter.Title = ""
+	s.Frontmatter.Category = "nonsense"
+	s.Frontmatter.TokenBudget.Minimal = 0
+
+	verr := s.Validate()
+	if verr == nil {
+		t.Fatalf("Validate accepted skill with 3 defects; want a joined error")
+	}
+	msg := verr.Error()
+	wants := []string{
+		"missing title",
+		"invalid category \"nonsense\"",
+		"token_budget",
+	}
+	for _, want := range wants {
+		if !strings.Contains(msg, want) {
+			t.Errorf("accumulated Validate error missing substring %q; got %v", want, verr)
+		}
+	}
+	// errors.Join also exposes the individual errors via Unwrap() []error.
+	type multiError interface{ Unwrap() []error }
+	if multi, ok := verr.(multiError); !ok {
+		t.Errorf("Validate result is not a multi-error (no Unwrap() []error); got %T", verr)
+	} else if got := len(multi.Unwrap()); got != 3 {
+		t.Errorf("Validate accumulated %d errors; want 3", got)
+	}
+}
+
+// TestValidateEmptyEnumReportsOneError pins the no-double-reporting
+// contract: an empty Category must surface as "missing category" only,
+// never as both "missing category" and "invalid category \"\"". Same
+// for Severity.
+func TestValidateEmptyEnumReportsOneError(t *testing.T) {
+	good, err := ParseBytes("locales/ar/example-skill/SKILL.md", []byte(localizedSkill))
+	if err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+	for _, field := range []string{"category", "severity"} {
+		t.Run("empty "+field, func(t *testing.T) {
+			s := *good
+			switch field {
+			case "category":
+				s.Frontmatter.Category = ""
+			case "severity":
+				s.Frontmatter.Severity = ""
+			}
+			verr := s.Validate()
+			if verr == nil {
+				t.Fatalf("Validate accepted empty %s; want missing-%s error", field, field)
+			}
+			msg := verr.Error()
+			if !strings.Contains(msg, "missing "+field) {
+				t.Errorf("Validate error for empty %s = %v, want substring %q", field, verr, "missing "+field)
+			}
+			if strings.Contains(msg, "invalid "+field+" \"\"") {
+				t.Errorf("Validate double-reported empty %s as 'invalid X \"\"'; got %v", field, verr)
+			}
+		})
+	}
+}
+
 func TestBodySectionExtraction(t *testing.T) {
 	s, err := ParseBytes("example.md", []byte(validSkill))
 	if err != nil {
@@ -426,6 +547,73 @@ func TestValidateEmptyEnumsReportMissing(t *testing.T) {
 			}
 			if strings.Contains(err.Error(), "invalid") {
 				t.Errorf("Validate error for %s should say 'missing', not 'invalid': %v", tc.name, err)
+			}
+		})
+	}
+}
+
+// TestValidateInvalidEnumMatchesParseBytes pins the wording-alignment
+// contract: when given the same invalid category / severity value,
+// Validate's error must contain the same "(allowed: ...)" allowed-set
+// suffix ParseBytes emits, so users hitting the same defect via either
+// code path see equivalent guidance.
+func TestValidateInvalidEnumMatchesParseBytes(t *testing.T) {
+	cases := []struct {
+		name       string
+		swapKey    string
+		swapValue  string
+		wantSuffix string
+	}{
+		{
+			"bad category",
+			"category: prevention",
+			"category: nonsense",
+			"(allowed: prevention, detection, compliance, supply-chain, hardening)",
+		},
+		{
+			"bad severity",
+			"severity: high",
+			"severity: spicy",
+			"(allowed: critical, high, medium, low)",
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			doc := strings.Replace(validSkill, tc.swapKey, tc.swapValue, 1)
+			if doc == validSkill {
+				t.Fatalf("setup: failed to swap %q in validSkill fixture", tc.swapKey)
+			}
+
+			// ParseBytes path.
+			_, parseErr := ParseBytes("bad.md", []byte(doc))
+			if parseErr == nil {
+				t.Fatalf("ParseBytes accepted %s; want error containing %q", tc.name, tc.wantSuffix)
+			}
+			if !strings.Contains(parseErr.Error(), tc.wantSuffix) {
+				t.Errorf("ParseBytes error for %s = %v, want suffix %q", tc.name, parseErr, tc.wantSuffix)
+			}
+
+			// Validate path — same fixture, route through ParseBytes
+			// with the allowlist temporarily relaxed so we land on a
+			// typed Skill carrying the invalid value, then call
+			// Validate.
+			good, err := ParseBytes("locales/ar/example-skill/SKILL.md", []byte(localizedSkill))
+			if err != nil {
+				t.Fatalf("setup parse: %v", err)
+			}
+			s := *good
+			switch tc.name {
+			case "bad category":
+				s.Frontmatter.Category = "nonsense"
+			case "bad severity":
+				s.Frontmatter.Severity = "spicy"
+			}
+			validateErr := s.Validate()
+			if validateErr == nil {
+				t.Fatalf("Validate accepted %s; want error containing %q", tc.name, tc.wantSuffix)
+			}
+			if !strings.Contains(validateErr.Error(), tc.wantSuffix) {
+				t.Errorf("Validate error for %s = %v, want suffix %q (must match ParseBytes wording)", tc.name, validateErr, tc.wantSuffix)
 			}
 		})
 	}

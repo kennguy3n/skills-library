@@ -32,7 +32,18 @@ func validateCmd() *cobra.Command {
 			var problems []string
 			for _, s := range skills {
 				if err := s.Validate(); err != nil {
-					problems = append(problems, err.Error())
+					// Validate returns errors.Join(...) when a skill has
+					// multiple defects. Unwrap into individual sub-errors so
+					// each gets its own "FAIL:" line and the problem count
+					// reflects the true number of defects (not "1" per
+					// skill).
+					if joined, ok := err.(interface{ Unwrap() []error }); ok {
+						for _, sub := range joined.Unwrap() {
+							problems = append(problems, sub.Error())
+						}
+					} else {
+						problems = append(problems, err.Error())
+					}
 				}
 				expected := s.Frontmatter.ID
 				actual := filepath.Base(filepath.Dir(s.Path))
