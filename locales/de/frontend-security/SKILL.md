@@ -1,15 +1,16 @@
 ---
 id: frontend-security
 language: de
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Frontend Security"
-description: "Browser-side hardening: XSS, CSP, CORS, SRI, DOM clobbering, iframe sandboxing, Trusted Types"
+title: "Frontend-Sicherheit"
+description: "Browserseitige Härtung: XSS, CSP, CORS, SRI, DOM-Clobbering, iframe-Sandboxing, Trusted Types"
 category: prevention
 severity: high
 applies_to:
-  - "when generating HTML / JSX / Vue / Svelte templates"
-  - "when wiring up response headers in a web app"
-  - "when adding third-party script tags or CDN resources"
+  - "beim Erzeugen von HTML- / JSX- / Vue- / Svelte-Templates"
+  - "beim Verdrahten von Response-Headern in einer Web-App"
+  - "beim Hinzufügen von Drittanbieter-Script-Tags oder CDN-Ressourcen"
 languages: ["html", "javascript", "typescript", "tsx", "jsx", "vue", "svelte"]
 token_budget:
   minimal: 1000
@@ -25,77 +26,92 @@ sources:
   - "MDN Trusted Types"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: de` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Frontend-Sicherheit
 
-# Frontend Security
+## Regeln (für KI-Agenten)
 
-## Rules (for AI agents)
+### IMMER
+- Alle User- / URL- / Storage-Daten als nicht vertrauenswürdig
+  behandeln. Über Framework-Escaping rendern (`{}` in JSX/Vue/Svelte,
+  `{{ }}` in Templating). Für rohes HTML einen geprüften Sanitizer
+  (DOMPurify) mit strikter Allowlist verwenden.
+- Einen strikten `Content-Security-Policy`-Header senden.
+  Produktions-Minimum: `default-src 'self'; script-src 'self'
+  'nonce-<random>'; object-src 'none'; base-uri 'self';
+  frame-ancestors 'none'; form-action 'self';
+  upgrade-insecure-requests`. Nonces oder Hashes verwenden — nie
+  `'unsafe-inline'` für `script-src`.
+- `Strict-Transport-Security: max-age=63072000; includeSubDomains;
+  preload`, `X-Content-Type-Options: nosniff`,
+  `Referrer-Policy: no-referrer-when-downgrade` oder strikter und
+  `Permissions-Policy` setzen, um nicht genutzte Features
+  abzuschalten.
+- Bei jedem `<script>` und `<link rel="stylesheet">`, das von einem
+  CDN geladen wird, `integrity="sha384-..." crossorigin="anonymous"`
+  hinzufügen.
+- Bei jedem `<iframe>` `sandbox="allow-scripts allow-same-origin"`
+  hinzufügen (nur die benötigten Attribute). Standard: keine
+  Allow-Flags.
+- Cookies mit `Secure; HttpOnly; SameSite=Lax` (oder `Strict` für
+  sensible Flows) verwenden. `__Host-`-Präfix, wenn kein
+  Subdomain-Sharing genutzt wird.
+- Trusted Types aktivieren, wo der Browser es unterstützt
+  (`Content-Security-Policy: require-trusted-types-for 'script'`),
+  damit Zuweisungen an DOM-Sinks (`innerHTML`,
+  `setAttribute('src', ...)` für Scripts) durch eine getypte Policy
+  laufen müssen.
 
-### ALWAYS
-- Treat all user/URL/storage data as untrusted. Render via framework
-  escaping (`{}` in JSX/Vue/Svelte, `{{ }}` in templating). For raw HTML use a
-  vetted sanitizer (DOMPurify) with a strict allowlist.
-- Send a strict `Content-Security-Policy` header. Minimum production baseline:
-  `default-src 'self'; script-src 'self' 'nonce-<random>'; object-src 'none';
-  base-uri 'self'; frame-ancestors 'none'; form-action 'self';
-  upgrade-insecure-requests`. Use nonces or hashes — never `'unsafe-inline'` for
-  `script-src`.
-- Set `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`,
-  `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer-when-downgrade`
-  or stricter, and `Permissions-Policy` to drop unused features.
-- Add `integrity="sha384-..." crossorigin="anonymous"` to every `<script>` and
-  `<link rel="stylesheet">` loaded from a CDN.
-- Add `sandbox="allow-scripts allow-same-origin"` (only the attributes you need)
-  to every `<iframe>`. Default to no allow flags.
-- Use cookies with `Secure; HttpOnly; SameSite=Lax` (or `Strict` for sensitive
-  flows). `__Host-` prefix when there's no subdomain sharing.
-- Enable Trusted Types where browser support allows
-  (`Content-Security-Policy: require-trusted-types-for 'script'`) so DOM-sink
-  assignments (`innerHTML`, `setAttribute('src', ...)` for scripts) must be
-  routed through a typed policy.
+### NIE
+- `dangerouslySetInnerHTML`, `v-html`, `{@html ...}`,
+  `innerHTML =` oder `document.write` mit nicht vertrauenswürdigem
+  Input verwenden.
+- `eval`, `new Function`, `setTimeout(string)`,
+  `setInterval(string)` oder `Function('return x')` verwenden.
+- User-Input in `href`, `src`, `formaction`, `action` oder ein
+  beliebiges URL-tragendes Attribut ohne Schema-Validierung
+  injizieren (`javascript:`, `data:`, `vbscript:` blockieren).
+- `target="_blank"` ohne `rel="noopener noreferrer"` verwenden —
+  leakt `window.opener`.
+- DOM-Knoten allein anhand ihrer Id vertrauen. DOM-Clobbering: ein
+  angreiferkontrolliertes `<input name="config">` überschattet
+  `window.config`.
+- `postMessage` ohne Prüfung von `event.origin` gegen eine
+  Allowlist verwenden.
+- JWTs, Refresh-Tokens oder PII in `localStorage` /
+  `sessionStorage` ablegen — jedes XSS exfiltriert sie. HttpOnly-
+  Cookies bevorzugen.
+- `document.cookie` aus JavaScript für Auth-Cookies lesen oder
+  schreiben — die sollten ohnehin HttpOnly sein.
 
-### NEVER
-- Use `dangerouslySetInnerHTML`, `v-html`, `{@html ...}`, `innerHTML =`, or
-  `document.write` with untrusted input.
-- Use `eval`, `new Function`, `setTimeout(string)`, `setInterval(string)`, or
-  `Function('return x')`.
-- Inject user input into `href`, `src`, `formaction`, `action`, or any URL-bearing
-  attribute without scheme validation (block `javascript:`, `data:`, `vbscript:`).
-- Use `target="_blank"` without `rel="noopener noreferrer"` — leaks
-  `window.opener`.
-- Trust DOM nodes by id alone. DOM clobbering: an attacker-controlled
-  `<input name="config">` shadows `window.config`.
-- Use `postMessage` without checking `event.origin` against an allowlist.
-- Store JWTs, refresh tokens, or PII in `localStorage` / `sessionStorage` —
-  any XSS exfiltrates them. Prefer HttpOnly cookies.
-- Read or write `document.cookie` from JavaScript for auth cookies — they
-  should be HttpOnly anyway.
+### BEKANNTE FALSCH-POSITIVE
+- Interne Admin-Tools, die bewusst Markdown / Rich Text von
+  vertrauenswürdigen Autoren rendern, dürfen
+  `dangerouslySetInnerHTML` nach einem Sanitizer-Durchgang
+  verwenden; den Sanitizer-Aufruf inline dokumentieren.
+- Browser-Extensions brauchen manchmal `'unsafe-eval'` in der
+  Extension-CSP; die CSP der nach aussen gerichteten Web-App muss
+  es weiterhin verbieten.
+- WebSocket-Verbindungen zu nicht-same-origin Endpunkten sind in
+  Ordnung, wenn der Server eine Origin-Validierung durchführt.
 
-### KNOWN FALSE POSITIVES
-- Internal admin tools deliberately rendering Markdown / rich text from trusted
-  authors may use `dangerouslySetInnerHTML` after a sanitizer pass; document the
-  sanitizer call inline.
-- Browser extensions sometimes need `'unsafe-eval'` in the extension CSP;
-  user-facing web app CSP should still forbid it.
-- WebSocket connections to non-same-origin endpoints are fine when the server
-  performs origin validation.
+## Kontext (für Menschen)
 
-## Context (for humans)
+Das OWASP XSS Prevention Cheat Sheet ist weiterhin die massgebliche
+Referenz für die Escaping-Regeln; CSP ist die Defense-in-Depth-
+Schicht, die ein vergessenes Escape in einen geloggten Report
+verwandelt statt in eine gestohlene Session. Trusted Types ist das
+neuere, vom Browser durchgesetzte Pattern, das die Frage "ging das
+durch einen Sanitizer?" vom Laufzeit-Audit ins Typsystem schiebt.
 
-The OWASP XSS Prevention Cheat Sheet is still the authoritative reference for the
-escaping rules; CSP is the defense-in-depth layer that turns one missed escape
-into a logged report rather than a stolen session. Trusted Types is the newer
-browser-enforced pattern that pushes the "did this go through a sanitizer?"
-question from runtime audit to type system.
+KI-generierte Frontends greifen oft zu `innerHTML` und
+`dangerouslySetInnerHTML`, weil sie kürzer sind; dieser Skill ist
+das Gegengewicht.
 
-AI-generated frontends commonly reach for `innerHTML` and `dangerouslySetInnerHTML`
-because they're shorter; this skill is the counterweight.
-
-## References
+## Referenzen
 
 - `rules/csp_defaults.json`
 - `rules/xss_sinks.json`
 - [OWASP XSS Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html).
 - [OWASP CSP Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html).
-- [CWE-79](https://cwe.mitre.org/data/definitions/79.html) — Cross-site scripting.
+- [CWE-79](https://cwe.mitre.org/data/definitions/79.html) — Cross-Site-Scripting.
 - [Trusted Types (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API).
