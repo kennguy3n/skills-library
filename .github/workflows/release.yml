@@ -285,6 +285,22 @@ jobs:
           # release.
           pattern: skills-check-*
 
+      - name: Build full OSV cache from upstream
+        # The committed `vulnerabilities/osv/` tree is a small
+        # latest-first sample (see scripts/ingest-osv.py:DEFAULT_PER_ECO);
+        # the release additionally ships the full upstream archive as a
+        # standalone asset so `skills-check fetch-vulns --from-release`
+        # can populate the user cache without hitting osv.dev directly.
+        shell: bash
+        run: |
+          set -e
+          mkdir -p osv-full-build/osv
+          python3 scripts/ingest-osv.py \
+            --per-ecosystem 0 \
+            --ordering latest-first \
+            --severity-priority \
+            --output-dir osv-full-build/osv
+
       - name: Stage release assets
         shell: bash
         run: |
@@ -311,6 +327,12 @@ jobs:
             compliance \
             profiles \
             locales
+          # Pack the full upstream OSV cache as a separate asset. The
+          # archive's top-level entry is `osv/`, so `fetch-vulns
+          # --from-release` can extract it directly into the user's
+          # cache root and end up with `<cache>/osv/<eco>/...` — the
+          # same layout the scanner consults.
+          tar -C osv-full-build -czf release/osv-cache.tar.gz osv
           if [ -d deltas ]; then
             tar -C deltas -czf release/deltas.tar.gz . || true
           fi
@@ -359,7 +381,8 @@ jobs:
             - `skills-check-<goos>-<goarch>[.exe]` — CLI binary (reproducible build).
             - `checksums-<goos>-<goarch>.txt` — SHA-256 of each binary.
             - `manifest.json` — library manifest (signed out-of-band before publish).
-            - `skills-library-data.tar.gz` — library payload (skills, vulnerabilities, dictionaries, dist, rules, compliance, profiles, locales, manifest.json). This is what `skills-check update` downloads by default.
+            - `skills-library-data.tar.gz` — library payload (skills, vulnerabilities, dictionaries, dist, rules, compliance, profiles, locales, manifest.json). This is what `skills-check update` downloads by default. The bundled `vulnerabilities/osv/` tree is a small latest-first sample.
+            - `osv-cache.tar.gz` — full upstream OSV catalogue (`osv/<eco>/...`). Consumed by `skills-check fetch-vulns --from-release` to populate the user cache with complete coverage without hitting osv.dev.
             - `deltas.tar.gz` — patch set against the previous release (best effort).
             - `SHA256SUMS.txt` — checksum of every asset above.
 

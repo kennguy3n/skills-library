@@ -2,7 +2,7 @@
   "schema_version": "1.7.5",
   "id": "GHSA-7c37-gx6w-8vc5",
   "published": "2026-05-08T17:37:45Z",
-  "modified": "2026-05-15T20:44:23.376785364Z",
+  "modified": "2026-05-16T00:06:22.506926Z",
   "aliases": [
     "CVE-2026-44310"
   ],
@@ -42,6 +42,10 @@
       "url": "https://github.com/sigstore/gitsign/security/advisories/GHSA-7c37-gx6w-8vc5"
     },
     {
+      "type": "ADVISORY",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-44310"
+    },
+    {
       "type": "PACKAGE",
       "url": "https://github.com/sigstore/gitsign"
     }
@@ -53,7 +57,7 @@
     ],
     "github_reviewed": true,
     "github_reviewed_at": "2026-05-08T17:37:45Z",
-    "nvd_published_at": null,
+    "nvd_published_at": "2026-05-15T17:16:47Z",
     "severity": "MODERATE"
   },
   "severity": [
@@ -62,5 +66,5 @@
       "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:L"
     }
   ],
-  "last_updated": "2026-05-15"
+  "last_updated": "2026-05-16"
 }

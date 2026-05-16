@@ -64,15 +64,22 @@ ECOSYSTEM_MAP = {
     "swift": "SwiftURL",
 }
 
-# Default per-ecosystem sample size. The cap exists so the repo
-# stays reviewable; production operators who need the full archive
-# should override via --per-ecosystem 0. 500 is the new floor (was
-# 30) because a 30-record stride produced obvious gaps in the OSV
-# coverage matrix — popular packages with multiple advisories often
-# lost the lower-severity rows. Combined with --severity-priority,
-# 500 captures the long tail of CRITICAL/HIGH advisories without
-# blowing past ~10 MB per ecosystem directory.
-DEFAULT_PER_ECO = 500
+# Default per-ecosystem sample size for the *repo-bundled* sample.
+# The cap exists so the committed `vulnerabilities/osv/` tree stays
+# small enough to clone and review (a full upstream pull is ~250 MB
+# and ~16k JSON files). Operators who need full coverage at scan
+# time should either:
+#
+#   - run `skills-check fetch-vulns` (default: pulls from osv.dev
+#     into the user-local cache with --per-ecosystem 0), or
+#   - run `skills-check fetch-vulns --from-release`, which pulls
+#     the pre-built `osv-cache.tar.gz` published as a release asset.
+#
+# 100 (down from the previous 500/2000) keeps the bundled tree
+# under ~10 MB while preserving the most operationally relevant
+# advisories when combined with `--ordering latest-first` (the
+# default the bundled sample is regenerated with).
+DEFAULT_PER_ECO = 100
 
 UA = "skills-library-osv-ingest/0.1"
 BULK_URL = "https://osv-vulnerabilities.storage.googleapis.com/{}/all.zip"

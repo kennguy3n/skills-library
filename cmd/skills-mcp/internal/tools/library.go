@@ -73,9 +73,11 @@ type Library struct {
 	// corresponding `osv/<eco>/index.json` exists, OSV lookups use
 	// the user cache in preference to the repo-bundled offline
 	// fallback under `<root>/vulnerabilities/osv/`. The committed
-	// sample is a 2,000-records-per-ecosystem latest-first slice
-	// suitable for offline use; the user cache is the full
-	// upstream archive (`--per-ecosystem 0`).
+	// sample is a small latest-first slice (see
+	// scripts/ingest-osv.py:DEFAULT_PER_ECO) suitable for offline
+	// use; the user cache is the full upstream archive populated
+	// either from osv.dev directly (`fetch-vulns`) or from the
+	// `osv-cache.tar.gz` release asset (`fetch-vulns --from-release`).
 	//
 	// Configured via the SKILLS_MCP_CACHE environment variable;
 	// defaults to `${XDG_CACHE_HOME:-$HOME/.cache}/skills-mcp/vulns`.

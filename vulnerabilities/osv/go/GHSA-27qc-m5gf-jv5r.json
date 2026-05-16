@@ -2,7 +2,7 @@
   "schema_version": "1.7.5",
   "id": "GHSA-27qc-m5gf-jv5r",
   "published": "2026-05-13T15:33:57Z",
-  "modified": "2026-05-13T15:48:31.235607Z",
+  "modified": "2026-05-16T00:29:42.467675Z",
   "aliases": [
     "CVE-2026-45375"
   ],
@@ -39,6 +39,10 @@
       "url": "https://github.com/siyuan-note/siyuan/security/advisories/GHSA-27qc-m5gf-jv5r"
     },
     {
+      "type": "ADVISORY",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-45375"
+    },
+    {
       "type": "PACKAGE",
       "url": "https://github.com/siyuan-note/siyuan"
     }
@@ -50,7 +54,7 @@
     ],
     "github_reviewed": true,
     "github_reviewed_at": "2026-05-13T15:33:57Z",
-    "nvd_published_at": null,
+    "nvd_published_at": "2026-05-14T19:16:39Z",
     "severity": "CRITICAL"
   },
   "severity": [
@@ -59,5 +63,5 @@
       "score": "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:H/I:H/A:H"
     }
   ],
-  "last_updated": "2026-05-13"
+  "last_updated": "2026-05-16"
 }

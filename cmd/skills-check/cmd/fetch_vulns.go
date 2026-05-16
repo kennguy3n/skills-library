@@ -3,6 +3,8 @@ package cmd
 import (
 	"fmt"
 	"io"
+	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -10,8 +12,30 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kennguy3n/skills-library/cmd/skills-check/internal/updater"
 	"github.com/spf13/cobra"
 )
+
+// releaseAssetOwnerRepo is the GitHub owner/repo that publishes
+// `osv-cache.tar.gz` as a release asset. It is the same coordinate
+// that ships the rest of the library's release assets (see
+// .github/workflows/release.yml). Operators who fork the repo and
+// publish their own release assets should override the resolved URL
+// via --release-url rather than rebuilding the binary.
+const releaseAssetOwnerRepo = "kennguy3n/skills-library"
+
+// releaseAssetName is the file name of the published OSV cache
+// tarball. The release workflow rebuilds this archive on every tag
+// with the full upstream OSV catalogue (no --per-ecosystem cap).
+const releaseAssetName = "osv-cache.tar.gz"
+
+// maxReleaseAssetBytes caps how many bytes a --from-release fetch
+// is allowed to download into the user cache before extraction.
+// The release asset is ~250 MB today; we allow 1 GiB to leave
+// headroom for the upstream OSV catalogue growth. This mirrors
+// updater.MaxHTTPTarballBytes and is a defence-in-depth guard
+// against a hostile mirror serving an unbounded body.
+const maxReleaseAssetBytes int64 = 1 << 30
 
 // fetch-vulns supported ecosystem identifiers. Keep the surface
 // narrow and explicit so the subcommand only ever shells out to the
@@ -108,19 +132,33 @@ func fetchVulnsCmd() *cobra.Command {
 		check        bool
 		maxAgeDays   int
 		verbose      bool
+		fromRelease  bool
+		releaseTag   string
+		releaseURL   string
 	)
 	c := &cobra.Command{
 		Use:   "fetch-vulns",
-		Short: "Populate the user-local OSV cache from osv.dev",
-		Long: `Download per-ecosystem OSV archives from osv.dev and write them
-into the user-local cache that skills-mcp (and skills-check
+		Short: "Populate the user-local OSV cache from osv.dev or a release asset",
+		Long: `Populate the user-local OSV cache that skills-mcp (and skills-check
 validation) consult before falling back to the repo-bundled sample.
 
 The cache lives under $SKILLS_MCP_CACHE (falling back to
 $XDG_CACHE_HOME/skills-mcp/vulns and then ~/.cache/skills-mcp/vulns).
-A full pull is ~250 MB and ~5–10 minutes on a typical connection;
-re-runs are idempotent and replace the existing cache per
-ecosystem.
+Two sources are supported:
+
+  1. osv.dev (default). Shells out to scripts/ingest-osv.py and
+     pulls each ecosystem archive from
+     osv-vulnerabilities.storage.googleapis.com. A full pull is
+     ~250 MB and ~5-10 minutes on a typical connection. Honours
+     --per-ecosystem, --ordering, and --only for client-side
+     subsetting.
+
+  2. release asset (--from-release). Downloads a single
+     pre-built osv-cache.tar.gz from the latest GitHub release
+     (override the tag with --release-tag, or the URL entirely
+     with --release-url) and extracts it into the user cache.
+     This is the recommended path for production deployments
+     that want full coverage without hitting osv.dev directly.
 
 Use --check (no download) to verify the cache exists and is
 fresher than --max-age-days; the command exits non-zero when the
@@ -148,12 +186,28 @@ cache is missing, partial, or stale, suitable for cron / CI.
 				return runFetchVulnsCheck(out, osvDir, ecos, maxAgeDays)
 			}
 
+			if err := os.MkdirAll(osvDir, 0o755); err != nil {
+				return fmt.Errorf("mkdir cache: %w", err)
+			}
+
+			if fromRelease {
+				resolved, err := resolveReleaseAssetURL(releaseURL, releaseTag)
+				if err != nil {
+					return err
+				}
+				fmt.Fprintf(out, "downloading OSV cache release asset -> %s\n", osvDir)
+				fmt.Fprintf(out, "  source: %s\n", resolved)
+				started := time.Now()
+				if err := runFetchVulnsFromRelease(c, resolved, absCache); err != nil {
+					return err
+				}
+				fmt.Fprintf(out, "done in %s\n", time.Since(started).Round(time.Second))
+				return runFetchVulnsCheck(out, osvDir, ecos, maxAgeDays)
+			}
+
 			script := repoIngestScript(path)
 			if script == "" {
 				return fmt.Errorf("could not locate scripts/ingest-osv.py; pass --path <library-root>")
-			}
-			if err := os.MkdirAll(osvDir, 0o755); err != nil {
-				return fmt.Errorf("mkdir cache: %w", err)
 			}
 			fmt.Fprintf(out, "fetching OSV archives -> %s\n", osvDir)
 			fmt.Fprintf(out, "  ecosystems: %s\n", strings.Join(ecos, ", "))
@@ -178,6 +232,9 @@ cache is missing, partial, or stale, suitable for cron / CI.
 	c.Flags().BoolVar(&check, "check", false, "verify cache is present and fresh; do not download")
 	c.Flags().IntVar(&maxAgeDays, "max-age-days", 7, "cache is considered stale when older than this many days")
 	c.Flags().BoolVar(&verbose, "verbose", false, "pass --verbose through to ingest-osv.py")
+	c.Flags().BoolVar(&fromRelease, "from-release", false, "download the pre-built osv-cache.tar.gz from a GitHub release instead of hitting osv.dev")
+	c.Flags().StringVar(&releaseTag, "release-tag", "latest", "release tag to pull from when --from-release is set; 'latest' follows the latest published release")
+	c.Flags().StringVar(&releaseURL, "release-url", "", "explicit URL of the osv-cache.tar.gz asset; overrides --release-tag")
 	return c
 }
 
@@ -221,6 +278,87 @@ func perEcosystemDisplay(n int) string {
 		return "unlimited (full archive)"
 	}
 	return fmt.Sprintf("%d", n)
+}
+
+// resolveReleaseAssetURL builds the HTTPS URL of the osv-cache.tar.gz
+// release asset. An explicit --release-url wins. Otherwise we use
+// GitHub's "latest" redirect (which 302s to the most recent published
+// non-draft release) when tag == "latest", or the per-tag download
+// URL when the operator pinned a specific tag. Both URL shapes are
+// stable GitHub endpoints documented at
+// https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases.
+func resolveReleaseAssetURL(explicitURL, tag string) (string, error) {
+	if explicitURL != "" {
+		if _, err := url.Parse(explicitURL); err != nil {
+			return "", fmt.Errorf("parse --release-url %q: %w", explicitURL, err)
+		}
+		return explicitURL, nil
+	}
+	tag = strings.TrimSpace(tag)
+	if tag == "" {
+		return "", fmt.Errorf("--release-tag is empty (use 'latest' or a tag like v0.1.1)")
+	}
+	if tag == "latest" {
+		return fmt.Sprintf(
+			"https://github.com/%s/releases/latest/download/%s",
+			releaseAssetOwnerRepo,
+			releaseAssetName,
+		), nil
+	}
+	return fmt.Sprintf(
+		"https://github.com/%s/releases/download/%s/%s",
+		releaseAssetOwnerRepo,
+		tag,
+		releaseAssetName,
+	), nil
+}
+
+// runFetchVulnsFromRelease downloads the OSV cache release asset
+// from rawURL into a temp file, validates the body size, and
+// extracts it into cacheRoot via updater.ExtractTarball. The
+// archive is expected to contain `osv/<eco>/{*.json,index.json}`
+// entries so extraction populates `<cacheRoot>/osv/<eco>/...`
+// in-place — matching the layout that the MCP scanner and
+// `fetch-vulns --check` already consult.
+func runFetchVulnsFromRelease(c *cobra.Command, rawURL, cacheRoot string) error {
+	client := &http.Client{Timeout: 10 * time.Minute}
+	req, err := http.NewRequest(http.MethodGet, rawURL, nil)
+	if err != nil {
+		return fmt.Errorf("new request: %w", err)
+	}
+	req.Header.Set("User-Agent", "skills-check/fetch-vulns")
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("GET %s: %w", rawURL, err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode/100 != 2 {
+		return fmt.Errorf("GET %s: HTTP %d", rawURL, resp.StatusCode)
+	}
+
+	tmpFile, err := os.CreateTemp("", "osv-cache-*.tar.gz")
+	if err != nil {
+		return fmt.Errorf("create tempfile: %w", err)
+	}
+	tmpPath := tmpFile.Name()
+	defer os.Remove(tmpPath)
+
+	limited := io.LimitReader(resp.Body, maxReleaseAssetBytes+1)
+	n, copyErr := io.Copy(tmpFile, limited)
+	if cerr := tmpFile.Close(); copyErr == nil {
+		copyErr = cerr
+	}
+	if copyErr != nil {
+		return fmt.Errorf("download %s: %w", rawURL, copyErr)
+	}
+	if n > maxReleaseAssetBytes {
+		return fmt.Errorf("download %s exceeded %d byte limit", rawURL, maxReleaseAssetBytes)
+	}
+
+	if err := updater.ExtractTarball(tmpPath, cacheRoot); err != nil {
+		return fmt.Errorf("extract %s: %w", tmpPath, err)
+	}
+	return nil
 }
 
 // runFetchVulnsIngest shells out to scripts/ingest-osv.py with
