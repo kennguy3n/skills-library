@@ -1,15 +1,16 @@
 ---
 id: logging-security
 language: pt-BR
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Logging Security"
-description: "Prevent secret/PII leaks in logs, log-injection attacks, missing audit trails, weak retention"
+title: "Segurança de logging"
+description: "Prevenir vazamentos de segredo/PII em logs, ataques de log-injection, ausência de audit trail e retenção fraca"
 category: prevention
 severity: high
 applies_to:
-  - "when generating logger calls or structured-logging schemas"
-  - "when wiring log shippers, sinks, retention, and access controls"
-  - "when reviewing requirements for audit logging"
+  - "ao gerar chamadas a logger ou schemas de logging estruturado"
+  - "ao configurar log shippers, sinks, retenção e controles de acesso"
+  - "ao revisar requisitos de audit logging"
 languages: ["*"]
 token_budget:
   minimal: 1000
@@ -25,75 +26,85 @@ sources:
   - "NIST SP 800-92 (Guide to Computer Security Log Management)"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: pt-BR` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Segurança de logging
 
-# Logging Security
+## Regras (para agentes de IA)
 
-## Rules (for AI agents)
+### SEMPRE
+- Logue em um **formato estruturado** (JSON ou logfmt) com nomes
+  de campo estáveis. Inclua `timestamp`, `service`, `version`,
+  `level`, `trace_id`, `span_id`, `user_id` (quando autenticado),
+  `request_id`, `event`.
+- Passe cada mensagem de log por um **redactor** antes de chegar
+  ao sink: senhas, tokens, API keys, cookies, URLs completas
+  contendo `?token=`, padrões comuns de PII (estilo SSN, estilo
+  cartão de crédito, opcionalmente e-mail).
+- Sanitize newlines / caracteres de controle de qualquer string
+  controlada pelo usuário antes de loggar (CWE-117): substitua
+  `\n`, `\r`, `\t` para que um atacante não consiga injetar
+  linhas de log falsas.
+- Logue eventos relevantes para segurança como **registros de
+  auditoria imutáveis**: sucesso/falha de login, desafios de MFA,
+  troca de senha, troca de role, conceder/revogar acesso,
+  exportação de dados, ação de admin. Registros de auditoria
+  recebem retenção mais longa e acesso mais estrito.
+- Defina retenção por categoria de dado, não global: curta para
+  debug, longa para auditoria, nada de PII após o consentimento
+  expirar.
+- Envie logs para um store centralizado e append-only (Cloud
+  Logging, CloudWatch, Elastic, Loki) com acesso de leitura
+  restrito a engenharia / SecOps.
+- Alerte sobre logs faltando de um serviço (falha silenciosa) e
+  sobre anomalias de volume (pico 10× ou queda 10×).
 
-### ALWAYS
-- Log in a **structured format** (JSON or logfmt) with stable field names.
-  Include `timestamp`, `service`, `version`, `level`, `trace_id`,
-  `span_id`, `user_id` (when authenticated), `request_id`, `event`.
-- Run every log message through a **redactor** before it reaches the log
-  sink: passwords, tokens, API keys, cookies, full URLs containing
-  `?token=`, common PII patterns (SSN-like, credit-card-like, email
-  optionally).
-- Sanitize newlines / control characters from any user-controlled string
-  before logging it (CWE-117): replace `\n`, `\r`, `\t` so an attacker
-  can't inject fake log lines.
-- Log security-relevant events as **immutable audit records**: login
-  success/failure, MFA challenges, password change, role change, access
-  grant/revoke, data export, admin action. Audit records get longer
-  retention and stricter access.
-- Set retention per data category, not globally: short for debug,
-  long for audit, no PII after consent expires.
-- Ship logs to a centralized, append-only store (Cloud Logging, CloudWatch,
-  Elastic, Loki) with read access restricted to engineering / SecOps.
-- Alert on missing logs from a service (silent failure) and on log volume
-  anomalies (10x spike or 10x drop).
+### NUNCA
+- Logue bodies completos de request / response em INFO. Bodies
+  regularmente contêm senhas, tokens, PII e arquivos enviados.
+- Logue headers `Authorization`, headers `Cookie` /
+  `Set-Cookie`, tokens em query-string, nem qualquer campo
+  chamado `password`, `secret`, `token`, `key`, `private` ou
+  `credential` — nem mesmo após "ofuscar" com `***`.
+- Logue statements SQL já bindados completos com os valores dos
+  parâmetros; logue em vez disso o template + *nomes* dos
+  parâmetros + um identificador hasheado do valor.
+- Permita que usuários sem privilégio leiam logs crus contendo
+  dados de outros usuários.
+- Use `print()` / `console.log` / `fmt.Println` puro em serviços
+  de produção; use o logger configurado para que redação e
+  estrutura sejam aplicadas de forma uniforme.
+- Desabilite o logging de tentativas de autenticação falhas para
+  "reduzir ruído" — detecção de brute-force depende desses
+  registros.
+- Logue para um único arquivo em disco local em produção; esses
+  logs se perdem quando o pod / container / VM morre.
 
-### NEVER
-- Log full request / response bodies at INFO. Bodies regularly contain
-  passwords, tokens, PII, and uploaded files.
-- Log `Authorization` headers, `Cookie` / `Set-Cookie` headers, query-string
-  tokens, or any field named `password`, `secret`, `token`, `key`,
-  `private`, or `credential` — even after "obfuscation" like `***`.
-- Log entire bound SQL statements with their parameter values; log the
-  statement template + parameter *names* + a hashed value identifier
-  instead.
-- Allow unprivileged users to read raw logs containing other users' data.
-- Use plain `print()` / `console.log` / `fmt.Println` in production
-  services; use the configured logger so redaction and structure are
-  applied uniformly.
-- Disable logging of failed authentication attempts to "reduce noise" —
-  brute-force detection depends on those records.
-- Log to a single file on local disk in production; logs there are lost
-  when the pod / container / VM dies.
+### FALSOS POSITIVOS CONHECIDOS
+- Logs de health-check ou probe do load balancer podem
+  legitimamente ser sub-amostrados / suprimidos no load
+  balancer para economizar volume.
+- Um valor de `request_id` que pareça um token não é um token —
+  redactors que casam padrões podem sobre-redigir; whiteliste
+  prefixos sabidamente seguros (ex.: seus IDs de correlação
+  `req_`).
+- Logs de acesso a APIs públicas anônimas sem headers de auth
+  não são um problema de privacidade per se; IPs de cliente
+  podem ainda ser PII sob a LGPD/GDPR.
 
-### KNOWN FALSE POSITIVES
-- Health-check or load-balancer probe logs can legitimately be downsampled
-  / suppressed at the load balancer to save volume.
-- A `request_id` value that happens to look like a token is not a token —
-  redactors that match patterns can over-redact; whitelist known-safe
-  prefixes (your `req_` correlation IDs, for example).
-- Anonymous public-API access logs without auth headers are not a privacy
-  issue per se; client IPs may still be PII under GDPR.
+## Contexto (para humanos)
 
-## Context (for humans)
+Logs são o lugar mais comum onde segredos terminam em texto
+claro — dumps de request, traces de exceção, prints de debug,
+telemetria de SDKs de terceiros. O OWASP Logging Cheat Sheet
+cobre as regras operacionais; NIST SP 800-92 cobre o lado de
+retenção / centralização / audit trail. Os requisitos de audit
+trail aparecem em SOC 2 CC7.2, PCI-DSS 10, HIPAA §164.312(b) e
+ISO 27001 A.12.4.
 
-Logs are the most common place secrets end up in plain text — request
-dumps, exception traces, debug prints, third-party SDK telemetry. OWASP's
-Logging Cheat Sheet covers the operational rules; NIST SP 800-92 covers
-the retention / centralization / audit-trail side. The audit-trail
-requirements show up under SOC 2 CC7.2, PCI-DSS 10, HIPAA §164.312(b),
-and ISO 27001 A.12.4.
+Este skill é o parceiro de `secret-detection` (que escaneia o
+fonte) e `error-handling-security` (que sanitiza a resposta
+externa). Logs ficam entre os dois e vazam nas duas direções.
 
-This skill is the partner to `secret-detection` (which scans source) and
-`error-handling-security` (which sanitizes the external response). Logs
-sit between the two and bleed both directions.
-
-## References
+## Referências
 
 - `rules/redaction_patterns.json`
 - `rules/audit_event_schema.json`
