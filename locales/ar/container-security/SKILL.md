@@ -2,7 +2,7 @@
 id: container-security
 language: ar
 dir: rtl
-source_revision: "fbb3a823"
+source_revision: "afe376a8"
 version: "1.0.0"
 title: "أمن الحاويات"
 description: "قواعد تصليب لـ Dockerfile وصور OCI ومانيفستات Kubernetes ومخططات Helm"

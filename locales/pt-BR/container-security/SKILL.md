@@ -1,7 +1,7 @@
 ---
 id: container-security
 language: pt-BR
-source_revision: "fbb3a823"
+source_revision: "afe376a8"
 version: "1.0.0"
 title: "Segurança de contêineres"
 description: "Regras de endurecimento para Dockerfile, imagens OCI, manifests Kubernetes e charts Helm"

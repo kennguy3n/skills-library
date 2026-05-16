@@ -1,7 +1,7 @@
 ---
 id: secret-detection
 language: es
-source_revision: "afe376a81d76"
+source_revision: "9808b0fa"
 version: "1.3.0"
 title: "Detección de secretos"
 description: "Detectar y evitar secretos, claves de API, tokens y credenciales codificados en el código"

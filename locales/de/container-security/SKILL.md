@@ -1,7 +1,7 @@
 ---
 id: container-security
 language: de
-source_revision: "fbb3a823"
+source_revision: "afe376a8"
 version: "1.0.0"
 title: "Container-Sicherheit"
 description: "Härtungsregeln für Dockerfile, OCI-Images, Kubernetes-Manifests und Helm-Charts"
