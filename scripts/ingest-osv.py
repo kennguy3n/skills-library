@@ -132,13 +132,33 @@ def extract_subset(
     target: int,
     verbose: bool,
     severity_priority: bool = False,
+    ordering: str = "stride",
 ) -> int:
     dest_dir.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(zip_path) as zf:
         names = sorted(n for n in zf.namelist() if n.endswith(".json"))
         if not names:
             return 0
-        if severity_priority and (target == 0 or target < len(names)):
+        if ordering == "latest-first" and (target == 0 or target < len(names)):
+            # Re-order the candidate list so the newest advisories
+            # (highest upstream `modified` timestamp) land at the head.
+            # `head_sample` below then takes a contiguous prefix rather
+            # than stride-sampling, so the offline-fallback subset is
+            # always the most-recently-edited records — the most
+            # operationally relevant ones for a scanner that may not
+            # be able to reach osv.dev at runtime.
+            modified_cache: dict[str, str] = {}
+            for name in names:
+                rec = _read_record(zf, name)
+                if rec is None:
+                    modified_cache[name] = ""
+                    continue
+                modified_cache[name] = rec.get("modified") or rec.get("published") or ""
+            # Sort by modified desc; ties broken by name asc for
+            # determinism across runs.
+            names.sort(key=lambda n: (modified_cache.get(n, ""), n), reverse=False)
+            names.sort(key=lambda n: modified_cache.get(n, ""), reverse=True)
+        elif severity_priority and (target == 0 or target < len(names)):
             # Sort the candidate list so the most impactful advisories
             # land at the head before stride-sampling trims the tail.
             # We compute severity once per record (a JSON parse per file
@@ -158,7 +178,13 @@ def extract_subset(
                     n,
                 )
             )
-        sample = stride_sample(names, target)
+        if ordering == "latest-first":
+            # Already sorted by modified desc — take the head N (not a
+            # stride sample). This is the offline-fallback ordering
+            # the repo bundles for skills-mcp / skills-check.
+            sample = names if target == 0 else names[:target]
+        else:
+            sample = stride_sample(names, target)
         written = 0
         for name in sample:
             try:
@@ -309,9 +335,15 @@ def write_index(dest_dir: Path) -> None:
     parsing when an older index pre-dates this field.
     """
     now = dt.datetime.now(dt.timezone.utc)
+    # last_updated is full RFC3339 so two regenerations on the same UTC
+    # calendar day produce distinct values; CI's `last_updated must be
+    # bumped` check is a string-equality test against the base branch,
+    # and date-only granularity caused spurious failures whenever the
+    # OSV index was rebuilt twice in the same day. The malicious-package
+    # bundles already use the same format.
     index: dict = {
         "schema_version": "1.0",
-        "last_updated": now.strftime("%Y-%m-%d"),
+        "last_updated": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "generated_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "by_package": {},
     }
@@ -362,11 +394,38 @@ def main() -> int:
             "Sort each ecosystem's archive by severity (CRITICAL first) before"
             " stride-sampling so a smaller --per-ecosystem still captures the"
             " most impactful advisories. Costs one extra JSON parse per"
-            " archive entry."
+            " archive entry. Ignored when --ordering=latest-first."
+        ),
+    )
+    parser.add_argument(
+        "--ordering",
+        choices=("stride", "latest-first"),
+        default="stride",
+        help=(
+            "How to choose --per-ecosystem records out of the upstream"
+            " archive. 'stride' (default) takes evenly-spaced records"
+            " across the alphabetical OSV-ID order — a representative"
+            " cross-section. 'latest-first' sorts by the upstream"
+            " `modified` timestamp descending and takes the head, which"
+            " biases the offline cache toward the most recently edited"
+            " advisories. Use 'latest-first' for repo-bundled offline"
+            " fallbacks; use 'stride' for representative test samples."
+        ),
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=None,
+        help=(
+            "Where to write per-ecosystem JSONs. Defaults to the repo's"
+            " vulnerabilities/osv/ directory; pass a user-cache path"
+            " (e.g. ~/.cache/skills-mcp/vulns/osv/) when populating a"
+            " runtime cache rather than the committed sample."
         ),
     )
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
+    cache_root = args.output_dir if args.output_dir is not None else CACHE_DIR
 
     selected = args.ecosystem or list(ECOSYSTEM_MAP)
     tmp = REPO_ROOT / ".osv-tmp"
@@ -380,7 +439,7 @@ def main() -> int:
             if not ok:
                 print("    download failed; skipping")
                 continue
-            dest = CACHE_DIR / eco
+            dest = cache_root / eco
             # Wipe existing files so a smaller --per-ecosystem on a
             # subsequent run doesn't leave stale records behind.
             if dest.exists():
@@ -392,6 +451,7 @@ def main() -> int:
                 args.per_ecosystem,
                 args.verbose,
                 severity_priority=args.severity_priority,
+                ordering=args.ordering,
             )
             print(f"    wrote {written} advisories -> {dest}")
             write_index(dest)

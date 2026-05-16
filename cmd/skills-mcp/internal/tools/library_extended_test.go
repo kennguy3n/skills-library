@@ -1165,3 +1165,104 @@ func TestLookupVulnerabilityMissingOSVIndexIsSafe(t *testing.T) {
 		t.Errorf("OSVAdvisories must be empty when cache missing; got %d", len(res.OSVAdvisories))
 	}
 }
+
+// TestOSVUserCacheOverridesRepoSample verifies the user-cache
+// fallback: when SKILLS_MCP_CACHE points at a directory containing a
+// populated osv/<eco>/index.json, the Library reads from there instead
+// of the repo-bundled sample.
+//
+// The test uses a synthetic ecosystem entry ("user-cache-only-pkg")
+// that is *not* in the repo sample, so a returned advisory proves the
+// lookup hit the user cache rather than falling through.
+func TestOSVUserCacheOverridesRepoSample(t *testing.T) {
+	tmp := t.TempDir()
+	// Minimal library scaffold so NewLibrary accepts the root.
+	if err := os.MkdirAll(filepath.Join(tmp, "skills"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmp, "vulnerabilities", "supply-chain", "malicious-packages"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmp, "vulnerabilities", "supply-chain", "malicious-packages", "npm.json"),
+		[]byte(`{"ecosystem":"npm","entries":[]}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	// User cache: one synthetic OSV record for a package the repo
+	// sample knows nothing about.
+	cache := t.TempDir()
+	npmDir := filepath.Join(cache, "osv", "npm")
+	if err := os.MkdirAll(npmDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	const recordID = "TEST-USER-CACHE-2026-0001"
+	record := `{
+  "schema_version": "1.6.0",
+  "id": "` + recordID + `",
+  "modified": "2026-05-15T00:00:00Z",
+  "summary": "synthetic test advisory routed via SKILLS_MCP_CACHE",
+  "affected": [{"package": {"ecosystem": "npm", "name": "user-cache-only-pkg"}}]
+}`
+	if err := os.WriteFile(filepath.Join(npmDir, recordID+".json"), []byte(record), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	index := `{
+  "schema_version": "1.0",
+  "ecosystem": "npm",
+  "last_updated": "2026-05-15",
+  "by_package": {
+    "user-cache-only-pkg": [{
+      "id": "` + recordID + `",
+      "file": "` + recordID + `.json",
+      "modified": "2026-05-15T00:00:00Z",
+      "summary": "synthetic test advisory routed via SKILLS_MCP_CACHE",
+      "aliases": [],
+      "severity": "medium"
+    }]
+  }
+}`
+	if err := os.WriteFile(filepath.Join(npmDir, "index.json"), []byte(index), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	lib, err := NewLibrary(tmp)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// NewLibrary picks up SKILLS_MCP_CACHE at construction-time via
+	// defaultUserCacheRoot(); for tests we override after-the-fact
+	// rather than mutating the global env (which is fragile when
+	// tests run in parallel).
+	lib.userCacheRoot = cache
+
+	res, err := lib.LookupVulnerability("user-cache-only-pkg", "npm", "")
+	if err != nil {
+		t.Fatalf("LookupVulnerability: %v", err)
+	}
+	if len(res.OSVAdvisories) == 0 {
+		t.Fatalf("expected user-cache record to surface; got none. " +
+			"This means osvDir() did NOT prefer the user cache.")
+	}
+	if got := res.OSVAdvisories[0].ID; got != recordID {
+		t.Errorf("OSVAdvisory.ID = %q, want %q", got, recordID)
+	}
+	if got := res.OSVAdvisories[0].Severity; got != "medium" {
+		t.Errorf("OSVAdvisory.Severity = %q, want medium (from index entry)", got)
+	}
+}
+
+// TestOSVUserCacheMissingFallsBackToRepoSample verifies that an unset
+// or missing user cache leaves the repo-bundled sample in charge. The
+// "rubygems" cache exists in this repo so we use it as the ground
+// truth — pointing userCacheRoot at a path with no osv/<eco>/ tree
+// must NOT mask the bundled sample.
+func TestOSVUserCacheMissingFallsBackToRepoSample(t *testing.T) {
+	lib := newLibrary(t)
+	lib.userCacheRoot = filepath.Join(t.TempDir(), "definitely-not-populated")
+
+	idx := lib.loadOSVIndex("rubygems")
+	if idx == nil || len(idx.ByPackage) == 0 {
+		t.Fatalf("repo-bundled rubygems index must remain visible when " +
+			"user cache is missing; got nil/empty")
+	}
+}
