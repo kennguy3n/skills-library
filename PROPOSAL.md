@@ -3,10 +3,8 @@
 This document describes the design and scope of **secure-code**, a security
 knowledge framework for AI-assisted coding maintained by
 [ShieldNet360](https://www.shieldnet360.com) and released under the
-[MIT license](./LICENSE). The Go module path remains
-[`github.com/kennguy3n/skills-library`](https://github.com/kennguy3n/skills-library)
-and the CLI binary remains `skills-check`; these are stable technical identifiers.
-The project's brand is **secure-code**.
+[MIT license](./LICENSE). The Go module path is `github.com/kennguy3n/skills-library`
+and the CLI binary is `skills-check`.
 
 ## Problem Statement
 
