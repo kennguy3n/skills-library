@@ -2,16 +2,17 @@
 id: dependency-audit
 language: ar
 dir: rtl
+source_revision: "fbb3a823"
 version: "1.0.0"
-title: "Dependency Audit"
-description: "Audit project dependencies for known vulnerabilities, malicious packages, and supply chain risks"
+title: "تدقيق التبعيات"
+description: "تدقيق تبعيات المشروع بحثًا عن ثغرات معروفة وحزم خبيثة ومخاطر سلسلة التوريد"
 category: supply-chain
 severity: high
 applies_to:
-  - "when adding a new dependency"
-  - "when upgrading dependencies"
-  - "when reviewing package manifests (package.json, requirements.txt, go.mod, Cargo.toml)"
-  - "before merging a PR that modifies dependency files"
+  - "عند إضافة تبعية جديدة"
+  - "عند ترقية التبعيات"
+  - "عند مراجعة بيانات الحزم (package.json، requirements.txt، go.mod، Cargo.toml)"
+  - "قبل دمج PR يعدّل ملفات التبعيات"
 languages: ["*"]
 token_budget:
   minimal: 400
@@ -26,61 +27,63 @@ sources:
   - "CISA Software Bill of Materials guidance"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: ar` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# تدقيق التبعيات
 
-# Dependency Audit
+## القواعد (لوكلاء الذكاء الاصطناعي)
 
-## Rules (for AI agents)
-
-### ALWAYS
-- Pin dependencies to exact versions in lockfiles (`package-lock.json`, `yarn.lock`,
-  `Pipfile.lock`, `poetry.lock`, `go.sum`, `Cargo.lock`).
-- Cross-check every new dependency name against the bundled malicious-package list in
+### دائمًا
+- ثبّت التبعيات على إصدارات دقيقة في ملفات القفل
+  (`package-lock.json`، `yarn.lock`، `Pipfile.lock`، `poetry.lock`،
+  `go.sum`، `Cargo.lock`).
+- قارن اسم كل تبعية جديدة بقائمة الحزم الخبيثة المُضمَّنة في
   `vulnerabilities/supply-chain/malicious-packages/`.
-- Prefer well-established packages with high download counts, multiple maintainers, and
-  recent activity over newer alternatives that solve the same problem.
-- Run the package manager's audit command (`npm audit`, `pip-audit`, `cargo audit`,
-  `govulncheck`) and review reported issues before merging.
-- Verify the package's repository URL on the package page actually exists and matches
-  the linked GitHub / GitLab / Codeberg project.
+- فضِّل الحزم الراسخة ذات عدد التنزيلات المرتفع، وتعدّد المشرفين،
+  والنشاط الحديث، على البدائل الأحدث التي تحلّ المشكلة ذاتها.
+- شغّل أمر التدقيق لمدير الحزم (`npm audit`، `pip-audit`،
+  `cargo audit`، `govulncheck`) وراجع المسائل المُبلَّغ عنها قبل
+  الدمج.
+- تحقّق أن رابط مستودع الحزمة المذكور في صفحتها موجود فعلًا ويطابق
+  مشروع GitHub / GitLab / Codeberg المرتبط.
 
-### NEVER
-- Add a dependency without pinning its version.
-- Install packages with `--unsafe-perm` or equivalent flags that bypass install
-  sandboxing.
-- Add a dependency whose name appears in the bundled malicious-package list.
-- Add a brand-new package (published within the last 30 days) without a clear,
-  documented reason — typosquats are usually freshly published.
-- Use the `latest` tag in a production lockfile or container image FROM line.
-- Commit unused dependencies — they expand the attack surface for free.
+### أبدًا
+- لا تضف تبعية بدون تثبيت إصدارها.
+- لا تثبّت الحزم باستخدام `--unsafe-perm` أو ما يكافئها من رايات تتجاوز
+  عزل التثبيت.
+- لا تضف تبعية يظهر اسمها ضمن قائمة الحزم الخبيثة المُضمَّنة.
+- لا تضف حزمة جديدة تمامًا (نُشرت في آخر 30 يومًا) دون سبب واضح
+  ومُوثَّق — فعادةً ما تكون عمليات الـ typosquat حديثة النشر.
+- لا تستخدم وسم `latest` في ملف قفل إنتاج أو في سطر FROM لصورة
+  حاويات.
+- لا تُلزِم تبعيات غير مستخدمة — فهي توسِّع سطح الهجوم مجّانًا.
 
-### KNOWN FALSE POSITIVES
-- Internal monorepo packages (`@yourco/*`) flagged as "unknown" — these are valid when
-  the namespace is owned by your organization.
-- New patch versions of stable packages (e.g. `react@18.2.5` after `18.2.4`) flagged as
-  "recently published" — patch updates are usually fine.
-- Package names that legitimately overlap with malicious entries from years ago that
-  have been re-registered by the original maintainer.
+### إيجابيات خاطئة معروفة
+- حزم الـ monorepo الداخلية (`@yourco/*`) المُعلَّمة بـ "unknown" —
+  وهي صحيحة حين تكون مساحة الأسماء مملوكة لمؤسستك.
+- إصدارات الترقيع الجديدة لحزم مستقرة (مثل `react@18.2.5` بعد
+  `18.2.4`) المُعلَّمة بأنها "حديثة النشر" — تحديثات الترقيع آمنة
+  عادة.
+- أسماء حزم تتقاطع بشكل مشروع مع إدخالات خبيثة قديمة بسنوات أعاد
+  المشرف الأصلي تسجيلها.
 
-## Context (for humans)
+## السياق (للبشر)
 
-Supply chain attacks have grown faster than any other attack category since 2019.
-Compromise of a popular package (event-stream, ua-parser-js, colors, faker, xz-utils)
-or publication of a typosquat (axois vs axios, urllib3 vs urlib3) reliably nets the
-attacker thousands of downstream victims within hours.
+نمت هجمات سلسلة التوريد بسرعة تفوق أيّ فئة هجوم أخرى منذ 2019. اختراق
+حزمة مشهورة (event-stream، ua-parser-js، colors، faker، xz-utils) أو
+نشر typosquat (axois مقابل axios، urllib3 مقابل urlib3) يضمن للمهاجم
+آلاف الضحايا في الاتجاه السفلي خلال ساعات.
 
-AI coding tools are particularly vulnerable because the model has no visibility into
-when a package was last compromised. The model recommends what it learned during
-training; if a maintainer was compromised after the training cutoff, the AI happily
-recommends a backdoored version.
+أدوات البرمجة المعتمدة على الذكاء الاصطناعي عُرضة بشكل خاص لأن
+النموذج لا يعرف متى تعرّضت حزمة للاختراق آخر مرة. يوصي النموذج بما
+تعلّمه خلال التدريب؛ فإذا تعرّض مشرف للاختراق بعد قطع التدريب، يوصي
+الذكاء الاصطناعي بمرح بنسخة تحوي بابًا خلفيًا.
 
-This skill compensates by injecting the live malicious-package database into the AI's
-working context and requiring the AI to consult it before adding any dependency.
+تعوّض هذه الـ skill عن ذلك بحقن قاعدة بيانات الحزم الخبيثة الحيّة في
+سياق عمل الذكاء الاصطناعي واشتراط أن يستشيرها قبل إضافة أي تبعية.
 
-## References
+## مراجع
 
-- `rules/known_malicious.json` — symlink or copy of the relevant
-  `vulnerabilities/supply-chain/malicious-packages/*.json` files.
+- `rules/known_malicious.json` — وصلة رمزية أو نسخة من ملفات
+  `vulnerabilities/supply-chain/malicious-packages/*.json` ذات الصلة.
 - [OWASP Top 10 A06](https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/).
 - [npm Advisories](https://github.com/advisories?query=type%3Aunreviewed+ecosystem%3Anpm).
 - [PyPI Advisory Database](https://github.com/pypa/advisory-database).
