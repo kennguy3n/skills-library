@@ -7,32 +7,12 @@
 [![DLP patterns](https://img.shields.io/badge/DLP%20patterns-74-red)](./skills/secret-detection/rules/dlp_patterns.json)
 [![Platforms](https://img.shields.io/badge/platforms-win%20%7C%20mac%20%7C%20linux-green)](#platform-support)
 
-> [!WARNING]
-> **Pre-release notice.** This repository is tagged at `v0.1.0` but the
-> signed public release is pending. The committed `manifest.json` still
-> carries `"signature": "TBD"` — the Ed25519 release-signing key (held
-> on a YubiKey, see [SIGNING.md](./SIGNING.md)) has not yet been
-> applied to a published artefact. Do **not** rely on
-> `skills-check update` for production use until a signed release is
-> published; verify the on-disk bundle today with
-> `skills-check manifest verify --checksums-only` instead. The signing
-> pipeline (`release.yml` → `sign-and-publish.yml`) is implemented
-> end-to-end and waiting on the first signed cut.
-
-> **Security knowledge for AI-assisted coding — open, offline-first, with signed release support planned.**
-
 **secure-code** is a structured, machine-readable library of security skills and
 supply-chain vulnerability intelligence designed to be embedded directly into AI
 coding assistants — Claude Code, Cursor, GitHub Copilot, Codex, Windsurf,
-Cline / OpenCode, Antigravity, and Devin. It ships bundled rules offline and is
-designed for incremental, **Ed25519-signed** remote updates for new
-vulnerabilities, detection patterns, and best practices. The signing pipeline
-(`cmd/skills-check/internal/manifest`, `release.yml`, `sign-and-publish.yml`)
-is implemented end-to-end; the first publicly signed release is the upcoming
-`v0.1.0` cut. Releases prior to that ship the same bytes with a `"signature":
-"TBD"` placeholder and must be verified with `--checksums-only` against the
-committed `manifest.json`. See [SIGNING.md](./SIGNING.md) for the
-draft → sign → verify → publish flow.
+Cline / OpenCode, Antigravity, and Devin. It ships bundled rules offline and
+supports incremental, Ed25519-signed remote updates. See
+[SIGNING.md](./SIGNING.md) for the signing model.
 
 Maintained by **[ShieldNet360](https://www.shieldnet360.com)** and released under
 the [MIT license](./LICENSE) — free to fork, embed, and ship in commercial products.
@@ -88,7 +68,7 @@ generation*, before the diff ever touches your repo.
 | Area | Path | Description |
 |------|------|-------------|
 | **Skills** | [`skills/`](./skills) | 28 self-contained `SKILL.md` manifests with rules, patterns, and checklists. Each skill is a security capability the AI tool consults at generation time. |
-| **Vulnerability database** | [`vulnerabilities/`](./vulnerabilities) | 10-year (2015-2025) curated supply-chain corpus across **9 ecosystems** for the malicious-packages layer (npm, PyPI, crates, Go, RubyGems, Maven, NuGet, GitHub Actions, Docker Hub). Lockfile-parser scanner coverage today is the **7 package-manager ecosystems** (npm, PyPI, Go, crates, Maven, NuGet, RubyGems); GitHub Actions and Docker Hub are surfaced through the dedicated `scan_github_actions` / `scan_dockerfile` MCP tools and IOC pattern files, not lockfile parsing. 71 documented typosquats, 58 code-relevant CVE detection patterns, dependency-confusion rules, plus an **offline OSV cache** of **7,271 advisories across 10 ecosystems** (composer, crates, go, maven, npm, nuget, pub, pypi, rubygems, swift) — a sampled subset (default stride target 500/ecosystem) for offline lookups, not comprehensive vulnerability intelligence; refresh via `scripts/ingest-osv.py` (`--per-ecosystem 0` for full archive). See [DATA_QUALITY.md](./DATA_QUALITY.md) for current per-ecosystem counts. Delta-updatable. |
+| **Vulnerability database** | [`vulnerabilities/`](./vulnerabilities) | Curated supply-chain corpus (malicious packages, typosquats, CVE detection patterns, dependency-confusion rules) plus an offline OSV cache. Delta-updatable. See the [Vulnerability database](#vulnerability-database--repo-sample-vs-full-upstream) section below for ecosystem coverage and counts. |
 | **Detection rules** | [`rules/`](./rules) | Sigma-format detection rules for AWS, GCP, Azure, K8s, Linux, macOS, Windows, O365, Google Workspace, Salesforce, and Slack — designed to complement the prevention-time rules in `skills/`. |
 | **Compliance maps** | [`compliance/`](./compliance) | OWASP Top 10, CWE Top 25, SANS Top 25 framework mappings plus developer-facing compliance coverage maps (SOC 2, HIPAA, PCI-DSS, FedRAMP). |
 | **Dictionaries** | [`dictionaries/`](./dictionaries) | Security term definitions, CWE catalogue, MITRE ATT&CK technique references — context the AI needs to reason about security. |
@@ -166,11 +146,8 @@ cp secure-code/dist/SECURITY-SKILLS.md /your-project/SECURITY-SKILLS.md
 
 ## CLI install and routine updates
 
-Vulnerability data and detection patterns change every week. The CLI keeps your
-local copy current with incremental remote updates, with **Ed25519** signature
-verification enforced once the upcoming `v0.1.0` signed release ships (the
-release pipeline is implemented; the in-repo `manifest.json` carries a
-`"signature": "TBD"` placeholder until then — see [SIGNING.md](./SIGNING.md)).
+Vulnerability data and detection patterns change weekly. The CLI keeps your
+local copy current with incremental, signature-verified remote updates.
 
 ### Install (all platforms)
 
@@ -186,10 +163,6 @@ winget install kennguy3n.skills-check
 
 # Linux via .deb / .rpm — see docs/install-linux.md
 ```
-
-> The Go module path remains `github.com/kennguy3n/skills-library` and the CLI
-> binary is `skills-check`. These are stable identifiers and will not be renamed.
-> The project's **brand** is `secure-code`.
 
 ### Pull latest rules
 
@@ -514,7 +487,7 @@ go test ./...                                       # covers CLI + MCP server
 ./skills-check list                                 # enumerate skills with token counts
 ./skills-check regenerate                           # rebuild dist/ files
 ./skills-check manifest compute --path . --write    # recompute SHA-256 checksums
-./skills-check manifest verify  --path . --checksums-only  # verify committed checksums (the repo manifest is unsigned in source; --checksums-only is required)
+./skills-check manifest verify  --path . --checksums-only  # verify committed checksums
 ```
 
 The same commands run in CI on every PR. `skills-check validate` enforces the

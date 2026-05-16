@@ -2,9 +2,8 @@
 
 This document describes the runtime architecture of the **secure-code** project
 (Go module path [`github.com/kennguy3n/skills-library`](https://github.com/kennguy3n/skills-library);
-CLI binary `skills-check`). The Go module path and CLI binary names are stable
-technical identifiers and are intentionally not renamed when the project's brand
-changed from "Skills Library" to **secure-code**.
+CLI binary `skills-check`). The Go module path and CLI binary name (`skills-check`)
+are stable technical identifiers.
 
 ## System Overview
 
@@ -231,11 +230,11 @@ cmd/skills-check/
     │   ├── devin.go           # devin.md formatter (defaults to full tier)
     │   ├── cline.go           # .clinerules formatter
     │   ├── universal.go       # SECURITY-SKILLS.md formatter
+    │   ├── profiles.go        # LoadProfile, ListProfiles, FilterSkillsByProfile
     │   ├── packaging_test.go  # validates packaging/* manifests are well-formed
     │   └── rules_test.go      # walks rules/**/*.yml and asserts the Sigma schema
     ├── manifest/              # manifest.json: load/save, SHA-256 checksum, Ed25519 sign/verify (incl. VerifyAny over multiple trusted keys), delta, atomic write
     ├── updater/               # Remote update engine: HTTP / dir / tarball sources (HTTP supports bearer-token auth for private repos), verify-before-replace, rollback
-    ├── compiler/              # …also hosts profiles.go (LoadProfile, ListProfiles, FilterSkillsByProfile)
     └── scheduler/             # Cross-platform scheduled updates (launchd / systemd / Task Scheduler)
 
 cmd/skills-mcp/                # Model Context Protocol server

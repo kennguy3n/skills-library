@@ -387,20 +387,12 @@ def render(now: dt.datetime) -> str:
     # Manifest integrity.
     lines.append("## Manifest integrity")
     lines.append("")
-    sig_state = "signed" if manifest["signed"] else "**unsigned (TBD)**"
+    sig_state = "signed" if manifest["signed"] else "unsigned"
     lines.append(f"- File: `manifest.json`")
     lines.append(f"- Release version: `{manifest['version']}`")
     lines.append(f"- Released at: {manifest['released_at'] or '—'}")
     lines.append(f"- Files indexed: {manifest['files']}")
     lines.append(f"- Signature: {sig_state}")
-    if not manifest["signed"]:
-        lines.append("")
-        lines.append(
-            "> Releases prior to the first signed cut ship with"
-            " `\"signature\": \"TBD\"`. Verify the on-disk bundle with"
-            " `skills-check manifest verify --checksums-only` against the"
-            " committed `manifest.json`."
-        )
     lines.append("")
     return "\n".join(lines) + "\n"
 

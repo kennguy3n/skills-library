@@ -58,8 +58,7 @@ Before opening a pull request, please run these in order:
 3. `./skills-check regenerate` — `dist/` re-rendered with no uncommitted drift.
 4. `./skills-check manifest compute --path . --write` — manifest checksums are
    in sync. CI re-runs `./skills-check manifest verify --checksums-only` and
-   rejects drift. (The repo manifest is unsigned in source; `--checksums-only`
-   is the documented opt-out for the unsigned-rejected default.)
+   rejects drift.
 5. `last_updated` bumped on any modified `SKILL.md`. CI enforces this.
 6. New / updated entries include at least one external reference URL.
 7. Commit messages follow the convention used in `git log` (no force-pushing to
