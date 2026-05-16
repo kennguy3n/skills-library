@@ -14,6 +14,7 @@
 package skill
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -153,6 +154,19 @@ func ParseBytes(path string, data []byte) (*Skill, error) {
 	}
 	if !AllowedSeverities[fm.Severity] {
 		return nil, fmt.Errorf("%s: invalid severity %q (allowed: critical, high, medium, low)", path, fm.Severity)
+	}
+	// Slice-emptiness parity with Validate: ParseBytes' key-presence check
+	// above accepts a file declaring `applies_to: []` (the key is present);
+	// but an empty slice has the same semantic meaning as a missing key
+	// ("the skill applies to nothing"), so we reject both shapes uniformly.
+	if len(fm.AppliesTo) == 0 {
+		return nil, fmt.Errorf("%s: applies_to must list at least one entry", path)
+	}
+	if len(fm.Languages) == 0 {
+		return nil, fmt.Errorf("%s: languages must list at least one entry", path)
+	}
+	if len(fm.Sources) == 0 {
+		return nil, fmt.Errorf("%s: sources must list at least one entry", path)
 	}
 	if fm.TokenBudget.Minimal <= 0 || fm.TokenBudget.Compact <= 0 || fm.TokenBudget.Full <= 0 {
 		return nil, fmt.Errorf("%s: token_budget must declare positive minimal, compact, and full counts", path)
@@ -420,75 +434,74 @@ func writeBullets(b *strings.Builder, label string, items []string) {
 //
 // Validate is *at least as strict* as ParseBytes: every defect ParseBytes
 // rejects on a SKILL.md file, Validate also rejects on the typed Skill.
-// It is strictly stricter for two cases that ParseBytes cannot see on
-// the raw YAML:
+// It is strictly stricter for one case ParseBytes cannot see on the raw
+// YAML — empty strings for required scalars. On a typed Frontmatter we
+// cannot distinguish "key missing" from "key present but empty," and
+// either way the field has no usable value, so we reject both.
 //
-//   - Empty slices for `applies_to` / `languages` / `sources`. ParseBytes
-//     only checks key *presence* via a raw-map lookup, so a file with
-//     `applies_to: []` passes ParseBytes but fails Validate. On a typed
-//     Frontmatter we cannot distinguish "key missing" from "key present
-//     but empty" — both arrive as a nil/empty slice — and an empty list
-//     is semantically equivalent to a missing one (the skill applies to
-//     nothing), so we reject both shapes.
-//   - Empty strings for required scalars. Same reason: a typed empty
-//     string is indistinguishable from an absent key.
+// Validate accumulates every defect into a single error (joined via
+// errors.Join) instead of returning the first failure. This matches
+// sdk/go.Validate's behavior and lets callers see every problem in
+// one pass instead of fix-one-rerun-fix-another.
 //
 // If you add or change a check here, mirror the corresponding check in
-// ParseBytes (lines 130–162) and vice versa.
+// ParseBytes and vice versa.
 func (s *Skill) Validate() error {
 	fm := s.Frontmatter
+	var errs []error
+
 	// Required scalar fields. We treat an empty string as "missing" since
 	// the typed view cannot distinguish absent-from-YAML from
 	// present-but-empty. This intentionally produces a "missing X" error
 	// (matching the wording ParseBytes uses for raw-map absence) rather
 	// than "invalid X".
 	if fm.ID == "" {
-		return fmt.Errorf("%s: missing id", s.Path)
+		errs = append(errs, fmt.Errorf("%s: missing id", s.Path))
 	}
 	if fm.Version == "" {
-		return fmt.Errorf("%s: missing version", s.Path)
+		errs = append(errs, fmt.Errorf("%s: missing version", s.Path))
 	}
 	if fm.Title == "" {
-		return fmt.Errorf("%s: missing title", s.Path)
+		errs = append(errs, fmt.Errorf("%s: missing title", s.Path))
 	}
 	if fm.Description == "" {
-		return fmt.Errorf("%s: missing description", s.Path)
+		errs = append(errs, fmt.Errorf("%s: missing description", s.Path))
 	}
 	if fm.Category == "" {
-		return fmt.Errorf("%s: missing category", s.Path)
+		errs = append(errs, fmt.Errorf("%s: missing category", s.Path))
 	}
 	if fm.Severity == "" {
-		return fmt.Errorf("%s: missing severity", s.Path)
+		errs = append(errs, fmt.Errorf("%s: missing severity", s.Path))
 	}
 	if fm.LastUpdated == "" {
-		return fmt.Errorf("%s: missing last_updated", s.Path)
+		errs = append(errs, fmt.Errorf("%s: missing last_updated", s.Path))
 	}
-	// Required slice fields. ParseBytes only checks key presence; we
-	// also reject empty lists because the semantics ("applies to no
-	// language at all", "has no sources") are nonsense.
+	// Required slice fields.
 	if len(fm.AppliesTo) == 0 {
-		return fmt.Errorf("%s: applies_to must list at least one entry", s.Path)
+		errs = append(errs, fmt.Errorf("%s: applies_to must list at least one entry", s.Path))
 	}
 	if len(fm.Languages) == 0 {
-		return fmt.Errorf("%s: languages must list at least one entry", s.Path)
+		errs = append(errs, fmt.Errorf("%s: languages must list at least one entry", s.Path))
 	}
 	if len(fm.Sources) == 0 {
-		return fmt.Errorf("%s: sources must list at least one entry", s.Path)
+		errs = append(errs, fmt.Errorf("%s: sources must list at least one entry", s.Path))
 	}
 	// Allowlist checks for non-empty enum-style fields. Error messages
-	// include the allowed-set suffix to match ParseBytes (parser.go ~152).
-	if !AllowedCategories[fm.Category] {
-		return fmt.Errorf("%s: invalid category %q (allowed: prevention, detection, compliance, supply-chain, hardening)", s.Path, fm.Category)
+	// include the allowed-set suffix to match ParseBytes. We skip the
+	// allowlist check when the value is empty so the user sees a single
+	// "missing X" error rather than both "missing X" and "invalid X \"\"".
+	if fm.Category != "" && !AllowedCategories[fm.Category] {
+		errs = append(errs, fmt.Errorf("%s: invalid category %q (allowed: prevention, detection, compliance, supply-chain, hardening)", s.Path, fm.Category))
 	}
-	if !AllowedSeverities[fm.Severity] {
-		return fmt.Errorf("%s: invalid severity %q (allowed: critical, high, medium, low)", s.Path, fm.Severity)
+	if fm.Severity != "" && !AllowedSeverities[fm.Severity] {
+		errs = append(errs, fmt.Errorf("%s: invalid severity %q (allowed: critical, high, medium, low)", s.Path, fm.Severity))
 	}
 	// Numeric / structural checks.
 	if fm.TokenBudget.Minimal <= 0 || fm.TokenBudget.Compact <= 0 || fm.TokenBudget.Full <= 0 {
-		return fmt.Errorf("%s: token_budget must declare positive minimal, compact, and full counts", s.Path)
+		errs = append(errs, fmt.Errorf("%s: token_budget must declare positive minimal, compact, and full counts", s.Path))
 	}
 	if fm.Dir != "" && fm.Dir != "ltr" && fm.Dir != "rtl" {
-		return fmt.Errorf("%s: invalid dir %q (allowed: ltr, rtl)", s.Path, fm.Dir)
+		errs = append(errs, fmt.Errorf("%s: invalid dir %q (allowed: ltr, rtl)", s.Path, fm.Dir))
 	}
-	return nil
+	return errors.Join(errs...)
 }
