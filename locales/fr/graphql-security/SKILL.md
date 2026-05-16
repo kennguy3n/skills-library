@@ -1,16 +1,17 @@
 ---
 id: graphql-security
 language: fr
+source_revision: "4c215e6f"
 version: "1.0.0"
-title: "GraphQL Security"
-description: "Defend GraphQL APIs: depth/complexity limits, introspection in production, batching/aliasing abuse, field-level authorization, persisted queries"
+title: "Sécurité de GraphQL"
+description: "Défendre les API GraphQL : limites de profondeur/complexité, introspection en production, abus de batching/aliasing, autorisation au niveau du champ, persisted queries"
 category: prevention
 severity: high
 applies_to:
-  - "when generating GraphQL schemas, resolvers, or server config"
-  - "when wiring authentication/authorization to a GraphQL endpoint"
-  - "when adding a public GraphQL API gateway"
-  - "when reviewing /graphql endpoint exposure"
+  - "lors de la génération de schémas, resolvers ou configuration de serveur GraphQL"
+  - "lors du câblage de l'authentification/autorisation à un endpoint GraphQL"
+  - "lors de l'ajout d'une passerelle d'API GraphQL publique"
+  - "lors de la revue de l'exposition de l'endpoint /graphql"
 languages: ["javascript", "typescript", "python", "go", "java", "kotlin", "csharp", "ruby"]
 token_budget:
   minimal: 1200
@@ -26,90 +27,107 @@ sources:
   - "graphql-armor (Escape technologies)"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: fr` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Sécurité de GraphQL
 
-# GraphQL Security
+## Règles (pour les agents IA)
 
-## Rules (for AI agents)
+### TOUJOURS
+- Imposer une **profondeur maximale** de query (typique : 7–10) et
+  une **complexité** (coût) de query côté serveur. Une query
+  imbriquée sur 5 niveaux contre une relation many-to-many peut
+  renvoyer des milliards de nœuds ; sans limite de coût, un seul
+  client fait tomber la base de données.
+- Désactiver l'**introspection** en production. L'introspection
+  rend la reconnaissance triviale ; les clients légitimes ont le
+  schéma intégré via codegen ou un artefact `.graphql`.
+- Utiliser des **persisted queries** (hashes d'opérations en
+  allowlist) pour toute API publique / à fort trafic. Du GraphQL
+  anonyme arbitraire est l'équivalent GraphQL d'un
+  `eval(req.body)`.
+- Appliquer une **autorisation au niveau du champ** dans les
+  resolvers, pas seulement à l'endpoint. GraphQL agrège plein de
+  champs dans une seule réponse HTTP — un seul `@auth` manquant
+  sur un champ sensible fait fuiter des données dans toute la
+  query.
+- Limiter le nombre d'**alias** par requête (typique : 15) et le
+  nombre d'**opérations par batch** (typique : 5). Apollo / Relay
+  permettent tous les deux des queries en batch — sans limites,
+  c'est une primitive d'amplification de N pages de l'API.
+- Rejeter tôt les définitions de **fragments circulaires** (la
+  plupart des serveurs le font, mais pas les executors custom). Un
+  fragment auto-référent provoque un coût de parsing exponentiel.
+- Renvoyer des erreurs génériques aux clients
+  (`INTERNAL_SERVER_ERROR`, `UNAUTHORIZED`) et router les stack
+  traces / extraits SQL uniquement vers les logs serveur. Les
+  erreurs par défaut d'Apollo font fuiter des internals du schéma
+  et de la query.
+- Définir une limite de taille de requête (typique : 100 Kio) et
+  un timeout de requête (typique : 10 s) sur la couche HTTP devant
+  le serveur GraphQL. Une query GraphQL de 1 Mio n'a aucun usage
+  légitime.
 
-### ALWAYS
-- Enforce a maximum **query depth** (typical: 7–10) and **query
-  complexity** (cost) at the server. A 5-level nested query against a
-  many-to-many relationship can return billions of nodes; without a
-  cost limit, one client crashes the database.
-- Disable **introspection** in production. Introspection makes
-  reconnaissance trivial; legitimate clients have the schema baked in
-  via codegen or a `.graphql` artifact.
-- Use **persisted queries** (allowlisted operation hashes) for any
-  high-traffic / public API. Anonymous arbitrary GraphQL is the GraphQL
-  equivalent of `eval(req.body)`.
-- Apply **field-level authorization** in resolvers, not just at the
-  endpoint. GraphQL aggregates many fields into one HTTP response — a
-  single missing `@auth` on a sensitive field leaks data across the
-  whole query.
-- Limit the number of **aliases** per request (typical: 15) and the
-  number of **operations per batch** (typical: 5). Apollo / Relay both
-  allow batched queries — without limits this is an N-pages-of-the-API
-  amplification primitive.
-- Reject **circular fragment** definitions early (most servers do, but
-  custom executors don't). A self-referencing fragment causes
-  exponential parse-time cost.
-- Return generic errors to clients (`INTERNAL_SERVER_ERROR`,
-  `UNAUTHORIZED`) and route stack traces / SQL snippets to server logs
-  only. Default Apollo errors leak schema and query internals.
-- Set a request size limit (typical: 100 KiB) and a request timeout
-  (typical: 10 s) on the HTTP layer in front of the GraphQL server.
-  A 1 MiB GraphQL query has no legitimate use.
-
-### NEVER
-- Expose `/graphql` introspection on a production endpoint. The
-  GraphQL playground (GraphiQL, Apollo Sandbox) must also be disabled
-  in production builds.
-- Trust the depth / complexity of a query because "our clients only
-  send well-formed queries." Any attacker can hand-craft a request to
+### JAMAIS
+- Exposer l'introspection de `/graphql` sur un endpoint de
+  production. Le playground GraphQL (GraphiQL, Apollo Sandbox)
+  doit aussi être désactivé dans les builds de production.
+- Faire confiance à la profondeur / complexité d'une query parce
+  que "nos clients n'envoient que des queries bien formées".
+  N'importe quel attaquant peut forger à la main une requête vers
   `/graphql`.
-- Allow `@skip(if: ...)` / `@include(if: ...)` directives to gate
-  authorization checks. Directives run after authorization in most
-  executors, but custom directive ordering has produced authz bypasses.
-- Implement N+1 patterns in resolvers (one DB query per parent record).
-  Use a DataLoader or join-based fetch. N+1 is both a performance bug
-  and a DoS amplifier.
-- Allow file uploads via GraphQL multipart (`apollo-upload-server`,
-  `graphql-upload`) without size limits, MIME validation, and
-  out-of-band virus scan. The 2020 CVE-2020-7754 (`graphql-upload`)
-  showed how a malformed multipart can crash the server.
-- Cache GraphQL responses by URL alone. POST `/graphql` always uses the
-  same URL; cache must key on operation hash + variables + auth claims
-  to avoid cross-tenant leaks.
-- Expose mutations that take untrusted JSON `input:` objects without
-  schema validation. GraphQL types are mandatory at the schema layer,
-  but `JSON` / `Scalar` types bypass them entirely.
+- Laisser des directives `@skip(if: ...)` / `@include(if: ...)`
+  piloter les vérifications d'autorisation. Les directives
+  s'exécutent après l'autorisation dans la plupart des executors,
+  mais des ordres custom de directives ont produit des bypasses
+  d'authz.
+- Implémenter des patterns N+1 dans les resolvers (une requête DB
+  par enregistrement parent). Utiliser un DataLoader ou un fetch
+  basé sur des jointures. N+1 est à la fois un bug de performance
+  et un amplificateur de DoS.
+- Autoriser les uploads de fichiers via GraphQL multipart
+  (`apollo-upload-server`, `graphql-upload`) sans limites de
+  taille, validation MIME et scan antivirus hors-bande. Le
+  CVE-2020-7754 de 2020 (`graphql-upload`) a montré comment un
+  multipart malformé peut faire crasher le serveur.
+- Cacher les réponses GraphQL uniquement par URL. POST `/graphql`
+  utilise toujours la même URL ; le cache doit clé par hash
+  d'opération + variables + claims d'auth pour éviter les fuites
+  inter-tenants.
+- Exposer des mutations qui prennent des objets `input:` en JSON
+  non fiable sans validation de schéma. Les types GraphQL sont
+  obligatoires au niveau du schéma, mais les types `JSON` /
+  `Scalar` les contournent entièrement.
 
-### KNOWN FALSE POSITIVES
-- Internal admin GraphQL endpoints behind an authenticated VPN may
-  legitimately leave introspection on for developer ergonomics.
-- Static-allowlisted persisted queries make depth / complexity checks
-  redundant on those operations — keep the checks for any operation
-  that isn't in the allowlist (i.e. operations through a `disabled` flag).
-- Public, read-only data APIs may use very high cost limits with
-  caching aggressively configured at the CDN layer; the trade-off is
-  documented per endpoint.
+### FAUX POSITIFS CONNUS
+- Les endpoints GraphQL internes d'admin derrière un VPN
+  authentifié peuvent légitimement laisser l'introspection
+  activée pour le confort des développeurs.
+- Les persisted queries en allowlist statique rendent les
+  vérifications de profondeur / complexité redondantes sur ces
+  opérations — conserver les vérifications pour toute opération
+  hors allowlist (c.-à-d. via un flag `disabled`).
+- Les API de données publiques en lecture seule peuvent utiliser
+  des limites de coût très hautes avec un caching agressivement
+  configuré au niveau CDN ; le compromis est documenté par
+  endpoint.
 
-## Context (for humans)
+## Contexte (pour les humains)
 
-GraphQL gives clients a query language. That language is Turing-complete
-in practice — depth, aliasing, fragments, and unions combine to form
-near-arbitrary computation against the resolver graph. Treating
-`/graphql` as a single endpoint with simple WAF / rate-limit controls is
-inadequate.
+GraphQL donne aux clients un langage de requête. Ce langage est
+Turing-complet en pratique — profondeur, aliasing, fragments et
+unions se combinent pour former une computation quasi arbitraire
+contre le graphe de resolvers. Traiter `/graphql` comme un
+endpoint unique avec de simples contrôles WAF / rate-limit est
+insuffisant.
 
-The 2022-2024 era of GraphQL incidents (Hyatt, Slack research from
-Apollo, several account-takeover-via-batching cases) all hinged on
-either missing field-level authorization or missing cost analysis.
-graphql-armor (Escape) and Apollo's built-in validation rules now
-provide off-the-shelf middleware for most of these — use them.
+L'ère 2022-2024 des incidents GraphQL (Hyatt, recherche Slack
+issue d'Apollo, plusieurs cas d'account-takeover via batching) ont
+toutes tenu soit à une autorisation au niveau du champ manquante,
+soit à une analyse de coût manquante. graphql-armor (Escape) et
+les règles de validation incluses dans Apollo fournissent
+désormais un middleware prêt à l'emploi pour la plupart d'entre
+elles — utilisez-les.
 
-## References
+## Références
 
 - `rules/graphql_safe_config.json`
 - [OWASP GraphQL Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/GraphQL_Cheat_Sheet.html).
