@@ -431,6 +431,73 @@ func TestValidateEmptyEnumsReportMissing(t *testing.T) {
 	}
 }
 
+// TestValidateInvalidEnumMatchesParseBytes pins the wording-alignment
+// contract: when given the same invalid category / severity value,
+// Validate's error must contain the same "(allowed: ...)" allowed-set
+// suffix ParseBytes emits, so users hitting the same defect via either
+// code path see equivalent guidance.
+func TestValidateInvalidEnumMatchesParseBytes(t *testing.T) {
+	cases := []struct {
+		name       string
+		swapKey    string
+		swapValue  string
+		wantSuffix string
+	}{
+		{
+			"bad category",
+			"category: prevention",
+			"category: nonsense",
+			"(allowed: prevention, detection, compliance, supply-chain, hardening)",
+		},
+		{
+			"bad severity",
+			"severity: high",
+			"severity: spicy",
+			"(allowed: critical, high, medium, low)",
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			doc := strings.Replace(validSkill, tc.swapKey, tc.swapValue, 1)
+			if doc == validSkill {
+				t.Fatalf("setup: failed to swap %q in validSkill fixture", tc.swapKey)
+			}
+
+			// ParseBytes path.
+			_, parseErr := ParseBytes("bad.md", []byte(doc))
+			if parseErr == nil {
+				t.Fatalf("ParseBytes accepted %s; want error containing %q", tc.name, tc.wantSuffix)
+			}
+			if !strings.Contains(parseErr.Error(), tc.wantSuffix) {
+				t.Errorf("ParseBytes error for %s = %v, want suffix %q", tc.name, parseErr, tc.wantSuffix)
+			}
+
+			// Validate path — same fixture, route through ParseBytes
+			// with the allowlist temporarily relaxed so we land on a
+			// typed Skill carrying the invalid value, then call
+			// Validate.
+			good, err := ParseBytes("locales/ar/example-skill/SKILL.md", []byte(localizedSkill))
+			if err != nil {
+				t.Fatalf("setup parse: %v", err)
+			}
+			s := *good
+			switch tc.name {
+			case "bad category":
+				s.Frontmatter.Category = "nonsense"
+			case "bad severity":
+				s.Frontmatter.Severity = "spicy"
+			}
+			validateErr := s.Validate()
+			if validateErr == nil {
+				t.Fatalf("Validate accepted %s; want error containing %q", tc.name, tc.wantSuffix)
+			}
+			if !strings.Contains(validateErr.Error(), tc.wantSuffix) {
+				t.Errorf("Validate error for %s = %v, want suffix %q (must match ParseBytes wording)", tc.name, validateErr, tc.wantSuffix)
+			}
+		})
+	}
+}
+
 func TestParseDefaultsToNoLocaleFields(t *testing.T) {
 	// English source skill has none of language / source_revision /
 	// dir set — these must be empty strings (zero values), not

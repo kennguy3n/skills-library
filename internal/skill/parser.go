@@ -475,12 +475,13 @@ func (s *Skill) Validate() error {
 	if len(fm.Sources) == 0 {
 		return fmt.Errorf("%s: sources must list at least one entry", s.Path)
 	}
-	// Allowlist checks for non-empty enum-style fields.
+	// Allowlist checks for non-empty enum-style fields. Error messages
+	// include the allowed-set suffix to match ParseBytes (parser.go ~152).
 	if !AllowedCategories[fm.Category] {
-		return fmt.Errorf("%s: invalid category %q", s.Path, fm.Category)
+		return fmt.Errorf("%s: invalid category %q (allowed: prevention, detection, compliance, supply-chain, hardening)", s.Path, fm.Category)
 	}
 	if !AllowedSeverities[fm.Severity] {
-		return fmt.Errorf("%s: invalid severity %q", s.Path, fm.Severity)
+		return fmt.Errorf("%s: invalid severity %q (allowed: critical, high, medium, low)", s.Path, fm.Severity)
 	}
 	// Numeric / structural checks.
 	if fm.TokenBudget.Minimal <= 0 || fm.TokenBudget.Compact <= 0 || fm.TokenBudget.Full <= 0 {
