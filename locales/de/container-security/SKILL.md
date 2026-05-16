@@ -1,15 +1,16 @@
 ---
 id: container-security
 language: de
+source_revision: "fbb3a823"
 version: "1.0.0"
-title: "Container Security"
-description: "Hardening rules for Dockerfile, OCI images, Kubernetes manifests, and Helm charts"
+title: "Container-Sicherheit"
+description: "Härtungsregeln für Dockerfile, OCI-Images, Kubernetes-Manifests und Helm-Charts"
 category: hardening
 severity: high
 applies_to:
-  - "when generating a Dockerfile or OCI image build"
-  - "when generating Kubernetes / Helm / Kustomize manifests"
-  - "when reviewing container changes in PR"
+  - "beim Erzeugen eines Dockerfile oder OCI-Image-Builds"
+  - "beim Erzeugen von Kubernetes-/Helm-/Kustomize-Manifests"
+  - "beim Reviewen von Container-Änderungen im PR"
 languages: ["dockerfile", "yaml", "go", "python"]
 token_budget:
   minimal: 1000
@@ -25,75 +26,86 @@ sources:
   - "OWASP Docker Top 10"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: de` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Container-Sicherheit
 
-# Container Security
+## Regeln (für KI-Agenten)
 
-## Rules (for AI agents)
-
-### ALWAYS
-- Use **multi-stage builds**: separate builder/test stages from the final runtime
-  image so build toolchains and source aren't shipped. The last stage should be
-  `FROM distroless`, `FROM scratch`, `FROM alpine:<digest>`, or another minimal
-  base — pinned by SHA256 digest, not just tag.
-- Run as a non-root user: `USER <uid>` (numeric UID >= 10000 for K8s `runAsNonRoot`
-  policies to be enforceable).
-- Add a `.dockerignore` excluding `.git`, `node_modules`, `.env`, `*.pem`, `*.key`,
-  `target/`, `.terraform/`, `dist/`, `coverage/`.
-- Set explicit `HEALTHCHECK` for long-running services and matching
+### IMMER
+- **Multi-Stage-Builds** verwenden: Builder-/Test-Stages vom finalen
+  Runtime-Image trennen, damit Build-Toolchains und Quellcode nicht
+  ausgeliefert werden. Die letzte Stage sollte `FROM distroless`,
+  `FROM scratch`, `FROM alpine:<digest>` oder eine andere minimale Base
+  sein — per SHA256-Digest gepinnt, nicht nur per Tag.
+- Als Non-Root-User laufen: `USER <uid>` (numerische UID >= 10000, damit
+  K8s-`runAsNonRoot`-Policies durchsetzbar sind).
+- Eine `.dockerignore` hinzufügen, die `.git`, `node_modules`, `.env`,
+  `*.pem`, `*.key`, `target/`, `.terraform/`, `dist/`, `coverage/`
+  ausschließt.
+- Explizite `HEALTHCHECK` für langlaufende Services setzen und passende
   `livenessProbe` / `readinessProbe` / `startupProbe` in K8s.
-- Set resource `requests` and `limits` on every container (CPU and memory).
-- Drop all Linux capabilities then add back only what's needed:
+- Resource-`requests` und `limits` an jedem Container (CPU und Memory)
+  setzen.
+- Alle Linux-Capabilities droppen und nur das Nötige wieder hinzufügen:
   `securityContext.capabilities.drop: [ALL]`.
-- Apply a seccomp profile (`RuntimeDefault` at minimum) and AppArmor / SELinux
-  where available.
-- Mark filesystem read-only: `readOnlyRootFilesystem: true`; use `emptyDir`
-  volumes for the few paths that must be writable.
-- Scan every image in CI (Trivy, Grype, Snyk, or your registry's scanner) and
-  fail builds on CRITICAL or HIGH severity findings.
-- Pull base images by SHA256 digest in production manifests, not by mutable tag.
+- Ein Seccomp-Profil anwenden (mindestens `RuntimeDefault`) und
+  AppArmor / SELinux, wo verfügbar.
+- Filesystem read-only markieren: `readOnlyRootFilesystem: true`;
+  `emptyDir`-Volumes für die wenigen Pfade verwenden, die schreibbar sein
+  müssen.
+- Jedes Image in CI scannen (Trivy, Grype, Snyk oder der Registry-
+  Scanner) und Builds bei CRITICAL- oder HIGH-Findings scheitern lassen.
+- Base-Images in Production-Manifests per SHA256-Digest ziehen, nicht
+  per mutable Tag.
 
-### NEVER
-- Run containers as root or with `privileged: true` / `allowPrivilegeEscalation:
-  true` outside of explicit, audited system pods (e.g., CNI plugins).
-- Mount the host docker socket (`/var/run/docker.sock`) inside an application
-  container. It's effectively root on the host.
-- Embed secrets in image layers via `ENV`, `ARG`, `COPY`, or by `echo`-ing them
-  to a file. Even if `--squash`'d, BuildKit cache and registry layers leak.
-- Use `latest`, `stable`, `slim`, or unversioned tags as the final image base —
-  builds become non-reproducible and quietly pick up CVEs.
-- Use `ADD <url>` to fetch remote resources during build (use `curl --fail` with
-  a checksum verify and `RUN` instead, or vendor the artifact).
-- Disable `automountServiceAccountToken` when the workload needs the K8s API,
-  but DO disable it (`automountServiceAccountToken: false`) when it doesn't.
-- Use `hostNetwork: true`, `hostPID: true`, or `hostIPC: true` for application
-  pods.
-- Run pods in the `kube-system` namespace, or any namespace without a
-  `NetworkPolicy` and PodSecurity admission policy.
+### NIE
+- Container als root oder mit `privileged: true` /
+  `allowPrivilegeEscalation: true` außerhalb expliziter, auditierter
+  System-Pods (z. B. CNI-Plugins) laufen lassen.
+- Den Host-Docker-Socket (`/var/run/docker.sock`) in einen
+  Application-Container mounten. Das ist effektiv Root auf dem Host.
+- Secrets in Image-Layern via `ENV`, `ARG`, `COPY` oder per `echo` in
+  eine Datei einbetten. Selbst bei `--squash` leaken BuildKit-Cache und
+  Registry-Layer.
+- `latest`, `stable`, `slim` oder unversionierte Tags als finale
+  Image-Base verwenden — Builds werden non-reproducible und ziehen still
+  CVEs hinein.
+- `ADD <url>` benutzen, um Remote-Resourcen während des Builds zu holen
+  (stattdessen `curl --fail` mit Checksum-Verify und `RUN`, oder das
+  Artefakt vendoren).
+- `automountServiceAccountToken` deaktivieren, wenn der Workload die
+  K8s-API braucht, aber AKTIVIERT lassen ist falsch — deaktivieren
+  (`automountServiceAccountToken: false`), wenn er sie nicht braucht.
+- `hostNetwork: true`, `hostPID: true` oder `hostIPC: true` für
+  Application-Pods verwenden.
+- Pods im `kube-system`-Namespace laufen lassen oder in einem Namespace
+  ohne `NetworkPolicy` und PodSecurity-Admission-Policy.
 
-### KNOWN FALSE POSITIVES
-- Operators that legitimately need cluster-admin access (kubelet, CSI drivers,
-  CNI plugins) require elevated privileges; they belong in `kube-system` or a
-  dedicated namespace with auditing, not in application namespaces.
-- Bare-metal Kubernetes nodes sometimes legitimately disable `seccomp` for
-  drivers that aren't compatible; document the exception.
-- One-shot debugging pods (kubectl debug, ephemeral containers) intentionally
-  bypass many of these controls; they should not be persisted as YAML in the
-  repo.
+### BEKANNTE FALSCH-POSITIVE
+- Operatoren, die legitim Cluster-Admin-Zugriff brauchen (Kubelet,
+  CSI-Drivers, CNI-Plugins), benötigen erhöhte Privilegien; sie gehören
+  in `kube-system` oder in einen eigenen, auditierten Namespace, nicht
+  in Application-Namespaces.
+- Bare-Metal-Kubernetes-Nodes deaktivieren manchmal legitim `seccomp`
+  für inkompatible Drivers; die Ausnahme dokumentieren.
+- One-Shot-Debug-Pods (kubectl debug, Ephemeral Containers) umgehen
+  viele dieser Kontrollen absichtlich; sie sollten nicht als YAML im
+  Repo persistiert werden.
 
-## Context (for humans)
+## Kontext (für Menschen)
 
-Containers leak two ways: image-layer leaks (secrets in `ENV`, build artifacts
-left in the final image, vulnerable base CVEs) and runtime escapes (privileged
-mode, docker.sock, host namespaces). NIST SP 800-190 frames these as **image
-risks**, **registry risks**, **orchestrator risks**, and **runtime risks**.
+Container leaken auf zwei Wegen: Image-Layer-Leaks (Secrets in `ENV`,
+in der finalen Image hinterlassene Build-Artefakte, anfällige Base-CVEs)
+und Runtime-Escapes (Privileged Mode, docker.sock, Host-Namespaces).
+NIST SP 800-190 rahmt das als **Image-Risiken**, **Registry-Risiken**,
+**Orchestrator-Risiken** und **Runtime-Risiken**.
 
-AI assistants almost always generate Dockerfiles that work and ship — fast — but
-they default to a single-stage `FROM node` / `FROM python` and `USER root`. This
-skill is the counterweight; pair it with `infrastructure-security` for K8s
-controls beyond the pod (RBAC, admission, supply chain).
+KI-Assistenten generieren fast immer Dockerfiles, die laufen und
+shippen — schnell — aber per Default Single-Stage `FROM node` /
+`FROM python` und `USER root`. Dieser Skill ist das Gegengewicht; paare
+ihn mit `infrastructure-security` für K8s-Kontrollen jenseits des Pods
+(RBAC, Admission, Supply Chain).
 
-## References
+## Referenzen
 
 - `checklists/dockerfile_hardening.yaml`
 - `checklists/k8s_pod_security.yaml`

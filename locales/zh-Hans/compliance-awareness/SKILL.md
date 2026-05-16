@@ -1,15 +1,16 @@
 ---
 id: compliance-awareness
 language: zh-Hans
+source_revision: "8e503523"
 version: "1.0.0"
-title: "Compliance Awareness"
-description: "Map generated code against OWASP, CWE, and SANS Top 25 controls for traceability"
+title: "合规意识"
+description: "把生成的代码映射到 OWASP、CWE 与 SANS Top 25 控制项,实现可追溯"
 category: compliance
 severity: medium
 applies_to:
-  - "when generating code in regulated environments"
-  - "when writing audit-relevant comments or documentation"
-  - "when refactoring code that crosses compliance boundaries (PII, PHI, PCI scope)"
+  - "在受监管环境中生成代码时"
+  - "在编写审计相关的注释或文档时"
+  - "在重构跨越合规边界 (PII、PHI、PCI 范围) 的代码时"
 languages: ["*"]
 token_budget:
   minimal: 400
@@ -26,50 +27,45 @@ sources:
   - "SOC 2 Trust Services Criteria"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: zh-Hans` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# 合规意识
 
-# Compliance Awareness
+## 规则（面向 AI 代理）
 
-## Rules (for AI agents)
+### 必须
+- 给处理 PII / PHI / PCI 数据的函数加上声明分类的注释
+  (例如 `// classification: PII`)。
+- 为安全相关动作(登录、权限变更、数据导出、管理员操作)记录审计事件 ——
+  记录谁、做了什么、何时;不要记录敏感载荷本身。
+- 当团队约定带可追溯信息时,在安全相关代码的注释里标出 CWE / OWASP 类别
+  (`// addresses CWE-79 — XSS`)。
+- 对 PCI 范围,把处理卡数据的代码隔离到名字清晰的模块中,
+  使范围边界一目了然。
+- 对 HIPAA 工作负载,优先做静态加密 + 传输加密,并记录密钥管理流程。
 
-### ALWAYS
-- Tag functions that handle PII / PHI / PCI data with a comment indicating the
-  classification (e.g. `// classification: PII`).
-- Log audit events for security-relevant actions (login, permission change, data
-  export, admin operations) — log who, what, when, NOT the sensitive payload.
-- Identify the CWE / OWASP category for security-relevant code in comments when the
-  team's convention is to include traceability (`// addresses CWE-79 — XSS`).
-- For PCI scope, segregate card-data-handling code into clearly-named modules so
-  scope boundaries are visible.
-- For HIPAA workloads, prefer encryption at rest AND in transit, with documented key
-  management.
+### 禁止
+- 在日志消息、错误信息或遥测事件中包含 PII / PHI / PCI。
+- 在不符合 PCI DSS 的代币化服务之外存储卡号、CVV 或完整磁条数据。
+- 在未做显式分类的情况下,把处理 PII 的代码混进通用工具模块。
+- 在不考虑 GDPR 义务(被遗忘权、数据最小化、合法依据)的前提下,
+  生成处理欧盟居民个人数据的代码。
+- 提议"开发阶段用"的绕过合规控制的方案——这些 workaround 永远会泄漏
+  到生产。
 
-### NEVER
-- Include PII / PHI / PCI in log messages, error messages, or telemetry events.
-- Store payment card numbers, CVVs, or full magnetic stripe data outside of a PCI
-  DSS-compliant tokenization service.
-- Mix PII-handling code into general utility modules without explicit classification.
-- Generate code that processes EU residents' personal data without considering GDPR
-  obligations (right to erasure, data minimization, lawful basis).
-- Suggest workarounds that bypass compliance controls "for development" — these
-  workarounds always leak into production.
+### 已知误报
+- 记录访问的数据*类型*("用户访问了理赔记录")通常没问题;
+  规则禁止的是记录敏感字段的*内容*。
+- 使用明显伪造数据 (`555-0100` 电话、PAN `4111-1111-1111-1111`、
+  `John Doe`) 的测试 fixture 不属于 PII。
+- 审计日志的留存时长是有意拉长的(通常以年计),不应被一般的数据留存
+  扫描误清除。
 
-### KNOWN FALSE POSITIVES
-- Logs of *types* of data accessed ("user accessed claim record") are usually fine;
-  the rule is against logging the *contents* of sensitive fields.
-- Test fixtures using clearly fake data (`555-0100` phone numbers,
-  `4111-1111-1111-1111` PAN, `John Doe`) are not PII.
-- Audit log retention is intentionally long (often years) and should not be filtered
-  by general data-retention sweeps.
+## 背景(面向人类)
 
-## Context (for humans)
+合规框架 (PCI DSS、HIPAA、SOC 2、ISO 27001、GDPR) 规定了控制项,但
+没有告诉开发者具体应该写什么代码。本 skill 在 AI 生成步骤上附加与
+控制项相关的指引,把这条鸿沟补上,让产出的代码默认就是审计友好的。
 
-Compliance frameworks (PCI DSS, HIPAA, SOC 2, ISO 27001, GDPR) prescribe controls but
-don't tell developers what code to write. This skill bridges the gap by attaching
-control-relevant guidance to AI generation steps, so the resulting code is
-audit-friendly by default.
-
-## References
+## 参考
 
 - `frameworks/owasp_mapping.yaml`
 - `frameworks/cwe_mapping.yaml`

@@ -1,15 +1,16 @@
 ---
 id: container-security
 language: zh-Hans
+source_revision: "fbb3a823"
 version: "1.0.0"
-title: "Container Security"
-description: "Hardening rules for Dockerfile, OCI images, Kubernetes manifests, and Helm charts"
+title: "容器安全"
+description: "Dockerfile、OCI 镜像、Kubernetes manifest 和 Helm chart 的加固规则"
 category: hardening
 severity: high
 applies_to:
-  - "when generating a Dockerfile or OCI image build"
-  - "when generating Kubernetes / Helm / Kustomize manifests"
-  - "when reviewing container changes in PR"
+  - "在生成 Dockerfile 或 OCI 镜像构建时"
+  - "在生成 Kubernetes / Helm / Kustomize manifest 时"
+  - "在 PR 中评审容器相关变更时"
 languages: ["dockerfile", "yaml", "go", "python"]
 token_budget:
   minimal: 1000
@@ -25,75 +26,73 @@ sources:
   - "OWASP Docker Top 10"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: zh-Hans` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# 容器安全
 
-# Container Security
+## 规则（面向 AI 代理）
 
-## Rules (for AI agents)
+### 必须
+- 使用**多阶段构建**:把 builder/test 阶段与最终 runtime 镜像分离,
+  避免把构建工具链和源码一起发出去。最后一个阶段应当是
+  `FROM distroless`、`FROM scratch`、`FROM alpine:<digest>` 或其他最小化
+  基础——按 SHA256 digest 固定,不要只用 tag。
+- 以非 root 用户运行:`USER <uid>`(数值 UID >= 10000,K8s 的
+  `runAsNonRoot` 才能强制生效)。
+- 添加 `.dockerignore`,排除 `.git`、`node_modules`、`.env`、`*.pem`、
+  `*.key`、`target/`、`.terraform/`、`dist/`、`coverage/`。
+- 对长时间运行的服务声明显式 `HEALTHCHECK`,并在 K8s 中配置对应的
+  `livenessProbe` / `readinessProbe` / `startupProbe`。
+- 在每个容器上声明 CPU 和内存的 `requests` 与 `limits`。
+- 删除所有 Linux capabilities,只把真正需要的加回来:
+  `securityContext.capabilities.drop: [ALL]`。
+- 至少应用 seccomp 配置 `RuntimeDefault`;条件允许时配合 AppArmor /
+  SELinux。
+- 把文件系统标为只读:`readOnlyRootFilesystem: true`;对少数必须可写
+  的路径使用 `emptyDir` 卷。
+- 在 CI 中扫描每个镜像(Trivy、Grype、Snyk,或 registry 自带扫描器),
+  CRITICAL 或 HIGH 发现失败构建。
+- 生产 manifest 中按 SHA256 digest 拉取基础镜像,不要按可变 tag。
 
-### ALWAYS
-- Use **multi-stage builds**: separate builder/test stages from the final runtime
-  image so build toolchains and source aren't shipped. The last stage should be
-  `FROM distroless`, `FROM scratch`, `FROM alpine:<digest>`, or another minimal
-  base — pinned by SHA256 digest, not just tag.
-- Run as a non-root user: `USER <uid>` (numeric UID >= 10000 for K8s `runAsNonRoot`
-  policies to be enforceable).
-- Add a `.dockerignore` excluding `.git`, `node_modules`, `.env`, `*.pem`, `*.key`,
-  `target/`, `.terraform/`, `dist/`, `coverage/`.
-- Set explicit `HEALTHCHECK` for long-running services and matching
-  `livenessProbe` / `readinessProbe` / `startupProbe` in K8s.
-- Set resource `requests` and `limits` on every container (CPU and memory).
-- Drop all Linux capabilities then add back only what's needed:
-  `securityContext.capabilities.drop: [ALL]`.
-- Apply a seccomp profile (`RuntimeDefault` at minimum) and AppArmor / SELinux
-  where available.
-- Mark filesystem read-only: `readOnlyRootFilesystem: true`; use `emptyDir`
-  volumes for the few paths that must be writable.
-- Scan every image in CI (Trivy, Grype, Snyk, or your registry's scanner) and
-  fail builds on CRITICAL or HIGH severity findings.
-- Pull base images by SHA256 digest in production manifests, not by mutable tag.
+### 禁止
+- 让容器以 root 身份运行,或在非明确审计过的系统 pod(如 CNI 插件)
+  之外使用 `privileged: true` / `allowPrivilegeEscalation: true`。
+- 把宿主机的 docker socket (`/var/run/docker.sock`) 挂进应用容器。
+  这等同于在宿主机上获得 root。
+- 通过 `ENV`、`ARG`、`COPY` 或 `echo` 把 secret 写进镜像层。即便用了
+  `--squash`,BuildKit 缓存与 registry 层仍然会泄露。
+- 把 `latest`、`stable`、`slim` 或未带版本的 tag 当作最终镜像基础——
+  构建会失去可复现性,并悄悄吞下 CVE。
+- 用 `ADD <url>` 在构建过程中拉取远程资源(改用 `curl --fail` +
+  校验 checksum + `RUN`,或者把工件 vendor 进来)。
+- 当 workload 确实需要访问 K8s API 时关闭
+  `automountServiceAccountToken`;但是当不需要时,**就要**关掉
+  (`automountServiceAccountToken: false`)。
+- 对应用 pod 使用 `hostNetwork: true`、`hostPID: true` 或
+  `hostIPC: true`。
+- 把 pod 放进 `kube-system` 命名空间,或任何没有 `NetworkPolicy` 与
+  PodSecurity admission 策略的命名空间。
 
-### NEVER
-- Run containers as root or with `privileged: true` / `allowPrivilegeEscalation:
-  true` outside of explicit, audited system pods (e.g., CNI plugins).
-- Mount the host docker socket (`/var/run/docker.sock`) inside an application
-  container. It's effectively root on the host.
-- Embed secrets in image layers via `ENV`, `ARG`, `COPY`, or by `echo`-ing them
-  to a file. Even if `--squash`'d, BuildKit cache and registry layers leak.
-- Use `latest`, `stable`, `slim`, or unversioned tags as the final image base —
-  builds become non-reproducible and quietly pick up CVEs.
-- Use `ADD <url>` to fetch remote resources during build (use `curl --fail` with
-  a checksum verify and `RUN` instead, or vendor the artifact).
-- Disable `automountServiceAccountToken` when the workload needs the K8s API,
-  but DO disable it (`automountServiceAccountToken: false`) when it doesn't.
-- Use `hostNetwork: true`, `hostPID: true`, or `hostIPC: true` for application
-  pods.
-- Run pods in the `kube-system` namespace, or any namespace without a
-  `NetworkPolicy` and PodSecurity admission policy.
+### 已知误报
+- 真正需要 cluster-admin 权限的 operator(kubelet、CSI 驱动、CNI
+  插件)需要较高权限;它们应属于 `kube-system` 或专门的带审计的命名
+  空间,而不是应用命名空间。
+- 裸金属 Kubernetes 节点有时会出于驱动兼容性合理地关闭 seccomp;
+  记录这一豁免。
+- 一次性调试 pod(kubectl debug、临时容器)有意绕开许多控制项;
+  它们不应作为 YAML 持久化进仓库。
 
-### KNOWN FALSE POSITIVES
-- Operators that legitimately need cluster-admin access (kubelet, CSI drivers,
-  CNI plugins) require elevated privileges; they belong in `kube-system` or a
-  dedicated namespace with auditing, not in application namespaces.
-- Bare-metal Kubernetes nodes sometimes legitimately disable `seccomp` for
-  drivers that aren't compatible; document the exception.
-- One-shot debugging pods (kubectl debug, ephemeral containers) intentionally
-  bypass many of these controls; they should not be persisted as YAML in the
-  repo.
+## 背景(面向人类)
 
-## Context (for humans)
+容器的泄露主要有两条路径:镜像层泄露(`ENV` 中的 secret、留在最终
+镜像里的构建工件、基础镜像里的 CVE)与运行时逃逸(特权模式、
+docker.sock、宿主机命名空间)。NIST SP 800-190 把它们分类为
+**镜像风险**、**registry 风险**、**编排器风险**和**运行时风险**。
 
-Containers leak two ways: image-layer leaks (secrets in `ENV`, build artifacts
-left in the final image, vulnerable base CVEs) and runtime escapes (privileged
-mode, docker.sock, host namespaces). NIST SP 800-190 frames these as **image
-risks**, **registry risks**, **orchestrator risks**, and **runtime risks**.
+AI 助手几乎总会生成"能跑、能发"的 Dockerfile——速度很快——但默认是
+单阶段的 `FROM node` / `FROM python` 加上 `USER root`。本 skill 是对
+这种倾向的反制;与 `infrastructure-security` 配合可以覆盖 pod 之外
+的 K8s 控制项(RBAC、admission、supply chain)。
 
-AI assistants almost always generate Dockerfiles that work and ship — fast — but
-they default to a single-stage `FROM node` / `FROM python` and `USER root`. This
-skill is the counterweight; pair it with `infrastructure-security` for K8s
-controls beyond the pod (RBAC, admission, supply chain).
-
-## References
+## 参考
 
 - `checklists/dockerfile_hardening.yaml`
 - `checklists/k8s_pod_security.yaml`

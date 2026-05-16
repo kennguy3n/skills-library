@@ -1,16 +1,17 @@
 ---
 id: cicd-security
 language: pt-BR
+source_revision: "4c215e6f"
 version: "1.0.0"
-title: "CI/CD Pipeline Security"
-description: "Harden GitHub Actions, GitLab CI, and similar pipelines against supply-chain attacks, secret exfiltration, and pwn-request style abuses"
+title: "Segurança de pipelines CI/CD"
+description: "Endurecer GitHub Actions, GitLab CI e pipelines similares contra ataques de supply chain, exfiltração de segredos e abusos do tipo pwn-request"
 category: prevention
 severity: critical
 applies_to:
-  - "when authoring or reviewing CI/CD workflow files"
-  - "when adding a third-party action / image / script to a pipeline"
-  - "when wiring cloud or registry credentials into CI"
-  - "when triaging a suspected pipeline compromise"
+  - "ao escrever ou revisar arquivos de workflow de CI/CD"
+  - "ao adicionar uma action / imagem / script de terceiros a um pipeline"
+  - "ao plugar credenciais de cloud ou registry no CI"
+  - "ao triar um suspeito comprometimento de pipeline"
 languages: ["yaml", "shell", "*"]
 token_budget:
   minimal: 1200
@@ -27,99 +28,106 @@ sources:
   - "CWE-1395: Dependency on Vulnerable Third-Party Component"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: pt-BR` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Segurança de pipelines CI/CD
 
-# CI/CD Pipeline Security
+## Regras (para agentes de IA)
 
-## Rules (for AI agents)
+### SEMPRE
+- Fixe toda GitHub Action de terceiros por **SHA de commit** (40
+  caracteres completos), não por tag — tags podem ser republicadas. O
+  mesmo vale para referências `include:` do GitLab CI e workflows
+  reutilizáveis. Renovate / Dependabot podem manter os pins por SHA
+  frescos.
+- Declare `permissions:` no nível do workflow ou do job e use padrão
+  `contents: read`. Conceda escopos adicionais (`id-token: write`,
+  `packages: write` etc.) job a job, nunca workflow-wide.
+- Use **OIDC** (`id-token: write` + trust policy do provedor cloud)
+  para credenciais cloud de curta duração. Nunca armazene chaves AWS /
+  GCP / Azure de longa duração como GitHub Secrets.
+- Trate `pull_request_target`, `workflow_run` e qualquer job
+  `pull_request` que use `actions/checkout` com
+  `ref: ${{ github.event.pull_request.head.ref }}` como **contexto
+  confiável sobre código não confiável**. Ou não rode, ou rode sem
+  segredos e sem tokens de escrita.
+- Passe toda expressão não confiável (`${{ github.event.* }}`) primeiro
+  por uma variável de ambiente; nunca interpole diretamente no corpo
+  `run:` — esse é o sink canônico de script-injection do GitHub
+  Actions.
+- Assine artefatos de release (Sigstore / cosign) e publique
+  atestações de provenance SLSA. Verifique a provenance em qualquer
+  pipeline consumidor que baixe o artefato.
+- Defina `runs-on` para uma imagem de runner endurecida e fixe a versão
+  do runner. StepSecurity Harden-Runner em modo audit (ou um firewall
+  de egress equivalente) é recomendado para qualquer workflow que
+  manipule segredos.
+- Trate `npm install`, `pip install`, `go install`, `cargo install` e
+  `docker pull` invocados em CI como execução de código não confiável.
+  Rode com `--ignore-scripts` (npm/yarn), lockfiles fixados, allowlists
+  de registry e tokens com privilégio mínimo por job.
 
-### ALWAYS
-- Pin every third-party GitHub Action by **commit SHA** (full 40-char),
-  not by tag — tags can be re-pushed. Same applies to GitLab CI `include:`
-  references and reusable workflows. Renovate / Dependabot can keep the
-  SHA pins fresh.
-- Declare `permissions:` at the workflow or job level and default to
-  `contents: read` only. Grant additional scopes (`id-token: write`,
-  `packages: write`, etc.) job-by-job, never workflow-wide.
-- Use **OIDC** (`id-token: write` + cloud provider trust policy) for
-  short-lived cloud credentials. Never store long-lived AWS / GCP / Azure
-  keys as GitHub Secrets.
-- Treat `pull_request_target`, `workflow_run`, and any `pull_request` job
-  that uses `actions/checkout` with `ref: ${{ github.event.pull_request.head.ref }}`
-  as **trusted-context-on-untrusted-code**. Either don't run them, or run
-  with no secrets and no write tokens.
-- Echo every untrusted expression (`${{ github.event.* }}`) through an
-  environment variable first; never interpolate it directly into `run:`
-  body — that's the canonical GitHub Actions script-injection sink.
-- Sign release artifacts (Sigstore / cosign) and publish SLSA provenance
-  attestations. Verify provenance in any consumer pipeline that pulls the
-  artifact.
-- Set `runs-on` to a hardened runner image and pin the runner version.
-  Audit-mode StepSecurity Harden-Runner (or equivalent egress firewall)
-  for any workflow handling secrets is recommended.
-- Treat `npm install`, `pip install`, `go install`, `cargo install`, and
-  `docker pull` invoked in CI as untrusted code execution. Run with
-  `--ignore-scripts` (npm/yarn), pinned lockfiles, registry allowlists,
-  and per-job least-privilege tokens.
+### NUNCA
+- Fixe uma action de terceiros por tag flutuante (`@v1`, `@main`,
+  `@latest`). O incidente tj-actions/changed-files de março de 2025
+  exfiltrou segredos de mais de 23.000 repositórios justamente porque
+  os consumidores usavam tags flutuantes.
+- `curl | bash` (ou `wget -O- | sh`) qualquer script de instalação no
+  CI. O comprometimento do bash uploader do Codecov em 2021 exfiltrou
+  env vars para um atacante por ~10 semanas porque milhares de
+  pipelines rodavam `bash <(curl https://codecov.io/bash)`. Sempre
+  baixe, verifique checksum, depois execute.
+- Eco de segredos em logs, mesmo em falha. Use `::add-mask::` para
+  qualquer segredo computado em runtime e cheque novamente com a
+  busca em logs de workflow do GitHub.
+- Permita que workflows rodem em PRs de forks com
+  `pull_request_target` se algum job toca um token com escopo de
+  escrita ou um segredo. A combinação é o padrão canônico "pwn
+  request" documentado pelo GitHub Security Lab.
+- Cacheie estado mutável (ex.: `~/.npm`, `~/.cargo`, `~/.gradle`)
+  usando apenas `os` como chave. Um hit de cache entre jobs é uma
+  superfície de ataque cross-tenant — chaveie por hash de lockfile e
+  escope na ref do workflow.
+- Confie em downloads de artefatos de runs de workflow arbitrários sem
+  verificar o workflow de origem + SHA do commit. Envenenamento de
+  build-cache funciona via reuso de artefatos sem escopo.
+- Armazene segredos em variáveis de repositório (`vars.*`) — são texto
+  plano para quem tem acesso de leitura. Apenas `secrets.*` é gated
+  por scanning e regras de escopo.
 
-### NEVER
-- Pin a third-party action by floating tag (`@v1`, `@main`, `@latest`).
-  The tj-actions/changed-files March 2025 incident exfiltrated secrets
-  from 23,000+ repositories specifically because consumers used floating
-  tags.
-- `curl | bash` (or `wget -O- | sh`) any installer script in CI.
-  The 2021 Codecov bash-uploader compromise exfiltrated env vars to an
-  attacker for ~10 weeks because thousands of pipelines ran
-  `bash <(curl https://codecov.io/bash)`. Always download, checksum,
-  then execute.
-- Echo secrets to logs, even on failure. Use `::add-mask::` for any
-  computed-at-runtime secret, and double-check with the GitHub
-  workflow-log search.
-- Allow workflows to run on forked PRs with `pull_request_target` if any
-  job touches a write-scoped token or secret. The combination is the
-  canonical "pwn request" pattern documented by GitHub Security Lab.
-- Cache mutable state (e.g. `~/.npm`, `~/.cargo`, `~/.gradle`) keyed only
-  on `os`. A cache hit cross-job is a cross-tenant attack surface — key
-  on a lockfile hash and scope to the workflow ref.
-- Trust artifact downloads from arbitrary workflow runs without verifying
-  the source workflow + commit SHA. Build-cache poisoning works through
-  unscoped artifact reuse.
-- Store secrets in repository variables (`vars.*`) — they are plaintext
-  to anyone with read access. Only `secrets.*` are gated by the secret
-  scanning + scope rules.
+### FALSOS POSITIVOS CONHECIDOS
+- Actions first-party da mesma organização que você espelha ou forka
+  in-house podem legitimamente ser fixadas por tag se a org impõe tags
+  assinadas + branch-protection no repo da action.
+- Pipelines de dados públicos que não manipulam segredos nem produzem
+  artefato assinado (ex.: link-checkers noturnos) não precisam de OIDC
+  nem provenance SLSA, e podem usar tags flutuantes sem impacto
+  prático.
+- `pull_request_target` é legítimo para bots de label / triage que só
+  chamam a API do GitHub com os escopos mínimos necessários, não fazem
+  checkout do código do PR e não expõem segredos no env.
 
-### KNOWN FALSE POSITIVES
-- First-party actions in the same organization that you mirror or fork
-  in-house may legitimately be pinned by tag if the org enforces signed
-  tags + branch-protection on the action repo.
-- Public-data pipelines that handle no secrets and produce no signed
-  artifact (e.g. nightly link-checkers) don't need OIDC or SLSA
-  provenance, and may use floating tags without practical impact.
-- `pull_request_target` is legitimate for label / triage bots that only
-  call the GitHub API with the minimal scopes needed, do not check out
-  PR code, and don't expose secrets in env.
+## Contexto (para humanos)
 
-## Context (for humans)
+CI/CD é hoje o alvo único mais lucrativo da supply chain. Um pipeline
+roda código confiável contra credenciais confiáveis e registries
+confiáveis — comprometê-lo uma vez dá acesso a todo consumidor a
+jusante de todo artefato que ele produz. O comprometimento do Codecov
+em 2021, o incidente SolarWinds em 2021, o envenenamento do pipeline
+de release da Ultralytics no PyPI em 2024 e a exfiltração em massa do
+tj-actions/changed-files em 2025 dependeram todos de mudanças não
+autenticadas em scripts ou actions consumidos pelo CI.
 
-CI/CD is now the most lucrative single supply-chain target. A pipeline
-runs trusted code against trusted credentials and trusted registries —
-compromising it once gives access to every downstream consumer of every
-artifact it produces. The 2021 Codecov compromise, 2021 SolarWinds
-incident, 2024 Ultralytics PyPI release-pipeline poisoning, and the
-2025 tj-actions/changed-files mass exfiltration all hinged on
-unauthenticated changes to CI-consumed scripts or actions.
+A maior parte das defesas é mecânica: fixar por SHA, minimizar
+permissões, usar OIDC, assinar artefatos, verificar provenance. O
+difícil é impor isso em escala organizacional. OpenSSF Scorecard
+automatiza as checagens das defesas mecânicas e integra com branch
+protection.
 
-Most of the defenses are mechanical: pin by SHA, minimize permissions,
-use OIDC, sign artifacts, verify provenance. The hard part is enforcing
-them across an organization. OpenSSF Scorecard automates checks for the
-mechanical defenses and integrates with branch protection.
+Esta skill enfatiza as fraquezas de design pattern (pwn requests,
+script injection, curl-pipe-bash, tags flutuantes, download de
+artefato não confiável) porque são os padrões que o YAML de workflow
+gerado por IA mais reinventa.
 
-This skill emphasizes the design-pattern weaknesses (pwn requests,
-script injection, curl-pipe-bash, floating tags, untrusted artifact
-download) because they are the patterns AI-generated workflow YAML
-reinvents most often.
-
-## References
+## Referências
 
 - `checklists/github_actions_hardening.yaml`
 - `checklists/gitlab_ci_hardening.yaml`

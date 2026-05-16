@@ -1,16 +1,17 @@
 ---
 id: api-security
 language: es
+source_revision: "fbb3a823"
 version: "1.0.0"
-title: "API Security"
-description: "Apply OWASP API Top 10 patterns to authentication, authorization, and input validation"
+title: "Seguridad de API"
+description: "Aplicar los patrones del OWASP API Top 10 para autenticación, autorización y validación de entrada"
 category: prevention
 severity: high
 applies_to:
-  - "when generating HTTP handlers"
-  - "when generating GraphQL resolvers"
-  - "when generating gRPC service methods"
-  - "when reviewing API endpoint changes"
+  - "al generar handlers HTTP"
+  - "al generar resolvers de GraphQL"
+  - "al generar métodos de servicio gRPC"
+  - "al revisar cambios en endpoints de API"
 languages: ["*"]
 token_budget:
   minimal: 500
@@ -25,58 +26,61 @@ sources:
   - "OAuth 2.0 Security Best Current Practice (RFC 9700)"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: es` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Seguridad de API
 
-# API Security
+## Reglas (para agentes de IA)
 
-## Rules (for AI agents)
+### SIEMPRE
+- Exigir autenticación en cada endpoint no público. Por defecto, autenticado; las
+  rutas genuinamente públicas se marcan explícitamente.
+- Aplicar autorización a nivel de objeto — confirmar que el sujeto autenticado
+  realmente tiene acceso al ID del recurso solicitado, no solo que ha iniciado
+  sesión (eso evita la clase OWASP API1 BOLA / IDOR).
+- Validar todas las entradas de la petición contra un esquema explícito (JSON
+  Schema, Pydantic, Zod, struct tags de validator/v10). Rechazar pronto; nunca
+  propagar entrada no confiable hacia capas internas.
+- Aplicar límites de tasa a nivel de ruta para endpoints de autenticación, reseteo
+  de contraseña y cualquier operación costosa.
+- Usar access tokens de vida corta (≤ 1 hora) con refresh tokens, no bearer
+  tokens de larga duración.
+- Devolver mensajes de error genéricos al exterior (`invalid credentials`) y
+  registrar detalles internamente — evitar filtrar cuál de los dos (usuario o
+  contraseña) estaba mal.
+- Incluir `Cache-Control: no-store` en respuestas con datos personales o
+  sensibles.
 
-### ALWAYS
-- Require authentication on every non-public endpoint. Default to authenticated; opt
-  out for genuinely public routes by explicit annotation.
-- Apply authorization at the object level — confirm the authenticated subject actually
-  has access to the requested resource ID, not just that they're logged in (defeats
-  the OWASP API1 BOLA / IDOR class).
-- Validate all request inputs against an explicit schema (JSON Schema, Pydantic,
-  Zod, validator/v10 struct tags). Reject early; never propagate untrusted input
-  deeper.
-- Enforce rate limits at the route level for authentication endpoints, password reset,
-  and any expensive operation.
-- Use short-lived access tokens (≤ 1 hour) with refresh tokens, not long-lived bearer
-  tokens.
-- Return generic error messages externally (`invalid credentials`) and log specifics
-  internally — avoid leaking which of username/password was wrong.
-- Include `Cache-Control: no-store` on responses containing personal or sensitive
-  data.
+### NUNCA
+- Usar IDs enteros secuenciales en URLs para recursos accesibles entre
+  inquilinos. Usar UUIDs o IDs opacos no adivinables.
+- Confiar en cabeceras `Authorization` sin verificar firma ni expiración.
+- Aceptar JWTs con algoritmo `none`. Fijar el algoritmo esperado al verificar.
+- Hacer mass-assignment del cuerpo de la petición directamente a modelos ORM
+  (`User(**request.json)`) — esto habilita escalada de privilegios cuando el
+  modelo tiene campos admin que el usuario no debería poder controlar.
+- Deshabilitar la protección CSRF en endpoints que cambian estado y son usados
+  por navegadores.
+- Devolver stack traces o páginas de error del framework al cliente en
+  producción.
+- Usar `HTTP GET` para cualquier operación que cambie estado — GET debe ser
+  seguro e idempotente.
 
-### NEVER
-- Use sequential integer IDs in URLs for resources accessible across tenants. Use
-  UUIDs or unguessable opaque IDs.
-- Trust `Authorization` headers without verifying the signature and expiration.
-- Accept `none` algorithm JWTs. Pin the expected algorithm at verification time.
-- Mass-assign request bodies directly to ORM models (`User(**request.json)`) — this
-  enables privilege escalation when the model has admin fields the user shouldn't
-  control.
-- Disable CSRF protection on state-changing endpoints used by browsers.
-- Return stack traces or framework error pages to the client in production.
-- Use `HTTP GET` for any state-changing operation — GET should be safe and
-  idempotent.
+### FALSOS POSITIVOS CONOCIDOS
+- Los endpoints de sitios de marketing públicos que sirven tráfico anónimo
+  legítimamente no tienen autenticación ni rate limit más allá del balanceador.
+- Los IDs secuenciales en rutas son aceptables para recursos genuinamente
+  públicos y no asociados a inquilinos (p. ej., slugs de blog, catálogo público
+  de productos).
+- Los endpoints de health check (`/healthz`, `/ready`) saltan la autenticación
+  intencionadamente.
 
-### KNOWN FALSE POSITIVES
-- Public marketing-site endpoints serving anonymous traffic legitimately have no auth
-  and no rate limits beyond the load balancer.
-- Sequential IDs in paths are fine for genuinely public, non-tenant-scoped resources
-  (e.g. blog post slugs, public product catalog items).
-- Health-check endpoints (`/healthz`, `/ready`) intentionally bypass auth.
+## Contexto (para humanos)
 
-## Context (for humans)
+El OWASP API Top 10 difiere del Top 10 web sobre todo porque las APIs tienen
+defaults más débiles: a menudo omiten CSRF, exponen IDs de objetos directamente
+y tienden a confiar en estado del cliente proporcionado por el desarrollador.
+Esta skill codifica los errores más comunes de alto impacto.
 
-The OWASP API Top 10 differs from the web Top 10 mostly because APIs have weaker
-defaults: they often skip CSRF, they expose object IDs directly, and they tend to
-trust developer-provided client-side state. This skill codifies the most common
-high-impact mistakes.
-
-## References
+## Referencias
 
 - `checklists/auth_patterns.yaml`
 - `checklists/input_validation.yaml`
