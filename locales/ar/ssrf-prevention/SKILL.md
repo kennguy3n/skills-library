@@ -2,16 +2,17 @@
 id: ssrf-prevention
 language: ar
 dir: rtl
+source_revision: "4c215e6f"
 version: "1.0.0"
-title: "SSRF Prevention"
-description: "Defend against Server-Side Request Forgery: cloud metadata blocking, internal IP filtering, DNS rebinding defense, allowlist-based URL fetching"
+title: "منع SSRF"
+description: "الدفاع ضدّ Server-Side Request Forgery: حَجب metadata السحابيّة، وتصفية IPs الداخليّة، والدفاع ضدّ DNS rebinding، وجَلب URL بِناءً على allowlist"
 category: prevention
 severity: critical
 applies_to:
-  - "when generating code that fetches a URL supplied by the client"
-  - "when wiring webhooks, image proxies, PDF renderers, oEmbed fetchers"
-  - "when running in any cloud environment with an instance metadata service"
-  - "when reviewing a URL-parsing or HTTP-client wrapper"
+  - "عند توليد كود يَجلب URL يُورِّده العميل"
+  - "عند توصيل webhooks، وimage proxies، وPDF renderers، وoEmbed fetchers"
+  - "عند التشغيل في أيّ بيئة سحابيّة بِخدمة metadata للنماذج"
+  - "عند مراجعة wrapper لِتحليل URL أو HTTP client"
 languages: ["*"]
 token_budget:
   minimal: 1200
@@ -28,86 +29,91 @@ sources:
   - "PortSwigger Web Security Academy — SSRF labs"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: ar` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# منع SSRF
 
-# SSRF Prevention
+## القواعد (لوكلاء الذكاء الاصطناعيّ)
 
-## Rules (for AI agents)
+### دائمًا
+- تَحقَّق من **كلّ** URL يُجلَب بِالنيابة عن عميل عبر **allowlist**
+  من المضيفين المُتوقَّعين. الـ allowlist هي الدفاع الوحيد
+  المستدام — تُتجَنَّب block-lists عبر حِيَل ترميز، وIPv6
+  ثنائيّة المكدّس، وDNS rebinding.
+- حُلَّ الـ hostname **مرّةً واحدة**، وتَحقَّق من الـ IP المُحَلَّل
+  مقابل block-list الخاصّ بك بِالنطاقات الخاصّة / المحجوزة /
+  link-local، ثمّ اتّصل بِذلك الـ IP المُثبَّت عبر SNI. وإلّا قد
+  يَسبق المهاجم بِسباق DNS rebind بين التحقّق والاتّصال
+  (`time-of-check / time-of-use`).
+- احظر على طبقة الشبكة **و** طبقة التطبيق. أوقِف egress إلى
+  `169.254.169.254`، و`[fd00:ec2::254]`،
+  و`metadata.google.internal`، و`100.100.100.200` من أيّ خدمة
+  لا تَحتاج خدمة الـ metadata بشكل مشروع.
+- افرض **IMDSv2** على AWS EC2 (session-token، وhop-limit=1).
+  IMDSv1 — النمط الذي استَغَلَّه اختراق Capital One عام 2019 —
+  يجب تعطيله على مستوى النموذج.
+- عَطِّل تحويلات HTTP افتراضيًّا في fetchers من جانب الخادم (أو
+  اتبع عددًا صغيرًا محدودًا منها فقط، مع إعادة التحقّق من الـ URL
+  الجديد مقابل الـ allowlist في كلّ قفزة). أكثر تجاوزات SSRF
+  شيوعًا هو `https://allowed.example.com` يَرجع 302 إلى
+  `http://169.254.169.254/...`.
+- استخدم HTTP client منفصلًا ومُقَيَّدًا لِـ URLs *يتحكّم بها
+  المستخدم* مقابل URLs *داخليّة*. سوء استخدام الـ client يجب أن
+  يَفشل بِإغلاق (مثلًا عبر تمييز نوع في Go / Rust / TypeScript).
+- حَلِّل URLs بِمُحَلِّل واحد معروف (`net/url.Parse` في Go،
+  و`urllib.parse` في Python، و`new URL()` في JavaScript). المُحلِّلات
+  التفاضليّة بين WHATWG وRFC-3986 مثلًا هي فئة موثَّقة من تجاوزات
+  SSRF.
 
-### ALWAYS
-- Validate **every** URL fetched on behalf of a client through an **allowlist**
-  of expected hosts. The allowlist is the only durable defense — block-lists
-  are bypassable through encoding tricks, IPv6 dual-stack, and DNS rebinding.
-- Resolve the hostname **once**, validate the resolved IP against your
-  block-list of private / reserved / link-local ranges, then connect to that
-  pinned IP using SNI. Otherwise an attacker can race a DNS rebind between
-  validation and connect (`time-of-check / time-of-use`).
-- Block at the network layer **and** at the application layer. Drop egress to
-  `169.254.169.254`, `[fd00:ec2::254]`, `metadata.google.internal`, and
-  `100.100.100.200` from any service that doesn't legitimately need the
-  metadata service.
-- Enforce **IMDSv2** on AWS EC2 (session-token, hop-limit=1). IMDSv1 — the
-  pattern Capital One's 2019 breach exploited — must be disabled at the
-  instance level.
-- Disable HTTP redirects by default on server-side fetchers (or follow only
-  a small bounded number, re-validating the new URL against the allowlist
-  at each hop). The most common SSRF bypass is `https://allowed.example.com`
-  returning a 302 to `http://169.254.169.254/...`.
-- Use a separate, restricted HTTP client for *user-controlled* URLs vs
-  *internal* URLs. Misusing the wrong client must fail closed (e.g. via
-  type-system distinction in Go / Rust / TypeScript).
-- Parse URLs with a single, well-known parser (Go `net/url.Parse`,
-  Python `urllib.parse`, JavaScript `new URL()`). Differential parsers
-  between e.g. WHATWG and RFC-3986 are a documented SSRF bypass class.
+### أبدًا
+- لا تَثِق بِـ hostname / IP يُورِّده المستخدم. أعد دائمًا الحلّ
+  في الـ resolver الموثوق وأعد فحص العنوان المُحَلَّل.
+- لا تَتَّصل بِـ URL استنادًا إلى hostname حين يَسمح البروتوكول
+  بِتحويلات — `gopher://`، و`dict://`، و`file://`، و`jar://`،
+  و`netdoc://`، و`ldap://` كلّها مُضَخِّمات شائعة لِـ SSRF.
+  اقتصر على `http://` و`https://` (و`ftp://` فقط إذا كنت
+  تَحتاجها فعلًا).
+- لا تَثِق بِـ `0.0.0.0`، أو `127.0.0.1`، أو `[::]`، أو `[::1]`،
+  أو `localhost`، أو `*.localhost.test` — كلّها تَصل إلى النموذج
+  المحلّيّ. وتَشمل القائمة أيضًا link-local `169.254.0.0/16`،
+  وIPv6 المُعَيَّن من IPv4 `::ffff:127.0.0.1`، وULA IPv6
+  `fc00::/7`.
+- لا تَستخدم نصّ URL المستخدم في سطر سجلّ أو ردّ خطأ — قد يكون
+  وحي الانعكاس لِـ SSRF الذي يُحَوِّل SSRF أعمى إلى SSRF
+  مُسَرِّب بيانات.
+- لا تُشَغِّل sidecar / proxy حَجب metadata كدفاعٍ **وحيد** —
+  مهاجم يَجد pseudo-URL لمقبس Unix أو hostname مَعِيب التهيئة
+  قد يَلتفّ حول الـ proxy. تَظلّ allowlist على مستوى التطبيق
+  مطلوبة.
+- لا تَسمح بِـ IDN / Punycode في URLs المستخدم دون توحيد —
+  هجمات الهَوْمُغراف بِـ IDN تَتجاوز فحوصات allowlist نصّيّة
+  ساذجة (`gооgle.com` بِـ o سيريليّة ≠ `google.com`).
 
-### NEVER
-- Trust a hostname / IP that was supplied by the user. Always re-resolve
-  in your trusted resolver and re-check the resolved address.
-- Connect to a URL based on its hostname when the protocol allows
-  redirects — `gopher://`, `dict://`, `file://`, `jar://`, `netdoc://`,
-  `ldap://` are all common SSRF amplifiers. Restrict to `http://` and
-  `https://` (and `ftp://` only if you actually need it).
-- Trust `0.0.0.0`, `127.0.0.1`, `[::]`, `[::1]`, `localhost`, or
-  `*.localhost.test` — all of them reach the local instance. The list also
-  must include link-local `169.254.0.0/16`, IPv4-mapped IPv6
-  `::ffff:127.0.0.1`, and IPv6 ULA `fc00::/7`.
-- Use the user's URL string in a logging line or an error response —
-  it can be the SSRF reflection oracle that turns blind SSRF into
-  data-exfiltration SSRF.
-- Run a metadata-blocking sidecar / proxy as the **only** defense — an
-  attacker who finds a Unix-domain-socket pseudo-URL or a misconfigured
-  hostname can route around the proxy. Application-level allowlist
-  remains required.
-- Allow IDN / Punycode in user URLs without normalization — IDN homograph
-  attacks bypass naive string-allowlist checks (`gооgle.com` Cyrillic-o
-  ≠ `google.com`).
+### إيجابيّات خاطئة معروفة
+- تَكاملات خادم-إلى-خادم حيث يَسيطر المُشغِّل على الجانبَين والـ
+  URL مُصلَّب في الـ config (لا يُورِّده المستخدم) — الـ
+  allowlist هنا هي الـ config الساكن نفسه.
+- استدعاءات خدمة-إلى-خدمة محلّيّة العنقود في Kubernetes — هذه
+  لا تمرّ عبر مدخل مستخدم، لكن انتبه إلى أيّ network policy
+  عبر namespaces.
+- webhooks خارجة **إلى** العميل (مثل webhooks Slack، أو
+  Discord، أو Microsoft Teams). تَحقَّق أنّ مضيف الـ URL في
+  allowlist مُوثَّقة لِلتكامل، وليس عشوائيًّا.
 
-### KNOWN FALSE POSITIVES
-- Server-to-server integrations where both sides are operator-controlled
-  and the URL is hard-coded in config (not user-supplied) — the allowlist
-  here is the static config itself.
-- Cluster-local Kubernetes service-to-service calls — these don't go
-  through user input, but be aware of any cross-namespace network policy.
-- Outbound webhooks **to** the customer (e.g. Slack, Discord, Microsoft
-  Teams webhooks). Validate that the URL host is in the integration's
-  documented allowlist, not arbitrary.
+## السياق (للبشر)
 
-## Context (for humans)
+SSRF الآن ناقل وصول أوّليّ بِحُكم الواقع لاختراقات السحابة.
+السلسلة هي: URL يُورِّده المستخدم → الخادم يَجلبها → الخادم
+لديه اعتمادات ضمنيّة (IAM لِـ metadata السحابة، وAPIs إدارة
+داخليّة، ونقاط نهاية RPC) → المهاجم يَسرق الاعتمادات. اختراق
+Capital One عام 2019 (80 مليون سجلّ عميل) كان حالة من كتاب
+الـ SSRF + تسريب IMDSv1. الإصلاحات بسيطة ومُوثَّقة جيّدًا؛
+الأنماط تَعود لأنّ جَلب URL ركن صغير في معظم كواعد الكود.
 
-SSRF is now the de-facto initial-access vector for cloud breaches. The
-chain is: a user-supplied URL → the server fetches it → the server has
-implicit credentials (cloud metadata IAM, internal admin APIs, RPC
-endpoints) → attacker steals the credentials. Capital One's 2019 breach
-(80M customer records) was a textbook SSRF + IMDSv1 exfiltration. The
-fixes are simple and well-documented; the patterns reappear because
-URL-fetching is a tiny corner of most codebases.
+يُؤكِّد هذا الـ skill على فئات DNS-rebinding وتجاوز التحويلات
+لأنّها حيث تَفشل أكثر مُحَقِّقات URL المُولَّدة بِالذكاء
+الاصطناعيّ — حَجب 169.254.169.254 الواضح سهل الإضافة، أمّا
+نمط allow-only-after-resolve-and-pin فيَحتاج تفكيرًا أكبر.
 
-This skill emphasizes the DNS-rebinding and redirect-bypass classes
-because those are where AI-generated URL validators most often fail —
-the obvious 169.254.169.254 block is easy to add, but the
-allow-only-after-resolve-and-pin pattern requires more thought.
-
-## References
+## مراجع
 
 - `rules/ssrf_sinks.json`
 - `rules/cloud_metadata_endpoints.json`

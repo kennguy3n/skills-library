@@ -2,15 +2,16 @@
 id: container-security
 language: ar
 dir: rtl
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Container Security"
-description: "Hardening rules for Dockerfile, OCI images, Kubernetes manifests, and Helm charts"
+title: "أمن الحاويات"
+description: "قواعد تصليب لـ Dockerfile وصور OCI ومانيفستات Kubernetes ومخططات Helm"
 category: hardening
 severity: high
 applies_to:
-  - "when generating a Dockerfile or OCI image build"
-  - "when generating Kubernetes / Helm / Kustomize manifests"
-  - "when reviewing container changes in PR"
+  - "عند توليد Dockerfile أو بناء صورة OCI"
+  - "عند توليد مانيفستات Kubernetes / Helm / Kustomize"
+  - "عند مراجعة تغييرات حاويات داخل PR"
 languages: ["dockerfile", "yaml", "go", "python"]
 token_budget:
   minimal: 1000
@@ -26,75 +27,82 @@ sources:
   - "OWASP Docker Top 10"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: ar` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# أمن الحاويات
 
-# Container Security
+## القواعد (لوكلاء الذكاء الاصطناعي)
 
-## Rules (for AI agents)
-
-### ALWAYS
-- Use **multi-stage builds**: separate builder/test stages from the final runtime
-  image so build toolchains and source aren't shipped. The last stage should be
-  `FROM distroless`, `FROM scratch`, `FROM alpine:<digest>`, or another minimal
-  base — pinned by SHA256 digest, not just tag.
-- Run as a non-root user: `USER <uid>` (numeric UID >= 10000 for K8s `runAsNonRoot`
-  policies to be enforceable).
-- Add a `.dockerignore` excluding `.git`, `node_modules`, `.env`, `*.pem`, `*.key`,
-  `target/`, `.terraform/`, `dist/`, `coverage/`.
-- Set explicit `HEALTHCHECK` for long-running services and matching
-  `livenessProbe` / `readinessProbe` / `startupProbe` in K8s.
-- Set resource `requests` and `limits` on every container (CPU and memory).
-- Drop all Linux capabilities then add back only what's needed:
+### دائمًا
+- استخدم **builds متعدّدة المراحل**: افصل مراحل builder/test عن صورة
+  وقت التشغيل النهائية كي لا تُشحن سلاسل أدوات البناء والشيفرة المصدرية.
+  يجب أن تكون المرحلة الأخيرة `FROM distroless`، `FROM scratch`،
+  `FROM alpine:<digest>` أو قاعدة دنيا أخرى — مُثبَّتة بـ SHA256 digest،
+  لا بمجرد tag.
+- شغّل بمستخدم غير root: `USER <uid>` (UID رقمي ≥ 10000 لكي تكون
+  سياسات K8s `runAsNonRoot` قابلة للفرض).
+- أضف `.dockerignore` يستثني `.git` و`node_modules` و`.env` و`*.pem`
+  و`*.key` و`target/` و`.terraform/` و`dist/` و`coverage/`.
+- اضبط `HEALTHCHECK` صريحًا للخدمات طويلة الأمد، مع
+  `livenessProbe` / `readinessProbe` / `startupProbe` مكافئة في K8s.
+- اضبط `requests` و`limits` للموارد على كل حاوية (CPU و الذاكرة).
+- أسقط جميع capabilities الـ Linux ثم أَعد فقط ما يلزم:
   `securityContext.capabilities.drop: [ALL]`.
-- Apply a seccomp profile (`RuntimeDefault` at minimum) and AppArmor / SELinux
-  where available.
-- Mark filesystem read-only: `readOnlyRootFilesystem: true`; use `emptyDir`
-  volumes for the few paths that must be writable.
-- Scan every image in CI (Trivy, Grype, Snyk, or your registry's scanner) and
-  fail builds on CRITICAL or HIGH severity findings.
-- Pull base images by SHA256 digest in production manifests, not by mutable tag.
+- طبّق ملف seccomp (`RuntimeDefault` كحد أدنى) و AppArmor / SELinux
+  حين تتوفر.
+- اجعل نظام الملفات للقراءة فقط: `readOnlyRootFilesystem: true`;
+  استخدم وحدات `emptyDir` للمسارات القليلة التي تحتاج كتابة.
+- افحص كل صورة في CI (Trivy، Grype، Snyk، أو فاحص سجلك) وأخفِق
+  البناء عند نتائج CRITICAL أو HIGH.
+- اجلب صور القاعدة في مانيفستات الإنتاج بـ SHA256 digest، لا بـ tag
+  متغيّر.
 
-### NEVER
-- Run containers as root or with `privileged: true` / `allowPrivilegeEscalation:
-  true` outside of explicit, audited system pods (e.g., CNI plugins).
-- Mount the host docker socket (`/var/run/docker.sock`) inside an application
-  container. It's effectively root on the host.
-- Embed secrets in image layers via `ENV`, `ARG`, `COPY`, or by `echo`-ing them
-  to a file. Even if `--squash`'d, BuildKit cache and registry layers leak.
-- Use `latest`, `stable`, `slim`, or unversioned tags as the final image base —
-  builds become non-reproducible and quietly pick up CVEs.
-- Use `ADD <url>` to fetch remote resources during build (use `curl --fail` with
-  a checksum verify and `RUN` instead, or vendor the artifact).
-- Disable `automountServiceAccountToken` when the workload needs the K8s API,
-  but DO disable it (`automountServiceAccountToken: false`) when it doesn't.
-- Use `hostNetwork: true`, `hostPID: true`, or `hostIPC: true` for application
-  pods.
-- Run pods in the `kube-system` namespace, or any namespace without a
-  `NetworkPolicy` and PodSecurity admission policy.
+### أبدًا
+- لا تشغّل حاويات بصلاحية root أو بـ `privileged: true` /
+  `allowPrivilegeEscalation: true` خارج pods نظام محدّدة ومُدقَّقة (مثل
+  ملحقات CNI).
+- لا تُركّب socket الـ docker الخاص بالمضيف
+  (`/var/run/docker.sock`) داخل حاوية تطبيق. فهذا فعليًا صلاحية root على
+  المضيف.
+- لا تُضمّن أسرارًا في طبقات الصورة عبر `ENV` أو `ARG` أو `COPY` أو
+  بـ `echo` إلى ملف. حتى مع `--squash` تتسرّب طبقات BuildKit cache
+  وregistry.
+- لا تستخدم `latest` أو `stable` أو `slim` أو tags بلا إصدار كقاعدة
+  نهائية — تصبح builds غير قابلة لإعادة الإنتاج وتلتقط CVEs بصمت.
+- لا تستخدم `ADD <url>` لجلب موارد بعيدة أثناء البناء (استخدم
+  `curl --fail` مع التحقق من checksum و`RUN` بدلًا من ذلك، أو وَنْدِر
+  المادة).
+- لا تُعطّل `automountServiceAccountToken` حين يحتاج الـ workload إلى
+  واجهة K8s، لكن عطّله (`automountServiceAccountToken: false`) حين لا
+  يحتاج.
+- لا تستخدم `hostNetwork: true` أو `hostPID: true` أو `hostIPC: true`
+  لـ pods التطبيقات.
+- لا تُشغّل pods في namespace `kube-system`، ولا في أي namespace بلا
+  `NetworkPolicy` وسياسة قبول PodSecurity.
 
-### KNOWN FALSE POSITIVES
-- Operators that legitimately need cluster-admin access (kubelet, CSI drivers,
-  CNI plugins) require elevated privileges; they belong in `kube-system` or a
-  dedicated namespace with auditing, not in application namespaces.
-- Bare-metal Kubernetes nodes sometimes legitimately disable `seccomp` for
-  drivers that aren't compatible; document the exception.
-- One-shot debugging pods (kubectl debug, ephemeral containers) intentionally
-  bypass many of these controls; they should not be persisted as YAML in the
-  repo.
+### إيجابيات خاطئة معروفة
+- المشغّلون (operators) الذين يحتاجون شرعًا صلاحية cluster-admin
+  (kubelet، CSI drivers، CNI plugins) يحتاجون صلاحيات مرتفعة؛ مكانها
+  `kube-system` أو namespace مخصّص مع تدقيق، لا في namespaces
+  التطبيقات.
+- نقاط Kubernetes على bare-metal تُعطّل شرعًا أحيانًا seccomp لدرايفرات
+  غير متوافقة؛ وثّق الاستثناء.
+- pods التصحيح اللمسية (kubectl debug، ephemeral containers) تتجاوز
+  عمدًا كثيرًا من هذه الضوابط؛ لا ينبغي إبقاؤها كـ YAML في المستودع.
 
-## Context (for humans)
+## السياق (للبشر)
 
-Containers leak two ways: image-layer leaks (secrets in `ENV`, build artifacts
-left in the final image, vulnerable base CVEs) and runtime escapes (privileged
-mode, docker.sock, host namespaces). NIST SP 800-190 frames these as **image
-risks**, **registry risks**, **orchestrator risks**, and **runtime risks**.
+تتسرّب الحاويات بطريقتين: تسريبات طبقات الصورة (أسرار في `ENV`،
+مواد بناء تُركَت في الصورة النهائية، CVEs في القاعدة) وهروبات وقت
+التشغيل (وضع privileged، docker.sock، namespaces المضيف). يصنّفها
+NIST SP 800-190 كـ **مخاطر الصورة**، **مخاطر السجل**، **مخاطر المنسّق**،
+**مخاطر وقت التشغيل**.
 
-AI assistants almost always generate Dockerfiles that work and ship — fast — but
-they default to a single-stage `FROM node` / `FROM python` and `USER root`. This
-skill is the counterweight; pair it with `infrastructure-security` for K8s
-controls beyond the pod (RBAC, admission, supply chain).
+تكاد مساعدات الذكاء الاصطناعي تولّد دائمًا Dockerfiles تعمل وتُشحن —
+بسرعة — لكنها افتراضًا أحادية المرحلة بـ `FROM node` / `FROM python`
+و`USER root`. هذه الـ skill هي الموازن؛ ادمجها مع
+`infrastructure-security` لضوابط K8s خارج الـ pod (RBAC، admission،
+سلسلة التوريد).
 
-## References
+## مراجع
 
 - `checklists/dockerfile_hardening.yaml`
 - `checklists/k8s_pod_security.yaml`

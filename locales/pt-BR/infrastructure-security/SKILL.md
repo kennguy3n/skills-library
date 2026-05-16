@@ -1,16 +1,17 @@
 ---
 id: infrastructure-security
 language: pt-BR
+source_revision: "fbb3a823"
 version: "1.0.0"
-title: "Infrastructure Security"
-description: "Apply hardening rules for Kubernetes, Docker, and Terraform infrastructure-as-code"
+title: "Segurança de infraestrutura"
+description: "Aplicar regras de hardening para Kubernetes, Docker e infrastructure-as-code em Terraform"
 category: hardening
 severity: high
 applies_to:
-  - "when generating Dockerfile content"
-  - "when generating Kubernetes manifests or Helm charts"
-  - "when generating Terraform or CloudFormation"
-  - "when reviewing IaC PRs"
+  - "ao gerar conteúdo de Dockerfile"
+  - "ao gerar manifests de Kubernetes ou charts de Helm"
+  - "ao gerar Terraform ou CloudFormation"
+  - "ao revisar PRs de IaC"
 languages: ["yaml", "hcl", "dockerfile"]
 token_budget:
   minimal: 650
@@ -26,59 +27,69 @@ sources:
   - "HashiCorp Terraform Security Best Practices"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: pt-BR` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Segurança de infraestrutura
 
-# Infrastructure Security
+## Regras (para agentes de IA)
 
-## Rules (for AI agents)
+### SEMPRE
+- Fixe imagens base por digest (`FROM image@sha256:...`) ao construir
+  containers para produção. Tags são mutáveis; digests não.
+- Rode containers como um `USER` não-root diferente de `0`. Adicione
+  `securityContext: runAsNonRoot: true` aos pod specs do K8s.
+- Defina `requests` E `limits` explícitos de recursos do Kubernetes
+  (`requests.cpu`, `requests.memory`, `limits.cpu`,
+  `limits.memory`).
+- Faça drop de todas as capabilities do Linux e re-adicione só o que
+  for necessário (`securityContext.capabilities.drop: ["ALL"]`).
+- Marque os filesystems como read-only
+  (`securityContext.readOnlyRootFilesystem: true`) quando o workload
+  não precisar legitimamente de acesso de escrita.
+- Habilite criptografia em repouso (`enable_kms_encryption`,
+  `kms_key_id`, `server_side_encryption_configuration`) para buckets
+  S3, volumes EBS, RDS, DynamoDB.
+- Defina `block_public_access` em cada bucket S3 a não ser que o
+  workload realmente sirva conteúdo público.
+- Aplique o princípio do privilégio mínimo às policies IAM: nomeie
+  ações e recursos explícitos; evite `*:*` e `Resource: "*"` fora de
+  policies admin intencionais.
 
-### ALWAYS
-- Pin base images by digest (`FROM image@sha256:...`) when building containers for
-  production. Tags are mutable; digests are not.
-- Run containers as a non-root `USER` other than `0`. Add `securityContext:
-  runAsNonRoot: true` to K8s pod specs.
-- Set explicit Kubernetes resource requests AND limits (`requests.cpu`,
-  `requests.memory`, `limits.cpu`, `limits.memory`).
-- Drop all Linux capabilities and re-add only what's required
-  (`securityContext.capabilities.drop: ["ALL"]`).
-- Mark filesystems read-only (`securityContext.readOnlyRootFilesystem: true`) when the
-  workload doesn't legitimately need write access.
-- Enable encryption at rest (`enable_kms_encryption`, `kms_key_id`,
-  `server_side_encryption_configuration`) for S3 buckets, EBS volumes, RDS, DynamoDB.
-- Set `block_public_access` on every S3 bucket unless the workload genuinely serves
-  public content.
-- Apply the principle of least privilege to IAM policies: name explicit actions and
-  resources; avoid `*:*` and `Resource: "*"` outside of intentional admin policies.
+### NUNCA
+- Use `latest` como tag de imagem em manifests de produção.
+- Rode um container com flag `--privileged` ou
+  `securityContext.privileged: true`.
+- Monte o `/var/run/docker.sock` do host dentro de um container.
+- Exponha serviços do Kubernetes com `type: LoadBalancer`
+  diretamente para a internet sem um ingress controller, WAF ou
+  camada de autenticação na frente.
+- Hardcode chaves de AWS / chaves de service-account de GCP / client
+  secrets de Azure no IaC. Use IRSA, Workload Identity do GKE,
+  managed identities do Azure, ou o equivalente nativo da
+  plataforma.
+- Crie buckets S3 com `acl = "public-read"` para buckets contendo
+  algo diferente de assets intencionalmente públicos.
+- Permita ingress `0.0.0.0/0` em portas de banco de dados, SSH, RDP
+  ou admin.
+- Desabilite `node_to_node_encryption` em Elasticsearch /
+  OpenSearch.
 
-### NEVER
-- Use `latest` as the image tag in production manifests.
-- Run a container with `--privileged` flag or `securityContext.privileged: true`.
-- Mount the host `/var/run/docker.sock` into a container.
-- Expose Kubernetes services with `type: LoadBalancer` on the open internet without an
-  ingress controller, WAF, or authentication layer in front.
-- Hardcode AWS keys / GCP service-account keys / Azure client secrets in IaC. Use
-  IRSA, GKE Workload Identity, Azure managed identities, or the platform-native
-  equivalent.
-- Create S3 buckets with `acl = "public-read"` for buckets containing anything other
-  than intentionally public assets.
-- Allow `0.0.0.0/0` ingress on database, SSH, RDP, or admin ports.
-- Disable `node_to_node_encryption` on Elasticsearch / OpenSearch.
+### FALSOS POSITIVOS CONHECIDOS
+- Fixar digest de imagem nem sempre é prático em ambientes de dev /
+  preview — fixar por tag (ex.: `node:20.11.1-alpine`) é aceitável
+  ali.
+- `Resource: "*"` é aceitável em policies que estejam documentadas
+  como admin-only com constraints `Condition` explícitos.
+- `runAsNonRoot: false` é aceitável quando o workload realmente
+  exige root (ex.: bindar à porta 80, certas ferramentas de rede).
+  Documente o porquê.
 
-### KNOWN FALSE POSITIVES
-- Pinning image digests is not always practical in dev / preview environments — tag
-  pinning (e.g. `node:20.11.1-alpine`) is acceptable there.
-- `Resource: "*"` is acceptable in policies that are documented admin-only with
-  explicit `Condition` constraints.
-- `runAsNonRoot: false` is acceptable when the workload genuinely requires root (e.g.,
-  binding to port 80, certain network tooling). Document why.
+## Contexto (para humanos)
 
-## Context (for humans)
+Infraestrutura mal configurada é a causa dominante de breaches em
+cloud. Os padrões acima codificam os itens de benchmark CIS mais
+violados como regras que a IA aplica durante a geração, não depois
+do deploy.
 
-Misconfigured infrastructure is the dominant cause of cloud breaches. The patterns
-above codify the most-violated CIS benchmark items into rules the AI applies during
-generation, not after deployment.
-
-## References
+## Referências
 
 - `checklists/k8s_hardening.yaml`
 - `checklists/docker_security.yaml`

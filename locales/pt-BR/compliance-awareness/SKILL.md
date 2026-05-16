@@ -1,15 +1,16 @@
 ---
 id: compliance-awareness
 language: pt-BR
+source_revision: "8e503523"
 version: "1.0.0"
-title: "Compliance Awareness"
-description: "Map generated code against OWASP, CWE, and SANS Top 25 controls for traceability"
+title: "Consciência de conformidade"
+description: "Mapear o código gerado contra controles OWASP, CWE e SANS Top 25 para rastreabilidade"
 category: compliance
 severity: medium
 applies_to:
-  - "when generating code in regulated environments"
-  - "when writing audit-relevant comments or documentation"
-  - "when refactoring code that crosses compliance boundaries (PII, PHI, PCI scope)"
+  - "ao gerar código em ambientes regulados"
+  - "ao escrever comentários ou documentação relevantes para auditoria"
+  - "ao refatorar código que cruza fronteiras de conformidade (PII, PHI, escopo PCI)"
 languages: ["*"]
 token_budget:
   minimal: 400
@@ -26,50 +27,56 @@ sources:
   - "SOC 2 Trust Services Criteria"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: pt-BR` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Consciência de conformidade
 
-# Compliance Awareness
+## Regras (para agentes de IA)
 
-## Rules (for AI agents)
+### SEMPRE
+- Marque funções que manipulam dados PII / PHI / PCI com um comentário
+  que indique a classificação (ex.: `// classification: PII`).
+- Logue eventos de auditoria para ações relevantes à segurança (login,
+  mudança de permissão, exportação de dados, operações admin) — registre
+  quem, o quê, quando, NÃO o payload sensível.
+- Identifique a categoria CWE / OWASP de código relevante à segurança
+  nos comentários quando a convenção do time for incluir rastreabilidade
+  (`// addresses CWE-79 — XSS`).
+- Para escopo PCI, segregue o código que manipula dados de cartão em
+  módulos com nomes claros, para que as fronteiras do escopo fiquem
+  visíveis.
+- Para cargas HIPAA, prefira criptografia em repouso E em trânsito, com
+  gerenciamento de chaves documentado.
 
-### ALWAYS
-- Tag functions that handle PII / PHI / PCI data with a comment indicating the
-  classification (e.g. `// classification: PII`).
-- Log audit events for security-relevant actions (login, permission change, data
-  export, admin operations) — log who, what, when, NOT the sensitive payload.
-- Identify the CWE / OWASP category for security-relevant code in comments when the
-  team's convention is to include traceability (`// addresses CWE-79 — XSS`).
-- For PCI scope, segregate card-data-handling code into clearly-named modules so
-  scope boundaries are visible.
-- For HIPAA workloads, prefer encryption at rest AND in transit, with documented key
-  management.
+### NUNCA
+- Inclua PII / PHI / PCI em mensagens de log, mensagens de erro ou
+  eventos de telemetria.
+- Armazene números de cartão, CVVs ou dados completos de tarja
+  magnética fora de um serviço de tokenização conforme PCI DSS.
+- Misture código que manipula PII em módulos utilitários gerais sem
+  classificação explícita.
+- Gere código que processa dados pessoais de residentes da UE sem
+  considerar as obrigações do GDPR (direito ao esquecimento, minimização
+  de dados, base legal).
+- Sugira workarounds que burlam controles de conformidade "para
+  desenvolvimento" — esses workarounds sempre vazam para produção.
 
-### NEVER
-- Include PII / PHI / PCI in log messages, error messages, or telemetry events.
-- Store payment card numbers, CVVs, or full magnetic stripe data outside of a PCI
-  DSS-compliant tokenization service.
-- Mix PII-handling code into general utility modules without explicit classification.
-- Generate code that processes EU residents' personal data without considering GDPR
-  obligations (right to erasure, data minimization, lawful basis).
-- Suggest workarounds that bypass compliance controls "for development" — these
-  workarounds always leak into production.
+### FALSOS POSITIVOS CONHECIDOS
+- Logs dos *tipos* de dado acessados ("usuário acessou registro de
+  reivindicação") geralmente são OK; a regra é contra logar o *conteúdo*
+  de campos sensíveis.
+- Fixtures de teste com dados claramente falsos (telefones `555-0100`,
+  PAN `4111-1111-1111-1111`, `John Doe`) não são PII.
+- A retenção de logs de auditoria é intencionalmente longa (geralmente
+  anos) e não deve ser filtrada por varreduras gerais de retenção.
 
-### KNOWN FALSE POSITIVES
-- Logs of *types* of data accessed ("user accessed claim record") are usually fine;
-  the rule is against logging the *contents* of sensitive fields.
-- Test fixtures using clearly fake data (`555-0100` phone numbers,
-  `4111-1111-1111-1111` PAN, `John Doe`) are not PII.
-- Audit log retention is intentionally long (often years) and should not be filtered
-  by general data-retention sweeps.
+## Contexto (para humanos)
 
-## Context (for humans)
+Frameworks de conformidade (PCI DSS, HIPAA, SOC 2, ISO 27001, GDPR)
+prescrevem controles mas não dizem ao desenvolvedor que código escrever.
+Esta skill cobre essa lacuna anexando orientação relevante aos passos de
+geração de IA, para que o código resultante seja audit-friendly por
+padrão.
 
-Compliance frameworks (PCI DSS, HIPAA, SOC 2, ISO 27001, GDPR) prescribe controls but
-don't tell developers what code to write. This skill bridges the gap by attaching
-control-relevant guidance to AI generation steps, so the resulting code is
-audit-friendly by default.
-
-## References
+## Referências
 
 - `frameworks/owasp_mapping.yaml`
 - `frameworks/cwe_mapping.yaml`

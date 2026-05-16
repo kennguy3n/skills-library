@@ -2,16 +2,17 @@
 id: supply-chain-security
 language: ar
 dir: rtl
+source_revision: "fbb3a823"
 version: "1.0.0"
-title: "Supply Chain Security"
-description: "Defend against typosquats, dependency confusion, and malicious package contributions"
+title: "أمن سلسلة التوريد"
+description: "الدفاع ضدّ typosquats، وتشويش الاعتمادات (dependency confusion)، ومساهمات الحزم الخبيثة"
 category: supply-chain
 severity: critical
 applies_to:
-  - "when AI is asked to add a dependency"
-  - "when reviewing PRs that modify package manifests"
-  - "when setting up a new project that uses internal namespaces"
-  - "before publishing a package to a public registry"
+  - "حين يُطلَب من الذكاء الاصطناعيّ إضافة اعتمادٍ ما"
+  - "عند مراجعة PRs تُعَدِّل بيانات الحزم"
+  - "عند إنشاء مشروع جديد يستخدم namespaces داخليّة"
+  - "قبل نشر حزمة إلى registry عامّ"
 languages: ["*"]
 token_budget:
   minimal: 550
@@ -27,59 +28,69 @@ sources:
   - "SLSA Supply-chain Levels for Software Artifacts v1.0"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: ar` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# أمن سلسلة التوريد
 
-# Supply Chain Security
+## القواعد (لوكلاء الذكاء الاصطناعيّ)
 
-## Rules (for AI agents)
+### دائمًا
+- احسب مسافة Levenshtein مقابل قائمة أعلى 1000 حزمة لِلنظام البيئيّ
+  المعنيّ كلّما اقترحت اعتمادًا جديدًا. ضَع علامة على أيّ مرشّح
+  بِمسافة ≤ 2 من حزمة شائعة (`axois` مقابل `axios`، و`urlib3`
+  مقابل `urllib3`، و`colours` مقابل `colors`، و`python-dateutil`
+  مقابل `dateutil` مقابل `dateutils`).
+- تَحقَّق أنّ حزم namespaces الداخليّة (`@yourco/*`،
+  و`com.yourco.*`) تُسحَب من الـ registry الداخليّ، لا العامّ.
+  هَيِّئ `.npmrc` / `pip.conf` / `settings.gradle` صراحةً
+  بِالنطاق الداخليّ.
+- ثَبِّت URL الـ registry في ملفّات الـ lockfile لتفادي هجمات
+  إعادة توجيه الـ registry.
+- تَحقَّق أنّ أيّ حزمة مُضافة حديثًا لها مَشرف موثَّق (provenance
+  لِـ `npm`، أو توقيع `sigstore`، أو وَسم git مُوَقَّع بِـ GPG) إن
+  نُشِرَت خلال الـ 90 يومًا الأخيرة.
+- عامِل سكربتات التثبيت (`postinstall`، و`preinstall`، وكود
+  عشوائيّ في `setup.py`، و`build.rs`) كَسَطح عالي الخطر، وَأشِر
+  إليها في وصف الـ PR لِمراجعة بشريّة.
 
-### ALWAYS
-- Compute Levenshtein distance against the top-1000 list for the relevant ecosystem
-  whenever proposing a new dependency. Flag any candidate with distance ≤ 2 from a
-  popular package (`axois` vs `axios`, `urlib3` vs `urllib3`, `colours` vs `colors`,
-  `python-dateutil` vs `dateutil` vs `dateutils`).
-- Verify that internal-namespace packages (`@yourco/*`, `com.yourco.*`) are pulled from
-  the internal registry, not the public one. Configure `.npmrc` /
-  `pip.conf` / `settings.gradle` with the internal scope explicitly.
-- Pin the registry URL in lockfiles to prevent registry redirection attacks.
-- Check that any newly added package has a verified maintainer (`npm` provenance,
-  `sigstore` signature, or GPG-signed git tag) when published in the last 90 days.
-- Treat install scripts (`postinstall`, `preinstall`, `setup.py` arbitrary code,
-  `build.rs`) as high-risk surface and flag them in the PR description for human
-  review.
+### أبدًا
+- لا تُضِف حزمة عامّة اسمها يُطابق نمط namespace داخليّ.
+- لا تَثِق بِحزمة URL مستودعها في صفحة الـ registry لا يُطابق
+  مستودع مصدرها الفعليّ.
+- لا تُوصِ بِحزمة نُشِرَت حديثًا بِعدد تنزيلات منخفض لاستخدامٍ
+  حسّاس أمنيًّا (auth، أو crypto، أو HTTP، أو drivers قواعد
+  بيانات).
+- لا تُعَطِّل فحص السلامة الخاصّ بِمدير الحزم (`--no-package-lock`،
+  و`--ignore-scripts = false` عند الدفاع ضدّها،
+  و`npm config set audit false` في الإنتاج).
+- لا تَدمج تلقائيًّا PRs لِتَرقية اعتمادات دون مُراجِع حين تَعبر
+  الترقية إصدارًا major.
+- لا تَقترح تثبيت أدوات عبر أنماط `curl | sh` من مصادر غير
+  موثوقة.
 
-### NEVER
-- Add a public package whose name matches an internal namespace pattern.
-- Trust a package whose repository URL on the registry page does not match its actual
-  source repo.
-- Recommend a freshly-published package with low download counts for a security-critical
-  use case (auth, crypto, HTTP, DB drivers).
-- Disable the package manager's integrity check (`--no-package-lock`, `--ignore-scripts
-  = false` when defending against it, `npm config set audit false` in production).
-- Auto-merge dependency-bump PRs without a reviewer when the bump crosses a major
-  version.
-- Suggest installing tools via `curl | sh` patterns from untrusted sources.
+### إيجابيّات خاطئة معروفة
+- منظّمات شرعيّة تَفرع الحزم المَصونة وتُعيد نشرها بِلاحقة
+  `-fork` أو `-community`؛ تَحقَّق من URL مستودع الفرع قبل
+  وَسمه.
+- إصدارات beta / alpha من حزم معروفة (مثل `next@canary`) تَبدو
+  "حديثة النشر" لكنّها جزء من وتيرة إصدارات معروفة.
+- حزم namespace داخليّة (`@yourco/internal-tools`) عَمدًا ليست
+  على الـ registry العامّ — هذه على ما يُرام حين يكون `.npmrc`
+  مُهَيَّأ صحيحًا.
 
-### KNOWN FALSE POSITIVES
-- Legitimate orgs forking and republishing maintained packages with a `-fork` or
-  `-community` suffix; verify the fork's repo URL before flagging.
-- Beta / alpha releases of well-known packages (e.g. `next@canary`) appear "newly
-  published" but are part of a known release cadence.
-- Internal namespace packages (`@yourco/internal-tools`) intentionally not on the
-  public registry — these are fine when the `.npmrc` is configured correctly.
+## السياق (للبشر)
 
-## Context (for humans)
+تَشتغل فئة هجوم تشويش الاعتمادات (dependency confusion) لأنّ
+معظم مديري الحزم يُفَضِّلون افتراضيًّا الحزمة بِأعلى إصدار عبر
+كلّ registries مُهَيَّأة. إذا نَشَر مُهاجم
+`@yourco/internal-tool@99.9.9` على npmjs.com، فإنّ كلّ
+`npm install` في مشروع فريقكم سيَسحب كود المهاجم بدلًا من
+الداخليّ الشرعيّ.
 
-The dependency-confusion attack class works because most package managers default to
-preferring the highest-version package across all configured registries. If an
-attacker publishes `@yourco/internal-tool@99.9.9` to npmjs.com, every `npm install` in
-your team's project pulls the attacker's code instead of the legitimate internal one.
+typosquats مُدَمِّرة بِالقدر نفسه، لكنّها تَستغلّ انتباه البشر
+بدل افتراضات الـ registry. أدوات الذكاء الاصطناعيّ عُرضة بِشكل
+خاصّ لأنّها تُوَلِّد أسماء حزم تَبدو معقولة دون التحقّق أيّها
+موجود فعلًا.
 
-Typosquats are equally devastating but exploit human attention instead of registry
-defaults. AI tools are especially prone because they generate plausible-looking
-package names without checking which ones actually exist.
-
-## References
+## مراجع
 
 - `rules/typosquat_patterns.json`
 - `rules/dependency_confusion.json`

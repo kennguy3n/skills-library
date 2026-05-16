@@ -2,15 +2,16 @@
 id: compliance-awareness
 language: ar
 dir: rtl
+source_revision: "8e503523"
 version: "1.0.0"
-title: "Compliance Awareness"
-description: "Map generated code against OWASP, CWE, and SANS Top 25 controls for traceability"
+title: "الوعي بالامتثال"
+description: "مطابقة الشيفرة المولَّدة مع ضوابط OWASP و CWE و SANS Top 25 من أجل التتبع"
 category: compliance
 severity: medium
 applies_to:
-  - "when generating code in regulated environments"
-  - "when writing audit-relevant comments or documentation"
-  - "when refactoring code that crosses compliance boundaries (PII, PHI, PCI scope)"
+  - "عند توليد شيفرة في بيئات مُنظَّمة"
+  - "عند كتابة تعليقات أو توثيق مهمّ للتدقيق"
+  - "عند إعادة هيكلة شيفرة تعبر حدود الامتثال (PII، PHI، نطاق PCI)"
 languages: ["*"]
 token_budget:
   minimal: 400
@@ -27,50 +28,49 @@ sources:
   - "SOC 2 Trust Services Criteria"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: ar` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# الوعي بالامتثال
 
-# Compliance Awareness
+## القواعد (لوكلاء الذكاء الاصطناعي)
 
-## Rules (for AI agents)
+### دائمًا
+- اضع علامة بتعليق على الدوال التي تتعامل مع بيانات PII / PHI / PCI تبيّن
+  تصنيف البيانات (مثل `// classification: PII`).
+- سجّل أحداث تدقيق للأعمال الحساسة (تسجيل الدخول، تغيير الصلاحيات،
+  تصدير البيانات، عمليات الإدارة) — مَن، ماذا، متى، لا الحمولة الحساسة.
+- حدّد فئة CWE / OWASP للشيفرة الحساسة أمنيًا في التعليقات عندما تتبنّى
+  السياسة المؤسّسية إدراج التتبع (`// addresses CWE-79 — XSS`).
+- لنطاق PCI، افصل شيفرة معالجة بيانات البطاقات في وحدات واضحة الأسماء
+  حتى تكون حدود النطاق ظاهرة.
+- لأحمال HIPAA، فضّل التشفير في السكون والتشفير في النقل، مع إدارة
+  مفاتيح موثّقة.
 
-### ALWAYS
-- Tag functions that handle PII / PHI / PCI data with a comment indicating the
-  classification (e.g. `// classification: PII`).
-- Log audit events for security-relevant actions (login, permission change, data
-  export, admin operations) — log who, what, when, NOT the sensitive payload.
-- Identify the CWE / OWASP category for security-relevant code in comments when the
-  team's convention is to include traceability (`// addresses CWE-79 — XSS`).
-- For PCI scope, segregate card-data-handling code into clearly-named modules so
-  scope boundaries are visible.
-- For HIPAA workloads, prefer encryption at rest AND in transit, with documented key
-  management.
+### أبدًا
+- لا تُدرج PII / PHI / PCI في رسائل السجلات أو رسائل الخطأ أو أحداث
+  القياس عن بُعد.
+- لا تُخزّن أرقام البطاقات أو CVV أو بيانات الشريط المغناطيسي كاملةً خارج
+  خدمة tokenization متوافقة مع PCI DSS.
+- لا تخلط شيفرة معالجة PII في وحدات أدوات عامة دون تصنيف صريح.
+- لا تُولّد شيفرة تعالج بيانات شخصية لمقيمي الاتحاد الأوروبي دون مراعاة
+  التزامات GDPR (الحق في المحو، تقليل البيانات، الأساس القانوني).
+- لا تقترح حلولًا التفافية تتجاوز ضوابط الامتثال "من أجل التطوير" —
+  هذه الالتفافات تتسرب دائمًا إلى الإنتاج.
 
-### NEVER
-- Include PII / PHI / PCI in log messages, error messages, or telemetry events.
-- Store payment card numbers, CVVs, or full magnetic stripe data outside of a PCI
-  DSS-compliant tokenization service.
-- Mix PII-handling code into general utility modules without explicit classification.
-- Generate code that processes EU residents' personal data without considering GDPR
-  obligations (right to erasure, data minimization, lawful basis).
-- Suggest workarounds that bypass compliance controls "for development" — these
-  workarounds always leak into production.
+### إيجابيات خاطئة معروفة
+- تسجيل *أنواع* البيانات المُطَّلَع عليها ("اطلع المستخدم على سجل المطالبة")
+  مقبول عادةً؛ القاعدة ضد تسجيل *محتوى* الحقول الحساسة.
+- بيانات الاختبار التي تستخدم قيمًا واضحة الزَيف (هواتف `555-0100`،
+  PAN بقيمة `4111-1111-1111-1111`، `John Doe`) ليست PII.
+- مدة الاحتفاظ بسجلات التدقيق طويلة عمدًا (غالبًا سنوات)، ولا ينبغي أن
+  تُنقَّى من خلال عمليات تنظيف عامة لاحتفاظ البيانات.
 
-### KNOWN FALSE POSITIVES
-- Logs of *types* of data accessed ("user accessed claim record") are usually fine;
-  the rule is against logging the *contents* of sensitive fields.
-- Test fixtures using clearly fake data (`555-0100` phone numbers,
-  `4111-1111-1111-1111` PAN, `John Doe`) are not PII.
-- Audit log retention is intentionally long (often years) and should not be filtered
-  by general data-retention sweeps.
+## السياق (للبشر)
 
-## Context (for humans)
+أُطر الامتثال (PCI DSS و HIPAA و SOC 2 و ISO 27001 و GDPR) تصف الضوابط
+لكنها لا تخبر المطوّر ما يكتب من شيفرة. تَسُد هذه الـ skill الفجوة عبر
+إلحاق إرشاد ذي صلة بالضوابط بخطوات التوليد للذكاء الاصطناعي، فتكون
+الشيفرة الناتجة صديقة للتدقيق افتراضيًا.
 
-Compliance frameworks (PCI DSS, HIPAA, SOC 2, ISO 27001, GDPR) prescribe controls but
-don't tell developers what code to write. This skill bridges the gap by attaching
-control-relevant guidance to AI generation steps, so the resulting code is
-audit-friendly by default.
-
-## References
+## مراجع
 
 - `frameworks/owasp_mapping.yaml`
 - `frameworks/cwe_mapping.yaml`

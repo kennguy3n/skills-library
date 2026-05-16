@@ -1,28 +1,30 @@
 ---
 id: infrastructure-security
 language: es
-source_revision: "fbb3a823a2a0"
+source_revision: "fbb3a823"
 version: "1.0.0"
 title: "Seguridad de infraestructura"
-description: "Endurecer la infraestructura: buckets S3 públicos, security groups abiertos, IAM permisivo, secretos en código"
+description: "Aplicar reglas de hardening para Kubernetes, Docker e infrastructure-as-code en Terraform"
 category: hardening
-severity: critical
+severity: high
 applies_to:
-  - "al escribir o revisar IaC (Terraform, CloudFormation, Pulumi)"
-  - "al desplegar nuevos servicios"
-  - "al revisar políticas IAM"
-languages: ["*"]
+  - "al generar contenido de Dockerfile"
+  - "al generar manifiestos de Kubernetes o charts de Helm"
+  - "al generar Terraform o CloudFormation"
+  - "al revisar PRs de IaC"
+languages: ["yaml", "hcl", "dockerfile"]
 token_budget:
-  minimal: 900
-  compact: 1400
-  full: 2200
-rules_path: "rules/"
-related_skills: ["iac-security", "iam-best-practices"]
-last_updated: "2026-05-13"
+  minimal: 650
+  compact: 950
+  full: 2500
+rules_path: "checklists/"
+related_skills: ["api-security", "compliance-awareness"]
+last_updated: "2026-05-12"
 sources:
-  - "CIS Benchmarks (AWS, GCP, Azure)"
-  - "NIST SP 800-53 Rev. 5"
-  - "MITRE ATT&CK Cloud Matrix"
+  - "CIS Kubernetes Benchmark"
+  - "CIS Docker Benchmark"
+  - "NSA/CISA Kubernetes Hardening Guidance"
+  - "HashiCorp Terraform Security Best Practices"
 ---
 
 # Seguridad de infraestructura
@@ -30,35 +32,64 @@ sources:
 ## Reglas (para agentes de IA)
 
 ### SIEMPRE
-- Mantener todos los buckets de almacenamiento de objetos privados por
-  defecto (block public ACLs, block public policy, ignore public ACLs,
-  restrict public buckets).
-- Restringir security groups y NSGs a los puertos y CIDRs estrictamente
-  necesarios. Nada de `0.0.0.0/0` salvo en puertos públicos diseñados
-  para serlo.
-- Cifrar datos en reposo (SSE-KMS, encryption-at-rest) y en tránsito
-  (TLS 1.2+).
-- Habilitar registro y monitoreo (CloudTrail, VPC Flow Logs, GuardDuty,
-  Cloud Audit Logs).
+- Pinear imágenes base por digest (`FROM image@sha256:...`) al construir
+  contenedores para producción. Los tags son mutables; los digests no.
+- Correr contenedores como un `USER` no-root distinto de `0`. Agregar
+  `securityContext: runAsNonRoot: true` a los pod specs de K8s.
+- Setear `requests` Y `limits` explícitos de recursos de Kubernetes
+  (`requests.cpu`, `requests.memory`, `limits.cpu`, `limits.memory`).
+- Soltar todas las capabilities de Linux y volver a agregar sólo las
+  requeridas (`securityContext.capabilities.drop: ["ALL"]`).
+- Marcar los filesystems como read-only
+  (`securityContext.readOnlyRootFilesystem: true`) cuando el workload no
+  necesita legítimamente acceso de escritura.
+- Habilitar cifrado en reposo (`enable_kms_encryption`, `kms_key_id`,
+  `server_side_encryption_configuration`) en buckets S3, volúmenes EBS,
+  RDS, DynamoDB.
+- Setear `block_public_access` en cada bucket S3 a menos que el workload
+  genuinamente sirva contenido público.
+- Aplicar el principio de mínimo privilegio a las policies de IAM:
+  nombrar acciones y recursos explícitos; evitar `*:*` y `Resource: "*"`
+  fuera de policies de admin intencionales.
 
 ### NUNCA
-- Usar el rol/usuario raíz para tareas operativas.
-- Adjuntar políticas IAM con `Action: "*"` y `Resource: "*"`.
-- Almacenar secretos en variables de entorno persistentes o en el código.
-- Permitir acceso SSH/RDP abierto a internet sin un bastión o ZTNA.
+- Usar `latest` como tag de imagen en manifiestos de producción.
+- Correr un contenedor con flag `--privileged` o
+  `securityContext.privileged: true`.
+- Montar el `/var/run/docker.sock` del host dentro de un contenedor.
+- Exponer servicios de Kubernetes con `type: LoadBalancer` directamente
+  a internet sin un ingress controller, WAF o capa de autenticación
+  delante.
+- Hardcodear claves de AWS / claves de service-account de GCP / client
+  secrets de Azure en IaC. Usar IRSA, Workload Identity de GKE, managed
+  identities de Azure, o el equivalente nativo de la plataforma.
+- Crear buckets S3 con `acl = "public-read"` para buckets que contengan
+  algo distinto a assets intencionalmente públicos.
+- Permitir ingress de `0.0.0.0/0` en puertos de base de datos, SSH, RDP
+  o admin.
+- Deshabilitar `node_to_node_encryption` en Elasticsearch / OpenSearch.
 
 ### FALSOS POSITIVOS CONOCIDOS
-- Buckets diseñados explícitamente como sitios estáticos públicos
-  (`*-public-site`) con política mínima.
+- Pinear digests de imagen no siempre es práctico en entornos de dev /
+  preview — pinear por tag (por ej. `node:20.11.1-alpine`) es aceptable
+  ahí.
+- `Resource: "*"` es aceptable en policies que estén documentadas como
+  admin-only con constraints `Condition` explícitos.
+- `runAsNonRoot: false` es aceptable cuando el workload genuinamente
+  requiere root (por ej. bindear al puerto 80, ciertas herramientas de
+  red). Documentar el por qué.
 
-## Contexto
+## Contexto (para humanos)
 
-Una mala configuración de infraestructura es la causa más común de
-filtraciones masivas en la nube. Los controles preventivos (IaC con
-validación) son mucho más baratos que la respuesta posterior.
+La infraestructura mal configurada es la causa dominante de brechas en
+la nube. Los patrones de arriba codifican los items más violados de los
+benchmarks CIS como reglas que la IA aplica durante la generación, no
+después del deploy.
 
 ## Referencias
 
-- CIS Benchmarks AWS Foundations / GCP / Azure
-- NIST SP 800-53 Rev. 5
-- MITRE ATT&CK Cloud Matrix
+- `checklists/k8s_hardening.yaml`
+- `checklists/docker_security.yaml`
+- `checklists/terraform_security.yaml`
+- [NSA/CISA Kubernetes Hardening Guidance](https://media.defense.gov/2022/Aug/29/2003066362/-1/-1/0/CTR_KUBERNETES_HARDENING_GUIDANCE_1.2_20220829.PDF).
+- [CIS Docker Benchmark](https://www.cisecurity.org/benchmark/docker).

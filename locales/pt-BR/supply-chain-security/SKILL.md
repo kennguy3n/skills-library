@@ -1,16 +1,17 @@
 ---
 id: supply-chain-security
 language: pt-BR
+source_revision: "fbb3a823"
 version: "1.0.0"
-title: "Supply Chain Security"
-description: "Defend against typosquats, dependency confusion, and malicious package contributions"
+title: "Segurança de cadeia de suprimentos"
+description: "Defesa contra typosquats, dependency confusion e contribuições de pacote maliciosas"
 category: supply-chain
 severity: critical
 applies_to:
-  - "when AI is asked to add a dependency"
-  - "when reviewing PRs that modify package manifests"
-  - "when setting up a new project that uses internal namespaces"
-  - "before publishing a package to a public registry"
+  - "quando pedem para a IA adicionar uma dependência"
+  - "ao revisar PRs que modificam manifests de pacote"
+  - "ao montar um projeto novo que usa namespaces internos"
+  - "antes de publicar um pacote para um registry público"
 languages: ["*"]
 token_budget:
   minimal: 550
@@ -26,59 +27,71 @@ sources:
   - "SLSA Supply-chain Levels for Software Artifacts v1.0"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: pt-BR` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Segurança de cadeia de suprimentos
 
-# Supply Chain Security
+## Regras (para agentes de IA)
 
-## Rules (for AI agents)
+### SEMPRE
+- Compute distância de Levenshtein contra a lista top-1000 do
+  ecossistema relevante toda vez que propor uma nova dependência.
+  Sinalize qualquer candidato com distância ≤ 2 de um pacote
+  popular (`axois` vs `axios`, `urlib3` vs `urllib3`, `colours`
+  vs `colors`, `python-dateutil` vs `dateutil` vs `dateutils`).
+- Verifique que pacotes de namespace interno (`@yourco/*`,
+  `com.yourco.*`) vêm do registry interno, não do público.
+  Configure `.npmrc` / `pip.conf` / `settings.gradle` com o escopo
+  interno explicitamente.
+- Pin a URL do registry nos lockfiles para evitar ataques de
+  redirect de registry.
+- Cheque se qualquer pacote recém-adicionado tem maintainer
+  verificado (provenance de `npm`, assinatura `sigstore` ou tag git
+  assinada por GPG) quando publicado nos últimos 90 dias.
+- Trate install scripts (`postinstall`, `preinstall`, código
+  arbitrário em `setup.py`, `build.rs`) como superfície de alto
+  risco e sinalize na descrição do PR para revisão humana.
 
-### ALWAYS
-- Compute Levenshtein distance against the top-1000 list for the relevant ecosystem
-  whenever proposing a new dependency. Flag any candidate with distance ≤ 2 from a
-  popular package (`axois` vs `axios`, `urlib3` vs `urllib3`, `colours` vs `colors`,
-  `python-dateutil` vs `dateutil` vs `dateutils`).
-- Verify that internal-namespace packages (`@yourco/*`, `com.yourco.*`) are pulled from
-  the internal registry, not the public one. Configure `.npmrc` /
-  `pip.conf` / `settings.gradle` with the internal scope explicitly.
-- Pin the registry URL in lockfiles to prevent registry redirection attacks.
-- Check that any newly added package has a verified maintainer (`npm` provenance,
-  `sigstore` signature, or GPG-signed git tag) when published in the last 90 days.
-- Treat install scripts (`postinstall`, `preinstall`, `setup.py` arbitrary code,
-  `build.rs`) as high-risk surface and flag them in the PR description for human
-  review.
+### NUNCA
+- Adicione um pacote público cujo nome bata com um pattern de
+  namespace interno.
+- Confie em um pacote cuja URL de repositório na página do
+  registry não bate com o source repo de verdade.
+- Recomende um pacote recém-publicado com baixa contagem de
+  downloads para um uso security-critical (auth, crypto, HTTP,
+  drivers de DB).
+- Desabilite o check de integridade do package manager
+  (`--no-package-lock`, `--ignore-scripts = false` quando estiver
+  se defendendo disso, `npm config set audit false` em produção).
+- Auto-merge PRs de bump de dependência sem revisor quando o bump
+  atravessa major version.
+- Sugira instalar ferramentas via patterns `curl | sh` de fontes
+  não confiáveis.
 
-### NEVER
-- Add a public package whose name matches an internal namespace pattern.
-- Trust a package whose repository URL on the registry page does not match its actual
-  source repo.
-- Recommend a freshly-published package with low download counts for a security-critical
-  use case (auth, crypto, HTTP, DB drivers).
-- Disable the package manager's integrity check (`--no-package-lock`, `--ignore-scripts
-  = false` when defending against it, `npm config set audit false` in production).
-- Auto-merge dependency-bump PRs without a reviewer when the bump crosses a major
-  version.
-- Suggest installing tools via `curl | sh` patterns from untrusted sources.
+### FALSOS POSITIVOS CONHECIDOS
+- Orgs legítimas dão fork e republicam pacotes mantidos com sufixo
+  `-fork` ou `-community`; verifique a URL do repo do fork antes
+  de sinalizar.
+- Releases beta / alpha de pacotes bem conhecidos (ex.: `next@canary`)
+  aparecem como "recém-publicados" mas são parte de uma cadência
+  conhecida de release.
+- Pacotes de namespace interno (`@yourco/internal-tools`)
+  intencionalmente fora do registry público — tudo certo quando o
+  `.npmrc` está configurado direito.
 
-### KNOWN FALSE POSITIVES
-- Legitimate orgs forking and republishing maintained packages with a `-fork` or
-  `-community` suffix; verify the fork's repo URL before flagging.
-- Beta / alpha releases of well-known packages (e.g. `next@canary`) appear "newly
-  published" but are part of a known release cadence.
-- Internal namespace packages (`@yourco/internal-tools`) intentionally not on the
-  public registry — these are fine when the `.npmrc` is configured correctly.
+## Contexto (para humanos)
 
-## Context (for humans)
+A classe de ataque dependency confusion funciona porque a maioria
+dos package managers, por padrão, prefere o pacote de maior versão
+em todos os registries configurados. Se um atacante publica
+`@yourco/internal-tool@99.9.9` no npmjs.com, todo `npm install` no
+projeto do seu time puxa o código do atacante em vez do interno
+legítimo.
 
-The dependency-confusion attack class works because most package managers default to
-preferring the highest-version package across all configured registries. If an
-attacker publishes `@yourco/internal-tool@99.9.9` to npmjs.com, every `npm install` in
-your team's project pulls the attacker's code instead of the legitimate internal one.
+Typosquats são igualmente devastadores, mas exploram a atenção
+humana em vez de defaults de registry. Ferramentas de IA são
+especialmente propensas porque geram nomes de pacote
+plausivelmente plausíveis sem checar quais existem de fato.
 
-Typosquats are equally devastating but exploit human attention instead of registry
-defaults. AI tools are especially prone because they generate plausible-looking
-package names without checking which ones actually exist.
-
-## References
+## Referências
 
 - `rules/typosquat_patterns.json`
 - `rules/dependency_confusion.json`

@@ -1,16 +1,17 @@
 ---
 id: ssrf-prevention
 language: es
+source_revision: "4c215e6f"
 version: "1.0.0"
-title: "SSRF Prevention"
-description: "Defend against Server-Side Request Forgery: cloud metadata blocking, internal IP filtering, DNS rebinding defense, allowlist-based URL fetching"
+title: "Prevención de SSRF"
+description: "Defensa contra Server-Side Request Forgery: bloqueo de metadata cloud, filtrado de IPs internas, defensa contra DNS rebinding, fetching de URL basado en allowlist"
 category: prevention
 severity: critical
 applies_to:
-  - "when generating code that fetches a URL supplied by the client"
-  - "when wiring webhooks, image proxies, PDF renderers, oEmbed fetchers"
-  - "when running in any cloud environment with an instance metadata service"
-  - "when reviewing a URL-parsing or HTTP-client wrapper"
+  - "al generar código que hace fetch de una URL provista por el cliente"
+  - "al cablear webhooks, image proxies, PDF renderers, oEmbed fetchers"
+  - "al correr en cualquier entorno cloud con un servicio de instance metadata"
+  - "al revisar un wrapper de URL-parsing o HTTP-client"
 languages: ["*"]
 token_budget:
   minimal: 1200
@@ -27,86 +28,97 @@ sources:
   - "PortSwigger Web Security Academy — SSRF labs"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: es` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Prevención de SSRF
 
-# SSRF Prevention
+## Reglas (para agentes de IA)
 
-## Rules (for AI agents)
+### SIEMPRE
+- Validar **cada** URL traída en nombre de un cliente a través de una
+  **allowlist** de hosts esperados. La allowlist es la única defensa
+  durable — las block-lists son evitables vía encoding tricks, IPv6
+  dual-stack y DNS rebinding.
+- Resolver el hostname **una vez**, validar la IP resuelta contra tu
+  block-list de rangos privados / reservados / link-local, luego
+  conectar a esa IP pineada usando SNI. Si no, un atacante puede
+  hacer un race de DNS rebind entre validación y connect
+  (`time-of-check / time-of-use`).
+- Bloquear en la capa de red **y** en la capa de aplicación. Cortar
+  el egress a `169.254.169.254`, `[fd00:ec2::254]`,
+  `metadata.google.internal` y `100.100.100.200` desde cualquier
+  servicio que no necesite legítimamente el servicio de metadata.
+- Enforzar **IMDSv2** en AWS EC2 (session-token, hop-limit=1). IMDSv1
+  — el patrón que explotó el breach de Capital One de 2019 — debe
+  deshabilitarse a nivel de instancia.
+- Deshabilitar redirects HTTP por default en fetchers server-side
+  (o seguir solo un número pequeño y acotado, re-validando la nueva
+  URL contra la allowlist en cada hop). El bypass más común de SSRF
+  es `https://allowed.example.com` retornando un 302 a
+  `http://169.254.169.254/...`.
+- Usar un HTTP client separado y restringido para URLs *controladas
+  por el usuario* vs URLs *internas*. Usar el client equivocado
+  debe fallar cerrado (por ej. vía distinción de tipo en Go / Rust /
+  TypeScript).
+- Parsear URLs con un único parser bien conocido (`net/url.Parse` de
+  Go, `urllib.parse` de Python, `new URL()` de JavaScript). Los
+  parsers diferenciales entre por ej. WHATWG y RFC-3986 son una
+  clase documentada de bypass de SSRF.
 
-### ALWAYS
-- Validate **every** URL fetched on behalf of a client through an **allowlist**
-  of expected hosts. The allowlist is the only durable defense — block-lists
-  are bypassable through encoding tricks, IPv6 dual-stack, and DNS rebinding.
-- Resolve the hostname **once**, validate the resolved IP against your
-  block-list of private / reserved / link-local ranges, then connect to that
-  pinned IP using SNI. Otherwise an attacker can race a DNS rebind between
-  validation and connect (`time-of-check / time-of-use`).
-- Block at the network layer **and** at the application layer. Drop egress to
-  `169.254.169.254`, `[fd00:ec2::254]`, `metadata.google.internal`, and
-  `100.100.100.200` from any service that doesn't legitimately need the
-  metadata service.
-- Enforce **IMDSv2** on AWS EC2 (session-token, hop-limit=1). IMDSv1 — the
-  pattern Capital One's 2019 breach exploited — must be disabled at the
-  instance level.
-- Disable HTTP redirects by default on server-side fetchers (or follow only
-  a small bounded number, re-validating the new URL against the allowlist
-  at each hop). The most common SSRF bypass is `https://allowed.example.com`
-  returning a 302 to `http://169.254.169.254/...`.
-- Use a separate, restricted HTTP client for *user-controlled* URLs vs
-  *internal* URLs. Misusing the wrong client must fail closed (e.g. via
-  type-system distinction in Go / Rust / TypeScript).
-- Parse URLs with a single, well-known parser (Go `net/url.Parse`,
-  Python `urllib.parse`, JavaScript `new URL()`). Differential parsers
-  between e.g. WHATWG and RFC-3986 are a documented SSRF bypass class.
+### NUNCA
+- Confiar en un hostname / IP provisto por el usuario. Siempre
+  re-resolver en tu resolver de confianza y re-chequear la
+  dirección resuelta.
+- Conectar a una URL basándose en su hostname cuando el protocolo
+  permite redirects — `gopher://`, `dict://`, `file://`, `jar://`,
+  `netdoc://`, `ldap://` son todos amplificadores comunes de SSRF.
+  Restringir a `http://` y `https://` (y `ftp://` solo si realmente
+  lo necesitás).
+- Confiar en `0.0.0.0`, `127.0.0.1`, `[::]`, `[::1]`, `localhost`, o
+  `*.localhost.test` — todos llegan a la instancia local. La lista
+  también debe incluir link-local `169.254.0.0/16`, IPv4-mapped
+  IPv6 `::ffff:127.0.0.1`, y IPv6 ULA `fc00::/7`.
+- Usar el string de URL del usuario en una línea de log o un
+  response de error — puede ser el oráculo de reflexión de SSRF
+  que convierte SSRF ciego en SSRF de exfiltración de data.
+- Correr un sidecar / proxy de bloqueo de metadata como **única**
+  defensa — un atacante que encuentra un pseudo-URL de
+  Unix-domain-socket o un hostname mal configurado puede rutear
+  alrededor del proxy. La allowlist a nivel aplicación sigue siendo
+  requerida.
+- Permitir IDN / Punycode en URLs de usuario sin normalización —
+  los ataques de homógrafos IDN evitan checks naive de string-
+  allowlist (`gооgle.com` con o cirílica ≠ `google.com`).
 
-### NEVER
-- Trust a hostname / IP that was supplied by the user. Always re-resolve
-  in your trusted resolver and re-check the resolved address.
-- Connect to a URL based on its hostname when the protocol allows
-  redirects — `gopher://`, `dict://`, `file://`, `jar://`, `netdoc://`,
-  `ldap://` are all common SSRF amplifiers. Restrict to `http://` and
-  `https://` (and `ftp://` only if you actually need it).
-- Trust `0.0.0.0`, `127.0.0.1`, `[::]`, `[::1]`, `localhost`, or
-  `*.localhost.test` — all of them reach the local instance. The list also
-  must include link-local `169.254.0.0/16`, IPv4-mapped IPv6
-  `::ffff:127.0.0.1`, and IPv6 ULA `fc00::/7`.
-- Use the user's URL string in a logging line or an error response —
-  it can be the SSRF reflection oracle that turns blind SSRF into
-  data-exfiltration SSRF.
-- Run a metadata-blocking sidecar / proxy as the **only** defense — an
-  attacker who finds a Unix-domain-socket pseudo-URL or a misconfigured
-  hostname can route around the proxy. Application-level allowlist
-  remains required.
-- Allow IDN / Punycode in user URLs without normalization — IDN homograph
-  attacks bypass naive string-allowlist checks (`gооgle.com` Cyrillic-o
-  ≠ `google.com`).
+### FALSOS POSITIVOS CONOCIDOS
+- Integraciones server-to-server donde ambos lados son
+  controlados por el operador y la URL está hardcoded en config
+  (no provista por el usuario) — la allowlist acá es el propio
+  config estático.
+- Llamadas service-to-service local-de-cluster en Kubernetes —
+  estas no pasan por input de usuario, pero ojo con cualquier
+  network policy cross-namespace.
+- Webhooks salientes **al** cliente (por ej. Slack, Discord,
+  Microsoft Teams webhooks). Validar que el host de la URL esté
+  en la allowlist documentada de la integración, no arbitrario.
 
-### KNOWN FALSE POSITIVES
-- Server-to-server integrations where both sides are operator-controlled
-  and the URL is hard-coded in config (not user-supplied) — the allowlist
-  here is the static config itself.
-- Cluster-local Kubernetes service-to-service calls — these don't go
-  through user input, but be aware of any cross-namespace network policy.
-- Outbound webhooks **to** the customer (e.g. Slack, Discord, Microsoft
-  Teams webhooks). Validate that the URL host is in the integration's
-  documented allowlist, not arbitrary.
+## Contexto (para humanos)
 
-## Context (for humans)
+SSRF es ahora el vector de acceso inicial de facto para breaches
+cloud. La cadena es: una URL provista por el usuario → el server
+hace fetch → el server tiene credenciales implícitas (IAM de
+metadata cloud, APIs internas de admin, endpoints RPC) → el
+atacante roba las credenciales. El breach de Capital One en 2019
+(80M registros de clientes) fue un caso de libro de SSRF +
+exfiltración por IMDSv1. Los fixes son simples y bien documentados;
+los patrones reaparecen porque URL-fetching es una esquina chica
+de la mayoría de los codebases.
 
-SSRF is now the de-facto initial-access vector for cloud breaches. The
-chain is: a user-supplied URL → the server fetches it → the server has
-implicit credentials (cloud metadata IAM, internal admin APIs, RPC
-endpoints) → attacker steals the credentials. Capital One's 2019 breach
-(80M customer records) was a textbook SSRF + IMDSv1 exfiltration. The
-fixes are simple and well-documented; the patterns reappear because
-URL-fetching is a tiny corner of most codebases.
+Este skill enfatiza las clases de DNS-rebinding y redirect-bypass
+porque ahí es donde los validators de URL generados por IA fallan
+más seguido — el bloqueo obvio de 169.254.169.254 es fácil de
+agregar, pero el patrón allow-only-after-resolve-and-pin requiere
+más pensamiento.
 
-This skill emphasizes the DNS-rebinding and redirect-bypass classes
-because those are where AI-generated URL validators most often fail —
-the obvious 169.254.169.254 block is easy to add, but the
-allow-only-after-resolve-and-pin pattern requires more thought.
-
-## References
+## Referencias
 
 - `rules/ssrf_sinks.json`
 - `rules/cloud_metadata_endpoints.json`

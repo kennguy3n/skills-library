@@ -1,15 +1,16 @@
 ---
 id: mobile-security
 language: fr
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Mobile Application Security"
-description: "Android and iOS hardening: exported components, ATS, keychain, certificate pinning, root/jailbreak detection"
+title: "Sécurité des applications mobiles"
+description: "Hardening Android et iOS : composants exported, ATS, keychain, certificate pinning, détection de root/jailbreak"
 category: hardening
 severity: high
 applies_to:
-  - "when generating Android (Kotlin / Java) app code or manifests"
-  - "when generating iOS (Swift / Objective-C) app code"
-  - "when generating React Native / Flutter native modules"
+  - "lors de la génération de code d'app Android (Kotlin / Java) ou de manifests"
+  - "lors de la génération de code d'app iOS (Swift / Objective-C)"
+  - "lors de la génération de modules natifs React Native / Flutter"
 languages: ["kotlin", "java", "swift", "objc", "dart", "javascript", "typescript", "xml", "plist"]
 token_budget:
   minimal: 1000
@@ -26,90 +27,99 @@ sources:
   - "Android Developers — App Security Best Practices"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: fr` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Sécurité des applications mobiles
 
-# Mobile Application Security
+## Règles (pour les agents IA)
 
-## Rules (for AI agents)
+### TOUJOURS
+- **Android** : chaque `<activity>`, `<service>`, `<receiver>`,
+  `<provider>` dans `AndroidManifest.xml` a soit
+  `android:exported="false"`, *soit* déclare explicitement un intent
+  filter et est exporté à dessein. Depuis Android 12 (API 31),
+  `android:exported` est obligatoire dès qu'un intent-filter est
+  déclaré.
+- **Android** : stocker les secrets dans le **Android Keystore**
+  (`KeyStore` / EncryptedSharedPreferences avec `MasterKey`). Jamais
+  dans des `SharedPreferences` en clair, des fichiers en clair, ou
+  `BuildConfig`.
+- **iOS** : stocker les secrets dans le **Keychain** avec
+  `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` ou plus strict.
+  Pas dans `UserDefaults`, plist ou fichiers.
+- **iOS** : garder App Transport Security (ATS) activé dans
+  `Info.plist`. Si une exception est requise, la scoper à un host
+  spécifique avec `NSExceptionDomains`.
+- Valider le certificat TLS du serveur avec **certificate pinning**
+  (pinning de public key préféré) pour les backends que vous
+  contrôlez. Utiliser `OkHttp.CertificatePinner` sur Android,
+  `URLSessionDelegate didReceiveChallenge` sur iOS, ou le module de
+  pinning du framework.
+- Obfusquer / réduire les builds de release (Android R8 / ProGuard
+  avec `proguard-rules.pro` ; iOS bitcode + Swift symbol stripping).
+  Retirer les debug logs des builds de release.
+- Détecter les appareils rootés / jailbreakés pour les apps à fort
+  risque (bancaire, paiement, entreprise) et réduire la sensibilité
+  (bloquer les paiements, refuser de rejoindre un managed profile).
+  Utiliser la Play Integrity API sur Android et
+  `DeviceCheck` / `AppAttest` sur iOS comme attestation faisant
+  autorité.
 
-### ALWAYS
-- **Android**: every `<activity>`, `<service>`, `<receiver>`, `<provider>` in
-  `AndroidManifest.xml` either has `android:exported="false"` *or* explicitly
-  declares an intent filter and is intentionally exported. As of Android 12
-  (API 31), `android:exported` is required when an intent-filter is declared.
-- **Android**: store secrets in the **Android Keystore** (`KeyStore` /
-  EncryptedSharedPreferences with `MasterKey`). Never in plain
-  `SharedPreferences`, plain files, or `BuildConfig`.
-- **iOS**: store secrets in the **Keychain** with
-  `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` or stricter. Don't store
-  in `UserDefaults`, plist, or files.
-- **iOS**: keep App Transport Security (ATS) enabled in `Info.plist`. If an
-  exception is required, scope it to a specific host with
-  `NSExceptionDomains`.
-- Validate the server's TLS certificate with **certificate pinning** (public
-  key pinning preferred) for backends you control. Use
-  `OkHttp.CertificatePinner` on Android,
-  `URLSessionDelegate didReceiveChallenge` on iOS, or your framework's
-  pinning module.
-- Obfuscate / shrink release builds (Android R8 / ProGuard with
-  `proguard-rules.pro`; iOS bitcode + Swift symbol stripping). Strip debug
-  logs from release builds.
-- Detect rooted / jailbroken devices for high-risk apps (banking, payment,
-  enterprise) and reduce sensitivity (block payments, refuse to attach to
-  a managed profile). Use the Play Integrity API on Android and
-  `DeviceCheck` / `AppAttest` on iOS as the authoritative attestation.
-
-### NEVER
-- Ship API keys, signing keys, or backend secrets in source / resources /
-  `strings.xml` / `BuildConfig` / `Info.plist`. Issue short-lived,
-  device-scoped tokens from a backend instead.
-- Set `android:allowBackup="true"` for apps that store credentials — the
-  backed-up data is readable on developer machines. Use
-  `android:fullBackupContent` to exclude sensitive paths.
-- Set `android:debuggable="true"` in release builds, or
-  `<application android:networkSecurityConfig>` that allows cleartext to
-  arbitrary hosts.
-- Disable ATS app-wide on iOS (`NSAllowsArbitraryLoads=true`). If you must
-  weaken it, scope per-host.
-- Implement custom TLS / certificate handling that returns "trust all"
-  (`X509TrustManager.checkServerTrusted` empty body,
-  `URLSessionDelegate` always-trust). This is the #1 Android security
-  finding shipped to production.
-- Pass user input to `WebView.loadUrl` / `WKWebView.load` without scheme
-  validation; never enable
-  `WebSettings.setAllowFileAccessFromFileURLs(true)` or
+### JAMAIS
+- Livrer des API keys, signing keys ou secrets de backend dans
+  source / resources / `strings.xml` / `BuildConfig` / `Info.plist`.
+  Émettre plutôt des tokens courts, scopés à l'appareil, depuis un
+  backend.
+- Mettre `android:allowBackup="true"` sur des apps qui stockent des
+  credentials — les données backupées sont lisibles sur les machines
+  de développeurs. Utiliser `android:fullBackupContent` pour exclure
+  les paths sensibles.
+- Mettre `android:debuggable="true"` dans des builds de release, ou
+  un `<application android:networkSecurityConfig>` qui autorise du
+  cleartext vers des hosts arbitraires.
+- Désactiver ATS au niveau de l'app sur iOS
+  (`NSAllowsArbitraryLoads=true`). S'il faut l'affaiblir, scoper
+  par host.
+- Implémenter un handling custom TLS / certificat qui retourne
+  "trust all" (`X509TrustManager.checkServerTrusted` corps vide,
+  `URLSessionDelegate` always-trust). C'est le #1 finding de
+  sécurité Android livré en production.
+- Passer l'input utilisateur à `WebView.loadUrl` / `WKWebView.load`
+  sans validation du scheme ; ne jamais activer
+  `WebSettings.setAllowFileAccessFromFileURLs(true)` ou
   `setUniversalAccessFromFileURLs(true)`.
-- Implement biometric auth without `BiometricPrompt`'s
-  `setUserAuthenticationRequired(true)` binding the key — biometric "true"
-  alone proves nothing without a cryptographic challenge.
-- Log full request/response bodies including `Authorization` headers — they
-  end up in adb / xcrun logs.
+- Implémenter l'auth biométrique sans
+  `setUserAuthenticationRequired(true)` de `BiometricPrompt` liant
+  la clé — un biométrique "true" seul ne prouve rien sans challenge
+  cryptographique.
+- Logguer les bodies complets de request/response avec les headers
+  `Authorization` — ils se retrouvent dans les logs adb / xcrun.
 
-### KNOWN FALSE POSITIVES
-- Public read-only IDs (analytics public key, public DSN) embedded in the
-  binary are not secrets; they're meant to be there.
-- The default debuggable=true on debug variants is normal — the rule applies
-  to release builds.
-- Custom URL schemes (`myapp://`) for OAuth callbacks are expected; ensure
-  the corresponding intent filter is restricted and the `state` parameter is
-  verified.
+### FAUX POSITIFS CONNUS
+- Les IDs publics en lecture seule (public key d'analytics, DSN
+  public) embarqués dans le binaire ne sont pas des secrets ; ils
+  sont censés être là.
+- Le `debuggable=true` par défaut sur les variantes debug est
+  normal — la règle s'applique aux builds de release.
+- Les URL schemes custom (`myapp://`) pour les callbacks OAuth sont
+  attendus ; s'assurer que l'intent filter correspondant est
+  restreint et que le paramètre `state` est vérifié.
 
-## Context (for humans)
+## Contexte (pour les humains)
 
-Mobile security splits cleanly into **what's in the binary** (secrets, debug
-flags, exported components, pinning) and **what happens at runtime** (TLS
-trust, keychain access, biometric binding). OWASP MASVS v2 provides the
-authoritative testable controls; the MASTG is the procedural test guide.
+La sécurité mobile se sépare proprement en **ce qui est dans le
+binaire** (secrets, debug flags, composants exported, pinning) et
+**ce qui se passe à l'exécution** (trust TLS, accès keychain,
+binding biométrique). OWASP MASVS v2 fournit les controls testables
+faisant autorité ; le MASTG est le guide de test procédural.
 
-AI assistants frequently generate Android code with `allowBackup=true`, no
-ProGuard, hardcoded API keys in `strings.xml`, and iOS code that calls
-`SecCertificateCreateWithData` with no verification. This skill is the
-counterweight.
+Les assistants IA génèrent fréquemment du code Android avec
+`allowBackup=true`, sans ProGuard, avec des API keys en dur dans
+`strings.xml`, et du code iOS qui appelle
+`SecCertificateCreateWithData` sans vérification. Ce skill est le
+contrepoids.
 
-## References
+## Références
 
 - `checklists/android_manifest.yaml`
 - `checklists/ios_keychain_ats.yaml`
-- [OWASP MASVS v2.0](https://mas.owasp.org/MASVS/).
+- [OWASP MASVS](https://mas.owasp.org/MASVS/).
 - [OWASP MASTG](https://mas.owasp.org/MASTG/).
-- [CWE-919 — Weaknesses in Mobile Applications](https://cwe.mitre.org/data/definitions/919.html).

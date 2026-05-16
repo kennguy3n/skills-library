@@ -2,16 +2,17 @@
 id: auth-security
 language: ar
 dir: rtl
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Authentication & Authorization Security"
-description: "JWT, OAuth 2.0 / OIDC, session management, CSRF, password hashing, and MFA enforcement"
+title: "أمن المصادقة والتفويض"
+description: "JWT و OAuth 2.0 / OIDC وإدارة الجلسات و CSRF وتجزئة كلمات المرور وإلزام MFA"
 category: prevention
 severity: critical
 applies_to:
-  - "when generating login / signup / password-reset flows"
-  - "when generating JWT issuance or verification"
-  - "when generating OAuth 2.0 / OIDC client or server code"
-  - "when wiring session cookies, CSRF tokens, MFA"
+  - "عند توليد تدفقات تسجيل الدخول / إنشاء الحساب / إعادة تعيين كلمة المرور"
+  - "عند توليد إصدار JWT أو التحقق منه"
+  - "عند توليد شيفرة عميل أو خادم OAuth 2.0 / OIDC"
+  - "عند توصيل كوكيز الجلسة وtoken الـ CSRF و MFA"
 languages: ["*"]
 token_budget:
   minimal: 1000
@@ -29,84 +30,83 @@ sources:
   - "NIST SP 800-63B (Authenticator Assurance)"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: ar` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# أمن المصادقة والتفويض
 
-# Authentication & Authorization Security
+## القواعد (لوكلاء الذكاء الاصطناعي)
 
-## Rules (for AI agents)
+### دائمًا
+- عند التحقق من JWT، ثبّت الخوارزمية المتوقعة (`RS256`، `EdDSA`، أو
+  `ES256`) وتحقق من `iss` و`aud` و`exp` و`nbf` و`iat`. ارفض `alg=none`
+  وأي خوارزمية غير متوقعة.
+- لعملاء OAuth 2.0 العامين (SPA / موبايل / CLI)، استخدم **تدفق
+  authorization code مع PKCE** (S256). لا تستخدم implicit flow أبدًا. ولا
+  تستخدم resource owner password credentials grant.
+- كوكيز الجلسة: `Secure; HttpOnly; SameSite=Lax` (أو `Strict` للتدفقات
+  الحساسة). استخدم البادئة `__Host-` حين لا توجد مشاركة بين النطاقات
+  الفرعية.
+- دوّر مُعرّف الجلسة عند تسجيل الدخول وعند تغيّر الامتيازات. اربط الجلسة
+  بـ user agent كإشارة لينة فقط — لا كفحص وحيد.
+- جزّئ كلمات المرور بـ argon2id (m=64 MiB, t=3, p=1) مع salt عشوائي لكل
+  مستخدم. Bcrypt cost ≥ 12 أو scrypt N≥2^17 بدائل مقبولة للأنظمة
+  legacy. PBKDF2-SHA256 يتطلب ≥ 600,000 تكرار (الحد الأدنى لـ OWASP
+  2023).
+- اشترط طول كلمة المرور ≥ 12 محرفًا دون قواعد تركيب؛ اسمح بـ Unicode؛
+  افحص كلمات المرور المرشحة ضد قائمة كلمات المرور المُسرَّبة (HIBP / واجهة
+  k-anonymity لـ pwned-passwords).
+- نفّذ قفل الحساب *أو* تحديد المعدّل لمحاولات كلمة المرور (NIST SP 800-63B
+  §5.2.2: على الأكثر 100 فشل خلال 30 يومًا).
+- نفّذ حماية CSRF للطلبات التي تُغيّر الحالة ويمكن الوصول إليها من جلسة
+  متصفح: synchronizer token، أو double-submit cookie، أو
+  `SameSite=Strict` لنقاط النهاية عالية المخاطر.
+- اطلب MFA / step-up للعمليات الإدارية وتغيير كلمة المرور وتغيير جهاز
+  MFA وتغيير الفوترة.
+- لـ OIDC، تحقق من `nonce` الذي أرسلتَه مقابل `nonce` في الـ ID token؛
+  وتحقق من `at_hash` / `c_hash` متى وُجدا.
 
-### ALWAYS
-- For JWT verification, pin the expected algorithm (`RS256`, `EdDSA`, or `ES256`)
-  and verify `iss`, `aud`, `exp`, `nbf`, and `iat`. Reject `alg=none` and any
-  unexpected algorithm.
-- For OAuth 2.0 public clients (SPA / mobile / CLI), use the **authorization
-  code flow with PKCE** (S256). Never the implicit flow. Never the resource
-  owner password credentials grant.
-- Cookies for sessions: `Secure; HttpOnly; SameSite=Lax` (or `Strict` for
-  sensitive flows). Use the `__Host-` prefix when there's no subdomain sharing.
-- Rotate the session identifier on login and on privilege change. Bind the
-  session to the user agent only as a soft signal — never as the sole check.
-- Hash passwords with argon2id (m=64 MiB, t=3, p=1) and a per-user random salt.
-  Bcrypt cost ≥ 12 or scrypt N≥2^17 are acceptable alternatives for legacy
-  systems. PBKDF2-SHA256 requires ≥ 600,000 iterations (OWASP 2023 minimum).
-- Enforce password length ≥ 12 characters with no composition rules; allow
-  Unicode; check candidate passwords against a known-breached list
-  (HIBP / pwned-passwords k-anonymity API).
-- Implement account lockout *or* rate limiting for password attempts (NIST
-  SP 800-63B §5.2.2: at most 100 failures over 30 days).
-- Implement CSRF protection for state-changing requests reachable from a
-  browser session: synchronizer token, double-submit cookie, or
-  `SameSite=Strict` for high-risk endpoints.
-- Require MFA / step-up for administrative operations, password changes,
-  MFA-device changes, billing changes.
-- For OIDC, validate the `nonce` you sent against the `nonce` in the ID token;
-  validate the `at_hash` / `c_hash` when present.
+### أبدًا
+- لا تستخدم `Math.random()` (أو أي RNG ليس CSPRNG) لتوليد مُعرّفات
+  جلسة، أو رموز إعادة تعيين، أو رموز استرداد MFA، أو مفاتيح API.
+- لا تقبل JWT بـ `alg=none`؛ ولا تقبل HS256 من عميل بينما المُصدِر يوقّع
+  بـ RS256 (هجوم خلط الخوارزميات الكلاسيكي).
+- لا تقارن كلمات المرور أو تجزئات الرموز بـ `==` / `strcmp`؛ استخدم
+  مقارِنًا بزمن ثابت.
+- لا تخزّن كلمات المرور بشكل قابل للعكس (مشفّرة بدلًا من مجزّأة). يجب
+  أن يكون التخزين باتجاه واحد.
+- لا تكشف أيهما الخاطئ — اسم المستخدم أم كلمة المرور. أعد رسالة عامة
+  "invalid credentials".
+- لا تضع رموز وصول أو رموز تحديث أو مُعرّفات جلسة في query strings الـ URL
+  — فهي تُسرَّب إلى السجلات وترويسات Referer وتاريخ المتصفح.
+- لا تستخدم `localStorage` / `sessionStorage` لحفظ رموز تحديث طويلة العمر.
+  استخدم كوكيز HttpOnly.
+- لا تثق بأدوار / مطالبات يقدّمها العميل في طبقة الـ API — اشتقّ الموضوع
+  المُصادَق عليه من جديد، وابحث عن التفويض على جهة الخادم في كل طلب.
+- لا تُصدر رموز وصول طويلة العمر (>ساعة واحدة)؛ اعتمد على رموز التحديث مع
+  التدوير.
+- لا تستخدم implicit flow ولا password grant.
 
-### NEVER
-- Use `Math.random()` (or any non-CSPRNG) to generate session IDs, reset
-  tokens, MFA recovery codes, or API keys.
-- Accept JWT `alg=none`; or accept HS256 from a client when the issuer signs
-  with RS256 (classic algorithm-confusion attack).
-- Compare passwords or token hashes with `==` / `strcmp`; use a constant-time
-  comparator.
-- Store passwords reversibly (encrypted instead of hashed). Storage must be
-  one-way.
-- Leak which of username/password was wrong. Return a generic
-  "invalid credentials" message.
-- Put access tokens, refresh tokens, or session IDs in URL query strings —
-  they leak to logs, Referer headers, and browser history.
-- Use `localStorage` / `sessionStorage` to hold long-lived refresh tokens.
-  Use HttpOnly cookies.
-- Trust client-supplied roles / claims at the API layer — re-derive the
-  authenticated subject and look up server-side authorization on each request.
-- Issue long-lived (>1 hour) access tokens; rely on refresh tokens with
-  rotation.
-- Use the implicit flow or the password grant.
+### إيجابيات خاطئة معروفة
+- رموز خدمة-إلى-خدمة بـ TTL طويل قد تكون مقبولة أحيانًا حين تكون مخزّنة في
+  مدير أسرار ومربوطة بهوية workload محدّدة.
+- مصادقة "magic link" في تطوير محلي بلا تجزئة كلمة مرور لمستخدمين مؤقتين
+  مقبولة إن كانت محصورة خلف env flag ومعطّلة في الإنتاج.
+- وجود الرموز في query الـ URL مقبول في موضع *واحد* — مسار العودة من
+  authorization code في OAuth — لأن القيمة قصيرة العمر وذات استخدام
+  واحد.
 
-### KNOWN FALSE POSITIVES
-- Service-to-service tokens with long TTLs are sometimes acceptable when stored
-  in a secret manager and bound to a specific workload identity.
-- Local-development "magic link" auth without password hashing for ephemeral
-  dev users is fine if it's gated behind an env flag and disabled in prod.
-- Tokens in URL query are tolerable in *one* place — the OAuth authorization
-  code return — because the value is short-lived and one-time-use.
+## السياق (للبشر)
 
-## Context (for humans)
+تظهر إخفاقات المصادقة باستمرار في OWASP Top 10 (A07:2021 — Identification
+and Authentication Failures). الأنماط الشائعة هي: تخزين كلمات مرور ضعيف،
+ورموز قابلة للتنبؤ، وغياب MFA، وسوء إعداد JWT، وتثبيت الجلسة. RFC 9700
+(OAuth 2.0 Security BCP) و NIST SP 800-63B هما المرجعان الرسميان للوصفة.
 
-Authentication failures show up consistently in OWASP Top 10 (A07:2021 —
-Identification and Authentication Failures). The common modes are: weak
-password storage, predictable tokens, missing MFA, JWT misconfiguration, and
-session fixation. RFC 9700 (OAuth 2.0 Security BCP) and NIST SP 800-63B are
-the authoritative references for the recipe.
+تميل مساعدات الذكاء الاصطناعي إلى شحن مصادقة "تعمل في dev": JWT بـ HS256
+بأسرار مكتوبة في الشيفرة، و`bcrypt.hash` بقيمة cost الافتراضية 10، ولا
+PKCE، ورموز في localStorage. هذه الـ skill تلتقط كل واحدة منها.
 
-AI assistants tend to ship "works in dev" auth: HS256 JWTs with hard-coded
-secrets, `bcrypt.hash` with default cost 10, no PKCE, tokens in localStorage.
-This skill catches each of those.
-
-## References
+## مراجع
 
 - `rules/jwt_safe_config.json`
 - `rules/oauth_flows.json`
 - [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html).
 - [RFC 9700 — OAuth 2.0 Security BCP](https://datatracker.ietf.org/doc/html/rfc9700).
-- [NIST SP 800-63B](https://pages.nist.gov/800-63-3/sp800-63b.html).

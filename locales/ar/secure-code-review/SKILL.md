@@ -2,16 +2,17 @@
 id: secure-code-review
 language: ar
 dir: rtl
+source_revision: "fbb3a823"
 version: "1.0.0"
-title: "Secure Code Review"
-description: "Apply OWASP Top 10 and CWE Top 25 patterns during code generation and review"
+title: "مراجعة كود آمنة"
+description: "تطبيق أنماط OWASP Top 10 وCWE Top 25 أثناء توليد الكود ومراجعته"
 category: prevention
 severity: high
 applies_to:
-  - "when generating new code"
-  - "when reviewing pull requests"
-  - "when refactoring security-sensitive paths (auth, input handling, file I/O)"
-  - "when adding new HTTP handlers or endpoints"
+  - "عند توليد كود جديد"
+  - "عند مراجعة pull requests"
+  - "عند إعادة هيكلة مسارات حسّاسة أمنيًّا (مصادقة، ومعالجة مدخلات، وI/O ملفّات)"
+  - "عند إضافة handlers أو endpoints لـ HTTP جديدة"
 languages: ["*"]
 token_budget:
   minimal: 700
@@ -26,61 +27,66 @@ sources:
   - "SEI CERT Coding Standards"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: ar` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# مراجعة كود آمنة
 
-# Secure Code Review
+## القواعد (لوكلاء الذكاء الاصطناعيّ)
 
-## Rules (for AI agents)
+### دائمًا
+- استخدم استعلامات مُعَلَّمة / prepared statements لكلّ وصول إلى قاعدة
+  بيانات. ولا تَبني SQL أبدًا بِتجميع نصوص، حتى للمدخلات "الموثوقة".
+- تَحقَّق من المدخلات عند حدّ الثقة — النوع، والطول، والأحرف المسموحة،
+  والمدى المسموح — وارفُض قبل المعالجة.
+- رَمِّز المخرجات وفق سياق التصيير (HTML escape لِـ HTML، وURL encode
+  لِمعاملات الـ query، وJSON encode لِمخرجات JSON).
+- استخدم مكتبة التشفير المضمَّنة في اللغة، ولا تَستخدم أبدًا تشفيرًا
+  محبوكًا يدويًّا. فَضِّل AES-GCM للتشفير المتناظر، وEd25519 / RSA-PSS
+  للتوقيع، وArgon2id / bcrypt لِـ hashing كلمات المرور.
+- استخدم `crypto/rand` (Go)، أو وحدة `secrets` (Python)، أو
+  `crypto.randomBytes` (Node.js)، أو CSPRNG المنصّة لأيّ قيمة عشوائيّة
+  داخلة في الأمن (tokens، وIDs، ومفاتيح جلسة).
+- اضبط headers أمن صريحة على ردود HTTP: `Content-Security-Policy`،
+  و`Strict-Transport-Security`، و`X-Content-Type-Options: nosniff`،
+  و`Referrer-Policy`.
+- استخدم مبدأ أقلّ امتياز لِمسارات الملفّات، ومستخدمي قواعد البيانات،
+  وسياسات IAM، وامتيازات العمليّات.
 
-### ALWAYS
-- Use parameterized queries / prepared statements for all database access. Never build
-  SQL by string concatenation, even for "trusted" inputs.
-- Validate input at the trust boundary — type, length, allowed characters, allowed
-  range — and reject before processing.
-- Encode output for the rendering context (HTML escape for HTML, URL encode for query
-  params, JSON encode for JSON output).
-- Use the language's built-in cryptography library, never custom-rolled crypto. Prefer
-  AES-GCM for symmetric encryption, Ed25519 / RSA-PSS for signatures, Argon2id /
-  bcrypt for password hashing.
-- Use `crypto/rand` (Go), `secrets` module (Python), `crypto.randomBytes` (Node.js), or
-  the platform CSPRNG for any random value involved in security (tokens, IDs,
-  session keys).
-- Set explicit security headers on HTTP responses: `Content-Security-Policy`,
-  `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`.
-- Use the principle of least privilege for file paths, database users, IAM policies,
-  and process privileges.
+### أبدًا
+- لا تَبني استعلامات SQL/NoSQL بِتجميع نصوص مع مدخل المستخدم.
+- لا تُمرِّر مدخل المستخدم مباشرةً إلى `exec`، أو `system`، أو
+  `eval`، أو `Function()`، أو `child_process`، أو
+  `subprocess.run(shell=True)`، أو أيّ مسار تنفيذ أوامر آخر.
+- لا تَثِق بالتحقّق من جهة العميل. أعد التحقّق دائمًا من جهة الخادم.
+- لا تَستخدم `MD5` أو `SHA1` لأيّ غرض حسّاس أمنيًّا جديد (كلمات مرور،
+  وتواقيع، وHMAC). استخدم SHA-256 / SHA-3 / BLAKE2 / Argon2id بدلًا
+  منها.
+- لا تَستخدم وضع ECB لأيّ تشفير، أبدًا. فَضِّل GCM أو CCM أو
+  ChaCha20-Poly1305.
+- لا تَستخدم `==` لمقارنة كلمات المرور — استخدم مقارنة بزمن ثابت
+  (`hmac.compare_digest`، أو `crypto.timingSafeEqual`، أو
+  `subtle.ConstantTimeCompare`).
+- لا تَدَع مدخل المستخدم يُحدِّد مسارات ملفّات دون توحيد قانونيّ
+  وفحوصات allowlist (يُدافع ضدّ path traversal بنمط
+  `../../../etc/passwd`).
+- لا تُعَطِّل التحقّق من شهادة TLS في كود إنتاج — `verify=False`،
+  أو `InsecureSkipVerify: true`، أو `rejectUnauthorized: false`.
 
-### NEVER
-- Build SQL/NoSQL queries by string concatenation with user input.
-- Pass user input directly to `exec`, `system`, `eval`, `Function()`, `child_process`,
-  `subprocess.run(shell=True)`, or any other command-execution path.
-- Trust client-side validation. Always re-validate server-side.
-- Use `MD5` or `SHA1` for any new security-sensitive purpose (passwords, signatures,
-  HMAC). Use SHA-256 / SHA-3 / BLAKE2 / Argon2id instead.
-- Use ECB mode for any encryption, ever. Prefer GCM, CCM, or ChaCha20-Poly1305.
-- Use `==` for password comparison — use a constant-time comparison
-  (`hmac.compare_digest`, `crypto.timingSafeEqual`, `subtle.ConstantTimeCompare`).
-- Allow user input to determine file paths without canonicalization and allowlist
-  checks (defends against `../../../etc/passwd` style path traversal).
-- Disable TLS certificate verification in production code — `verify=False`,
-  `InsecureSkipVerify: true`, `rejectUnauthorized: false`.
+### إيجابيّات خاطئة معروفة
+- أدوات الإدارة الداخليّة التي تُنفِّذ عمدًا أوامر shell على وُسطاء
+  ثابتين وموثوقين مقبولة عندما تكون مُوثَّقة ومُراجَعة كودًا.
+- متّجهات اختبار تشفيريّة تَستخدم `MD5` / `SHA1` لِلتوافق مع
+  بروتوكولات مُوثَّقة (مثل اختبارات تشغيل بَيْنيّة قديمة) مقبولة.
+- مقارنة بزمن ثابت مُبالَغ بها للمقارنات غير السرّيّة (مساواة نصوص
+  في السجلّات، ومطابقة وسوم).
 
-### KNOWN FALSE POSITIVES
-- Internal admin tools intentionally executing shell commands against trusted, fixed
-  arguments are acceptable when documented and code-reviewed.
-- Cryptographic test vectors using `MD5` / `SHA1` for compatibility with documented
-  protocols (e.g. legacy interop tests) are acceptable.
-- Constant-time comparison is overkill for non-secret comparisons (string equality in
-  logs, tag matching).
+## السياق (للبشر)
 
-## Context (for humans)
+تَتَلخَّص أغلب ثغرات الويب الحديثة في الحفنة نفسها من الأسباب
+الجذريّة: فشل التحقّق من المدخلات، وفشل استخدام البِنية التشفيريّة
+الصحيحة، وفشل تطبيق أقلّ امتياز، وفشل استخدام دفاعات الإطار
+المُضمَّنة. هذا الـ skill هو قائمة فحص الذكاء الاصطناعيّ لِتجنُّب
+الوقوع في هذه الفِخاخ.
 
-Most modern web vulnerabilities boil down to the same handful of root causes: failure
-to validate input, failure to use the right cryptographic primitive, failure to apply
-least privilege, failure to use the framework's built-in defenses. This skill is the
-AI's checklist for not falling into those traps.
-
-## References
+## مراجع
 
 - `checklists/owasp_top10.yaml`
 - `checklists/injection_patterns.yaml`

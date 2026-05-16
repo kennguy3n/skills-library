@@ -1,16 +1,17 @@
 ---
 id: auth-security
 language: es
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Authentication & Authorization Security"
-description: "JWT, OAuth 2.0 / OIDC, session management, CSRF, password hashing, and MFA enforcement"
+title: "Seguridad de autenticación y autorización"
+description: "JWT, OAuth 2.0 / OIDC, gestión de sesiones, CSRF, hashing de contraseñas y aplicación de MFA"
 category: prevention
 severity: critical
 applies_to:
-  - "when generating login / signup / password-reset flows"
-  - "when generating JWT issuance or verification"
-  - "when generating OAuth 2.0 / OIDC client or server code"
-  - "when wiring session cookies, CSRF tokens, MFA"
+  - "al generar flujos de login / registro / reseteo de contraseña"
+  - "al generar emisión o verificación de JWT"
+  - "al generar código de cliente o servidor OAuth 2.0 / OIDC"
+  - "al configurar cookies de sesión, tokens CSRF, MFA"
 languages: ["*"]
 token_budget:
   minimal: 1000
@@ -28,84 +29,89 @@ sources:
   - "NIST SP 800-63B (Authenticator Assurance)"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: es` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Seguridad de autenticación y autorización
 
-# Authentication & Authorization Security
+## Reglas (para agentes de IA)
 
-## Rules (for AI agents)
+### SIEMPRE
+- Para verificación de JWT, fijar el algoritmo esperado (`RS256`, `EdDSA` o
+  `ES256`) y verificar `iss`, `aud`, `exp`, `nbf` e `iat`. Rechazar `alg=none`
+  y cualquier algoritmo inesperado.
+- Para clientes públicos OAuth 2.0 (SPA / móvil / CLI), usar el **flujo de
+  authorization code con PKCE** (S256). Nunca el implicit flow. Nunca el
+  resource owner password credentials grant.
+- Cookies de sesión: `Secure; HttpOnly; SameSite=Lax` (o `Strict` para flujos
+  sensibles). Usar el prefijo `__Host-` cuando no haya compartición de
+  subdominios.
+- Rotar el identificador de sesión en login y en cambio de privilegios. Atar
+  la sesión al user agent solo como señal blanda — nunca como única
+  verificación.
+- Hashear contraseñas con argon2id (m=64 MiB, t=3, p=1) y un salt aleatorio
+  por usuario. Bcrypt cost ≥ 12 o scrypt N≥2^17 son alternativas aceptables
+  para sistemas legacy. PBKDF2-SHA256 requiere ≥ 600.000 iteraciones (mínimo
+  OWASP 2023).
+- Exigir longitud de contraseña ≥ 12 caracteres sin reglas de composición;
+  permitir Unicode; comprobar contra una lista de contraseñas filtradas
+  (HIBP / API k-anonymity de pwned-passwords).
+- Implementar lockout de cuenta *o* rate limiting para intentos de contraseña
+  (NIST SP 800-63B §5.2.2: máximo 100 fallos en 30 días).
+- Implementar protección CSRF para peticiones que cambian estado y son
+  alcanzables desde una sesión de navegador: synchronizer token, double-submit
+  cookie, o `SameSite=Strict` para endpoints de alto riesgo.
+- Requerir MFA / step-up para operaciones administrativas, cambios de
+  contraseña, cambios de dispositivo MFA, cambios de facturación.
+- Para OIDC, validar el `nonce` que enviaste contra el `nonce` del ID token;
+  validar `at_hash` / `c_hash` cuando estén presentes.
 
-### ALWAYS
-- For JWT verification, pin the expected algorithm (`RS256`, `EdDSA`, or `ES256`)
-  and verify `iss`, `aud`, `exp`, `nbf`, and `iat`. Reject `alg=none` and any
-  unexpected algorithm.
-- For OAuth 2.0 public clients (SPA / mobile / CLI), use the **authorization
-  code flow with PKCE** (S256). Never the implicit flow. Never the resource
-  owner password credentials grant.
-- Cookies for sessions: `Secure; HttpOnly; SameSite=Lax` (or `Strict` for
-  sensitive flows). Use the `__Host-` prefix when there's no subdomain sharing.
-- Rotate the session identifier on login and on privilege change. Bind the
-  session to the user agent only as a soft signal — never as the sole check.
-- Hash passwords with argon2id (m=64 MiB, t=3, p=1) and a per-user random salt.
-  Bcrypt cost ≥ 12 or scrypt N≥2^17 are acceptable alternatives for legacy
-  systems. PBKDF2-SHA256 requires ≥ 600,000 iterations (OWASP 2023 minimum).
-- Enforce password length ≥ 12 characters with no composition rules; allow
-  Unicode; check candidate passwords against a known-breached list
-  (HIBP / pwned-passwords k-anonymity API).
-- Implement account lockout *or* rate limiting for password attempts (NIST
-  SP 800-63B §5.2.2: at most 100 failures over 30 days).
-- Implement CSRF protection for state-changing requests reachable from a
-  browser session: synchronizer token, double-submit cookie, or
-  `SameSite=Strict` for high-risk endpoints.
-- Require MFA / step-up for administrative operations, password changes,
-  MFA-device changes, billing changes.
-- For OIDC, validate the `nonce` you sent against the `nonce` in the ID token;
-  validate the `at_hash` / `c_hash` when present.
+### NUNCA
+- Usar `Math.random()` (ni ningún RNG que no sea CSPRNG) para generar IDs de
+  sesión, tokens de reseteo, códigos de recuperación MFA o claves de API.
+- Aceptar JWT `alg=none`; o aceptar HS256 desde un cliente cuando el emisor
+  firma con RS256 (ataque clásico de confusión de algoritmo).
+- Comparar contraseñas o hashes de tokens con `==` / `strcmp`; usar un
+  comparador de tiempo constante.
+- Almacenar contraseñas de forma reversible (cifradas en vez de hasheadas).
+  El almacenamiento debe ser unidireccional.
+- Filtrar cuál de usuario/contraseña era incorrecto. Devolver un mensaje
+  genérico "invalid credentials".
+- Poner access tokens, refresh tokens o IDs de sesión en query strings de URL
+  — se filtran a logs, cabeceras Referer e historial del navegador.
+- Usar `localStorage` / `sessionStorage` para guardar refresh tokens de larga
+  vida. Usar cookies HttpOnly.
+- Confiar en roles / claims provistos por el cliente en la capa API —
+  rederivar el sujeto autenticado y consultar autorización server-side en
+  cada petición.
+- Emitir access tokens de larga vida (>1 hora); apoyarse en refresh tokens
+  con rotación.
+- Usar el implicit flow o el password grant.
 
-### NEVER
-- Use `Math.random()` (or any non-CSPRNG) to generate session IDs, reset
-  tokens, MFA recovery codes, or API keys.
-- Accept JWT `alg=none`; or accept HS256 from a client when the issuer signs
-  with RS256 (classic algorithm-confusion attack).
-- Compare passwords or token hashes with `==` / `strcmp`; use a constant-time
-  comparator.
-- Store passwords reversibly (encrypted instead of hashed). Storage must be
-  one-way.
-- Leak which of username/password was wrong. Return a generic
-  "invalid credentials" message.
-- Put access tokens, refresh tokens, or session IDs in URL query strings —
-  they leak to logs, Referer headers, and browser history.
-- Use `localStorage` / `sessionStorage` to hold long-lived refresh tokens.
-  Use HttpOnly cookies.
-- Trust client-supplied roles / claims at the API layer — re-derive the
-  authenticated subject and look up server-side authorization on each request.
-- Issue long-lived (>1 hour) access tokens; rely on refresh tokens with
-  rotation.
-- Use the implicit flow or the password grant.
+### FALSOS POSITIVOS CONOCIDOS
+- Tokens servicio-a-servicio con TTLs largos son a veces aceptables cuando se
+  guardan en un secret manager y están atados a una identidad de workload
+  específica.
+- Auth "magic link" en desarrollo local sin hashing de contraseña para
+  usuarios efímeros de dev está bien si está protegido por una env flag y
+  desactivado en producción.
+- Tokens en query de URL son tolerables en *un* sitio — el retorno del
+  authorization code de OAuth — porque el valor es de vida corta y de un
+  solo uso.
 
-### KNOWN FALSE POSITIVES
-- Service-to-service tokens with long TTLs are sometimes acceptable when stored
-  in a secret manager and bound to a specific workload identity.
-- Local-development "magic link" auth without password hashing for ephemeral
-  dev users is fine if it's gated behind an env flag and disabled in prod.
-- Tokens in URL query are tolerable in *one* place — the OAuth authorization
-  code return — because the value is short-lived and one-time-use.
+## Contexto (para humanos)
 
-## Context (for humans)
+Los fallos de autenticación aparecen consistentemente en OWASP Top 10
+(A07:2021 — Identification and Authentication Failures). Los modos comunes
+son: almacenamiento débil de contraseñas, tokens predecibles, ausencia de
+MFA, mala configuración de JWT y fijación de sesión. RFC 9700 (OAuth 2.0
+Security BCP) y NIST SP 800-63B son las referencias autoritativas para la
+receta.
 
-Authentication failures show up consistently in OWASP Top 10 (A07:2021 —
-Identification and Authentication Failures). The common modes are: weak
-password storage, predictable tokens, missing MFA, JWT misconfiguration, and
-session fixation. RFC 9700 (OAuth 2.0 Security BCP) and NIST SP 800-63B are
-the authoritative references for the recipe.
+Los asistentes de IA tienden a generar auth "funciona en dev": JWTs HS256
+con secretos hardcoded, `bcrypt.hash` con cost 10 por defecto, sin PKCE,
+tokens en localStorage. Esta skill atrapa cada uno de esos.
 
-AI assistants tend to ship "works in dev" auth: HS256 JWTs with hard-coded
-secrets, `bcrypt.hash` with default cost 10, no PKCE, tokens in localStorage.
-This skill catches each of those.
-
-## References
+## Referencias
 
 - `rules/jwt_safe_config.json`
 - `rules/oauth_flows.json`
 - [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html).
 - [RFC 9700 — OAuth 2.0 Security BCP](https://datatracker.ietf.org/doc/html/rfc9700).
-- [NIST SP 800-63B](https://pages.nist.gov/800-63-3/sp800-63b.html).

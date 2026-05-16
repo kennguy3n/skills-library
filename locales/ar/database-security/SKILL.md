@@ -2,16 +2,17 @@
 id: database-security
 language: ar
 dir: rtl
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Database Security"
-description: "Prevent SQL injection, ORM misuse, credential leaks; enforce least-privilege DB users and safe migrations"
+title: "أمن قواعد البيانات"
+description: "منع حقن SQL وسوء استخدام ORM وتسريب الاعتمادات؛ فرض مستخدمين بأقل صلاحيات وهجرات آمنة"
 category: prevention
 severity: critical
 applies_to:
-  - "when generating SQL or raw query strings"
-  - "when generating ORM model code or queries"
-  - "when generating database migration files"
-  - "when wiring connection strings or pooling"
+  - "عند توليد SQL أو سلاسل استعلام خام"
+  - "عند توليد شيفرة نماذج / استعلامات ORM"
+  - "عند توليد ملفات هجرة قاعدة البيانات"
+  - "عند توصيل سلاسل الاتصال أو الـ pooling"
 languages: ["sql", "python", "javascript", "typescript", "go", "ruby", "java", "kotlin", "csharp"]
 token_budget:
   minimal: 1000
@@ -27,77 +28,82 @@ sources:
   - "CIS PostgreSQL / MySQL Benchmarks"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: ar` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# أمن قواعد البيانات
 
-# Database Security
+## القواعد (لوكلاء الذكاء الاصطناعي)
 
-## Rules (for AI agents)
-
-### ALWAYS
-- Use parameterized queries / prepared statements for any SQL that touches
-  user-controlled values. Pass values as parameters, never via string
-  concatenation or formatting (`%s`, `+`, template literals).
-- Use the ORM's safe query API. In SQLAlchemy: `session.execute(text(":id"),
-  {"id": user_id})`. In Django: ORM methods, `Model.objects.filter(...)`. In
-  Sequelize / Prisma / SQLAlchemy core: `.where({ ... })` builders. In Go:
+### دائمًا
+- استخدم استعلامات معاملاتية / prepared statements لأي SQL يَمَسّ
+  قيمًا يتحكم بها المستخدم. مرِّر القيم كمعاملات، لا عبر دمج/تنسيق
+  السلاسل (`%s`، `+`، template literals).
+- استخدم واجهة الاستعلام الآمنة في ORM. في SQLAlchemy:
+  `session.execute(text(":id"), {"id": user_id})`. في Django: طرق
+  ORM، `Model.objects.filter(...)`. في Sequelize / Prisma /
+  SQLAlchemy core: بُناة `.where({ ... })`. في Go:
   `db.QueryContext(ctx, "select ... where id = $1", id)`.
-- Validate that identifier columns / table names — which can't be parameterized —
-  come from a hard-coded allowlist, not from user input.
-- Use a dedicated database user per application with the minimum grants needed.
-  Web apps that only read shouldn't have `INSERT`/`UPDATE`/`DELETE`. Migration
-  jobs run as a separate `DDL`-capable user.
-- Enable Row-Level Security (Postgres `CREATE POLICY` / Supabase RLS / Azure SQL
-  RLS) for multi-tenant tables and set the tenant context per session.
-- Pull DB credentials from a secret manager or env var injected at start —
-  never from a committed `database.yml` / `.env`. Rotate on schedule.
-- Use TLS to the database (`sslmode=require` for Postgres, `requireSSL=true`
-  for MySQL, encrypted connection for MSSQL). Pin the CA where the driver
-  supports it.
-- Connection pooling has a max size that fits within the DB's `max_connections`,
-  with healthy back-pressure on the application.
+- تحقّق أن أسماء الأعمدة / الجداول المعرّفة — التي لا يمكن
+  تمريرها كمعاملات — تأتي من allowlist مُحدَّدة في الشيفرة، لا من
+  مدخلات المستخدم.
+- استخدم مستخدم قاعدة بيانات مخصّصًا لكل تطبيق بأدنى صلاحيات
+  ممكنة. تطبيقات الويب التي تقرأ فقط لا ينبغي أن تملك
+  `INSERT`/`UPDATE`/`DELETE`. مهام الهجرة تعمل بمستخدم منفصل قادر
+  على `DDL`.
+- فعّل Row-Level Security (Postgres `CREATE POLICY` / Supabase
+  RLS / Azure SQL RLS) للجداول متعدّدة المستأجرين، واضبط سياق
+  المستأجر لكل جلسة.
+- اسحب اعتمادات قاعدة البيانات من مدير أسرار أو متغير بيئة يُحقَن
+  عند البدء — لا من `database.yml` / `.env` مُلتزَم به في المستودع.
+  دوِّر الاعتمادات وفق جدول.
+- استخدم TLS إلى قاعدة البيانات (`sslmode=require` لـ Postgres،
+  `requireSSL=true` لـ MySQL، اتصال مُشفَّر لـ MSSQL). ثبّت CA حيثما
+  يدعم الـ driver ذلك.
+- لـ Connection pooling حدّ أقصى يلائم `max_connections` لقاعدة
+  البيانات، مع ضغط رجوع صحي في التطبيق.
 
-### NEVER
-- Concatenate user input into SQL: `"SELECT * FROM users WHERE name='" + name
-  + "'"`. Even if you "escape" it yourself — drivers escape correctly only
-  when binding through the parameter API.
-- Use ORM raw query methods (`.raw()`, `.objects.raw()`, `.query(text(...))`)
-  with f-string interpolation of user input.
-- Run application workloads as the database superuser / `root` / `postgres` /
-  `sa`. Create a service user.
-- Disable TLS to the database (`sslmode=disable`, `useSSL=false`).
-- Store secrets, PII, or large blobs in JSON columns without encryption-at-rest
-  and a key rotation plan.
-- Run destructive migrations (DROP TABLE, DROP COLUMN, ALTER COLUMN type changes
-  on populated tables) inline with deploys without an expand–contract plan and
-  a backup verified to be restorable.
-- Bind an internet-exposed database listener with no allowlist; databases stay
-  in a private network and are reached via a bastion / VPN / private link.
-- Log entire SQL statements with bound values at INFO level — bound values are
-  almost always sensitive.
+### أبدًا
+- لا تدمج مدخلات المستخدم في SQL: `"SELECT * FROM users WHERE
+  name='" + name + "'"`. حتى لو "هربتها" بنفسك — لا تُهرّب الـ
+  drivers بصورة صحيحة إلا حين تربطها عبر واجهة المعاملات.
+- لا تستخدم طرق الاستعلام الخام في ORM (`.raw()`، `.objects.raw()`،
+  `.query(text(...))`) مع إدراج f-string لمدخلات المستخدم.
+- لا تشغّل أعباء التطبيق بمستخدم قاعدة البيانات الفائق / `root` /
+  `postgres` / `sa`. أنشئ مستخدم خدمة.
+- لا تعطّل TLS إلى قاعدة البيانات (`sslmode=disable`،
+  `useSSL=false`).
+- لا تخزن أسرارًا أو PII أو blobs كبيرة في أعمدة JSON دون تشفير
+  أثناء الراحة وخطة تدوير مفاتيح.
+- لا تشغّل هجرات مدمِّرة (DROP TABLE، DROP COLUMN، ALTER COLUMN
+  لتغيير نوع على جداول مأهولة) بشكل مدمج في النشر دون خطة
+  expand–contract ونسخة احتياطية مُتحقَّقة قابلة للاستعادة.
+- لا تربط مستمع قاعدة بيانات مكشوفًا للإنترنت بلا allowlist؛ تبقى
+  قواعد البيانات في شبكة خاصة ويُصل إليها عبر bastion / VPN /
+  private link.
+- لا تسجّل عبارات SQL كاملة مع القيم المرتبطة على مستوى INFO —
+  القيم المرتبطة تكون حسّاسة تقريبًا دائمًا.
 
-### KNOWN FALSE POSITIVES
-- Reporting tools that run analyst-authored ad-hoc SQL legitimately interpolate
-  identifiers; they should run against a read-only replica with a separate user
-  whose grants prevent damage.
-- Some ORMs (Django, SQLAlchemy 1.x) use `%s` placeholders as *parameter
-  markers*, not Python format-string placeholders — that's safe.
-- Health-check queries (`SELECT 1`) are intentionally trivial.
+### إيجابيات خاطئة معروفة
+- أدوات التقارير التي تنفّذ SQL مخصّصًا كتبه محلِّلون تدرج المعرّفات
+  شرعًا؛ ينبغي أن تعمل على نسخة قراءة فقط بمستخدم منفصل تحول صلاحياته
+  دون أي ضرر.
+- بعض الـ ORMs (Django، SQLAlchemy 1.x) تستخدم `%s` كـ *علامات
+  معاملات*، لا كعلامات format-string في Python — وذلك آمن.
+- استعلامات فحص الصحّة (`SELECT 1`) تافهة بقصد.
 
-## Context (for humans)
+## السياق (للبشر)
 
-SQL injection has been #1 or #2 on every OWASP Top 10 for fifteen years and it
-hasn't budged because the failure mode is *easy by default*: any language with
-string concatenation lets you produce a query. AI assistants happily generate
-"works in dev" code that interpolates user input — particularly for sorting
-columns, dynamic filters, and pagination.
+ظلّ حقن SQL في المرتبة #1 أو #2 في كل OWASP Top 10 على مدى خمسة عشر
+عامًا ولم يتزحزح، لأن نمط الإخفاق *سهل افتراضيًا*: أي لغة فيها دمج
+سلاسل تسمح بإنتاج استعلام. تولّد مساعدات الذكاء الاصطناعي بسرور شيفرة
+"تشتغل في dev" تدرج مدخلات المستخدم — خصوصًا لأعمدة الفرز، والمرشّحات
+الديناميكية، والترقيم.
 
-This skill pairs naturally with `api-security` (which guards the route) and
-`secret-detection` (which guards the connection string).
+تتزاوج هذه الـ skill طبيعيًّا مع `api-security` (تحرس المسار) ومع
+`secret-detection` (تحرس سلسلة الاتصال).
 
-## References
+## مراجع
 
 - `rules/sql_injection_sinks.json`
 - `rules/orm_safe_patterns.json`
 - [OWASP SQL Injection Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html).
-- [CWE-89](https://cwe.mitre.org/data/definitions/89.html) — SQL Injection.
+- [CWE-89](https://cwe.mitre.org/data/definitions/89.html) — حقن SQL.
 - [PostgreSQL Row-Level Security](https://www.postgresql.org/docs/current/ddl-rowsecurity.html).

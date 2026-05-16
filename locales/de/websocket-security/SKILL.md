@@ -1,15 +1,16 @@
 ---
 id: websocket-security
 language: de
+source_revision: "4c215e6f"
 version: "1.0.0"
-title: "WebSocket Security"
-description: "Secure WebSocket endpoints: Origin validation, auth on handshake, message size/rate limits, wss-only, reconnection backoff"
+title: "WebSocket-Security"
+description: "Sichere WebSocket-Endpoints: Origin-Validierung, Auth beim Handshake, Message-Größen-/Rate-Limits, wss-only, Reconnect-Backoff"
 category: prevention
 severity: high
 applies_to:
-  - "when generating a WebSocket / Socket.IO / SignalR server"
-  - "when wiring real-time messaging, presence, or collaborative editing"
-  - "when reviewing /ws or wss:// endpoint exposure"
+  - "beim Generieren eines WebSocket- / Socket.IO- / SignalR-Servers"
+  - "beim Verdrahten von Real-time-Messaging, Presence oder kollaborativem Editing"
+  - "beim Review der Exposition von /ws- oder wss://-Endpoints"
 languages: ["javascript", "typescript", "python", "go", "java", "csharp", "ruby", "elixir"]
 token_budget:
   minimal: 1200
@@ -25,102 +26,106 @@ sources:
   - "CWE-770: Allocation of Resources Without Limits or Throttling"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: de` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# WebSocket-Security
 
-# WebSocket Security
+## Regeln (für KI-Agenten)
 
-## Rules (for AI agents)
+### IMMER
+- Den **`Origin`-Header** beim WebSocket-Upgrade-Handshake gegen
+  eine Allowlist validieren. CORS gilt **nicht** für WebSockets —
+  der Browser upgraded fröhlich cross-origin und lässt JavaScript
+  auf `attacker.com` `wss://api.example.com/ws` mit den Cookies
+  des Nutzers öffnen (Cross-Site WebSocket Hijacking).
+- Authentifizierung **am Handshake selbst** verlangen, nicht als
+  erste Message nach dem Connect. Entweder:
+  1. Cookie-basierte Auth beim HTTP-Upgrade (und CSRF-Schutz via
+     Origin-Verifikation), oder
+  2. Ein kurzlebiges signiertes Token (5–10 min Lifetime) im
+     `Sec-WebSocket-Protocol`-Subprotocol-Header, oder
+  3. Ein signiertes Query-Parameter-Token.
+  Niemals einer `subscribe`- / `auth`-Message nach dem Upgrade
+  vertrauen — zu dem Zeitpunkt ist die Verbindung schon mit dem
+  authentifizierten Cookie-Kontext offen.
+- In Produktion ausschließlich **`wss://`** verwenden. Klartext-
+  `ws://` über das offene Internet exponiert Session-Tokens,
+  Message-Inhalte und CSRF-Primitive an jeden On-Path-Beobachter.
+- **Maximale Message-Größe** am Server erzwingen (typisch: 32 KiB
+  für Chat, 256 KiB für kollaboratives Editing, höher nur wenn der
+  Use Case es verlangt und die Auth-Hürde hoch ist). Ohne Limit
+  kann ein einziger offener Socket den Server OOM-killen.
+- Ein **Message-Rate-Limit** pro Connection (z. B. 60 Messages/
+  Minute) und ein **Connection-Rate-Limit** pro Source-IP / pro
+  authentifiziertem Nutzer erzwingen. Real-Time-Missbrauch
+  (Chat-Spam, Presence-Ping-Flood) ist eine häufige DoS-Quelle.
+- **Ping- / Pong-Heartbeats** implementieren (alle 20–30 s) und
+  die Verbindung bei verpasstem Pong schließen. Sonst sammeln sich
+  Half-open-TCP-Sockets hinter Load Balancern an.
+- Auf Client-Seite **bounded exponential Backoff** für
+  Reconnection (z. B. Base 1 s, Faktor 2, Max 60 s, Jitter ±20%).
+  Eine naive `setTimeout(connect, 0)`-Reconnect-Loop schmilzt den
+  Server während Outages.
+- Jede WebSocket-Message als separaten Request für Zwecke der
+  **Input-Validation** und **Authorisierung** behandeln. Die
+  Permissions des Nutzers können sich nach dem Öffnen des Socket
+  ändern (Logout, Rollenwechsel, Account-Lock) — bei jeder
+  privilegierten Aktion neu prüfen.
 
-### ALWAYS
-- Validate the **`Origin` header** on the WebSocket upgrade handshake
-  against an allowlist. CORS does **not** apply to WebSockets — the
-  browser will happily upgrade cross-origin and let JavaScript on
-  `attacker.com` open `wss://api.example.com/ws` with the user's
-  cookies (Cross-Site WebSocket Hijacking).
-- Require authentication **on the handshake** itself, not as the first
-  message after connect. Either:
-  1. Cookie-based auth on the HTTP upgrade (and CSRF-protect by
-     verifying Origin), or
-  2. A short-lived signed token (5–10 minute lifetime) in the
-     `Sec-WebSocket-Protocol` subprotocol header, or
-  3. A signed query parameter token.
-  Never trust a `subscribe` / `auth` message after the upgrade — by
-  that point the connection has already been opened with the
-  authenticated cookie context.
-- Use **`wss://`** only in production. Plain `ws://` over the open
-  internet exposes session tokens, message contents, and CSRF
-  primitives to any on-path observer.
-- Enforce **max message size** at the server (typical: 32 KiB for
-  chat, 256 KiB for collaborative editing, much higher only when the
-  use case demands it and the auth bar is high). Without a limit, a
-  single open socket can OOM the server.
-- Enforce a **message rate limit** per connection (e.g. 60
-  messages/minute) and a **connection rate limit** per source IP /
-  per authenticated user. Real-time abuse (chat spam, presence
-  ping flood) is a frequent DoS source.
-- Implement **ping / pong heartbeats** (every 20–30 s) and close the
-  connection on missed pong. Half-open TCP sockets accumulate behind
-  load balancers otherwise.
-- On the client side, use **bounded exponential backoff** for
-  reconnection (e.g. base 1 s, factor 2, max 60 s, jitter ±20%).
-  A naïve `setTimeout(connect, 0)` reconnect loop melts the server
-  during outages.
-- Treat each WebSocket message as a separate request for the
-  purposes of **input validation** and **authorization**. The user's
-  permissions can change after the socket is open (logout, role
-  change, account lock) — re-check on each privileged action.
+### NIE
+- Origin-Validierung überspringen, weil „es ist ein WebSocket, CORS
+  gilt nicht". Genau deshalb muss man sie selbst machen. Der
+  dokumentierte Angriff ist Cross-Site WebSocket Hijacking, 2013
+  öffentlich demonstriert und 2024 immer noch häufig in
+  Bug-Bounty-Reports.
+- Ein Session-Cookie als langlebiges WebSocket-Token verwenden.
+  Soll die WS-Verbindung mehrere Tabs / Seiten überleben, ein
+  refreshbares kurzlebiges JWT im Subprotocol ausstellen; nicht
+  darauf verlassen, dass das Cookie ewig hängen bleibt.
+- Beliebige `subprotocols` vom Client serverseitiges Routing
+  beeinflussen lassen ohne Allowlist. Subprotocol-Verhandlung ist
+  vom Angreifer kontrolliert.
+- WebSocket-Handler im selben Prozess / Thread-Pool wie HTTP-
+  Request-Handler ohne Sizing-Limits laufen lassen — ein
+  Slow-Loris-Style-WebSocket kann die gesamte HTTP-Arbeit
+  aushungern.
+- Interne Cluster-Topologie in WebSocket-Messages exponieren
+  (z. B. `{"server_id": "pod-prod-42"}`). Interne IDs sind
+  Aufklärungsmaterial auf einem geschwätzigen Real-Time-Channel.
 
-### NEVER
-- Skip Origin validation because "it's a WebSocket, CORS doesn't
-  apply." That's exactly why you have to do it yourself. The
-  documented attack is Cross-Site WebSocket Hijacking, demonstrated
-  publicly in 2013 and still common in 2024 bug-bounty reports.
-- Use a session cookie as a long-lived WebSocket token. If the WS
-  connection is supposed to survive multiple tabs / pages, issue a
-  refreshable short-lived JWT in the subprotocol; don't rely on the
-  cookie sticking around forever.
-- Allow arbitrary `subprotocols` from the client to influence
-  server-side routing without an allowlist. Subprotocol negotiation
-  is attacker-controlled.
-- Run WebSocket handlers in the same process / thread pool as HTTP
-  request handlers without sizing limits — a slow-loris-style
-  WebSocket can starve all HTTP work.
-- Expose internal cluster topology in WebSocket messages (e.g.
-  `{"server_id": "pod-prod-42"}`). Internal IDs are reconnaissance
-  material on a chatty real-time channel.
+### BEKANNTE FALSCH-POSITIVE
+- Öffentliche Chat- / Presence-Endpoints, die absichtlich für
+  jeden Origin offen sind, müssen trotzdem Per-Connection-Rate-
+  Limits und einen Per-Source-IP-Cap erzwingen; sie dürfen
+  legitim `Origin: null` für Desktop- / Mobile-Clients erlauben.
+- Mobile- / Desktop-Native-Clients senden keinen `Origin`-Header.
+  Im Voraus entscheiden, ob sie erlaubt sind (und einen anderen
+  Auth-Modus wie Device-Cert + Bearer-Token anwenden) oder direkt
+  abgelehnt werden.
+- Service-zu-Service-WebSockets (z. B. Kafka-WebSocket-Bridge,
+  Apache Pulsar) innerhalb einer privaten VPC dürfen legitim
+  `ws://` mit mTLS auf Netzwerk-Layer benutzen.
 
-### KNOWN FALSE POSITIVES
-- Public chat / presence endpoints that are intentionally open to any
-  origin must still enforce per-connection rate limits and a
-  per-source-IP cap; they may legitimately permit `Origin: null` for
-  desktop / mobile clients.
-- Mobile / desktop native clients send no `Origin` header. Decide
-  upfront whether to allow them (and apply a different auth mode like
-  device-cert + bearer token) or to reject them outright.
-- Service-to-service WebSockets (e.g. Kafka WebSocket bridge,
-  Apache Pulsar) inside a private VPC may legitimately use `ws://`
-  with mTLS handled at the network layer.
+## Kontext (für Menschen)
 
-## Context (for humans)
+WebSockets sind der langlebige Cousin von HTTP. Die meisten
+Controls, die HTTP gratis bekommt (CORS, CSP, Per-Request-Auth),
+gelten nicht out-of-the-box, und Frameworks, die WebSockets hinter
+einer Higher-Level-API verpacken (Socket.IO, SignalR, Phoenix
+Channels), verstecken den Upgrade-Mechanismus genug, dass
+Entwickler vergessen, ihn zu härten.
 
-WebSockets are the long-lived sibling of HTTP. Most of the controls
-HTTP gets for free (CORS, CSP, per-request auth) do not apply
-out-of-the-box, and frameworks that wrap WebSockets behind a higher-
-level API (Socket.IO, SignalR, Phoenix Channels) hide the upgrade
-mechanism enough that developers forget to harden it.
+Die zwei wiederkehrenden Incident-Klassen sind:
+1. **Cross-Site WebSocket Hijacking** — fehlender Origin-Check +
+   Cookie-Auth → attacker.com öffnet einen WS mit den Cookies des
+   Nutzers und liest dessen Stream.
+2. **Resource-Exhaustion** — kein Size-/Rate-/Connection-Limit +
+   ein geschwätziges Protokoll → trivialer DoS.
 
-The two recurring incident classes are:
-1. **Cross-Site WebSocket Hijacking** — missing Origin check + cookie
-   auth → attacker.com opens a WS with the user's cookies and reads
-   their stream.
-2. **Resource exhaustion** — no size / rate / connection limit + a
-   chatty protocol → trivial DoS.
+Beides sind simple Fixes, aber beides ist leicht zu vergessen,
+wenn man schnell ein Chat- / Collab-Feature generiert. Dieser
+Skill spiegelt das OWASP-Cheat-Sheet plus die operativen
+Must-haves (Heartbeats, Backoff).
 
-Both are simple fixes, but both are easy to forget when generating
-a quick chat / collab feature. This skill mirrors the OWASP cheat
-sheet plus the operational must-haves (heartbeats, backoff).
-
-## References
+## Referenzen
 
 - `rules/websocket_hardening.json`
 - [OWASP WebSocket Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/WebSocket_Cheat_Sheet.html).

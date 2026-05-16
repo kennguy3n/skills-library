@@ -2,15 +2,16 @@
 id: serverless-security
 language: ar
 dir: rtl
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Serverless Security"
-description: "Lambda / Cloud Functions / Azure Functions hardening: IAM, timeouts, secrets, event injection"
+title: "أمن serverless"
+description: "تَقسية Lambda / Cloud Functions / Azure Functions: IAM، ومُهَل، وأسرار، وحَقن أحداث"
 category: hardening
 severity: high
 applies_to:
-  - "when generating AWS Lambda / GCP Cloud Functions / Azure Functions code"
-  - "when generating serverless.yml / SAM templates / functions framework"
-  - "when wiring API Gateway, EventBridge, SQS, S3 triggers"
+  - "عند توليد كود AWS Lambda / GCP Cloud Functions / Azure Functions"
+  - "عند توليد serverless.yml / قوالب SAM / functions framework"
+  - "عند توصيل triggers من API Gateway، وEventBridge، وSQS، وS3"
 languages: ["python", "javascript", "typescript", "go", "java", "yaml"]
 token_budget:
   minimal: 1000
@@ -26,74 +27,81 @@ sources:
   - "NIST SP 800-204 (Microservices)"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: ar` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# أمن serverless
 
-# Serverless Security
+## القواعد (لوكلاء الذكاء الاصطناعيّ)
 
-## Rules (for AI agents)
+### دائمًا
+- أعطِ كلّ function دور تنفيذ IAM خاصًّا بها بِأقلّ الصلاحيّات
+  اللازمة. ولا تُشارِك أبدًا الأدوار بين الـ functions، ولا
+  تُعيد استخدام دور الـ bootstrap / المطوّر.
+- اضبط مُهلة function ملموسة (≤ 30s لِواجهات API متزامنة،
+  و≤ 15min لِأشغال خلفيّة). الافتراضات مثل 6s أو 900s مزالق
+  بِاتّجاهات مختلفة.
+- اضبط حدود concurrency مَحجوزة أو مُجَهَّزة لكلّ function
+  لتفادي انفجار الفواتير ومَنع مستأجر صاخب من تجويع بقيّة
+  الحساب.
+- اسحب الأسرار عند الـ cold-start من secrets manager (AWS
+  Secrets Manager / GCP Secret Manager / Azure Key Vault) **مع
+  تخزين مؤقّت**، لا من متغيّرات بيئة بِنصّ صريح.
+- تَحقَّق من كلّ event payload وفق schema قبل أيّ كود يَلمسه.
+  لا تَكترث Lambda أنّ الحدث وَصَل من قائمة SQS "خاصّتك" — فقد
+  يكون رسالةً مسمومة.
+- فَعِّل تسجيلًا مُبَنْيَنًا يُنَقِّح أنماط أسرار معروفة (فَوِّض
+  ذلك إلى skill `logging-security`).
+- فَعِّل تتبُّع X-Ray / OpenTelemetry وتنبيهات
+  CloudWatch / Cloud Monitoring على معدّل الأخطاء، وعدد عمليّات
+  الـ throttle، وزمن p95.
+- استخدم VPC لِلـ functions التي تَلمس قاعدة بيانات أو خدمة
+  خاصّة؛ وإلّا تَحصل الـ function على egress كامل إلى الإنترنت،
+  وهذا نادرًا ما يكون مرغوبًا.
 
-### ALWAYS
-- Give each function its own IAM execution role with the minimum permissions
-  needed. Never share roles across functions; never reuse the bootstrap /
-  developer role.
-- Set a concrete function timeout (≤ 30s for synchronous APIs, ≤ 15min for
-  background jobs). Defaults like 6s or 900s are footguns in different
-  directions.
-- Set reserved or provisioned concurrency limits per function to avoid bill
-  blow-outs and to keep one noisy tenant from starving the rest of the
-  account.
-- Pull secrets at cold-start from a secret manager (AWS Secrets Manager / GCP
-  Secret Manager / Azure Key Vault) **with caching**, not from plaintext
-  environment variables.
-- Validate every event payload against a schema before any code that touches
-  it. Lambda doesn't care that the event arrived from "your" SQS queue — it
-  could be a poison message.
-- Enable structured logging that redacts known secret patterns (delegate to
-  the `logging-security` skill).
-- Enable X-Ray / OpenTelemetry tracing and CloudWatch / Cloud Monitoring
-  alerts on error rate, throttle count, duration p95.
-- Use a VPC for functions that touch a private database or service; otherwise
-  the function gets full outbound internet, which is rarely desirable.
+### أبدًا
+- لا تَستخدم `arn:aws:iam::*:role/*` (PassRole بِبدل)، أو
+  `*:*` action/resource، أو صلاحيّات `iam:*` على دور function.
+- لا تَضع الأسرار في متغيّرات بيئة بِنصّ صريح (استخدم مراجع
+  Secrets Manager / `aws_lambda_function.environment` مع
+  `kms_key_arn`).
+- لا تُمرِّر نصوصًا يتحكّم بها المستخدم إلى `exec`، أو
+  `os.system`، أو `child_process`، أو
+  `subprocess.Popen(shell=True)` — تَتحوّل function URLs إلى
+  اختصارات RCE حالما يَنفُذ أحدهم إلى shell.
+- لا تَثِق بِـ Lambda function URL أو مورد API Gateway كمصادقة.
+  function URLs بـ `AUTH_TYPE=NONE` غير مُصدَّقة؛ اطلب IAM، أو
+  Cognito، أو Lambda authorizer.
+- لا تُعَطِّل `aws_lambda_function.code_signing_config_arn`
+  لِـ functions الإنتاج؛ وَقِّع وتَحقَّق عند الـ deploy.
+- لا تَستخدم الوسم `latest` لِـ functions تَستخدم صورة
+  حاوية؛ ثَبِّت بِالـ digest.
+- لا تَستخدم مفاتيح AWS وصول ساكنة وطويلة العمر لاستدعاء AWS
+  من Lambda — استخدم دور التنفيذ.
+- لا تَتخَطَّ التحقّق من حُمَل أحداث S3 / SQS / EventBridge —
+  اِفترِض أنّ أيّ مُستدعٍ قد يَنشر أيّ شكل، حتى لو كان الـ
+  trigger "موثوقًا".
 
-### NEVER
-- Use `arn:aws:iam::*:role/*` (wildcard PassRole), `*:*` action/resource, or
-  `iam:*` permissions on a function role.
-- Put secrets in environment variables in plaintext (use Secrets Manager
-  references / `aws_lambda_function.environment` with `kms_key_arn`).
-- Pass user-controlled strings to `exec`, `os.system`, `child_process`,
-  `subprocess.Popen(shell=True)` — function URLs become RCE shortcuts when
-  someone shells out.
-- Trust the Lambda function URL or API Gateway resource as authentication.
-  Function URLs with `AUTH_TYPE=NONE` are unauthenticated; require IAM,
-  Cognito, or a Lambda authorizer.
-- Disable `aws_lambda_function.code_signing_config_arn` for production
-  functions; sign and verify on deploy.
-- Use the `latest` image tag for container-image functions; pin by digest.
-- Use long-lived static AWS access keys to call AWS from Lambda — use the
-  execution role.
-- Skip validation of S3 / SQS / EventBridge event payloads — assume any caller
-  can post any shape, even if the trigger is "trusted".
+### إيجابيّات خاطئة معروفة
+- handlers موارد مُخَصَّصة لـ CloudFormation / Lambda
+  (`cfn-response`) قد تَحتاج صلاحيّات واسعة بشكل مشروع لإعداد
+  قصير المدى.
+- اختراقات تَدفئة الـ cold-start (إرسال ping إلى الـ function
+  عبر جدول CloudWatch Events) ليست بِحَدّ ذاتها مسألة أمن.
+- مُكَرِّرات Step Functions بِآلاف map states ليست مشكلة
+  "concurrency غير مُتتَبَّعة" إذا كان لِـ StateMachine سقف
+  concurrency خاصّ بها.
 
-### KNOWN FALSE POSITIVES
-- Custom CloudFormation / Lambda resource handlers (`cfn-response`) sometimes
-  legitimately need broad permissions for short-lived setup.
-- Cold-start warmer hacks (pinging the function on a CloudWatch Events
-  schedule) are not, themselves, a security issue.
-- Step Functions iterators with thousands of map states are not an "untracked
-  concurrency" problem if the StateMachine has its own concurrency cap.
+## السياق (للبشر)
 
-## Context (for humans)
+تُسَمِّي OWASP في Serverless Top 10 العائلات نفسها كما في Top 10
+المعتاد، مع خطرَين خاصَّين بِـ serverless: **حَقن الحدث** (الحدث
+نفسه يَحوي مدخلًا غير موثوق — رسالة SQS، أو object key لِـ S3 —
+يَتعامل معه كود لاحق كأنّه موثوق)، و**denial-of-wallet** (مهاجم
+يَستنزف concurrency لِيَنفُخ فاتورتك).
 
-OWASP's Serverless Top 10 names the same families as the regular Top 10 plus
-two serverless-specific risks: **event injection** (the event itself contains
-untrusted input — an SQS message, an S3 object key — that downstream code
-treats as trusted) and **denial-of-wallet** (an attacker exhausts your
-concurrency to run up your bill).
+تَميل مساعدات الذكاء الاصطناعيّ إلى توليد Lambdas بـ IAM `*:*`،
+وأسرار في متغيّرات البيئة، وبلا تحقُّق من الأحداث. هذا الـ skill
+هو الثقل المضادّ.
 
-AI assistants tend to generate Lambdas with `*:*` IAM, environment-variable
-secrets, and no event validation. This skill is the counterweight.
-
-## References
+## مراجع
 
 - `checklists/lambda_hardening.yaml`
 - `checklists/event_validation.yaml`

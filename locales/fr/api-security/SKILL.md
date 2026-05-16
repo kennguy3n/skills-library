@@ -1,16 +1,17 @@
 ---
 id: api-security
 language: fr
+source_revision: "fbb3a823"
 version: "1.0.0"
-title: "API Security"
-description: "Apply OWASP API Top 10 patterns to authentication, authorization, and input validation"
+title: "Sécurité des API"
+description: "Appliquer les patterns OWASP API Top 10 à l'authentification, l'autorisation et la validation des entrées"
 category: prevention
 severity: high
 applies_to:
-  - "when generating HTTP handlers"
-  - "when generating GraphQL resolvers"
-  - "when generating gRPC service methods"
-  - "when reviewing API endpoint changes"
+  - "lors de la génération de handlers HTTP"
+  - "lors de la génération de resolvers GraphQL"
+  - "lors de la génération de méthodes de service gRPC"
+  - "lors de la revue de changements sur les endpoints d'API"
 languages: ["*"]
 token_budget:
   minimal: 500
@@ -25,58 +26,67 @@ sources:
   - "OAuth 2.0 Security Best Current Practice (RFC 9700)"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: fr` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Sécurité des API
 
-# API Security
+## Règles (pour les agents IA)
 
-## Rules (for AI agents)
+### TOUJOURS
+- Exiger l'authentification sur chaque endpoint non public. Par défaut,
+  authentifié ; les routes véritablement publiques sont marquées explicitement.
+- Appliquer l'autorisation au niveau de l'objet — confirmer que le sujet
+  authentifié a effectivement accès à l'ID de ressource demandé, pas seulement
+  qu'il est connecté (cela neutralise la classe OWASP API1 BOLA / IDOR).
+- Valider toutes les entrées de la requête contre un schéma explicite (JSON
+  Schema, Pydantic, Zod, struct tags validator/v10). Rejeter tôt ; ne jamais
+  propager d'entrée non fiable en profondeur.
+- Appliquer des limites de débit au niveau de la route pour les endpoints
+  d'authentification, de réinitialisation de mot de passe et toute opération
+  coûteuse.
+- Utiliser des access tokens à courte durée de vie (≤ 1 heure) avec des refresh
+  tokens, pas des bearer tokens à longue durée.
+- Renvoyer des messages d'erreur génériques à l'extérieur (`invalid
+  credentials`) et journaliser les détails en interne — éviter de divulguer
+  lequel de l'identifiant ou du mot de passe était incorrect.
+- Inclure `Cache-Control: no-store` sur les réponses contenant des données
+  personnelles ou sensibles.
 
-### ALWAYS
-- Require authentication on every non-public endpoint. Default to authenticated; opt
-  out for genuinely public routes by explicit annotation.
-- Apply authorization at the object level — confirm the authenticated subject actually
-  has access to the requested resource ID, not just that they're logged in (defeats
-  the OWASP API1 BOLA / IDOR class).
-- Validate all request inputs against an explicit schema (JSON Schema, Pydantic,
-  Zod, validator/v10 struct tags). Reject early; never propagate untrusted input
-  deeper.
-- Enforce rate limits at the route level for authentication endpoints, password reset,
-  and any expensive operation.
-- Use short-lived access tokens (≤ 1 hour) with refresh tokens, not long-lived bearer
-  tokens.
-- Return generic error messages externally (`invalid credentials`) and log specifics
-  internally — avoid leaking which of username/password was wrong.
-- Include `Cache-Control: no-store` on responses containing personal or sensitive
-  data.
+### JAMAIS
+- Utiliser des IDs entiers séquentiels dans les URLs pour des ressources
+  accessibles entre locataires. Utiliser des UUIDs ou des IDs opaques
+  imprévisibles.
+- Faire confiance aux en-têtes `Authorization` sans vérifier la signature et
+  l'expiration.
+- Accepter des JWT avec l'algorithme `none`. Épingler l'algorithme attendu au
+  moment de la vérification.
+- Faire du mass-assignment du corps de requête directement vers des modèles ORM
+  (`User(**request.json)`) — cela permet une escalade de privilèges quand le
+  modèle a des champs admin que l'utilisateur ne devrait pas contrôler.
+- Désactiver la protection CSRF sur les endpoints modificateurs d'état utilisés
+  par les navigateurs.
+- Renvoyer des stack traces ou des pages d'erreur du framework au client en
+  production.
+- Utiliser `HTTP GET` pour toute opération modificatrice d'état — GET doit être
+  sûr et idempotent.
 
-### NEVER
-- Use sequential integer IDs in URLs for resources accessible across tenants. Use
-  UUIDs or unguessable opaque IDs.
-- Trust `Authorization` headers without verifying the signature and expiration.
-- Accept `none` algorithm JWTs. Pin the expected algorithm at verification time.
-- Mass-assign request bodies directly to ORM models (`User(**request.json)`) — this
-  enables privilege escalation when the model has admin fields the user shouldn't
-  control.
-- Disable CSRF protection on state-changing endpoints used by browsers.
-- Return stack traces or framework error pages to the client in production.
-- Use `HTTP GET` for any state-changing operation — GET should be safe and
-  idempotent.
+### FAUX POSITIFS CONNUS
+- Les endpoints de site marketing publics qui servent du trafic anonyme n'ont
+  légitimement pas d'authentification ni de limite de débit au-delà du load
+  balancer.
+- Les IDs séquentiels dans les chemins sont acceptables pour des ressources
+  véritablement publiques et non rattachées à un locataire (p. ex. slugs de
+  posts de blog, catalogue produit public).
+- Les endpoints de health check (`/healthz`, `/ready`) contournent
+  intentionnellement l'authentification.
 
-### KNOWN FALSE POSITIVES
-- Public marketing-site endpoints serving anonymous traffic legitimately have no auth
-  and no rate limits beyond the load balancer.
-- Sequential IDs in paths are fine for genuinely public, non-tenant-scoped resources
-  (e.g. blog post slugs, public product catalog items).
-- Health-check endpoints (`/healthz`, `/ready`) intentionally bypass auth.
+## Contexte (pour les humains)
 
-## Context (for humans)
+Le OWASP API Top 10 diffère du Top 10 web surtout parce que les APIs ont des
+valeurs par défaut plus faibles : elles omettent souvent CSRF, exposent
+directement les IDs d'objets, et tendent à faire confiance à l'état côté client
+fourni par le développeur. Cette skill codifie les erreurs à fort impact les
+plus courantes.
 
-The OWASP API Top 10 differs from the web Top 10 mostly because APIs have weaker
-defaults: they often skip CSRF, they expose object IDs directly, and they tend to
-trust developer-provided client-side state. This skill codifies the most common
-high-impact mistakes.
-
-## References
+## Références
 
 - `checklists/auth_patterns.yaml`
 - `checklists/input_validation.yaml`

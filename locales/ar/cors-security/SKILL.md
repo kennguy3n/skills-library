@@ -2,15 +2,16 @@
 id: cors-security
 language: ar
 dir: rtl
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "CORS Security"
-description: "Strict CORS configuration: no wildcard with credentials, allowlist-based origins, sensible preflight cache, minimal exposed headers"
+title: "أمن CORS"
+description: "إعداد CORS صارم: لا wildcard مع الاعتمادات، أصول من allowlist، تخزين preflight معقول، رؤوس مكشوفة بالحد الأدنى"
 category: prevention
 severity: high
 applies_to:
-  - "when generating CORS middleware or framework config"
-  - "when wiring API Gateway / Cloud Front / Nginx CORS headers"
-  - "when reviewing a cross-origin browser-facing endpoint"
+  - "عند توليد middleware لـ CORS أو إعداد إطار العمل"
+  - "عند توصيل رؤوس CORS لـ API Gateway / CloudFront / Nginx"
+  - "عند مراجعة endpoint موجَّه للمتصفح يعبر الأصول"
 languages: ["*"]
 token_budget:
   minimal: 1000
@@ -25,75 +26,67 @@ sources:
   - "Fetch Living Standard (CORS)"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: ar` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# أمن CORS
 
-# CORS Security
+## القواعد (لوكلاء الذكاء الاصطناعي)
 
-## Rules (for AI agents)
+### دائمًا
+- استخدم **allowlist** للأصول، لا `*`. اعكس رأس `Origin` الوارد فقط حين
+  يطابق مدخلًا معروفًا من الإعدادات (أو regex مُسبق التركيب لأسماء مضيف
+  يتحكم بها المشغّل).
+- إن كانت الاستجابات تتضمن اعتمادات (cookies أو `Authorization`)، اضبط
+  `Access-Control-Allow-Credentials: true` **و** تأكَّد أن
+  `Access-Control-Allow-Origin` نصّ أصل محدّد واحد — أبدًا ليس `*`.
+- ضع `Vary: Origin` على الاستجابات التي يعتمد جسمها على `Origin` الطلب،
+  كي لا تُقدِّم الذاكرات المؤقتة استجابةَ أصلٍ لأصل آخر.
+- قيّد `Access-Control-Allow-Methods` للـ preflight على الطرق التي
+  يقبلها الـ endpoint فعلًا؛ وقيّد `Access-Control-Allow-Headers` على
+  الرؤوس المستهلكة فعلًا.
+- اضبط `Access-Control-Max-Age` على قيمة معقولة (≤ 86400 في الإنتاج)
+  لإطفاء كُلفة preflight دون تثبيت allowlist خاطئة.
+- احتفظ بـ allowlist في الشيفرة (أو في ملف إعدادات في المستودع)، لا
+  مشتقَّة من قاعدة بيانات — كي لا يضيف المهاجمون أصلهم بإدخال صف.
 
-### ALWAYS
-- Use an **allowlist** of origins, not `*`. Reflect the incoming `Origin`
-  header only when it matches a known entry from configuration (or matches
-  a precompiled regex of operator-controlled hostnames).
-- If responses include credentials (cookies, `Authorization`), set
-  `Access-Control-Allow-Credentials: true` **and** ensure
-  `Access-Control-Allow-Origin` is a single specific origin string —
-  never `*`.
-- Include `Vary: Origin` on responses whose body depends on the request
-  `Origin`, so caches don't serve one origin's response to another.
-- Restrict preflight `Access-Control-Allow-Methods` to the actual methods
-  the endpoint accepts; restrict `Access-Control-Allow-Headers` to the
-  actual headers consumed.
-- Set `Access-Control-Max-Age` to a sensible value (≤ 86400 in production)
-  to amortize preflight latency without locking in a bad allowlist.
-- Maintain the allowlist in code (or in a config file checked into
-  source), not derived from a database — so attackers can't add their
-  origin by inserting a row.
+### أبدًا
+- لا تضبط `Access-Control-Allow-Origin: *` مع
+  `Access-Control-Allow-Credentials: true`. تحظر مواصفة Fetch ذلك
+  لسبب — سترفض المتصفحات الاستجابة، لكن المشكلة الأكبر أن proxy /
+  cache أمامي ربما يكون قد سرّبها مسبقًا.
+- لا تعكس رأس `Origin` دون فحص allowlist
+  (`Access-Control-Allow-Origin: <Origin>` لكل أصل وارد). هذا يعادل
+  `*` بالنسبة للاعتمادات مع سلوك تخزين مؤقت أسوأ.
+- لا تسمح بـ `null` كأصل. `null` هو ما يرسله Chrome من iframes في
+  sandbox ومن URIs بنوع `data:` و`file://` — ولا ينبغي لأيٍّ منها
+  وصول معتمَد إلى واجهتك.
+- لا تسمح بنطاقات فرعية عشوائية بـ regex مثل `.*\.example\.com$` دون
+  مراعاة الاستيلاء على النطاق الفرعي. ثبّت نطاقات فرعية محددة؛ وعامِل
+  `*.example.com` كقرار متعمَّد مرتبط بضوابط ملكية النطاقات الفرعية.
+- لا تكشف رؤوسًا داخلية عبر `Access-Control-Expose-Headers`. اقتصر على
+  أدنى حد يحتاجه الواجهة الأمامية فعلًا.
+- لا تستخدم CORS كآلية تخويل. CORS سياسة *متصفح*؛ لا توقف
+  server-to-server ولا curl ولا العملاء غير المتصفّحين. وثّق الطلب
+  بمصادقة سليمة.
 
-### NEVER
-- Set `Access-Control-Allow-Origin: *` together with
-  `Access-Control-Allow-Credentials: true`. The Fetch spec forbids it for
-  a reason — browsers will refuse the response, but the bigger problem is
-  that an upstream proxy / cache may already have leaked it.
-- Reflect the `Origin` header without an allowlist check (`Access-Control-
-  Allow-Origin: <Origin>` for every incoming origin). That's the same as
-  `*` for credentials but with worse caching behavior.
-- Allow `null` as an Origin. `null` is what Chrome sends from sandboxed
-  iframes, `data:` URIs, and `file://` — none of which should have
-  credentialed access to your API.
-- Allow arbitrary subdomains with a regex like `.*\.example\.com$` without
-  considering subdomain takeover. Pin specific subdomains; treat
-  `*.example.com` as a deliberate decision tied to subdomain ownership
-  controls.
-- Expose internal headers via `Access-Control-Expose-Headers`. Limit to
-  the minimal set the frontend genuinely needs.
-- Use CORS as authorization. CORS is a *browser* policy; it does not stop
-  server-to-server, curl, or non-browser clients. Authenticate the
-  request properly.
+### إيجابيات خاطئة معروفة
+- الواجهات العامة بصدق وغير المُصادقة (بيانات مفتوحة، endpoints لـ CDN
+  تسويقي) يمكن أن تستخدم شرعًا `Access-Control-Allow-Origin: *`
+  *دون* اعتمادات.
+- أدوات إدارة داخلية مقصورة على شبكة خاصة يمكنها استخدام أصل واحد
+  ثابت؛ هاجس الـ wildcard لا ينطبق لعدم وجود مستدعين عابرين للأصول.
+- بعض التكاملات (Stripe.js و Plaid و Auth0) تتوقع رؤوس CORS محددة —
+  اقرأ قسم CORS لكل مزوّد قبل تخفيف الأساس.
 
-### KNOWN FALSE POSITIVES
-- Truly public, unauthenticated APIs (e.g., open data, marketing CDN
-  endpoints) can legitimately use `Access-Control-Allow-Origin: *`
-  *without* credentials.
-- Internal admin tools restricted to a private network can use a single
-  fixed origin; the wildcard concern doesn't apply because there are no
-  cross-origin callers.
-- A handful of integrations (Stripe.js, Plaid, Auth0) expect specific CORS
-  headers — read each provider's CORS section before relaxing the
-  baseline.
+## السياق (للبشر)
 
-## Context (for humans)
+كثيرًا ما يُساء فهم CORS كضابط أمني. ليس كذلك — هو *تخفيف* لسياسة
+نفس الأصل. الضابط الأمني هو المصادقة. سوء إعداد CORS يهمّ لأنه عند
+الاقتران بالكوكيز أو رأس `Authorization` يمنح الأصول غير الموثوقة
+القدرة على إصدار طلبات عابرة للأصول معتمدة وقراءة الاستجابة.
 
-CORS is widely misunderstood as a security control. It isn't — it's a
-*relaxation* of the same-origin policy. The security control is
-authentication. CORS misconfiguration matters because, when combined with
-cookies or `Authorization` headers, it gives untrusted origins the ability
-to make credentialed cross-origin requests and read the response.
+هذه الـ skill قصيرة بالتصميم — مصفوفة التركيبات السيّئة محدودة،
+والقواعد قاطعة.
 
-This skill is short by design — the matrix of bad combinations is finite
-and the rules are blunt.
-
-## References
+## مراجع
 
 - `rules/cors_safe_config.json`
 - [OWASP CORS Origin Header Scrutiny](https://owasp.org/www-community/attacks/CORS_OriginHeaderScrutiny).

@@ -1,15 +1,16 @@
 ---
 id: serverless-security
 language: zh-Hans
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Serverless Security"
-description: "Lambda / Cloud Functions / Azure Functions hardening: IAM, timeouts, secrets, event injection"
+title: "Serverless 安全"
+description: "Lambda / Cloud Functions / Azure Functions 加固:IAM、超时、secret、event injection"
 category: hardening
 severity: high
 applies_to:
-  - "when generating AWS Lambda / GCP Cloud Functions / Azure Functions code"
-  - "when generating serverless.yml / SAM templates / functions framework"
-  - "when wiring API Gateway, EventBridge, SQS, S3 triggers"
+  - "生成 AWS Lambda / GCP Cloud Functions / Azure Functions 代码时"
+  - "生成 serverless.yml / SAM 模板 / functions framework 时"
+  - "接入 API Gateway、EventBridge、SQS、S3 trigger 时"
 languages: ["python", "javascript", "typescript", "go", "java", "yaml"]
 token_budget:
   minimal: 1000
@@ -25,74 +26,75 @@ sources:
   - "NIST SP 800-204 (Microservices)"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: zh-Hans` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Serverless 安全
 
-# Serverless Security
+## 规则(面向 AI 代理)
 
-## Rules (for AI agents)
+### 必须
+- 给每个 function 各自专属的 IAM execution role,只赋所需的最小
+  权限。绝不要跨 function 共享 role;绝不要复用 bootstrap / 开发
+  者用的 role。
+- 给 function 设具体的 timeout(同步 API ≤ 30s,后台任务 ≤
+  15min)。6s 或 900s 这种默认值是两个方向上的 footgun。
+- 给每个 function 设 reserved 或 provisioned concurrency 上限,
+  既避免 bill blow-out,又避免一个噪音 tenant 把整个账号其他
+  function 都饿死。
+- cold-start 时从 secret manager(AWS Secrets Manager / GCP
+  Secret Manager / Azure Key Vault)拉 secret,**带 cache**,
+  不要从明文 environment variable 拿。
+- 任何接触 event 的代码运行之前,先按 schema 校验 event payload。
+  Lambda 不在乎 event 是从"你"的 SQS queue 来的 —— 它完全可能
+  是一条 poison message。
+- 启用会 redact 已知 secret pattern 的结构化日志(委托给
+  `logging-security` skill)。
+- 启用 X-Ray / OpenTelemetry tracing,以及对错误率、throttle
+  数、p95 时延的 CloudWatch / Cloud Monitoring 告警。
+- 对接私有数据库或服务的 function 应放进 VPC;否则该 function
+  默认拥有完整出网,这通常不是想要的。
 
-### ALWAYS
-- Give each function its own IAM execution role with the minimum permissions
-  needed. Never share roles across functions; never reuse the bootstrap /
-  developer role.
-- Set a concrete function timeout (≤ 30s for synchronous APIs, ≤ 15min for
-  background jobs). Defaults like 6s or 900s are footguns in different
-  directions.
-- Set reserved or provisioned concurrency limits per function to avoid bill
-  blow-outs and to keep one noisy tenant from starving the rest of the
-  account.
-- Pull secrets at cold-start from a secret manager (AWS Secrets Manager / GCP
-  Secret Manager / Azure Key Vault) **with caching**, not from plaintext
-  environment variables.
-- Validate every event payload against a schema before any code that touches
-  it. Lambda doesn't care that the event arrived from "your" SQS queue — it
-  could be a poison message.
-- Enable structured logging that redacts known secret patterns (delegate to
-  the `logging-security` skill).
-- Enable X-Ray / OpenTelemetry tracing and CloudWatch / Cloud Monitoring
-  alerts on error rate, throttle count, duration p95.
-- Use a VPC for functions that touch a private database or service; otherwise
-  the function gets full outbound internet, which is rarely desirable.
+### 禁止
+- 不要在 function role 上使用 `arn:aws:iam::*:role/*`(wildcard
+  PassRole)、`*:*` action/resource 或 `iam:*` 权限。
+- 不要把 secret 用明文塞进 environment variable(用 Secrets
+  Manager 引用 / `aws_lambda_function.environment` 配
+  `kms_key_arn`)。
+- 不要把用户控制的字符串传给 `exec`、`os.system`、
+  `child_process`、`subprocess.Popen(shell=True)` —— 一旦有人
+  shell 出去,function URL 就成 RCE 的捷径。
+- 不要把 Lambda function URL 或 API Gateway resource 本身当作
+  认证。`AUTH_TYPE=NONE` 的 function URL 是无认证的;请要求
+  IAM、Cognito 或 Lambda authorizer。
+- 不要为生产 function 禁用
+  `aws_lambda_function.code_signing_config_arn`;在 deploy 时
+  签名并校验。
+- 不要给容器镜像 function 用 `latest` 镜像 tag;按 digest 钉死。
+- 不要在 Lambda 里用长期静态 AWS access key 来调 AWS —— 用
+  execution role。
+- 不要跳过对 S3 / SQS / EventBridge event payload 的校验 —— 即
+  使 trigger 是"可信"的,也要假设任何 caller 都能 post 任何
+  形状的数据进来。
 
-### NEVER
-- Use `arn:aws:iam::*:role/*` (wildcard PassRole), `*:*` action/resource, or
-  `iam:*` permissions on a function role.
-- Put secrets in environment variables in plaintext (use Secrets Manager
-  references / `aws_lambda_function.environment` with `kms_key_arn`).
-- Pass user-controlled strings to `exec`, `os.system`, `child_process`,
-  `subprocess.Popen(shell=True)` — function URLs become RCE shortcuts when
-  someone shells out.
-- Trust the Lambda function URL or API Gateway resource as authentication.
-  Function URLs with `AUTH_TYPE=NONE` are unauthenticated; require IAM,
-  Cognito, or a Lambda authorizer.
-- Disable `aws_lambda_function.code_signing_config_arn` for production
-  functions; sign and verify on deploy.
-- Use the `latest` image tag for container-image functions; pin by digest.
-- Use long-lived static AWS access keys to call AWS from Lambda — use the
-  execution role.
-- Skip validation of S3 / SQS / EventBridge event payloads — assume any caller
-  can post any shape, even if the trigger is "trusted".
+### 已知误报
+- 自定义 CloudFormation / Lambda 资源 handler(`cfn-response`)
+  有时为了短期 setup 合理需要较宽权限。
+- 用 CloudWatch Events 定时 ping function 来减缓 cold start 这
+  类 warmer 技巧本身不是安全问题。
+- 有几千个 map state 的 Step Functions 迭代器,如果
+  StateMachine 本身有 concurrency cap,就不算"未追踪
+  concurrency"问题。
 
-### KNOWN FALSE POSITIVES
-- Custom CloudFormation / Lambda resource handlers (`cfn-response`) sometimes
-  legitimately need broad permissions for short-lived setup.
-- Cold-start warmer hacks (pinging the function on a CloudWatch Events
-  schedule) are not, themselves, a security issue.
-- Step Functions iterators with thousands of map states are not an "untracked
-  concurrency" problem if the StateMachine has its own concurrency cap.
+## 背景(面向人类)
 
-## Context (for humans)
+OWASP 的 Serverless Top 10 跟普通 Top 10 是同样这几大类,加上
+两个 serverless 特有的:**event injection**(event 自身就携带
+不可信输入 —— 一条 SQS 消息、一个 S3 object key —— 而下游代
+码却把它当作可信)和 **denial-of-wallet**(攻击者耗尽你的
+concurrency 来把你的账单刷爆)。
 
-OWASP's Serverless Top 10 names the same families as the regular Top 10 plus
-two serverless-specific risks: **event injection** (the event itself contains
-untrusted input — an SQS message, an S3 object key — that downstream code
-treats as trusted) and **denial-of-wallet** (an attacker exhausts your
-concurrency to run up your bill).
+AI 助手倾向于生成 `*:*` IAM、environment variable 里放
+secret、且不做 event 校验的 Lambda。本 skill 就是来对冲。
 
-AI assistants tend to generate Lambdas with `*:*` IAM, environment-variable
-secrets, and no event validation. This skill is the counterweight.
-
-## References
+## 参考
 
 - `checklists/lambda_hardening.yaml`
 - `checklists/event_validation.yaml`

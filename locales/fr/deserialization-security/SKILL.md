@@ -1,15 +1,16 @@
 ---
 id: deserialization-security
 language: fr
+source_revision: "4c215e6f"
 version: "1.0.0"
-title: "Deserialization Security"
-description: "Block unsafe deserialization across Java, Python, .NET, PHP, Ruby, Node.js — gadget chains, type allowlisting, safer alternatives"
+title: "Sécurité de la désérialisation"
+description: "Bloquer la désérialisation non sûre en Java, Python, .NET, PHP, Ruby, Node.js — chaînes de gadgets, allowlist de types, alternatives plus sûres"
 category: prevention
 severity: critical
 applies_to:
-  - "when generating code that deserializes data from any untrusted source"
-  - "when wiring cookies, sessions, message queues, or RPC payloads"
-  - "when reviewing pickle / unserialize / Marshal / ObjectInputStream / BinaryFormatter usage"
+  - "lors de la génération de code désérialisant des données d'une source non fiable"
+  - "lors du câblage de cookies, sessions, message queues ou payloads RPC"
+  - "lors de la revue d'usages de pickle / unserialize / Marshal / ObjectInputStream / BinaryFormatter"
 languages: ["java", "python", "csharp", "php", "ruby", "javascript", "typescript"]
 token_budget:
   minimal: 1200
@@ -26,98 +27,110 @@ sources:
   - "CVE-2019-2725 (WebLogic XMLDecoder)"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: fr` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Sécurité de la désérialisation
 
-# Deserialization Security
+## Règles (pour les agents IA)
 
-## Rules (for AI agents)
+### TOUJOURS
+- Préférer des formats **structurels, validés par schéma** (JSON avec
+  un validateur JSON Schema, Protobuf, FlatBuffers, MessagePack avec
+  une carte de types explicite) plutôt que des sérialiseurs natifs
+  polymorphes. Le trade-off "économiser 10 lignes de mapping" ne
+  vaut jamais une primitive RCE.
+- Quand un désérialiseur polymorphe est inévitable, configurer une
+  **allowlist stricte de types** au niveau du framework
+  (`PolymorphicTypeValidator` de Jackson, fastjson safeMode,
+  `KnownTypeAttribute` de .NET, `Whitelist` de XStream). Le défaut
+  "any class" est la source de toute CVE moderne de désérialisation
+  Java.
+- Signer et authentifier tout cookie ou token portant des données
+  sérialisées avec une clé aléatoire fraîche (HMAC-SHA-256, minimum).
+  Ne jamais désérialiser avant la vérification HMAC.
+- Faire tourner les chemins de désérialisation avec les capacités
+  minimales requises par le format (pas de filesystem, pas de réseau,
+  pas de subprocess, pas de réflexion) — p. ex. patterns
+  `ObjectInputFilter` Java ; Python dans un namespace restreint.
+- Traiter chacune des fonctions suivantes comme des "primitives de
+  désérialisation d'input non fiable" : Java
+  `ObjectInputStream.readObject`, Jackson avec `enableDefaultTyping`,
+  SnakeYAML `Yaml.load()`, XStream `fromXML`, Python
+  `pickle.load(s)` / `cPickle` / `dill` / `joblib.load`, `yaml.load`
+  (Loader par défaut), `numpy.load(allow_pickle=True)`, `torch.load`,
+  PHP `unserialize`, .NET `BinaryFormatter` /
+  `ObjectStateFormatter` / `NetDataContractSerializer` /
+  `LosFormatter`, Ruby `Marshal.load` / `YAML.load` (Psych ≤ 3.0).
+  Ajouter l'une d'elles à un chemin de gestion de requête exige une
+  revue de sécurité explicite.
 
-### ALWAYS
-- Prefer **structural, schema-validated** formats (JSON with a JSON Schema
-  validator, Protobuf, FlatBuffers, MessagePack with an explicit type map)
-  over polymorphic native serializers. The trade-off "save 10 lines of
-  mapping code" is never worth the RCE primitive.
-- When a polymorphic deserializer is unavoidable, configure a **strict
-  type allowlist** at the framework level (Jackson `PolymorphicTypeValidator`,
-  fastjson safeMode, .NET `KnownTypeAttribute`, XStream `Whitelist`). The
-  default of "any class" is the source of every modern Java deserialization
-  CVE.
-- Sign and authenticate any cookie or token that carries serialized data
-  with a fresh random key (HMAC-SHA-256, minimum). Never deserialize before
-  HMAC verification.
-- Run deserialization code paths under the minimum capabilities the format
-  needs (no filesystem, no network, no subprocess, no reflection) — e.g.
-  Java `ObjectInputFilter` patterns; Python in a constrained namespace.
-- Treat any of the following functions as "untrusted-input deserialization
-  primitives": Java `ObjectInputStream.readObject`, Jackson with
-  `enableDefaultTyping`, SnakeYAML `Yaml.load()`, XStream `fromXML`,
-  Python `pickle.load(s)` / `cPickle` / `dill` / `joblib.load`,
-  `yaml.load` (default Loader), `numpy.load(allow_pickle=True)`,
-  `torch.load`, PHP `unserialize`, .NET `BinaryFormatter` /
-  `ObjectStateFormatter` / `NetDataContractSerializer` / `LosFormatter`,
-  Ruby `Marshal.load` / `YAML.load` (Psych ≤ 3.0). Adding one of these
-  to a request-handling code path requires explicit security review.
+### JAMAIS
+- Passer des octets non fiables à l'une des primitives ci-dessus sans
+  wrapper HMAC-authentifié. Même avec wrapper, préférer un format non
+  polymorphe.
+- Utiliser Java Jackson avec `objectMapper.enableDefaultTyping()` ou
+  `@JsonTypeInfo(use = Id.CLASS)`. Le défaut
+  `LAMINAR_INTERNAL_DEFAULT` produit une chaîne de gadgets par
+  class-id (ysoserial / marshalsec).
+- Utiliser SnakeYAML `new Yaml()` sans spécifier explicitement un
+  `SafeConstructor` (ou `Constructor` avec allowlist). Le constructeur
+  par défaut est la source des CVE communes de RCE YAML en Java.
+- Utiliser Python `pickle.loads` sur des données venant d'un socket
+  réseau, d'une colonne DB, d'une clé de cache Redis ou de tout
+  endroit traversant une frontière de confiance. Aucune validation ne
+  rend pickle sûr.
+- Utiliser Python `yaml.load(data)` (sans `Loader=yaml.SafeLoader`).
+  PyYAML a changé le défaut en 6.0 pour échouer bruyamment — d'anciens
+  chemins de code livrent encore le défaut non sûr.
+- Utiliser Python `torch.load(path)` sur un checkpoint téléchargé
+  sans `weights_only=True` (PyTorch ≥ 2.6 a True par défaut ; les
+  versions plus anciennes atteignent pickle et exécutent du code
+  arbitraire).
+- Utiliser PHP `unserialize()` sur des données cookie / POST / GET.
+  Le format sérialisé PHP a une longue histoire de chaînes de gadgets
+  par méthodes magiques (`__wakeup`, `__destruct`, `__toString`).
+- Utiliser .NET `BinaryFormatter`, `NetDataContractSerializer`,
+  `ObjectStateFormatter`, `LosFormatter` sur tout input traversant
+  une frontière de confiance. Microsoft marque `BinaryFormatter`
+  comme obsolète et non sûr.
+- Faire confiance au contenu d'un Ruby `Marshal.load` venant de hors
+  du même processus. Même restriction pour `YAML.load` sur un Psych
+  ancien.
 
-### NEVER
-- Pass untrusted bytes to any of the primitives above without an
-  HMAC-authenticated wrapper. Even with a wrapper, prefer a non-polymorphic
-  format.
-- Use Java `Jackson` with `objectMapper.enableDefaultTyping()` or
-  `@JsonTypeInfo(use = Id.CLASS)`. The default of `LAMINAR_INTERNAL_DEFAULT`
-  produces a class-id gadget chain (ysoserial / marshalsec).
-- Use `SnakeYAML new Yaml()` without explicitly specifying a `SafeConstructor`
-  (or `Constructor` with an allowlist). The default constructor is the
-  source of common Java YAML RCE CVEs.
-- Use Python `pickle.loads` on data from a network socket, a database
-  column, a Redis cache key, or anywhere that crosses a trust boundary.
-  No amount of validation makes pickle safe.
-- Use Python `yaml.load(data)` (without `Loader=yaml.SafeLoader`). PyYAML
-  changed the default in 6.0 to fail loudly — older code paths still ship
-  the unsafe default.
-- Use Python `torch.load(path)` on a downloaded checkpoint without
-  `weights_only=True` (PyTorch ≥ 2.6 defaults to True; older versions
-  reach pickle and execute arbitrary code).
-- Use PHP `unserialize()` on cookie / POST / GET data. PHP serialized
-  format has a long history of magic-method gadget chains (`__wakeup`,
-  `__destruct`, `__toString`).
-- Use .NET `BinaryFormatter`, `NetDataContractSerializer`,
-  `ObjectStateFormatter`, `LosFormatter` for any input crossing a trust
-  boundary. Microsoft marks `BinaryFormatter` as obsolete and unsafe.
-- Trust the contents of a Ruby `Marshal.load` from anywhere outside the
-  same process. Same restriction for `YAML.load` on older Psych.
+### FAUX POSITIFS CONNUS
+- RPC interne où les deux côtés sont contrôlés par l'opérateur, les
+  données sont authentifiées de bout en bout (mTLS + HMAC), et le
+  choix de format est pragmatique (p. ex. des services Java utilisant
+  ObjectInputStream sur un socket TLS+mTLS-only peuvent être
+  acceptables dans certains stacks legacy).
+- Désérialisation au build-time / configuration-time de fichiers
+  livrés dans le dépôt (fixtures de test pickle, etc.) — mais les
+  marquer clairement et ne jamais les charger depuis un téléchargement.
+- Les formats de session cryptographiquement authentifiés comme les
+  sessions cookie signées par défaut de Rails sont un usage
+  intentionnel de Marshal, mais seulement parce que le HMAC
+  conditionne la désérialisation.
 
-### KNOWN FALSE POSITIVES
-- Internal RPC where both sides are operator-controlled, the data is
-  authenticated end-to-end (mTLS + HMAC), and the format choice is
-  pragmatic (e.g. Java services using ObjectInputStream over a
-  TLS+mTLS-only socket may be acceptable in some legacy stacks).
-- Build-time / configuration-time deserialization of files that ship in
-  the repository (pickle test fixtures, etc.) — but mark them clearly
-  and never load them from a download.
-- Cryptographically-authenticated session formats like Rails' default
-  signed-cookie sessions are intended use of Marshal, but only because
-  the HMAC gates the deserialization.
+## Contexte (pour les humains)
 
-## Context (for humans)
+Les vulnérabilités de désérialisation sont la primitive RCE la plus
+fiable des stacks d'entreprise modernes. L'économie est simple :
+quand le sérialiseur autorise l'instanciation arbitraire de classes,
+la codebase a déjà importé des milliers de classes — dont beaucoup
+ont des side-effects dans leurs callbacks `readObject`, `__reduce__`,
+`__wakeup`, `Read*`. Une chaîne de gadgets combine ces side-effects
+en RCE.
 
-Deserialization vulnerabilities are the single most reliable RCE
-primitive in modern enterprise stacks. The economics are simple: when
-the serializer allows arbitrary class instantiation, the codebase has
-already imported thousands of classes — many of which have side-effects
-in their `readObject`, `__reduce__`, `__wakeup`, `Read*` callbacks. A
-gadget chain combines these side-effects into RCE.
+ysoserial (Java), ysoserial.net (.NET), marshalsec (Java) et les
+catalogues de gadgets pickle Python sont du tooling mature. À toute
+question "est-ce exploitable ?", la réponse est "oui, avec les
+gadgets déjà sur ton classpath".
 
-ysoserial (Java), ysoserial.net (.NET), marshalsec (Java), and the
-Python pickle gadget catalogs are mature tooling. Every "is this
-exploitable?" question is "yes, with the gadgets already on your
-classpath."
+Le fix n'est pas de filtrer — c'est d'utiliser un format qui
+n'autorise pas l'instanciation arbitraire de classes en premier
+lieu. La plupart des services modernes embarquent du JWT signé /
+JSON sur mTLS. Là où un format polymorphe est inévitable, allowlist
+de types + HMAC ne sont pas négociables.
 
-The fix is not to filter — it is to use a format that doesn't permit
-arbitrary class instantiation in the first place. Most modern services
-ship signed JWTs / JSON over mTLS. Where a polymorphic format is
-unavoidable, type-allowlist + HMAC are non-negotiable.
-
-## References
+## Références
 
 - `rules/unsafe_deserializers.json`
 - [OWASP Deserialization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html).

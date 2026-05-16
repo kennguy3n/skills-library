@@ -1,15 +1,16 @@
 ---
 id: serverless-security
 language: es
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Serverless Security"
-description: "Lambda / Cloud Functions / Azure Functions hardening: IAM, timeouts, secrets, event injection"
+title: "Seguridad serverless"
+description: "Endurecimiento de Lambda / Cloud Functions / Azure Functions: IAM, timeouts, secrets, event injection"
 category: hardening
 severity: high
 applies_to:
-  - "when generating AWS Lambda / GCP Cloud Functions / Azure Functions code"
-  - "when generating serverless.yml / SAM templates / functions framework"
-  - "when wiring API Gateway, EventBridge, SQS, S3 triggers"
+  - "al generar código de AWS Lambda / GCP Cloud Functions / Azure Functions"
+  - "al generar serverless.yml / plantillas SAM / functions framework"
+  - "al cablear triggers de API Gateway, EventBridge, SQS, S3"
 languages: ["python", "javascript", "typescript", "go", "java", "yaml"]
 token_budget:
   minimal: 1000
@@ -25,74 +26,82 @@ sources:
   - "NIST SP 800-204 (Microservices)"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: es` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Seguridad serverless
 
-# Serverless Security
+## Reglas (para agentes de IA)
 
-## Rules (for AI agents)
+### SIEMPRE
+- Dar a cada función su propio IAM execution role con los permisos
+  mínimos necesarios. Nunca compartir roles entre funciones; nunca
+  reutilizar el role de bootstrap / del desarrollador.
+- Setear un timeout concreto de función (≤ 30s para APIs síncronas,
+  ≤ 15min para jobs de background). Defaults como 6s o 900s son
+  footguns en direcciones distintas.
+- Setear límites de concurrency reservada o provisionada por función
+  para evitar bill blow-outs y para impedir que un tenant ruidoso
+  starve al resto de la cuenta.
+- Pull secrets en cold-start desde un secret manager (AWS Secrets
+  Manager / GCP Secret Manager / Azure Key Vault) **con caching**,
+  no desde environment variables en plaintext.
+- Validar cada event payload contra un schema antes de cualquier
+  código que lo toque. A Lambda no le importa que el event haya
+  llegado de "tu" SQS queue — podría ser un poison message.
+- Habilitar logging estructurado que redacte patrones de secret
+  conocidos (delegar al skill `logging-security`).
+- Habilitar tracing X-Ray / OpenTelemetry y alertas CloudWatch /
+  Cloud Monitoring sobre tasa de error, count de throttles, duración
+  p95.
+- Usar una VPC para funciones que toquen una base de datos o
+  servicio privado; si no, la función obtiene salida full a internet,
+  lo cual rara vez es deseable.
 
-### ALWAYS
-- Give each function its own IAM execution role with the minimum permissions
-  needed. Never share roles across functions; never reuse the bootstrap /
-  developer role.
-- Set a concrete function timeout (≤ 30s for synchronous APIs, ≤ 15min for
-  background jobs). Defaults like 6s or 900s are footguns in different
-  directions.
-- Set reserved or provisioned concurrency limits per function to avoid bill
-  blow-outs and to keep one noisy tenant from starving the rest of the
-  account.
-- Pull secrets at cold-start from a secret manager (AWS Secrets Manager / GCP
-  Secret Manager / Azure Key Vault) **with caching**, not from plaintext
-  environment variables.
-- Validate every event payload against a schema before any code that touches
-  it. Lambda doesn't care that the event arrived from "your" SQS queue — it
-  could be a poison message.
-- Enable structured logging that redacts known secret patterns (delegate to
-  the `logging-security` skill).
-- Enable X-Ray / OpenTelemetry tracing and CloudWatch / Cloud Monitoring
-  alerts on error rate, throttle count, duration p95.
-- Use a VPC for functions that touch a private database or service; otherwise
-  the function gets full outbound internet, which is rarely desirable.
+### NUNCA
+- Usar `arn:aws:iam::*:role/*` (PassRole con wildcard), `*:*`
+  action/resource, o permisos `iam:*` en un role de función.
+- Poner secrets en environment variables en plaintext (usar
+  referencias de Secrets Manager / `aws_lambda_function.environment`
+  con `kms_key_arn`).
+- Pasar strings controlados por usuario a `exec`, `os.system`,
+  `child_process`, `subprocess.Popen(shell=True)` — function URLs
+  se convierten en shortcuts a RCE cuando alguien shellea.
+- Confiar en la Lambda function URL o en el recurso de API Gateway
+  como autenticación. Function URLs con `AUTH_TYPE=NONE` están sin
+  autenticar; requerir IAM, Cognito, o un Lambda authorizer.
+- Deshabilitar `aws_lambda_function.code_signing_config_arn` para
+  funciones de producción; firmar y verificar en deploy.
+- Usar el tag `latest` para funciones de imagen de container;
+  pinear por digest.
+- Usar AWS access keys estáticas de larga vida para llamar a AWS
+  desde Lambda — usar el execution role.
+- Saltarse la validación de payloads de S3 / SQS / EventBridge —
+  asumir que cualquier caller puede postear cualquier forma, incluso
+  si el trigger es "confiable".
 
-### NEVER
-- Use `arn:aws:iam::*:role/*` (wildcard PassRole), `*:*` action/resource, or
-  `iam:*` permissions on a function role.
-- Put secrets in environment variables in plaintext (use Secrets Manager
-  references / `aws_lambda_function.environment` with `kms_key_arn`).
-- Pass user-controlled strings to `exec`, `os.system`, `child_process`,
-  `subprocess.Popen(shell=True)` — function URLs become RCE shortcuts when
-  someone shells out.
-- Trust the Lambda function URL or API Gateway resource as authentication.
-  Function URLs with `AUTH_TYPE=NONE` are unauthenticated; require IAM,
-  Cognito, or a Lambda authorizer.
-- Disable `aws_lambda_function.code_signing_config_arn` for production
-  functions; sign and verify on deploy.
-- Use the `latest` image tag for container-image functions; pin by digest.
-- Use long-lived static AWS access keys to call AWS from Lambda — use the
-  execution role.
-- Skip validation of S3 / SQS / EventBridge event payloads — assume any caller
-  can post any shape, even if the trigger is "trusted".
+### FALSOS POSITIVOS CONOCIDOS
+- Handlers de custom resources de CloudFormation / Lambda
+  (`cfn-response`) a veces legítimamente necesitan permisos amplios
+  para setup de corta duración.
+- Hacks de calentamiento de cold-start (pingear la función con un
+  schedule de CloudWatch Events) no son, en sí mismos, un problema
+  de seguridad.
+- Iteradores Step Functions con miles de map states no son un
+  problema de "concurrency no rastreada" si el StateMachine tiene
+  su propio cap de concurrency.
 
-### KNOWN FALSE POSITIVES
-- Custom CloudFormation / Lambda resource handlers (`cfn-response`) sometimes
-  legitimately need broad permissions for short-lived setup.
-- Cold-start warmer hacks (pinging the function on a CloudWatch Events
-  schedule) are not, themselves, a security issue.
-- Step Functions iterators with thousands of map states are not an "untracked
-  concurrency" problem if the StateMachine has its own concurrency cap.
+## Contexto (para humanos)
 
-## Context (for humans)
+El Serverless Top 10 de OWASP nombra las mismas familias que el
+Top 10 normal más dos riesgos específicos del serverless:
+**event injection** (el event en sí mismo contiene input no
+confiable — un mensaje SQS, un object key de S3 — que código
+downstream trata como confiable) y **denial-of-wallet** (un
+atacante exhaure tu concurrency para hacer subir tu bill).
 
-OWASP's Serverless Top 10 names the same families as the regular Top 10 plus
-two serverless-specific risks: **event injection** (the event itself contains
-untrusted input — an SQS message, an S3 object key — that downstream code
-treats as trusted) and **denial-of-wallet** (an attacker exhausts your
-concurrency to run up your bill).
+Los asistentes de IA tienden a generar Lambdas con IAM `*:*`,
+secrets en environment variables, y sin validación de events.
+Este skill es el contrapeso.
 
-AI assistants tend to generate Lambdas with `*:*` IAM, environment-variable
-secrets, and no event validation. This skill is the counterweight.
-
-## References
+## Referencias
 
 - `checklists/lambda_hardening.yaml`
 - `checklists/event_validation.yaml`

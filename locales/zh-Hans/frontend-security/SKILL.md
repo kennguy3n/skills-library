@@ -1,15 +1,16 @@
 ---
 id: frontend-security
 language: zh-Hans
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Frontend Security"
-description: "Browser-side hardening: XSS, CSP, CORS, SRI, DOM clobbering, iframe sandboxing, Trusted Types"
+title: "前端安全"
+description: "浏览器侧加固:XSS、CSP、CORS、SRI、DOM clobbering、iframe 沙箱、Trusted Types"
 category: prevention
 severity: high
 applies_to:
-  - "when generating HTML / JSX / Vue / Svelte templates"
-  - "when wiring up response headers in a web app"
-  - "when adding third-party script tags or CDN resources"
+  - "在生成 HTML / JSX / Vue / Svelte 模板时"
+  - "在 web 应用中接入响应头时"
+  - "在添加第三方 script 标签或 CDN 资源时"
 languages: ["html", "javascript", "typescript", "tsx", "jsx", "vue", "svelte"]
 token_budget:
   minimal: 1000
@@ -25,77 +26,76 @@ sources:
   - "MDN Trusted Types"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: zh-Hans` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# 前端安全
 
-# Frontend Security
+## 规则（面向 AI 代理）
 
-## Rules (for AI agents)
+### 必须
+- 把所有用户/URL/storage 数据当作不可信。通过框架转义渲染
+  (JSX/Vue/Svelte 用 `{}`,模板用 `{{ }}`)。原始 HTML 用经过审计的
+  sanitizer(DOMPurify)配合严格 allowlist。
+- 发送严格的 `Content-Security-Policy` 头。生产最低基线:
+  `default-src 'self'; script-src 'self' 'nonce-<random>'; object-src
+  'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self';
+  upgrade-insecure-requests`。使用 nonce 或 hash —— 永远不要在
+  `script-src` 里用 `'unsafe-inline'`。
+- 设置 `Strict-Transport-Security: max-age=63072000; includeSubDomains;
+  preload`、`X-Content-Type-Options: nosniff`、
+  `Referrer-Policy: no-referrer-when-downgrade` 或更严,以及
+  `Permissions-Policy` 来禁用未使用的特性。
+- 给从 CDN 加载的每个 `<script>` 和 `<link rel="stylesheet">` 加
+  `integrity="sha384-..." crossorigin="anonymous"`。
+- 给每个 `<iframe>` 加 `sandbox="allow-scripts allow-same-origin"`
+  (只加需要的属性)。默认不加任何 allow 标志。
+- 使用带 `Secure; HttpOnly; SameSite=Lax`(敏感流程用 `Strict`)的
+  cookie。无子域共享时使用 `__Host-` 前缀。
+- 在浏览器支持时启用 Trusted Types
+  (`Content-Security-Policy: require-trusted-types-for 'script'`),
+  让 DOM sink 赋值(`innerHTML`、给 script 用的
+  `setAttribute('src', ...)`)必须经过类型化的 policy。
 
-### ALWAYS
-- Treat all user/URL/storage data as untrusted. Render via framework
-  escaping (`{}` in JSX/Vue/Svelte, `{{ }}` in templating). For raw HTML use a
-  vetted sanitizer (DOMPurify) with a strict allowlist.
-- Send a strict `Content-Security-Policy` header. Minimum production baseline:
-  `default-src 'self'; script-src 'self' 'nonce-<random>'; object-src 'none';
-  base-uri 'self'; frame-ancestors 'none'; form-action 'self';
-  upgrade-insecure-requests`. Use nonces or hashes — never `'unsafe-inline'` for
-  `script-src`.
-- Set `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`,
-  `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer-when-downgrade`
-  or stricter, and `Permissions-Policy` to drop unused features.
-- Add `integrity="sha384-..." crossorigin="anonymous"` to every `<script>` and
-  `<link rel="stylesheet">` loaded from a CDN.
-- Add `sandbox="allow-scripts allow-same-origin"` (only the attributes you need)
-  to every `<iframe>`. Default to no allow flags.
-- Use cookies with `Secure; HttpOnly; SameSite=Lax` (or `Strict` for sensitive
-  flows). `__Host-` prefix when there's no subdomain sharing.
-- Enable Trusted Types where browser support allows
-  (`Content-Security-Policy: require-trusted-types-for 'script'`) so DOM-sink
-  assignments (`innerHTML`, `setAttribute('src', ...)` for scripts) must be
-  routed through a typed policy.
+### 禁止
+- 不要把不可信输入交给 `dangerouslySetInnerHTML`、`v-html`、
+  `{@html ...}`、`innerHTML =` 或 `document.write`。
+- 不要使用 `eval`、`new Function`、`setTimeout(string)`、
+  `setInterval(string)` 或 `Function('return x')`。
+- 不要把用户输入未经 scheme 校验地注入到 `href`、`src`、
+  `formaction`、`action` 或任何携带 URL 的属性(阻断 `javascript:`、
+  `data:`、`vbscript:`)。
+- 不要在没有 `rel="noopener noreferrer"` 的情况下使用
+  `target="_blank"` —— 会泄漏 `window.opener`。
+- 不要仅凭 id 信任 DOM 节点。DOM clobbering:攻击者控制的
+  `<input name="config">` 会遮蔽 `window.config`。
+- 不要在使用 `postMessage` 时不对 `event.origin` 做 allowlist 校验。
+- 不要把 JWT、refresh token 或 PII 存到 `localStorage` /
+  `sessionStorage` —— 任意 XSS 都能外泄。优先使用 HttpOnly cookie。
+- 不要在 JavaScript 里读写认证用 cookie 的 `document.cookie` —— 它们
+  本就应该是 HttpOnly。
 
-### NEVER
-- Use `dangerouslySetInnerHTML`, `v-html`, `{@html ...}`, `innerHTML =`, or
-  `document.write` with untrusted input.
-- Use `eval`, `new Function`, `setTimeout(string)`, `setInterval(string)`, or
-  `Function('return x')`.
-- Inject user input into `href`, `src`, `formaction`, `action`, or any URL-bearing
-  attribute without scheme validation (block `javascript:`, `data:`, `vbscript:`).
-- Use `target="_blank"` without `rel="noopener noreferrer"` — leaks
-  `window.opener`.
-- Trust DOM nodes by id alone. DOM clobbering: an attacker-controlled
-  `<input name="config">` shadows `window.config`.
-- Use `postMessage` without checking `event.origin` against an allowlist.
-- Store JWTs, refresh tokens, or PII in `localStorage` / `sessionStorage` —
-  any XSS exfiltrates them. Prefer HttpOnly cookies.
-- Read or write `document.cookie` from JavaScript for auth cookies — they
-  should be HttpOnly anyway.
+### 已知误报
+- 内部管理工具刻意渲染来自可信作者的 Markdown / 富文本时,可以在过了
+  sanitizer 之后使用 `dangerouslySetInnerHTML`;在 inline 注释中写明
+  sanitizer 调用。
+- 浏览器扩展有时需要在扩展 CSP 里使用 `'unsafe-eval'`;面向用户的 web
+  应用 CSP 仍应禁止。
+- 与非 same-origin 端点的 WebSocket 连接在服务端有 origin 校验时是
+  可以接受的。
 
-### KNOWN FALSE POSITIVES
-- Internal admin tools deliberately rendering Markdown / rich text from trusted
-  authors may use `dangerouslySetInnerHTML` after a sanitizer pass; document the
-  sanitizer call inline.
-- Browser extensions sometimes need `'unsafe-eval'` in the extension CSP;
-  user-facing web app CSP should still forbid it.
-- WebSocket connections to non-same-origin endpoints are fine when the server
-  performs origin validation.
+## 背景(面向人类)
 
-## Context (for humans)
+OWASP XSS Prevention Cheat Sheet 至今仍是转义规则的权威参考;CSP 是
+纵深防御层,让一次漏掉的转义变成一条记录上报,而不是一个被偷的会话。
+Trusted Types 是更新的、由浏览器强制的模式,把"这个有过 sanitizer
+吗?"从运行时审计移交给类型系统。
 
-The OWASP XSS Prevention Cheat Sheet is still the authoritative reference for the
-escaping rules; CSP is the defense-in-depth layer that turns one missed escape
-into a logged report rather than a stolen session. Trusted Types is the newer
-browser-enforced pattern that pushes the "did this go through a sanitizer?"
-question from runtime audit to type system.
+AI 生成的前端常常会顺手用 `innerHTML` 和 `dangerouslySetInnerHTML`,
+因为它们更短;这个 skill 就是对冲。
 
-AI-generated frontends commonly reach for `innerHTML` and `dangerouslySetInnerHTML`
-because they're shorter; this skill is the counterweight.
-
-## References
+## 参考
 
 - `rules/csp_defaults.json`
 - `rules/xss_sinks.json`
 - [OWASP XSS Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html).
 - [OWASP CSP Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html).
-- [CWE-79](https://cwe.mitre.org/data/definitions/79.html) — Cross-site scripting.
+- [CWE-79](https://cwe.mitre.org/data/definitions/79.html) —— 跨站脚本。
 - [Trusted Types (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API).

@@ -1,16 +1,17 @@
 ---
 id: iam-best-practices
 language: pt-BR
+source_revision: "6de0becf"
 version: "1.0.0"
-title: "Identity & Access Management Best Practices"
-description: "Least-privilege IAM design, key rotation, MFA enforcement, role assumption, and cross-account access patterns for AWS / GCP / Azure / Kubernetes"
+title: "Boas práticas de Identity & Access Management"
+description: "Desenho IAM com privilégio mínimo, rotação de chaves, enforcement de MFA, assunção de roles e padrões de acesso cross-account para AWS / GCP / Azure / Kubernetes"
 category: prevention
 severity: critical
 applies_to:
-  - "when generating IAM policies, roles, or trust documents"
-  - "when wiring CI/CD service accounts or workload identities"
-  - "when reviewing access-key creation, rotation, or revocation"
-  - "when designing cross-account or cross-tenant access"
+  - "ao gerar policies, roles ou documentos de trust IAM"
+  - "ao configurar service accounts de CI/CD ou workload identities"
+  - "ao revisar criação, rotação ou revogação de access keys"
+  - "ao desenhar acesso cross-account ou cross-tenant"
 languages: ["hcl", "yaml", "json", "python", "go", "typescript"]
 token_budget:
   minimal: 1100
@@ -30,113 +31,122 @@ sources:
   - "OWASP Cloud Security Top 10"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: pt-BR` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Boas práticas de Identity & Access Management
 
-# Identity & Access Management Best Practices
+## Regras (para agentes de IA)
 
-## Rules (for AI agents)
+### SEMPRE
+- Conceda as permissões **mínimas** necessárias para o trabalho
+  declarado do workload (NIST AC-6). Comece com uma policy
+  deny-by-default e adicione ações concretas com ARNs `Resource`
+  explícitos; nunca `Action: "*"` combinado com `Resource: "*"`.
+- Prefira **workload identity** (IAM roles for service accounts no
+  EKS, Workload Identity no GKE, Managed Identity no Azure) em vez de
+  access keys de longa duração. Access keys estáticas são exceção,
+  não o padrão.
+- Exija **MFA** para cada usuário IAM humano, especialmente qualquer
+  principal que possa assumir um role privilegiado. Force MFA via
+  condição na policy IAM (`aws:MultiFactorAuthPresent: true`), não só
+  por configuração no nível do diretório.
+- Faça rotação de access keys, service-account keys e signing keys
+  num cronograma documentado (≤ 90 dias). Detecte credenciais
+  inativas (≥ 90 dias sem uso) e desabilite-as automaticamente.
+- Use **assunção de role com `sts:AssumeRole` + ExternalId** para
+  trust entre contas. O ExternalId deve ser único por consumidor e
+  guardado como segredo em ambas as contas.
+- Emita credenciais **com escopo de sessão** com
+  `MaxSessionDuration ≤ 1h` para roles humanos e ≤ 12h para roles
+  break-glass. Sessões de longa duração derrotam a rotação.
+- Separe identidades de **deploy** e de **runtime**. O pipeline de
+  CI/CD recebe um role de deploy; o serviço em execução recebe um
+  role de runtime distinto sem permissões que mutem IAM.
+- Para Kubernetes RBAC, limite `Role` / `RoleBinding` a um único
+  namespace; use `ClusterRole` apenas para objetos verdadeiramente
+  cluster-wide. Audite bindings de `cluster-admin` em cada PR.
+- Logue cada chamada que muta IAM (CloudTrail / Cloud Audit Logs /
+  Azure Activity Log) num sink à prova de adulteração. Alerte sobre
+  mudanças de policy, `iam:PassRole`, `iam:CreateAccessKey` e
+  `sts:AssumeRole` vindos de principals inesperados.
+- Para acesso **break-glass** (root, owner, cluster-admin), exija
+  aprovação out-of-band (ex.: incidente PagerDuty + ticket) e emita
+  alerta imediato em cada uso.
+- Marque cada principal IAM com `owner`, `environment` e `purpose`.
+  Use essas tags em SCPs / org policies para limitar o raio de
+  impacto.
 
-### ALWAYS
-- Grant the **minimum** permissions required for the workload's stated job
-  (NIST AC-6). Start with a deny-by-default policy and add concrete actions
-  with explicit `Resource` ARNs; never `Action: "*"` combined with
-  `Resource: "*"`.
-- Prefer **workload identity** (IAM roles for service accounts on EKS,
-  GKE Workload Identity, Azure Managed Identity) over long-lived access
-  keys. Static access keys are the exception, not the default.
-- Require **MFA** for every human IAM user, especially any principal that
-  can assume a privileged role. Enforce MFA via an IAM policy condition
-  (`aws:MultiFactorAuthPresent: true`), not just a directory-level setting.
-- Rotate access keys, service-account keys, and signing keys on a documented
-  schedule (≤ 90 days). Detect inactive credentials (≥ 90 days unused) and
-  disable them automatically.
-- Use **role assumption with `sts:AssumeRole` + ExternalId** for cross-account
-  trust. The ExternalId must be unique per consumer and stored as a secret
-  in both accounts.
-- Issue **session-scoped** credentials with `MaxSessionDuration ≤ 1h` for
-  human roles and ≤ 12h for break-glass roles. Long-lived sessions defeat
-  rotation.
-- Separate **deploy** and **runtime** identities. The CI/CD pipeline gets a
-  deploy role; the running service gets a distinct runtime role with no
-  IAM-mutating permissions.
-- For Kubernetes RBAC, scope `Role` / `RoleBinding` to a single namespace;
-  use `ClusterRole` only for true cluster-wide objects. Audit
-  `cluster-admin` bindings on every PR.
-- Log every IAM-mutating call (CloudTrail / Cloud Audit Logs / Azure
-  Activity Log) to a tamper-evident sink. Alert on policy changes,
-  `iam:PassRole`, `iam:CreateAccessKey`, and `sts:AssumeRole` from
-  unexpected principals.
-- For **break-glass** access (root, owner, cluster-admin), require an
-  out-of-band approval (e.g., PagerDuty incident + ticket) and emit an
-  immediate alert on every use.
-- Tag every IAM principal with `owner`, `environment`, and `purpose`. Use
-  these tags in SCPs / org policies to constrain blast radius.
+### NUNCA
+- Use a conta **root** para operações do dia-a-dia. Credenciais root
+  recebem um dispositivo MFA de hardware, ficam guardadas offline e
+  só são usadas para o pequeno conjunto de tarefas root-only (ex.:
+  fechar conta, mudar plano de suporte).
+- Embuta access keys de longa duração no código-fonte, imagens de
+  container, AMIs ou variáveis de ambiente de CI quando há workload
+  identity disponível.
+- Conceda `iam:PassRole` com `Resource: "*"`. Sempre fixe os ARNs
+  dos roles que o caller pode passar para serviços downstream.
+- Conceda `iam:*` ou `sts:*` a um workload de runtime — essas são
+  permissões somente de tempo de deploy.
+- Compartilhe um mesmo IAM user entre múltiplos humanos ou serviços.
+  Um principal por identidade é o invariante de auditoria.
+- Use a managed policy `AdministratorAccess` (ou qualquer `*:*`) de
+  forma rotineira; trate-a como anexo exclusivo de break-glass.
+- Confie em qualquer assume-role cross-account sem condição
+  `ExternalId` para integrações de terceiros (Confused Deputy: AWS
+  Security Bulletin 2021).
+- Hardcode ARNs / resource IDs de AWS / GCP / Azure em documentos
+  de policy sem o escopo correspondente baseado em tags ou caminho
+  de organização (quando o número de recursos pode crescer).
+- Desabilite MFA de um principal para "corrigir" um problema de
+  login — rotacione o dispositivo, não remova a exigência.
+- Persista tokens de asserção OIDC / SAML além do TTL declarado.
+  Renove por re-asserção, não guardando o token original.
 
-### NEVER
-- Use the **root account** for day-to-day operations. Root credentials get a
-  hardware MFA device, are stored offline, and are used only for the small
-  set of root-only tasks (e.g., closing the account, changing the support
-  plan).
-- Embed long-lived access keys in source, container images, AMIs, or
-  CI environment variables when a workload identity is available.
-- Grant `iam:PassRole` with `Resource: "*"`. Always pin the role ARNs the
-  caller may pass to downstream services.
-- Grant `iam:*` or `sts:*` to a runtime workload — these are deploy-time
-  permissions only.
-- Share a single IAM user across multiple humans or services. One principal
-  per identity is the audit invariant.
-- Use `AdministratorAccess` (or any `*:*`) managed policy on a routine basis;
-  treat it as a break-glass-only attachment.
-- Trust any cross-account assume-role without an `ExternalId` condition for
-  third-party integrations (Confused Deputy: AWS Security Bulletin 2021).
-- Hard-code AWS / GCP / Azure ARNs / resource IDs in policy documents
-  without a corresponding tag-based or organization-path scope (when the
-  number of resources can grow).
-- Disable MFA for a principal to "fix" a login problem — rotate the device,
-  do not remove the requirement.
-- Persist OIDC / SAML assertion tokens beyond their stated TTL. Refresh by
-  re-assertion, not by storing the original token.
+### FALSOS POSITIVOS CONHECIDOS
+- `Resource: "*"` é aceitável para operações de leitura intrinseca-
+  mente com escopo de conta como `ec2:DescribeRegions` ou
+  `sts:GetCallerIdentity` — essas APIs não aceitam ARN de recurso.
+- Service-linked roles (ex.: `AWSServiceRoleForAutoScaling`) vêm
+  com permissões mais amplas que seus roles custom; isso é por
+  design e gerenciado pelo provider.
+- Operadores de bootstrap de uma só vez (Terraform runners numa
+  conta nova) frequentemente precisam de permissões elevadas;
+  limite por tag / SCP e revogue depois que o bootstrap terminar.
+- Emuladores de dev local (LocalStack, emulador do GCS) podem
+  aceitar qualquer credencial; é propriedade do emulador, não um
+  grant real.
 
-### KNOWN FALSE POSITIVES
-- `Resource: "*"` is acceptable for inherently account-scoped read
-  operations like `ec2:DescribeRegions` or `sts:GetCallerIdentity` — those
-  APIs do not accept a resource ARN.
-- Service-linked roles (e.g., `AWSServiceRoleForAutoScaling`) ship with
-  broader permissions than your custom roles; that is by design and
-  managed by the provider.
-- One-time bootstrap operators (Terraform-runners in a fresh account) often
-  need elevated permissions; gate by tag / SCP and revoke after the
-  bootstrap is complete.
-- Local-development emulators (LocalStack, GCS emulator) may accept any
-  credentials; that is a property of the emulator, not a real grant.
+## Contexto (para humanos)
 
-## Context (for humans)
+Identity & access management é a base de todo controle de segurança
+na cloud. Os modos de falha recorrentes são: policies permissivas
+demais (`*:*`), access keys de longa duração commitadas no git,
+ausência de MFA em contas privilegiadas e trust policies de
+`AssumeRole` sem `ExternalId`. São as mesmas causas-raiz
+documentadas nos vazamentos de Capital One (2019), Verkada (2021) e
+Uber (2022).
 
-Identity & access management is the foundation of every cloud security
-control. The recurring failure modes are: over-permissive policies
-(`*:*`), long-lived access keys checked into git, missing MFA on
-privileged accounts, and `AssumeRole` trust policies without an
-`ExternalId`. These are the same root causes documented in the Capital
-One (2019), Verkada (2021), and Uber (2022) breaches.
+Os controles de alta alavancagem são:
 
-The high-leverage controls are:
+1. **Workload identity acima de access keys.** Um pod no EKS que
+   assume um role via IRSA nunca precisa de uma credencial que
+   possa vazar.
+2. **MFA em cada humano, forçada por policy.** Uma senha vazada
+   sozinha já não basta para agir.
+3. **Grants de privilégio mínimo revisados em tempo de PR.** O
+   momento mais barato para restringir uma permissão é quando ela
+   está sendo adicionada — não seis meses depois quando um auditor
+   pergunta.
+4. **Rotação de chaves obrigatória.** Credenciais estáticas
+   envelhecem silenciosamente até virarem passivo; automatize a
+   rotação para que não seja pulada.
+5. **Trust cross-account com ExternalId.** A classe de ataque
+   Confused Deputy fica totalmente mitigada por uma convenção de
+   ExternalId.
 
-1. **Workload identity over access keys.** A pod in EKS that assumes a
-   role via IRSA never needs a credential to leak.
-2. **MFA on every human, enforced by policy.** A leaked password alone
-   is no longer sufficient to act.
-3. **Least-privilege grants reviewed at PR time.** The cheapest moment
-   to constrain a permission is when it's being added — not when an
-   auditor asks six months later.
-4. **Mandatory key rotation.** Static credentials silently age into
-   liabilities; automate the rotation so it is not skipped.
-5. **Cross-account trust with ExternalId.** The Confused Deputy class
-   of attacks is fully mitigated by an ExternalId convention.
+Este skill faz cumprir esses controles quando assistentes de IA
+geram policies IAM, documentos de trust ou identidades de CI/CD.
 
-This skill enforces those controls when AI assistants generate IAM
-policies, trust documents, or CI/CD identities.
-
-## References
+## Referências
 
 - `rules/iam_policy_invariants.json`
 - `rules/key_rotation_policy.json`

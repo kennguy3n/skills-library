@@ -1,16 +1,17 @@
 ---
 id: dependency-audit
 language: de
+source_revision: "fbb3a823"
 version: "1.0.0"
-title: "Dependency Audit"
-description: "Audit project dependencies for known vulnerabilities, malicious packages, and supply chain risks"
+title: "Dependency-Audit"
+description: "Projekt-Dependencies auf bekannte Vulnerabilities, malicious Packages und Supply-Chain-Risiken prüfen"
 category: supply-chain
 severity: high
 applies_to:
-  - "when adding a new dependency"
-  - "when upgrading dependencies"
-  - "when reviewing package manifests (package.json, requirements.txt, go.mod, Cargo.toml)"
-  - "before merging a PR that modifies dependency files"
+  - "beim Hinzufügen einer neuen Dependency"
+  - "beim Upgrade von Dependencies"
+  - "beim Review von Package-Manifests (package.json, requirements.txt, go.mod, Cargo.toml)"
+  - "vor dem Mergen eines PRs, der Dependency-Files ändert"
 languages: ["*"]
 token_budget:
   minimal: 400
@@ -25,61 +26,76 @@ sources:
   - "CISA Software Bill of Materials guidance"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: de` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Dependency-Audit
 
-# Dependency Audit
+## Regeln (für KI-Agenten)
 
-## Rules (for AI agents)
+### IMMER
+- Dependencies in Lockfiles auf exakte Versionen pinnen
+  (`package-lock.json`, `yarn.lock`, `Pipfile.lock`, `poetry.lock`,
+  `go.sum`, `Cargo.lock`).
+- Jeden neuen Dependency-Namen gegen die mitgelieferte Malicious-
+  Package-Liste in `vulnerabilities/supply-chain/malicious-packages/`
+  abgleichen.
+- Etablierte Pakete mit hohen Download-Zahlen, mehreren Maintainern und
+  jüngster Aktivität gegenüber neueren Alternativen für dasselbe
+  Problem bevorzugen.
+- Das Audit-Kommando des Package Managers ausführen (`npm audit`,
+  `pip-audit`, `cargo audit`, `govulncheck`) und gemeldete Issues vor
+  dem Merge prüfen.
+- Verifizieren, dass die auf der Package-Seite hinterlegte Repository-
+  URL tatsächlich existiert und mit dem verlinkten GitHub- / GitLab- /
+  Codeberg-Projekt übereinstimmt.
 
-### ALWAYS
-- Pin dependencies to exact versions in lockfiles (`package-lock.json`, `yarn.lock`,
-  `Pipfile.lock`, `poetry.lock`, `go.sum`, `Cargo.lock`).
-- Cross-check every new dependency name against the bundled malicious-package list in
-  `vulnerabilities/supply-chain/malicious-packages/`.
-- Prefer well-established packages with high download counts, multiple maintainers, and
-  recent activity over newer alternatives that solve the same problem.
-- Run the package manager's audit command (`npm audit`, `pip-audit`, `cargo audit`,
-  `govulncheck`) and review reported issues before merging.
-- Verify the package's repository URL on the package page actually exists and matches
-  the linked GitHub / GitLab / Codeberg project.
+### NIE
+- Eine Dependency hinzufügen, ohne die Version zu pinnen.
+- Pakete mit `--unsafe-perm` oder vergleichbaren Flags installieren,
+  die das Install-Sandboxing umgehen.
+- Eine Dependency hinzufügen, deren Name in der mitgelieferten
+  Malicious-Package-Liste auftaucht.
+- Ein brandneues Paket (innerhalb der letzten 30 Tage veröffentlicht)
+  ohne klare, dokumentierte Begründung hinzufügen — Typosquats sind
+  meist frisch publiziert.
+- Den `latest`-Tag in einem Produktiv-Lockfile oder in der FROM-Zeile
+  eines Container-Images verwenden.
+- Ungenutzte Dependencies committen — sie vergrößern die Angriffsfläche
+  gratis.
 
-### NEVER
-- Add a dependency without pinning its version.
-- Install packages with `--unsafe-perm` or equivalent flags that bypass install
-  sandboxing.
-- Add a dependency whose name appears in the bundled malicious-package list.
-- Add a brand-new package (published within the last 30 days) without a clear,
-  documented reason — typosquats are usually freshly published.
-- Use the `latest` tag in a production lockfile or container image FROM line.
-- Commit unused dependencies — they expand the attack surface for free.
+### BEKANNTE FALSCH-POSITIVE
+- Interne Monorepo-Pakete (`@yourco/*`), die als "unknown" gemeldet
+  werden — sie sind gültig, wenn der Namespace deiner Organisation
+  gehört.
+- Neue Patch-Versionen stabiler Pakete (z. B. `react@18.2.5` nach
+  `18.2.4`), die als "recently published" gemeldet werden — Patch-
+  Updates sind meist unproblematisch.
+- Paketnamen, die sich legitim mit jahrealten Malicious-Einträgen
+  überschneiden, weil der ursprüngliche Maintainer den Namen neu
+  registriert hat.
 
-### KNOWN FALSE POSITIVES
-- Internal monorepo packages (`@yourco/*`) flagged as "unknown" — these are valid when
-  the namespace is owned by your organization.
-- New patch versions of stable packages (e.g. `react@18.2.5` after `18.2.4`) flagged as
-  "recently published" — patch updates are usually fine.
-- Package names that legitimately overlap with malicious entries from years ago that
-  have been re-registered by the original maintainer.
+## Kontext (für Menschen)
 
-## Context (for humans)
+Supply-Chain-Angriffe wachsen seit 2019 schneller als jede andere
+Angriffskategorie. Die Kompromittierung eines beliebten Pakets
+(event-stream, ua-parser-js, colors, faker, xz-utils) oder die
+Veröffentlichung eines Typosquats (axois vs axios, urllib3 vs urlib3)
+verschafft dem Angreifer zuverlässig innerhalb von Stunden Tausende
+nachgelagerter Opfer.
 
-Supply chain attacks have grown faster than any other attack category since 2019.
-Compromise of a popular package (event-stream, ua-parser-js, colors, faker, xz-utils)
-or publication of a typosquat (axois vs axios, urllib3 vs urlib3) reliably nets the
-attacker thousands of downstream victims within hours.
+KI-Coding-Tools sind besonders verwundbar, weil das Modell keinen
+Einblick hat, wann ein Paket zuletzt kompromittiert wurde. Das Modell
+empfiehlt, was es im Training gelernt hat; wurde ein Maintainer nach
+dem Training-Cutoff kompromittiert, empfiehlt die KI fröhlich eine
+Backdoor-Version.
 
-AI coding tools are particularly vulnerable because the model has no visibility into
-when a package was last compromised. The model recommends what it learned during
-training; if a maintainer was compromised after the training cutoff, the AI happily
-recommends a backdoored version.
+Dieser Skill kompensiert das, indem er die Live-Malicious-Package-
+Datenbank in den Arbeitskontext der KI einspeist und verlangt, dass
+die KI sie konsultiert, bevor sie eine Dependency hinzufügt.
 
-This skill compensates by injecting the live malicious-package database into the AI's
-working context and requiring the AI to consult it before adding any dependency.
+## Referenzen
 
-## References
-
-- `rules/known_malicious.json` — symlink or copy of the relevant
-  `vulnerabilities/supply-chain/malicious-packages/*.json` files.
+- `rules/known_malicious.json` — Symlink oder Kopie der jeweils
+  relevanten `vulnerabilities/supply-chain/malicious-packages/*.json`-
+  Files.
 - [OWASP Top 10 A06](https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/).
 - [npm Advisories](https://github.com/advisories?query=type%3Aunreviewed+ecosystem%3Anpm).
 - [PyPI Advisory Database](https://github.com/pypa/advisory-database).

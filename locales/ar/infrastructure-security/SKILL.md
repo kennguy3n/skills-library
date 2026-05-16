@@ -2,16 +2,17 @@
 id: infrastructure-security
 language: ar
 dir: rtl
+source_revision: "fbb3a823"
 version: "1.0.0"
-title: "Infrastructure Security"
-description: "Apply hardening rules for Kubernetes, Docker, and Terraform infrastructure-as-code"
+title: "أمن البنية التحتيّة"
+description: "تطبيق قواعد تصليب لـ Kubernetes وDocker وinfrastructure-as-code لـ Terraform"
 category: hardening
 severity: high
 applies_to:
-  - "when generating Dockerfile content"
-  - "when generating Kubernetes manifests or Helm charts"
-  - "when generating Terraform or CloudFormation"
-  - "when reviewing IaC PRs"
+  - "عند توليد محتوى Dockerfile"
+  - "عند توليد manifests لـ Kubernetes أو charts لـ Helm"
+  - "عند توليد Terraform أو CloudFormation"
+  - "عند مراجعة PRs لـ IaC"
 languages: ["yaml", "hcl", "dockerfile"]
 token_budget:
   minimal: 650
@@ -27,59 +28,64 @@ sources:
   - "HashiCorp Terraform Security Best Practices"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: ar` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# أمن البنية التحتيّة
 
-# Infrastructure Security
+## القواعد (لوكلاء الذكاء الاصطناعي)
 
-## Rules (for AI agents)
-
-### ALWAYS
-- Pin base images by digest (`FROM image@sha256:...`) when building containers for
-  production. Tags are mutable; digests are not.
-- Run containers as a non-root `USER` other than `0`. Add `securityContext:
-  runAsNonRoot: true` to K8s pod specs.
-- Set explicit Kubernetes resource requests AND limits (`requests.cpu`,
-  `requests.memory`, `limits.cpu`, `limits.memory`).
-- Drop all Linux capabilities and re-add only what's required
+### دائمًا
+- ثبِّت صور الأساس بـ digest (`FROM image@sha256:...`) عند بناء
+  containers للإنتاج. فالـ tags قابلة للتغيير، والـ digests لا.
+- شغِّل containers بوصف `USER` غير root مختلف عن `0`. وأضف
+  `securityContext: runAsNonRoot: true` إلى pod specs لـ K8s.
+- اضبط `requests` و`limits` صريحة لموارد Kubernetes (`requests.cpu`،
+  و`requests.memory`، و`limits.cpu`، و`limits.memory`).
+- أَسقِط جميع capabilities لـ Linux، ثمّ أَعِد إضافة ما يَلزم فقط
   (`securityContext.capabilities.drop: ["ALL"]`).
-- Mark filesystems read-only (`securityContext.readOnlyRootFilesystem: true`) when the
-  workload doesn't legitimately need write access.
-- Enable encryption at rest (`enable_kms_encryption`, `kms_key_id`,
-  `server_side_encryption_configuration`) for S3 buckets, EBS volumes, RDS, DynamoDB.
-- Set `block_public_access` on every S3 bucket unless the workload genuinely serves
-  public content.
-- Apply the principle of least privilege to IAM policies: name explicit actions and
-  resources; avoid `*:*` and `Resource: "*"` outside of intentional admin policies.
+- اجعل filesystems للقراءة فقط
+  (`securityContext.readOnlyRootFilesystem: true`) حين لا يحتاج
+  الـ workload فعلًا إلى وصول كتابة.
+- فعِّل التشفير عند الراحة (`enable_kms_encryption`، و`kms_key_id`،
+  و`server_side_encryption_configuration`) لـ S3 buckets، وحَجوم
+  EBS، وRDS، وDynamoDB.
+- اضبط `block_public_access` على كل bucket لـ S3 ما لم يُقدِّم
+  الـ workload محتوى عامًّا حقيقيًّا.
+- طبِّق مبدأ أقلّ امتياز على policies لـ IAM: سَمِّ actions وresources
+  بوضوح؛ وتجنَّب `*:*` و`Resource: "*"` خارج policies الإداريّة
+  المُتعَمَّدة.
 
-### NEVER
-- Use `latest` as the image tag in production manifests.
-- Run a container with `--privileged` flag or `securityContext.privileged: true`.
-- Mount the host `/var/run/docker.sock` into a container.
-- Expose Kubernetes services with `type: LoadBalancer` on the open internet without an
-  ingress controller, WAF, or authentication layer in front.
-- Hardcode AWS keys / GCP service-account keys / Azure client secrets in IaC. Use
-  IRSA, GKE Workload Identity, Azure managed identities, or the platform-native
-  equivalent.
-- Create S3 buckets with `acl = "public-read"` for buckets containing anything other
-  than intentionally public assets.
-- Allow `0.0.0.0/0` ingress on database, SSH, RDP, or admin ports.
-- Disable `node_to_node_encryption` on Elasticsearch / OpenSearch.
+### أبدًا
+- لا تستخدم `latest` بوصفه tag للصورة في manifests الإنتاج.
+- لا تُشغِّل container بـ flag `--privileged` أو
+  `securityContext.privileged: true`.
+- لا تُركِّب `/var/run/docker.sock` الخاصّ بالمضيف داخل container.
+- لا تَكشف خدمات Kubernetes بـ `type: LoadBalancer` على الإنترنت
+  المفتوح بلا ingress controller أو WAF أو طبقة مصادقة في الأمام.
+- لا تُصلِّب مفاتيح AWS / مفاتيح service-account لـ GCP / client
+  secrets لـ Azure داخل IaC. استخدم IRSA، أو Workload Identity لـ
+  GKE، أو managed identities لـ Azure، أو المُكافئ المحلّيّ لكلّ
+  منصّة.
+- لا تُنشِئ S3 buckets بـ `acl = "public-read"` لـ buckets تحوي أيّ
+  شيء غير أصول عامّة مقصودة.
+- لا تَسمح بـ ingress من `0.0.0.0/0` على منافذ قواعد البيانات، أو
+  SSH، أو RDP، أو الإدارة.
+- لا تُعطِّل `node_to_node_encryption` في Elasticsearch /
+  OpenSearch.
 
-### KNOWN FALSE POSITIVES
-- Pinning image digests is not always practical in dev / preview environments — tag
-  pinning (e.g. `node:20.11.1-alpine`) is acceptable there.
-- `Resource: "*"` is acceptable in policies that are documented admin-only with
-  explicit `Condition` constraints.
-- `runAsNonRoot: false` is acceptable when the workload genuinely requires root (e.g.,
-  binding to port 80, certain network tooling). Document why.
+### إيجابيات خاطئة معروفة
+- تثبيت digests الصور ليس عمليًّا دائمًا في بيئات dev / preview —
+  تثبيت الـ tag (مثلًا `node:20.11.1-alpine`) مقبول هناك.
+- `Resource: "*"` مقبول في policies موثَّقة بأنّها admin-only فقط،
+  مع قيود `Condition` صريحة.
+- `runAsNonRoot: false` مقبول حين يحتاج الـ workload فعلًا إلى root
+  (مثلًا الارتباط بالمنفذ 80، أو أدوات شبكة معيَّنة). وثِّق السبب.
 
-## Context (for humans)
+## السياق (للبشر)
 
-Misconfigured infrastructure is the dominant cause of cloud breaches. The patterns
-above codify the most-violated CIS benchmark items into rules the AI applies during
-generation, not after deployment.
+البنية التحتيّة المُساءُ ضبطها هي السبب الأكثر هيمنةً لاختراقات
+السحابة. تُحوِّل الأنماط أعلاه أكثر بنود benchmarks CIS انتهاكًا إلى
+قواعد يُطبِّقها الذكاء الاصطناعيّ أثناء التوليد، لا بعد النشر.
 
-## References
+## مراجع
 
 - `checklists/k8s_hardening.yaml`
 - `checklists/docker_security.yaml`

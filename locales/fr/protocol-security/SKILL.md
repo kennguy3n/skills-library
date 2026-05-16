@@ -1,15 +1,16 @@
 ---
 id: protocol-security
 language: fr
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Protocol Security"
-description: "TLS 1.2+, mTLS, certificate validation, HSTS, gRPC channel credentials, WebSocket origin checks"
+title: "Sécurité des protocoles"
+description: "TLS 1.2+, mTLS, validation de certificat, HSTS, credentials de canal gRPC, checks d'Origin WebSocket"
 category: hardening
 severity: critical
 applies_to:
-  - "when generating HTTP / gRPC / WebSocket / SMTP / database clients & servers"
-  - "when generating TLS configuration in code or platform config"
-  - "when generating service-to-service auth"
+  - "lors de la génération de clients et serveurs HTTP / gRPC / WebSocket / SMTP / base de données"
+  - "lors de la génération de configuration TLS dans le code ou la config plateforme"
+  - "lors de la génération d'auth service-à-service"
 languages: ["*"]
 token_budget:
   minimal: 1000
@@ -26,77 +27,85 @@ sources:
   - "CWE-295, CWE-326, CWE-319, CWE-757"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: fr` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Sécurité des protocoles
 
-# Protocol Security
+## Règles (pour les agents IA)
 
-## Rules (for AI agents)
+### TOUJOURS
+- Par défaut **TLS 1.3** pour les nouveaux clients et serveurs ;
+  n'autoriser TLS 1.2 que pour l'interop avec des pairs legacy.
+  Désactiver TLS 1.0/1.1, SSLv2/v3.
+- Valider le certificat serveur : chaîne vers une CA de confiance,
+  nom correspondant au hostname attendu (ou SAN), non expiré, non
+  révoqué (OCSP stapling activé).
+- Activer HSTS sur les réponses HTTP pour tout ce qui est servi en
+  HTTPS : `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`.
+  Inscrire le host à la HSTS preload list une fois stable.
+- Utiliser **mutual TLS** (mTLS) pour le trafic service-à-service à
+  l'intérieur d'un trust domain (mesh : Istio / Linkerd ; standalone
+  : SPIFFE / SPIRE pour l'identité).
+- Pour les clients/serveurs gRPC, utiliser `grpc.secure_channel` /
+  `grpc.SslCredentials` / `credentials.NewTLS` — jamais
+  `insecure_channel` en production.
+- Pour les serveurs WebSocket, valider le header `Origin` contre une
+  allowlist et authentifier le handshake (cookies + token CSRF, ou
+  un bearer en query-string utilisé une fois à l'upgrade et
+  re-validé).
+- Pour les tokens service-à-service, préférer des **SPIFFE IDs**
+  (`spiffe://trust-domain/...`) avec des certs de workload courts,
+  plutôt que des API keys long terme.
+- Pinner le certificat (pinning de public key) pour les clients
+  mobile / desktop à fort risque qui rappellent le backend de
+  l'opérateur.
 
-### ALWAYS
-- Default to **TLS 1.3** for new clients and servers; permit TLS 1.2 only for
-  interop with legacy peers. Disable TLS 1.0/1.1, SSLv2/v3.
-- Validate the server certificate: chain to a trusted CA, name matches the
-  expected hostname (or SAN), not expired, not revoked (OCSP stapling
-  enabled).
-- Enable HSTS on HTTP responses for everything served over HTTPS:
-  `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`.
-  Add the host to the HSTS preload list once stable.
-- Use **mutual TLS** (mTLS) for service-to-service traffic inside a trust
-  domain (mesh: Istio / Linkerd; standalone: SPIFFE / SPIRE for identity).
-- For gRPC clients/servers, use `grpc.secure_channel` /
-  `grpc.SslCredentials` / `credentials.NewTLS` — never `insecure_channel`
-  in production.
-- For WebSocket servers, validate the `Origin` header against an allowlist
-  and authenticate the handshake (cookies + CSRF token, or a query-string
-  bearer used once at upgrade and re-validated).
-- For service-to-service tokens, prefer **SPIFFE IDs** (`spiffe://trust-domain/...`)
-  with short-lived workload certs over long-lived API keys.
-- Pin the certificate (public key pinning) for high-risk mobile / desktop
-  clients calling back to the operator's own backend.
-
-### NEVER
-- Disable certificate verification (`InsecureSkipVerify: true`,
+### JAMAIS
+- Désactiver la vérification du certificat (`InsecureSkipVerify: true`,
   `verify=False`, `rejectUnauthorized: false`,
-  `CURLOPT_SSL_VERIFYPEER=0`). The only acceptable use is in a unit test
-  that runs against a localhost ephemeral cert.
-- Implement a custom `X509TrustManager` / `HostnameVerifier` /
-  `URLSessionDelegate` / `ServerCertificateValidationCallback` that
-  unconditionally returns trusted.
-- Mix HTTP and HTTPS resources on the same page (mixed content) — modern
-  browsers will block subresources, but APIs are still vulnerable to MITM
-  downgrade.
-- Send tokens / passwords over plain HTTP — even on localhost in dev unless
-  the dev environment is documented as not security-relevant.
-- Use `grpc.insecure_channel(...)` in production code.
-- Trust the `Host` / `X-Forwarded-Host` / `Forwarded` header without an
-  allowlist; absolute URLs built from `Host` enable host-header injection
-  and password-reset poisoning.
-- Forward incoming `Authorization` / `Cookie` headers blindly across origins
-  in your service mesh — re-derive identity from mTLS or a service token.
-- Enable TLS renegotiation on clients you control; pin to `tls.NoRenegotiation`
-  where available.
+  `CURLOPT_SSL_VERIFYPEER=0`). Le seul usage acceptable est dans un
+  test unitaire qui s'exécute contre un cert localhost éphémère.
+- Implémenter un `X509TrustManager` / `HostnameVerifier` /
+  `URLSessionDelegate` / `ServerCertificateValidationCallback`
+  custom qui retourne « trusted » sans condition.
+- Mélanger des ressources HTTP et HTTPS sur la même page (mixed
+  content) — les navigateurs modernes bloqueront les sous-ressources,
+  mais les APIs restent vulnérables au downgrade MITM.
+- Envoyer des tokens / mots de passe sur HTTP en clair — même sur
+  localhost en dev, à moins que l'environnement de dev soit
+  documenté comme non pertinent pour la sécurité.
+- Utiliser `grpc.insecure_channel(...)` en code de production.
+- Faire confiance au header `Host` / `X-Forwarded-Host` /
+  `Forwarded` sans allowlist ; les URLs absolues construites à
+  partir de `Host` permettent du host-header injection et du
+  password-reset poisoning.
+- Faire suivre aveuglément les headers `Authorization` / `Cookie`
+  entrants au travers des origins dans votre service mesh — re-
+  dériver l'identité depuis mTLS ou un service token.
+- Activer la TLS renegotiation sur les clients que vous contrôlez ;
+  pinner sur `tls.NoRenegotiation` quand disponible.
 
-### KNOWN FALSE POSITIVES
-- Localhost-only dev servers with self-signed certs and explicit
-  documentation are fine; CI tests against ephemeral CA-signed certs are
-  fine.
-- A small number of legacy enterprise integrations require TLS 1.2 with a
-  specific cipher; document the exception and isolate the integration
-  behind a proxy.
-- Public read-only endpoints (e.g., status pages) can legitimately serve
-  over HTTP for cacheability, though HTTPS is still preferred.
+### FAUX POSITIFS CONNUS
+- Les serveurs dev en localhost-uniquement avec des certs
+  self-signed et une documentation explicite sont OK ; les tests CI
+  contre des certs éphémères signés par CA sont OK.
+- Un petit nombre d'intégrations legacy enterprise requièrent TLS
+  1.2 avec un cipher spécifique ; documenter l'exception et isoler
+  l'intégration derrière un proxy.
+- Les endpoints publics en lecture seule (ex., pages de statut)
+  peuvent légitimement être servis en HTTP pour la cacheabilité,
+  bien que HTTPS reste préféré.
 
-## Context (for humans)
+## Contexte (pour les humains)
 
-NIST SP 800-52 Rev. 2 is the authoritative US-government TLS reference;
-RFC 8446 is TLS 1.3 itself. The recurring failure mode in code review is
-**`InsecureSkipVerify`** (or its equivalents in every language) — usually
-introduced "to make tests work" and never reverted.
+NIST SP 800-52 Rev. 2 est la référence TLS faisant autorité au sein
+du gouvernement US ; RFC 8446 c'est TLS 1.3 lui-même. Le mode
+d'échec récurrent en code review est **`InsecureSkipVerify`** (ou
+ses équivalents dans chaque langage) — en général introduit « pour
+faire passer les tests » et jamais retiré.
 
-This skill pairs naturally with `crypto-misuse` (algorithm choice) and
-`auth-security` (token issuance).
+Ce skill s'accorde naturellement avec `crypto-misuse` (choix
+d'algorithme) et `auth-security` (émission de tokens).
 
-## References
+## Références
 
 - `rules/tls_defaults.json`
 - `rules/cert_validation_sinks.json`
