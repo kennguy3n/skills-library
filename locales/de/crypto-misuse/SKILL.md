@@ -1,15 +1,16 @@
 ---
 id: crypto-misuse
 language: de
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "Cryptographic Misuse"
-description: "Block weak ciphers, predictable RNG, undersized keys, slow-hash misuse, and non-constant-time comparisons"
+title: "Krypto-Fehlbenutzung"
+description: "Schwache Cipher, vorhersagbare RNG, zu kleine Keys, Slow-Hash-Misbrauch und non-constant-time Vergleiche blockieren"
 category: prevention
 severity: critical
 applies_to:
-  - "when generating code that hashes / encrypts / signs"
-  - "when generating code that compares secrets / MACs / tokens"
-  - "when wiring TLS settings, key sizes, or RNG"
+  - "beim Erzeugen von Code, der hasht / verschlüsselt / signiert"
+  - "beim Erzeugen von Code, der Secrets / MACs / Tokens vergleicht"
+  - "beim Verdrahten von TLS-Settings, Key-Größen oder RNG"
 languages: ["*"]
 token_budget:
   minimal: 1000
@@ -25,78 +26,87 @@ sources:
   - "CWE-327, CWE-338, CWE-916, CWE-208"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: de` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Krypto-Fehlbenutzung
 
-# Cryptographic Misuse
+## Regeln (für KI-Agenten)
 
-## Rules (for AI agents)
-
-### ALWAYS
-- Use the language / platform's cryptographic library. Python: `cryptography`,
-  `secrets`. JavaScript: Web Crypto, `crypto.webcrypto`, Node `crypto`. Go:
-  `crypto/*`, `golang.org/x/crypto`. Java: JCE/Bouncy Castle. .NET:
+### IMMER
+- Die Krypto-Bibliothek der Sprache / Plattform verwenden. Python:
+  `cryptography`, `secrets`. JavaScript: Web Crypto,
+  `crypto.webcrypto`, Node `crypto`. Go: `crypto/*`,
+  `golang.org/x/crypto`. Java: JCE / Bouncy Castle. .NET:
   `System.Security.Cryptography`.
-- Use a cryptographically secure RNG: Python `secrets.token_bytes` /
-  `secrets.token_urlsafe`, JS `crypto.getRandomValues` / `crypto.randomBytes`,
-  Go `crypto/rand.Read`, Java `SecureRandom`.
-- Hash passwords with a slow KDF tuned for ~100 ms on production hardware:
-  **argon2id** (preferred, RFC 9106 parameters: m=64 MiB, t=3, p=1), **scrypt**
-  (N=2^17, r=8, p=1), or **bcrypt** (cost ≥ 12). Always with a per-user random
-  salt.
-- Encrypt with AEAD (authenticated encryption): AES-256-GCM, ChaCha20-Poly1305,
-  or AES-256-GCM-SIV. Generate a fresh random nonce per encryption.
-- Use TLS 1.2+ (TLS 1.3 strongly preferred). Disable TLS 1.0/1.1, SSLv3,
-  RC4, 3DES, and export ciphers.
-- Compare MACs / signatures / tokens with constant-time helpers:
+- Einen kryptographisch sicheren RNG verwenden: Python
+  `secrets.token_bytes` / `secrets.token_urlsafe`, JS
+  `crypto.getRandomValues` / `crypto.randomBytes`, Go
+  `crypto/rand.Read`, Java `SecureRandom`.
+- Passwörter mit einem langsamen KDF hashen, abgestimmt auf ~100 ms
+  auf Production-Hardware: **argon2id** (bevorzugt, RFC-9106-
+  Parameter: m=64 MiB, t=3, p=1), **scrypt** (N=2^17, r=8, p=1) oder
+  **bcrypt** (Cost ≥ 12). Immer mit einem zufälligen Salt pro Nutzer.
+- Mit AEAD (authenticated encryption) verschlüsseln: AES-256-GCM,
+  ChaCha20-Poly1305 oder AES-256-GCM-SIV. Pro Verschlüsselung einen
+  frischen zufälligen Nonce erzeugen.
+- TLS 1.2+ verwenden (TLS 1.3 stark bevorzugt). TLS 1.0/1.1, SSLv3,
+  RC4, 3DES und Export-Cipher deaktivieren.
+- MACs / Signaturen / Tokens mit Constant-Time-Helpern vergleichen:
   `hmac.compare_digest`, `crypto.subtle.timingSafeEqual`,
   `subtle.ConstantTimeCompare`, `MessageDigest.isEqual`,
   `CryptographicOperations.FixedTimeEquals`.
-- For asymmetric keys: RSA ≥ 3072 bits, ECDSA P-256 or P-384, Ed25519, X25519.
+- Für asymmetrische Keys: RSA ≥ 3072 Bit, ECDSA P-256 oder P-384,
+  Ed25519, X25519.
 
-### NEVER
-- Use MD5 or SHA-1 for signatures, certificates, password storage, or message
-  authentication. (They remain valid for incidental non-security uses like
-  ETag / file deduplication if explicitly documented.)
-- Use DES, 3DES, RC4, or Blowfish for new code.
-- Use ECB mode. Use CBC without HMAC over the ciphertext. Use CTR/GCM with a
-  reused nonce.
-- Use unsalted hashes for passwords. Use `sha256(password)` for password
-  storage — it's a fast hash; brute force is trivial.
-- Use `Math.random()`, Python `random`, `rand()` in C / Go for tokens, IDs,
-  nonces, or passwords. They are predictable.
-- Hardcode IVs/nonces, salts, or keys. Never reuse a GCM/Poly1305 nonce under
-  the same key.
-- Compare secrets with `==`, `===`, `strcmp`, `bytes.Equal` — these are
-  timing-leaky.
-- Roll your own crypto (custom XOR, custom HMAC, custom Diffie–Hellman, custom
-  signature schemes). Use audited primitives.
+### NIE
+- MD5 oder SHA-1 für Signaturen, Zertifikate, Passwort-Speicherung
+  oder Message-Authentifizierung verwenden. (Bleiben gültig für
+  inzidentelle Non-Security-Nutzungen wie ETag /
+  Datei-Deduplikation, sofern explizit dokumentiert.)
+- DES, 3DES, RC4 oder Blowfish für neuen Code verwenden.
+- ECB-Modus verwenden. CBC ohne HMAC über den Ciphertext verwenden.
+  CTR/GCM mit wiederverwendetem Nonce verwenden.
+- Ungesalzene Hashes für Passwörter verwenden.
+  `sha256(password)` für Passwort-Speicherung verwenden — es ist ein
+  Fast-Hash; Brute Force ist trivial.
+- `Math.random()`, Python `random`, `rand()` in C / Go für Tokens,
+  IDs, Nonces oder Passwörter verwenden. Sind vorhersagbar.
+- IVs/Nonces, Salts oder Keys hardcoden. Niemals einen GCM/Poly1305-
+  Nonce unter demselben Key wiederverwenden.
+- Secrets mit `==`, `===`, `strcmp`, `bytes.Equal` vergleichen —
+  diese leaken über Timing.
+- Eigene Krypto bauen (Custom-XOR, Custom-HMAC, Custom-Diffie-Hellman,
+  Custom-Signaturschemata). Auditiierte Primitives verwenden.
 
-### KNOWN FALSE POSITIVES
-- MD5 / SHA-1 in non-security contexts: HTTP ETag computation, content
-  deduplication, cache keying for non-sensitive data, fixture fingerprinting.
-  Annotate these uses with a `// non-security use: ...` comment.
-- Test vectors and KAT (Known Answer Test) values intentionally hardcode IVs,
-  keys, and plaintexts — they belong in `tests/` not production.
-- Legacy interop: some industry / government protocols still require specific
-  legacy ciphers. Document the exception and isolate behind a feature flag.
+### BEKANNTE FALSCH-POSITIVE
+- MD5 / SHA-1 in Non-Security-Kontexten: HTTP-ETag-Berechnung,
+  Content-Deduplikation, Cache-Keying für nicht-sensible Daten,
+  Fixture-Fingerprinting. Diese Verwendungen mit einem
+  `// non-security use: ...` Kommentar annotieren.
+- Testvektoren und KAT-Werte (Known Answer Test) hardcoden absichtlich
+  IVs, Keys und Plaintexts — gehören in `tests/`, nicht in
+  Production.
+- Legacy-Interop: einige Industrie-/Behörden-Protokolle verlangen
+  noch spezifische Legacy-Cipher. Ausnahme dokumentieren und hinter
+  einem Feature-Flag isolieren.
 
-## Context (for humans)
+## Kontext (für Menschen)
 
-NIST SP 800-131A Rev. 2 is the authoritative US-government deprecation roadmap
-for algorithms; OWASP's storage cheat sheet is the practical "do these things"
-companion. The recurring failure modes are: fast hash for passwords (CWE-916),
-predictable RNG for tokens (CWE-338), broken cipher choice (CWE-327), and
-non-constant-time comparison of secrets (CWE-208).
+NIST SP 800-131A Rev. 2 ist die autoritative US-Regierungs-
+Deprecation-Roadmap für Algorithmen; das OWASP-Storage-Cheat-Sheet ist
+das praktische "mach diese Dinge"-Begleitdokument. Wiederkehrende
+Failure-Modes: Fast-Hash für Passwörter (CWE-916), vorhersagbarer RNG
+für Tokens (CWE-338), kaputte Cipher-Wahl (CWE-327) und
+non-constant-time Vergleich von Secrets (CWE-208).
 
-AI assistants tend to mirror whatever crypto example was popular on Stack
-Overflow circa 2014, which means lots of `sha256(password)` and `AES-CBC` with
-manual padding. This skill is the counterweight.
+KI-Assistenten neigen dazu, das auf Stack Overflow circa 2014 populäre
+Krypto-Beispiel zu spiegeln — was viel `sha256(password)` und
+`AES-CBC` mit manuellem Padding bedeutet. Dieser Skill ist das
+Gegengewicht.
 
-## References
+## Referenzen
 
 - `rules/algorithm_blocklist.json`
 - `rules/key_size_minimums.json`
 - [NIST SP 800-131A Rev. 2](https://csrc.nist.gov/publications/detail/sp/800-131a/rev-2/final).
 - [OWASP Cryptographic Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html).
-- [CWE-327](https://cwe.mitre.org/data/definitions/327.html) — Broken or risky crypto.
-- [CWE-916](https://cwe.mitre.org/data/definitions/916.html) — Insufficient computational effort for password hash.
+- [CWE-327](https://cwe.mitre.org/data/definitions/327.html) — Gebrochene oder riskante Krypto.
+- [CWE-916](https://cwe.mitre.org/data/definitions/916.html) — Unzureichender Rechenaufwand für Passwort-Hash.

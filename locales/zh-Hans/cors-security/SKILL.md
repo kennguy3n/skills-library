@@ -1,15 +1,16 @@
 ---
 id: cors-security
 language: zh-Hans
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "CORS Security"
-description: "Strict CORS configuration: no wildcard with credentials, allowlist-based origins, sensible preflight cache, minimal exposed headers"
+title: "CORS 安全"
+description: "严格 CORS 配置:带凭据时不允许通配符,来源走 allowlist,合理的 preflight 缓存,最小化的暴露 header"
 category: prevention
 severity: high
 applies_to:
-  - "when generating CORS middleware or framework config"
-  - "when wiring API Gateway / Cloud Front / Nginx CORS headers"
-  - "when reviewing a cross-origin browser-facing endpoint"
+  - "在生成 CORS 中间件或框架配置时"
+  - "在连接 API Gateway / CloudFront / Nginx 的 CORS header 时"
+  - "在评审面向浏览器的跨源端点时"
 languages: ["*"]
 token_budget:
   minimal: 1000
@@ -24,75 +25,61 @@ sources:
   - "Fetch Living Standard (CORS)"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: zh-Hans` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# CORS 安全
 
-# CORS Security
+## 规则（面向 AI 代理）
 
-## Rules (for AI agents)
+### 必须
+- 来源使用 **allowlist**,不要用 `*`。仅当传入的 `Origin` 与配置中已知
+  条目(或运营方控制的主机名预编译正则)匹配时,才回显该 header。
+- 当响应包含凭据(cookie、`Authorization`)时,既要设置
+  `Access-Control-Allow-Credentials: true`,**又**要保证
+  `Access-Control-Allow-Origin` 是单一明确的来源字符串 —— 决不能是 `*`。
+- 当响应正文依赖请求的 `Origin` 时,在响应中包含 `Vary: Origin`,以免
+  缓存把一个来源的响应发给另一个来源。
+- 把 preflight 的 `Access-Control-Allow-Methods` 限制为该端点实际接受的
+  方法;把 `Access-Control-Allow-Headers` 限制为实际消费的 header。
+- 把 `Access-Control-Max-Age` 设为合理值(生产环境 ≤ 86400),既能摊
+  平 preflight 的延迟,又不至于把错的 allowlist 长期固化。
+- 在代码(或版本化的配置文件)中维护 allowlist,而不是从数据库派生 ——
+  这样攻击者就不能通过插入一行数据加入自己的来源。
 
-### ALWAYS
-- Use an **allowlist** of origins, not `*`. Reflect the incoming `Origin`
-  header only when it matches a known entry from configuration (or matches
-  a precompiled regex of operator-controlled hostnames).
-- If responses include credentials (cookies, `Authorization`), set
-  `Access-Control-Allow-Credentials: true` **and** ensure
-  `Access-Control-Allow-Origin` is a single specific origin string —
-  never `*`.
-- Include `Vary: Origin` on responses whose body depends on the request
-  `Origin`, so caches don't serve one origin's response to another.
-- Restrict preflight `Access-Control-Allow-Methods` to the actual methods
-  the endpoint accepts; restrict `Access-Control-Allow-Headers` to the
-  actual headers consumed.
-- Set `Access-Control-Max-Age` to a sensible value (≤ 86400 in production)
-  to amortize preflight latency without locking in a bad allowlist.
-- Maintain the allowlist in code (or in a config file checked into
-  source), not derived from a database — so attackers can't add their
-  origin by inserting a row.
+### 禁止
+- 不要把 `Access-Control-Allow-Origin: *` 与
+  `Access-Control-Allow-Credentials: true` 同时设置。Fetch 规范明令禁止
+  —— 浏览器会拒绝响应,但更大的问题是上游 proxy / 缓存可能已经把它
+  泄露了。
+- 不要在没有 allowlist 校验的情况下回显 `Origin` header(对任何传入
+  来源都返回 `Access-Control-Allow-Origin: <Origin>`)。对凭据而言,这
+  与 `*` 等价,而且缓存行为更糟。
+- 不要把 `null` 当作合法 Origin。Chrome 在 sandboxed iframe、`data:`
+  URI 和 `file://` 下会发送 `null` —— 这些都不应当带凭据访问你的 API。
+- 不要用 `.*\.example\.com$` 之类的正则放行任意子域,而不考虑子域劫持。
+  把具体子域显式 pin 下来;把 `*.example.com` 视作与子域所有权控制绑
+  在一起的有意决定。
+- 不要通过 `Access-Control-Expose-Headers` 暴露内部 header。仅暴露前端
+  真正需要的最小集合。
+- 不要把 CORS 当作授权机制。CORS 是*浏览器*策略;它无法挡住
+  server-to-server、curl 或非浏览器客户端。请做正经的请求认证。
 
-### NEVER
-- Set `Access-Control-Allow-Origin: *` together with
-  `Access-Control-Allow-Credentials: true`. The Fetch spec forbids it for
-  a reason — browsers will refuse the response, but the bigger problem is
-  that an upstream proxy / cache may already have leaked it.
-- Reflect the `Origin` header without an allowlist check (`Access-Control-
-  Allow-Origin: <Origin>` for every incoming origin). That's the same as
-  `*` for credentials but with worse caching behavior.
-- Allow `null` as an Origin. `null` is what Chrome sends from sandboxed
-  iframes, `data:` URIs, and `file://` — none of which should have
-  credentialed access to your API.
-- Allow arbitrary subdomains with a regex like `.*\.example\.com$` without
-  considering subdomain takeover. Pin specific subdomains; treat
-  `*.example.com` as a deliberate decision tied to subdomain ownership
-  controls.
-- Expose internal headers via `Access-Control-Expose-Headers`. Limit to
-  the minimal set the frontend genuinely needs.
-- Use CORS as authorization. CORS is a *browser* policy; it does not stop
-  server-to-server, curl, or non-browser clients. Authenticate the
-  request properly.
+### 已知误报
+- 真正公开、无需鉴权的 API(如开放数据、营销 CDN 端点)合法地可以在
+  *没有*凭据的情况下使用 `Access-Control-Allow-Origin: *`。
+- 仅限私有网络访问的内部管理工具可以使用单一固定 Origin;通配符的担忧
+  在这里不适用,因为不存在跨源调用方。
+- 少数集成 (Stripe.js、Plaid、Auth0) 期望特定的 CORS header —— 在放宽
+  基线之前阅读各家供应商的 CORS 章节。
 
-### KNOWN FALSE POSITIVES
-- Truly public, unauthenticated APIs (e.g., open data, marketing CDN
-  endpoints) can legitimately use `Access-Control-Allow-Origin: *`
-  *without* credentials.
-- Internal admin tools restricted to a private network can use a single
-  fixed origin; the wildcard concern doesn't apply because there are no
-  cross-origin callers.
-- A handful of integrations (Stripe.js, Plaid, Auth0) expect specific CORS
-  headers — read each provider's CORS section before relaxing the
-  baseline.
+## 背景(面向人类)
 
-## Context (for humans)
+CORS 常被误解为安全控制。它不是 —— 它是 same-origin policy 的
+*放宽*。真正的安全控制是认证。CORS 配置错误之所以重要,是因为它在与
+cookie 或 `Authorization` header 结合时,会让不可信来源具备发起带凭据
+跨源请求并读取响应的能力。
 
-CORS is widely misunderstood as a security control. It isn't — it's a
-*relaxation* of the same-origin policy. The security control is
-authentication. CORS misconfiguration matters because, when combined with
-cookies or `Authorization` headers, it gives untrusted origins the ability
-to make credentialed cross-origin requests and read the response.
+本 skill 故意写得很短 —— 错误组合的矩阵是有限的,规则也很直接。
 
-This skill is short by design — the matrix of bad combinations is finite
-and the rules are blunt.
-
-## References
+## 参考
 
 - `rules/cors_safe_config.json`
 - [OWASP CORS Origin Header Scrutiny](https://owasp.org/www-community/attacks/CORS_OriginHeaderScrutiny).

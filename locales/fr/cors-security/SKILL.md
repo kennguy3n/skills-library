@@ -1,15 +1,16 @@
 ---
 id: cors-security
 language: fr
+source_revision: "afe376a8"
 version: "1.0.0"
-title: "CORS Security"
-description: "Strict CORS configuration: no wildcard with credentials, allowlist-based origins, sensible preflight cache, minimal exposed headers"
+title: "Sécurité CORS"
+description: "Configuration CORS stricte : pas de wildcard avec credentials, origines en allowlist, cache de preflight raisonnable, en-têtes exposés minimaux"
 category: prevention
 severity: high
 applies_to:
-  - "when generating CORS middleware or framework config"
-  - "when wiring API Gateway / Cloud Front / Nginx CORS headers"
-  - "when reviewing a cross-origin browser-facing endpoint"
+  - "lors de la génération du middleware CORS ou de la config du framework"
+  - "lors du câblage des en-têtes CORS d'API Gateway / CloudFront / Nginx"
+  - "lors de la revue d'un endpoint cross-origin exposé au navigateur"
 languages: ["*"]
 token_budget:
   minimal: 1000
@@ -24,75 +25,82 @@ sources:
   - "Fetch Living Standard (CORS)"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: fr` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# Sécurité CORS
 
-# CORS Security
+## Règles (pour les agents IA)
 
-## Rules (for AI agents)
+### TOUJOURS
+- Utiliser une **allowlist** d'origines, pas `*`. Refléter l'en-tête
+  `Origin` entrant uniquement quand il correspond à une entrée connue
+  de la configuration (ou à une regex précompilée de noms d'hôtes
+  contrôlés par l'opérateur).
+- Si les réponses incluent des credentials (cookies, `Authorization`),
+  positionner `Access-Control-Allow-Credentials: true` **et** garantir
+  que `Access-Control-Allow-Origin` est une seule chaîne d'origine
+  spécifique — jamais `*`.
+- Inclure `Vary: Origin` sur les réponses dont le corps dépend de
+  l'`Origin` de la requête, pour que les caches ne servent pas la
+  réponse d'une origine à une autre.
+- Restreindre `Access-Control-Allow-Methods` du preflight aux méthodes
+  effectivement acceptées par l'endpoint ; restreindre
+  `Access-Control-Allow-Headers` aux en-têtes effectivement consommés.
+- Positionner `Access-Control-Max-Age` à une valeur raisonnable
+  (≤ 86400 en production) pour amortir la latence du preflight sans
+  figer une mauvaise allowlist.
+- Maintenir l'allowlist dans le code (ou dans un fichier de config
+  versionné), pas dérivée d'une base de données — pour que les
+  attaquants ne puissent pas ajouter leur origine en insérant une
+  ligne.
 
-### ALWAYS
-- Use an **allowlist** of origins, not `*`. Reflect the incoming `Origin`
-  header only when it matches a known entry from configuration (or matches
-  a precompiled regex of operator-controlled hostnames).
-- If responses include credentials (cookies, `Authorization`), set
-  `Access-Control-Allow-Credentials: true` **and** ensure
-  `Access-Control-Allow-Origin` is a single specific origin string —
-  never `*`.
-- Include `Vary: Origin` on responses whose body depends on the request
-  `Origin`, so caches don't serve one origin's response to another.
-- Restrict preflight `Access-Control-Allow-Methods` to the actual methods
-  the endpoint accepts; restrict `Access-Control-Allow-Headers` to the
-  actual headers consumed.
-- Set `Access-Control-Max-Age` to a sensible value (≤ 86400 in production)
-  to amortize preflight latency without locking in a bad allowlist.
-- Maintain the allowlist in code (or in a config file checked into
-  source), not derived from a database — so attackers can't add their
-  origin by inserting a row.
+### JAMAIS
+- Positionner `Access-Control-Allow-Origin: *` avec
+  `Access-Control-Allow-Credentials: true`. La spec Fetch l'interdit
+  pour une raison — les navigateurs refuseront la réponse, mais le plus
+  gros problème est qu'un proxy / cache en amont peut déjà l'avoir
+  fuitée.
+- Refléter l'en-tête `Origin` sans vérification par allowlist
+  (`Access-Control-Allow-Origin: <Origin>` pour toute origine
+  entrante). C'est la même chose que `*` pour les credentials avec un
+  comportement de cache pire.
+- Autoriser `null` comme Origin. `null` est ce que Chrome envoie depuis
+  des iframes sandboxed, des URIs `data:` et `file://` — aucun ne
+  devrait avoir d'accès credentialed à votre API.
+- Autoriser des sous-domaines arbitraires avec une regex comme
+  `.*\.example\.com$` sans tenir compte du subdomain takeover. Épingler
+  des sous-domaines spécifiques ; traiter `*.example.com` comme une
+  décision délibérée couplée à des contrôles de propriété des
+  sous-domaines.
+- Exposer des en-têtes internes via `Access-Control-Expose-Headers`.
+  Limiter au minimum dont le frontend a réellement besoin.
+- Utiliser CORS comme autorisation. CORS est une politique de
+  *navigateur* ; ça n'arrête pas server-to-server, curl ou les clients
+  non-navigateurs. Authentifie la requête correctement.
 
-### NEVER
-- Set `Access-Control-Allow-Origin: *` together with
-  `Access-Control-Allow-Credentials: true`. The Fetch spec forbids it for
-  a reason — browsers will refuse the response, but the bigger problem is
-  that an upstream proxy / cache may already have leaked it.
-- Reflect the `Origin` header without an allowlist check (`Access-Control-
-  Allow-Origin: <Origin>` for every incoming origin). That's the same as
-  `*` for credentials but with worse caching behavior.
-- Allow `null` as an Origin. `null` is what Chrome sends from sandboxed
-  iframes, `data:` URIs, and `file://` — none of which should have
-  credentialed access to your API.
-- Allow arbitrary subdomains with a regex like `.*\.example\.com$` without
-  considering subdomain takeover. Pin specific subdomains; treat
-  `*.example.com` as a deliberate decision tied to subdomain ownership
-  controls.
-- Expose internal headers via `Access-Control-Expose-Headers`. Limit to
-  the minimal set the frontend genuinely needs.
-- Use CORS as authorization. CORS is a *browser* policy; it does not stop
-  server-to-server, curl, or non-browser clients. Authenticate the
-  request properly.
+### FAUX POSITIFS CONNUS
+- Les APIs vraiment publiques et non authentifiées (open data,
+  endpoints CDN marketing) peuvent légitimement utiliser
+  `Access-Control-Allow-Origin: *` *sans* credentials.
+- Les outils d'admin internes restreints à un réseau privé peuvent
+  utiliser une seule origine fixe ; la préoccupation du wildcard ne
+  s'applique pas car il n'y a pas d'appelants cross-origin.
+- Quelques intégrations (Stripe.js, Plaid, Auth0) attendent des
+  en-têtes CORS spécifiques — lire la section CORS de chaque
+  fournisseur avant d'assouplir la base.
 
-### KNOWN FALSE POSITIVES
-- Truly public, unauthenticated APIs (e.g., open data, marketing CDN
-  endpoints) can legitimately use `Access-Control-Allow-Origin: *`
-  *without* credentials.
-- Internal admin tools restricted to a private network can use a single
-  fixed origin; the wildcard concern doesn't apply because there are no
-  cross-origin callers.
-- A handful of integrations (Stripe.js, Plaid, Auth0) expect specific CORS
-  headers — read each provider's CORS section before relaxing the
-  baseline.
+## Contexte (pour les humains)
 
-## Context (for humans)
+CORS est largement compris à tort comme un contrôle de sécurité. Ce
+n'en est pas un — c'est un *assouplissement* de la same-origin policy.
+Le contrôle de sécurité c'est l'authentification. La mauvaise
+configuration CORS importe parce que, combinée avec des cookies ou des
+en-têtes `Authorization`, elle donne aux origines non fiables la
+capacité de faire des requêtes cross-origin credentialed et de lire la
+réponse.
 
-CORS is widely misunderstood as a security control. It isn't — it's a
-*relaxation* of the same-origin policy. The security control is
-authentication. CORS misconfiguration matters because, when combined with
-cookies or `Authorization` headers, it gives untrusted origins the ability
-to make credentialed cross-origin requests and read the response.
+Cette skill est courte by design — la matrice des mauvaises
+combinaisons est finie et les règles sont tranchantes.
 
-This skill is short by design — the matrix of bad combinations is finite
-and the rules are blunt.
-
-## References
+## Références
 
 - `rules/cors_safe_config.json`
 - [OWASP CORS Origin Header Scrutiny](https://owasp.org/www-community/attacks/CORS_OriginHeaderScrutiny).
