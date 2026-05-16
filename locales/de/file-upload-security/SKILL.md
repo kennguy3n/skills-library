@@ -1,16 +1,17 @@
 ---
 id: file-upload-security
 language: de
+source_revision: "4c215e6f"
 version: "1.0.0"
-title: "File Upload Security"
-description: "Validate user uploads: MIME magic bytes, filename sanitization, size limits, separate serving domain, AV scanning, polyglot detection"
+title: "File-Upload-Sicherheit"
+description: "User-Uploads validieren: MIME-Magic-Bytes, Filename-Sanitisierung, Grössenlimits, separate Serving-Domain, AV-Scan, Polyglot-Erkennung"
 category: prevention
 severity: high
 applies_to:
-  - "when generating an HTTP file-upload endpoint"
-  - "when wiring presigned-URL upload to S3 / GCS / Azure Blob"
-  - "when adding image/PDF/document processing of user uploads"
-  - "when reviewing user-generated-content storage and serving"
+  - "beim Erzeugen eines HTTP-File-Upload-Endpoints"
+  - "beim Verdrahten von Presigned-URL-Upload zu S3 / GCS / Azure Blob"
+  - "beim Hinzufügen von Bild- / PDF- / Dokumenten-Verarbeitung von User-Uploads"
+  - "beim Review von User-Generated-Content-Storage und -Serving"
 languages: ["*"]
 token_budget:
   minimal: 1200
@@ -26,105 +27,114 @@ sources:
   - "CVE-2018-15473 (libmagic), CVE-2016-3714 (ImageTragick)"
 ---
 
-> ⚠️ **TRANSLATION PENDING** — this file is a stub: the frontmatter carries the `language: de` marker but the body below is the untranslated English original. Translate the prose, then remove this banner.
+# File-Upload-Sicherheit
 
-# File Upload Security
+## Regeln (für KI-Agenten)
 
-## Rules (for AI agents)
+### IMMER
+- Die **Magic Bytes** jedes Uploads serverseitig verifizieren.
+  `Content-Type` und Dateiendung sind angreiferkontrolliert und nie
+  ausreichend. libmagic, `file-type` (Node), `mimetypes-magic`
+  (Python) oder Tika verwenden.
+- Eine **Allowlist** akzeptierter Typen pro Endpoint pflegen
+  (`image/png`, `image/jpeg`, `application/pdf`, …). Alles andere
+  ablehnen, einschliesslich `text/html`, `image/svg+xml` (trägt
+  `<script>`), `text/xml` und `application/octet-stream`.
+- Dateinamen sanitisieren: Verzeichniskomponenten entfernen, Unicode
+  normalisieren, `..`, NUL-Byte, Steuerzeichen, reservierte Windows-
+  Namen (`CON`, `PRN`, `AUX`, `NUL`, `COM1-9`, `LPT1-9`) und alle
+  nicht-`[a-zA-Z0-9._-]`-Zeichen ablehnen. Als UUID / Hash speichern
+  und den Original-Filename in einer separaten, escapeten
+  Metadaten-Column halten.
+- Ein **Grössenlimit** am Proxy / API-Gateway *und* in der
+  Anwendung erzwingen — mindestens doppellagig. Das Proxy-Limit
+  verhindert Bandwidth-DoS; das App-Limit verhindert
+  Speicher-Erschöpfung, wenn ein Proxy fehlkonfiguriert ist.
+- Uploads **ausserhalb des Document-Roots** speichern und von einer
+  separaten Domain (`usercontent.example.net`) über ein CDN ausliefern.
+  `Content-Disposition: attachment` für Nicht-Bild-Typen setzen und
+  einen `Content-Security-Policy: default-src 'none'; sandbox`-
+  Header, um jegliches inline gerendertes HTML/SVG zu neutralisieren.
+- Einen **Virenscanner** (ClamAV, VirusTotal, Sophos) auf jeden
+  Upload laufen lassen, bevor er anderen Usern zugänglich gemacht
+  wird — out-of-band, damit der Request selbst nicht latenzgebunden
+  ist.
+- Medien serverseitig re-encodieren: `convert in.jpg out.jpg`
+  (ImageMagick mit striktem `policy.xml`), `ffmpeg -i` für Video,
+  `pdftocairo` für PDFs. Re-Encodieren entfernt die meisten Polyglot-
+  / steganographischen Payloads und exotischen Codec-Exploits.
+- Speziell für SVG: entweder serverseitig in ein Rasterformat
+  rendern oder durch einen strikten Allowlist-Sanitizer (DOMPurify
+  in Node, `lxml.html.clean` in Python) leiten, der `<script>`,
+  `<iframe>`, `<foreignObject>`, `xlink:href` mit `javascript:` und
+  CSS-Expression / `url()` mit Nicht-Data-URIs entfernt.
 
-### ALWAYS
-- Verify **magic bytes** of every upload server-side. `Content-Type`
-  and file extension are attacker-controlled and never sufficient.
-  Use libmagic, `file-type` (Node), `mimetypes-magic` (Python),
-  or Tika.
-- Maintain an **allowlist** of accepted types per endpoint
-  (`image/png`, `image/jpeg`, `application/pdf`, …). Deny everything
-  else, including `text/html`, `image/svg+xml` (carries `<script>`),
-  `text/xml`, and `application/octet-stream`.
-- Sanitize filenames: strip directory components, normalize Unicode,
-  reject `..`, NUL byte, control chars, reserved Windows names
-  (`CON`, `PRN`, `AUX`, `NUL`, `COM1-9`, `LPT1-9`), and any non
-  `[a-zA-Z0-9._-]` characters. Store as a UUID / hash and keep the
-  original filename in a separate, escaped metadata column.
-- Enforce a **size limit** at the proxy / API gateway *and* at the
-  application — at least double-layer. The proxy limit prevents
-  bandwidth DoS; the app limit prevents memory exhaustion when a
-  proxy is misconfigured.
-- Store uploads **outside the document root** and serve them from a
-  separate domain (`usercontent.example.net`) on a CDN. Set
-  `Content-Disposition: attachment` for non-image types and a
-  `Content-Security-Policy: default-src 'none'; sandbox` header to
-  neutralize any inline-rendered HTML/SVG.
-- Run a **virus scanner** (ClamAV, VirusTotal, Sophos) on every
-  upload before making it accessible to other users — out of band so
-  the request itself isn't latency-bound.
-- Re-encode media server-side: `convert in.jpg out.jpg` (ImageMagick
-  with a strict `policy.xml`), `ffmpeg -i` for video, `pdftocairo`
-  for PDFs. Re-encoding strips most polyglot / steganographic
-  payloads and exotic codec exploits.
-- For SVG specifically: either render server-side to a raster format,
-  or pass through a strict allowlist sanitizer (DOMPurify in Node,
-  `lxml.html.clean` in Python) that strips `<script>`, `<iframe>`,
-  `<foreignObject>`, `xlink:href` with `javascript:`, and CSS
-  expression / url() with non-data URIs.
+### NIE
+- Dem `Content-Type` vom Client vertrauen. Der MIME-Sniffer in IE /
+  älterem Chrome liest den Body nach Type-Hinweisen — eine als
+  `image/png` getarnte HTML-Payload läuft als HTML, wenn sie
+  same-origin ausgeliefert wird.
+- Den Storage-Pfad mit dem user-gelieferten Filename konstruieren.
+  Path-Traversal (`../../etc/passwd`) und die Windows-Reserved-Name-
+  Klasse reduzieren sich beide auf "lass den Angreifer wählen, wo
+  geschrieben wird".
+- Uploads vom selben Origin wie die Anwendung ausliefern. Auslieferung
+  auf `api.example.com/uploads/x.html` bedeutet, ein bösartiger HTML-
+  Upload läuft mit vollem Zugriff auf api.example.com-Cookies und
+  CORS.
+- Einen Stack verwenden, der Uploads mit ImageMagick / libraw /
+  ExifTool / ffmpeg ohne striktes policy.xml / Sandbox / Versions-
+  Kontrolle verarbeitet. ImageTragick (CVE-2016-3714) und GitLab
+  ExifTool (CVE-2021-22205) basierten beide darauf, dass ein Server
+  user-kontrollierte Bytes fröhlich an eine Media-Library
+  weiterreichte.
+- PDF-Upload + In-Browser-Render zulassen, ohne zu verifizieren, dass
+  das PDF die strukturelle Validierung besteht (z. B. `pdfinfo`).
+  Bösartige PDFs sind ein gängiges JavaScript-in-PDF- / XFA-RCE-
+  Primitiv gegen Adobe Reader auf der Empfängerseite, selbst wenn
+  der Server sicher ist.
+- `.docx` / `.xlsx` / `.zip`-Extraktion mit `unzip` oder
+  `python -m zipfile` ohne Path-Traversal-sicheren Extractor
+  verwenden. Zip-Slip (CVE-2018-1002201) hat Dateien über `../`-
+  Einträge ausserhalb des Zielverzeichnisses extrahiert.
+- S3- / GCS-Presigned-Upload-URLs ohne strikte signierte
+  `Content-Type`-Condition und festes Object-Key-Prefix verwenden.
+  Ohne die Conditions kann der Client beliebige Inhalte an
+  beliebige Keys hochladen.
 
-### NEVER
-- Trust `Content-Type` from the client. The mime sniffer in IE / older
-  Chrome reads the body for type clues — an HTML payload disguised as
-  `image/png` will run as HTML when served same-origin.
-- Construct the storage path with the user-supplied filename. Path
-  traversal (`../../etc/passwd`) and the Windows reserved-name class
-  both reduce to "let attacker pick where to write."
-- Serve uploads from the same origin as the application. Serving on
-  `api.example.com/uploads/x.html` means a malicious HTML upload runs
-  with full access to api.example.com cookies and CORS.
-- Use a stack that processes uploads with ImageMagick / libraw /
-  ExifTool / ffmpeg without strict policy.xml / sandbox / version
-  control. ImageTragick (CVE-2016-3714) and GitLab ExifTool
-  (CVE-2021-22205) both relied on a server happily handing
-  user-controlled bytes to a media library.
-- Allow PDF upload + render in-browser without verifying the PDF
-  passes structural validation (e.g. `pdfinfo`). Malicious PDFs are
-  a common JavaScript-in-PDF / XFA RCE primitive against Adobe Reader
-  on the recipient side, even when the server is safe.
-- Use `.docx` / `.xlsx` / `.zip` extraction with `unzip` or
-  `python -m zipfile` without a path-traversal-safe extractor.
-  Zip slip (CVE-2018-1002201) extracted files outside the target
-  directory through `../` entries.
-- Use S3 / GCS presigned upload URLs without a strict `Content-Type`
-  signed condition and a fixed object-key prefix. Without the
-  conditions, the client can upload anything to any key.
+### BEKANNTE FALSCH-POSITIVE
+- Nur-interne Admin-Uploads (z. B. ein Ops-Dashboard) dürfen
+  legitim der Dateiendung vertrauen, weil die Trust-Boundary
+  SSO + IP-Allowlist ist. Das als bewusste Entscheidung im Endpoint
+  dokumentieren.
+- Manche Integrationen (z. B. CSV-Export aus BI-Tools) müssen
+  user-gelieferte Filenames roundtrippen; sie in Metadaten erhalten,
+  aber der On-Disk-Name muss trotzdem eine UUID sein.
+- Tarballs / DEBs / RPMs in einer Build-Pipeline brauchen keinen AV-
+  Scan — die Trust-Boundary ist der Signing-Key der Build-Pipeline,
+  nicht der AV.
 
-### KNOWN FALSE POSITIVES
-- Internal-only admin uploads (e.g. an ops dashboard) may legitimately
-  trust file extension because the trust boundary is the SSO + IP
-  allowlist. Document this as a deliberate decision in the endpoint.
-- Some integrations (e.g. exporting CSV from BI tools) need to round-trip
-  user-supplied filenames; preserve them in metadata, but the on-disk
-  name must still be a UUID.
-- Tarballs / DEBs / RPMs in a build pipeline don't need AV scan — the
-  trust boundary is the build pipeline's signing key, not the AV.
+## Kontext (für Menschen)
 
-## Context (for humans)
+File-Upload ist die persistente, lohnende Angriffsfläche. Jedes
+reale Breach-Lab enthält im Early-Game den Zug "find an upload form",
+weil der Weg von Upload zu RCE meist kurz ist: ein HTML-File mit
+JavaScript-Credential-Stealer hochladen, eine PHP- / JSP-Shell in
+einen fehlkonfigurierten Doc-Root hochladen, ein SVG mit einem
+SAML-Stealer-`<script>` hochladen, ein EXIF-payload-Bild auf einen
+verwundbaren ImageMagick-Service hochladen.
 
-File upload is the persistent rich-target attack surface. Every
-real-world breach lab includes a "find an upload form" early-game
-move because the path from upload to RCE is usually short: upload an
-HTML file with a JavaScript credential stealer, upload a PHP / JSP
-shell to a misconfigured doc-root, upload an SVG with a
-SAML-stealer `<script>`, upload an EXIF-payloaded image to a
-vulnerable ImageMagick service.
+Die Verteidigungen sind gut verstanden und billig — der Bug ist,
+dass sie kombiniert angewandt werden müssen. Eine Magic-Byte-
+Allowlist wird trivial durch ein Polyglot umgangen (eine Datei, die
+gleichzeitig ein gültiges PNG und eine gültige HTML-Seite ist).
+Eine separate Serving-Domain neutralisiert die HTML-Ausführung des
+Polyglots. Ein Virenscanner fängt bekannte Malware. Re-Encodieren
+entfernt exotische Codec-Payloads. Jede Verteidigung ist eine
+Schicht; fehlt eine, kippt der meiste Upload von "gespeicherten
+Daten" zu "gespeichertem RCE".
 
-The defenses are well-understood and inexpensive — the bug is that
-they have to be applied in combination. A magic-byte allowlist is
-trivially bypassed by a polyglot (a file that is simultaneously a
-valid PNG and a valid HTML page). A separate serving domain
-neutralizes the polyglot's HTML execution. A virus scanner catches
-known malware. Re-encoding strips weird codec payloads. Each defense
-is a layer; missing one layer turns most uploads from "stored data"
-into "stored RCE."
-
-## References
+## Referenzen
 
 - `rules/upload_validation.json`
 - [OWASP File Upload Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html).
